@@ -1,16 +1,49 @@
 <!DOCTYPE html>
 <html>
-<!-- TWO VERY IMPORTANT ERRORS THAT NEED TO BE FIXED IF I EVER REVISIT THIS! -->
-<!-- 1. The iframe captcha for the verification NEEDS TO BE ANIMATED! I DONT KNOW WHY ITS NOT WOKRING BUT FIX THIS! -->
-<!-- 2. During the "Generating plants", the green/yellow bar lags behind the actual count. this is a minute error, but is noticable. Fix this by comparing to the original code, which is in a nearby directory -->
+
+<!--
+  If you're reading this, welcome! This can be considered my second ever "completed" webdev project.
+  It's technically not all mine, as basically the entire animation is from a scammer website lmfao, but in all honesty
+  if you scam people, then there is no copyright for you, so this code is 100% by me pretty much :)
+
+  This directory was first made 2 years ago, and I had a half-assed attempt at making a website, as well as never finishing it.
+  Today in 2023, I spent around 40 hours just analyzing/rewriting the js, and finally incorporating the captcha iframe and finzalizing everything.
+
+  It was an interesting learning expereince with js in general and how iframe/parent communication works. If you're curious, 
+  I have a bunch of test files within the /testing-garbage/ subdir in this directory, so navigate there if you're curious on my learning process.
+  Also, funny thing is that I had to use powershell to hash everything lol, so thank god my powershell skills aren't rusty. 
+  The hashing file "ps.ps1" is in the /plant-zips/ subdir if you're also curious. 
+
+  Also, please DO NOTE, that the images within everything are from 3 sources:
+  1. www.gettyimages.com
+  2. gelbooru.com
+  3. www.zerochan.net
+
+  I basically pulled a gallery-dl with various tools on these three sites after searching up relavent words for each plant, like 
+  "pine", "palm", "cactus", and "wheat" and then used a batchfile i found online to randomly rename all the files.
+  The batchfile "RandomNames.bat" is in the same dir as the ps1 file, so if you're curious, you can check it out.
+  Then, I zipped, deleted, randomly renamed, deleted, zipped, etc for all 4 sizes for all 4 plants.
+
+  Initially my thought was to make a backend using flask or node, but GitHub Pages is a bitch and only hosts static sites so oh well :)
+
+  But anyhow, this means that since I pulled from 2 anime image boards, there's bound to be hentai (ANIME PORN), and questionable ones to say the least.
+  Be careful lmao if you're actually wanting to see all the images I've pulled. There's probably duplicates as well, since zerochan and gelbooru
+  probably share quite a lot of stuff. This was a concept website anyways so don't get caught up in the content. Look at the js/iframe/animations instead xD.
+
+  Furthermore, since many of the zip files afterwards were much larger than the 100Mb limit GitHub puts on repo files, and I am out of GitLFS space, I simply
+  opted to chop everything up into seperate files, and make a cool terminal html page to go with each. It was pretty fun :D
+
+  Thanks for visiting my website, and I hope you enjoy the plants you get! ;)
+-->
 
 <head>
   <title>Plant Generator</title>
-  <meta name="description" content="" />
+  <meta name="description" content="Get free plants online!" />
   <meta property="og:title" content="Plant Generator" />
-  <meta property="og:description" content="" />
+  <meta property="og:description" content="Get free plants online!" />
   <meta name="referrer" content="no-referrer">
   <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- CSS -->
   <link href="./style1.css" rel="stylesheet" />
@@ -76,11 +109,9 @@
     button:hover,
     button:visited,
     button:active,
-    button:focus;
-
-      {
+    button:focus {
       text-decoration: none !important;
-      outline: none !important
+      outline: none !important;
     }
 
     ::selection {
@@ -160,7 +191,7 @@
       -webkit-background-size: cover !important;
       background-position: center !important;
       will-change: transform;
-      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
       transform: translate3d(0, 0, 0)
     }
 
@@ -339,10 +370,9 @@
       left: 0;
       position: absolute;
       top: 0;
-      1clip-path: polygon(0 9%, 100% 0%, 100% 100%, 0% 88%);
       clip-path: polygon(1% 9%, 35% 9%, 38% 9%, 97% 9%, 100% 24%, 100% 91%, 78% 91%, 72% 91%, 4% 91%, 1% 81%);
       background: #eee;
-      z-index: 2
+      z-index: 2;
     }
 
     .epu-u-i-w:after {
@@ -353,9 +383,9 @@
       left: 1px;
       position: absolute;
       top: -5px;
-      1clip-path: polygon(0 9%, 100% 0%, 100% 100%, 0% 88%);
+      clip-path: polygon(0 9%, 100% 0%, 100% 100%, 0% 88%);
       clip-path: polygon(0% 0%, 35% 0%, 37% 9%, 97% 9%, 100% 24%, 100% 100%, 74% 99%, 72% 90%, 3% 90%, 0 81%);
-      z-index: 1
+      z-index: 1;
     }
 
     .epu-u-i-w span.material-icons-two-tone {
@@ -452,19 +482,19 @@
     }
 
     .sps-i i {
-      1color: #fff;
+      color: #fff;
       text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
       position: relative;
       z-index: 3;
-      font-size: 2em
+      font-size: 2em;
     }
 
     .sps-i.active i {
-      color: #fff
+      color: #fff;
     }
 
     .m-ft-b-w {
-      margin: 50px auto 0
+      margin: 50px auto 0;
     }
 
     .p-b {
@@ -493,8 +523,8 @@
       display: block;
       position: absolute;
       z-index: 2;
-      1clip-path: polygon(3% 12%, 100% 0%, 97% 63%, 92% 64%, 96% 75%, 96% 95%, 0 90%, 2% 50%, 7% 35%, 2% 33%);
-      clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 92% 99%, 27% 100%, 27% 90%, 15% 90%, 15% 100%, 0% 99%)
+      clip-path: polygon(3% 12%, 100% 0%, 97% 63%, 92% 64%, 96% 75%, 96% 95%, 0 90%, 2% 50%, 7% 35%, 2% 33%);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 92% 99%, 27% 100%, 27% 90%, 15% 90%, 15% 100%, 0% 99%);
     }
 
     .p-b:after {
@@ -506,8 +536,8 @@
       display: block;
       position: absolute;
       z-index: 1;
-      1clip-path: polygon(3% 12%, 100% 0%, 97% 63%, 92% 64%, 96% 75%, 96% 95%, 0 90%, 2% 50%, 7% 35%, 2% 33%);
-      clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 92% 99%, 27% 100%, 27% 90%, 15% 90%, 15% 100%, 0% 99%)
+      clip-path: polygon(3% 12%, 100% 0%, 97% 63%, 92% 64%, 96% 75%, 96% 95%, 0 90%, 2% 50%, 7% 35%, 2% 33%);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 92% 99%, 27% 100%, 27% 90%, 15% 90%, 15% 100%, 0% 99%);
     }
 
     .p-b span {
@@ -1183,12 +1213,12 @@
       background: #83dd81 !important
     }
 
-    .ps-c-w-g-i-i-c-w. #cwPB div {
+    .ps-c-w-g-i-i-c-w #cwPB div {
       -webkit-transition: background .2s ease-in-out 0s;
       -moz-transition: background .2s ease-in-out 0s;
       -ms-transition: background .2s ease-in-out 0s;
       -o-transition: background .2s ease-in-out 0s;
-      transition: background .2s ease-in-out 0s
+      transition: background .2s ease-in-out 0s;
     }
 
     .etbaeou {
@@ -2338,7 +2368,7 @@
       transition: all 280ms ease;
       box-sizing: border-box;
       cursor: pointer;
-      -webkit-appearance: none;
+      appearance: none;
       display: inline-block;
       vertical-align: middle;
       font: 500 14px/31px Roboto, sans-serif !important;
@@ -2384,6 +2414,60 @@
     }
   </style>
 
+  <!-- iframe css -->
+  <style>
+    /* Popup styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-container {
+      position: relative;
+      width: 400px;
+      max-width: 90%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .popup-iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+  </style>
+
   <!--Favicon-->
   <link rel="shortcut icon" type="image/x-icon" href="./favicon.png">
 
@@ -2392,81 +2476,413 @@
   <link href="./font1.css" rel="stylesheet">
   <link href="./font2.css" rel="stylesheet">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- js spam -->
+  <script src="./jquery.min.js"></script>
+  <script src="./cloudfront.js"></script>
+  <script type="text/javascript" src="./cloudfront2.js"></script>
+
+  <!-- iframe js, defer to load only after html page loads -->
+  <script src="./captcha.js" defer></script>
+
+  <!-- listenner for successful captcha -->
+  <script>
+    window.document.addEventListener('myCustomEvent', handleEvent, false)
+    function handleEvent(e) {
+      console.log(e.detail); // outputs: {foo: 'Success!'}
+
+      SelectedNumber = document.getElementById("numberOfPlants").innerHTML;
+
+      // constructs and opens link
+      var stringlink = "./plant-zips/" + ClickedOnElementID + "/" + SelectedNumber;
+      window.open(stringlink, '_blank');
+
+      // hides last page loading div
+      document.getElementById('RotateLastStep').style.display = 'none';
+
+      // closes captcha
+      closePopup();
+
+      // replaces last page texts
+      const elementToReplace2 = document.getElementById('endingText');
+      elementToReplace2.innerHTML = 'Enjoy your plants!';
+
+      const elementToReplace3 = document.getElementById('EndingTitle');
+      elementToReplace3.innerHTML = 'Complete';
+
+      // replaces last page button
+      const anchorElement = document.getElementById('l-s-v-b');
+      const newHTML = '<center><p style="color: white; font-size: 23.4px">Thank you!</p></center>';
+
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = newHTML;
+
+      anchorElement.parentNode.replaceChild(tempContainer.firstChild, anchorElement);
+    }
+  </script>
+
+  <!-- for the two global variables at the end -->
+  <script>
+    // global scope declaration
+    var ClickedOnElementID;
+    var SelectedNumber;
+
+    function record(element) {
+      ClickedOnElementID = element.id;
+      console.log("Clicked element ID: " + ClickedOnElementID);
+    }
+  </script>
+
+  <!-- main script for the aniamtions, everything seems to be working fine so don't touch -->
+  <script type="text/javascript">
+    // explanation
+    // The code is wrapped inside the $(document).ready() function, which ensures that the code executes when the document (webpage) has finished loading.
+    // The code initializes several variables like $psm_1, $psm_2, $psm_3, $psm_4, and $psm_5 with string values.
+    // It defines and assigns values to multiple audio objects (i, d, m, c, a) using audio files located in the same directory.
+    // Two functions are defined within the code: l(i) and p(i).
+    //     The l(i) function is used to add and remove the "active" class from certain elements based on the clicked element's class.
+    //     The p(i) function is used to add and remove the "active" class from certain elements and update variables (t and e) based on the clicked element's class.
+    // The code attaches a click event handler to elements with the class .sps-i. When clicked, the handler executes the p($(this)) function, passing the clicked element as anargument.
+    // The code sets initial values for some variables (n, s1sts2, t).
+    // The code defines a $(window).load() event handler, which triggers when all the content on the window has finished loading. Inside the handler, there are several animations andtimeouts to modify and remove elements from the DOM (Document Object Model).
+    // The code attaches a click event handler to an element with the id #stb-ee-f. When clicked, the handler plays the audio object i, performs some checks on input fields, andtriggers various animations and modifications to the DOM elements.
+    // There are several setTimeout() functions used to delay certain actions or animations.
+    $(document).ready(function () {
+      var $psm_1 = "Loading";
+      var $psm_2 = "Getting Ready";
+      var $psm_3 = "Syncing";
+      var $psm_4 = "Finalizing";
+      var $psm_5 = "Loading Last Step";
+
+      // n thru o are blank for now, still not sure why but too lazy to read the code to check
+      var n;
+      var s;
+      var t;
+      var e;
+      var o;
+      var i = new Audio("./plant.click.mp3");
+      var d = new Audio("./plant.click.mp3");
+      var m = new Audio("./plant.click.mp3");
+      var c = new Audio("./plant.click.mp3");
+      var a = new Audio("./plant.click.mp3");
+
+      function l(i) {
+        var a = $(".v-r-i-s-1, .v-r-i-s-2, .v-r-i-s-3, .v-r-i-s-4");
+        a.hasClass("active") && a.removeClass("active");
+
+        if (i.hasClass("v-r-i-s-1")) {
+          n = "34";
+        } else if (i.hasClass("v-r-i-s-2")) {
+          n = "69";
+        } else if (i.hasClass("v-r-i-s-3")) {
+          n = "420";
+        } else if (i.hasClass("v-r-i-s-4")) {
+          n = "1337";
+        }
+
+        i.addClass("active");
+      }
+
+      // this function loads the correct selected plant on the search screen
+      function p(i) {
+        var a = $(".sps-i-1, .sps-i-2, .sps-i-4, .sps-i-5");
+        a.hasClass("active") && a.removeClass("active");
+
+        if (i.hasClass("sps-i-1")) {
+          t = "Wheat";
+          e = '<img src="./sprite-icons/wheat.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (i.hasClass("sps-i-2")) {
+          t = "Cactus";
+          e = '<img src="./sprite-icons/cactus.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (i.hasClass("sps-i-4")) {
+          t = "Pine";
+          e = '<img src="./sprite-icons/pine.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (i.hasClass("sps-i-5")) {
+          t = "Palm";
+          e = '<img src="./sprite-icons/coconut.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        }
+
+        i.addClass("active");
+        c.play();
+      }
+
+      n = "34";
+      var s1sts2 = "Success!";
+
+      $(window).load(function () {
+        setTimeout(function () {
+          $(".imjaprlc-lb div").animate({
+            width: "100%"
+          }, 2000);
+        }, 50);
+
+        setTimeout(function () {
+          $(".imjaprl").animate({
+            opacity: 0
+          }, 700, function () {
+            $(".imjaprl").remove();
+          });
+
+          $(".aoi").addClass("animated bounceIn");
+          $(".aoi").removeClass("aoinv");
+        }, 2000);
+      });
+
+      t = "";
+
+      $(".sps-i").click(function () {
+        if (!$(this).hasClass("active")) {
+          $(this).addClass("animated headShake").one(
+            "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+            function () {
+              $(this).removeClass("animated headShake");
+            }
+          );
+
+          p($(this));
+        }
+      });
+
+      $c_s_m = ".prcs-m";
+
+      $(document).on("click", "#stb-ee-f", function () {
+        i.play();
+
+        if ($("#epu-u-i").val() == "") {
+          $(".iew-e-u")
+            .addClass("flipInX")
+            .fadeIn(function () {
+              setTimeout(function () {
+                $(".iew-e-u")
+                  .addClass("animated flipOutX")
+                  .one(
+                    "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                    function () {
+                      $(this).removeClass("animated flipOutX").hide();
+                    }
+                  );
+              }, 1200);
+            });
+        }
+
+        if (t === '') {
+          $(".iew-e-p").addClass("flipInX").fadeIn(function () {
+            setTimeout(function () {
+              $(".iew-e-p").addClass("animated flipOutX").one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+                $(this).removeClass("animated flipOutX").hide();
+              });
+            }, 1200);
+          });
+        }
+        else if (t !== "" && $("#epu-u-i").val() !== "") {
+          var o = $("#epu-u-i").val();
+          var ceh = $(".b-s-c-w").height();
+          $(".b-s-c-w").addClass("animated bounceOut");
+
+          setTimeout(function () {
+            $(".b-s-c-w").hide();
+            $(".i-w-b-r-t-y").removeClass("mfp-hide");
+            $(".i-w-b-r-t-y").height(ceh);
+            $("#f-t-f-p-t-u-v").html(o);
+            $("#f-t-f-p-t-p-v").html(e);
+
+            setTimeout(() => {
+              $(".f-t-f-p-a-w").fadeOut(() => {
+                $(this).remove();
+                const i = document.querySelector(".caSsi");
+                i.classList.add("animated", "bounceOut");
+
+                i.addEventListener("animationend", () => {
+                  $(".f-t-f-p-t-l div")
+                    .removeClass("animated pulse infinite")
+                    .addClass("animated bounceIn caSs-ts");
+                  $(".f-t-f-p-t-l div").html(s1sts2);
+                  $(".caSs").html('<svg class="caSs-cm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+
+                  a.play();
+
+                  setTimeout(function () {
+                    $(".h-c1").hide();
+                    $(".mcp-p-w-u").removeClass("animated bounceIn").addClass("animated flipOutY").one(
+                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                      function () {
+                        $(".mcp-p-w-u").removeClass("animated flipOutY").hide();
+                        $(".etbaeou").removeClass("mfp-hide");
+                        $(".v-r-i-s").addClass("animated bounceIn");
+                        $(".mcp-p-w-r").addClass("animated bounceIn");
+                      }
+                    );
+
+                    $(".v-r-i-s").click(function () {
+                      $(".v-r-i-s").removeClass("animation-delay-200 animation-delay-400 animation-delay-600 animation-delay-800");
+
+                      if (!$(this).hasClass("active")) {
+                        $(this).addClass("animated headShake").one(
+                          "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                          function () {
+                            $(this).removeClass("animated headShake");
+                          }
+                        );
+
+                        $(".r-i-s-r-m-v").addClass("animated fadeIn flipInX").one(
+                          "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                          function () {
+                            $(".r-i-s-r-m-v").removeClass("animated fadeIn flipInX");
+                          }
+                        );
+
+                        $(".r-i-s-r-m-v").addClass("animated flipInX");
+                      }
+
+                      l($(this));
+                      $(".r-i-s-r-m-v").html(n);
+                    });
+
+                    $(document).on("click", "#stb-ee-s", function () {
+                      $(".etbaeou").addClass("animated bounceOut").one(
+                        "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+
+                        function () {
+                          $(".etbaeou").removeClass("animated bounceOut").hide();
+
+                          (function () {
+                            $(".loading-step").removeClass("mfp-hide").addClass("animated bounceIn");
+                            var i = $(".prcs-m");
+
+                            function a(i, a) {
+                              var n = (i * a.width()) / 100;
+                              a.find("div").animate({ width: n }, 500).html(i + "%&nbsp;");
+                            }
+
+                            a(0, $("#pBC"));
+
+
+                            setTimeout(function () {
+                              setTimeout(function () {
+                                i.html($psm_1);
+                                a(1, $("#pBC"));
+                              }, 0);
+
+
+                              setTimeout(function () {
+                                i.html($psm_2);
+                                a(20, $("#pBC"));
+                              }, 1500);
+
+
+                              setTimeout(function () {
+                                $(".mcp-p-w-p").removeClass("animated bounceIn animation-delay-100");
+                                gih = $(".ps-c-w-g-i").height();
+                                gihn = gih / 2 + 20;
+                                $(".mcp-p-w-p").animate({ top: "-=" + gihn }, 800);
+                                $(".ps-c-w-g-i").animate({ bottom: "-=" + gihn, opacity: "1" }, 800, function () {
+                                  function updateProgress(progress, element, duration) {
+                                    var width = (progress * element.width()) / 100;
+                                    element.find("div")
+                                      .animate({ width: width }, duration)
+                                      .html(progress + "%&nbsp;");
+                                  }
+
+                                  $(".cwPBw").addClass("animated bounceIn");
+                                  updateProgress(0, $("#cwPB"), 1);
+                                  updateProgress(100, $("#cwPB"), 4000);
+                                  m.play();
+                                  $("#ps-c-w-g-i-i-b-v").countTo({
+                                    from: 0,
+                                    to: n,
+                                    speed: 2000,
+                                    refreshInterval: 10,
+                                    onComplete: function (i) {
+                                      m.loop = false;
+                                      $(".ps-c-w-g-i-i-t img").fadeOut(300, function () {
+                                        $(".ps-c-w-g-i-i-t").html('<svg class="caSs-cm caSs-cm-s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+                                        $(".ps-c-w-g-i").addClass("animated headShake");
+                                        setTimeout(function () {
+                                          $(".ps-c-w-g-i-i-c-w").html('<span class="material-icons-two-tone mitt-r">check_circle</span>');
+                                          $(".ps-c-w-g-i-i-c-w").addClass("ps-c-w-g-i-i-c-w-s");
+                                          $(".cwPBw").addClass("headShake");
+                                          $(".cwPBw").addClass("cwPBws");
+                                        }, 250);
+                                        setTimeout(function () {
+                                          $(".ps-c-w-g-i").fadeOut(function () {
+                                            $(".ps-c-w-g-i-c").remove();
+                                            $(".mcp-p-w-p").animate({ top: "+=" + gihn }, 600);
+                                          });
+                                        }, 2000);
+                                      });
+                                    }
+                                  });
+                                });
+
+                                i.html($psm_3 + " " + n + " Plants");
+                                a(40, $("#pBC"));
+                              }, 3500);
+
+
+                              setTimeout(function () {
+                                i.html($psm_4);
+                                a(80, $("#pBC"));
+                              }, 11000);
+
+
+                              setTimeout(function () {
+                                i.html($psm_5);
+                                a(90, $("#pBC"));
+                              }, 13000);
+
+
+                              setTimeout(function () {
+                                i.html('<span class="material-icons-two-tone fa-spin">rotate_right</span>');
+                                a(90, $("#pBC"));
+                              }, 15000);
+
+
+                              setTimeout(function () {
+                                $(".loading-step")
+                                  .addClass("animated flipOutY")
+                                  .one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+                                    $(this).removeClass("animated flipOutY");
+                                    $(".loading-step").addClass("mfp-hide");
+                                    $(".v-r-a").html(n);
+                                    $(".v-u").html(o);
+                                    $(".c-w-l-r-o-w .v-r-img").attr("src", s);
+                                    $(".last-step").removeClass("mfp-hide");
+                                    d.play();
+                                    $(".c-w-l-t-v").addClass("animated bounceIn");
+                                    $(".c-w-l-p-v").addClass("animated bounceIn");
+                                    $(".c-w-l-r-o-w").addClass("animated bounceIn");
+                                    $(".m-ft-b-w").addClass("animated bounceIn");
+                                  });
+                              }, 19000);
+
+                            }, 1500);
+                          })();
+                        }
+                      );
+                    });
+                  }, 1500);
+                });
+              });
+            }, 3000);
+          }, 600)
+        }
+      });
+    });
+  </script>
 </head>
 
 <body>
-  <div class="Capt" id="Captcha" style="visibility: hidden;transition:visibility 3s linear,opacity 0.3s linear !important;">
-    <style>
-      .close {
-        position: absolute;
-        right: 11%;
-        top: 11%;
-        width: 32px;
-        height: 32px;
-        opacity: 0.5;
-      }
-
-      .close:hover {
-        opacity: 1;
-      }
-
-      .close:before,
-      .close:after {
-        position: absolute;
-        left: 15px;
-        content: ' ';
-        height: 33px;
-        width: 5px;
-        background-color: rgb(255, 255, 255);
-        border-radius: 5% !important;
-      }
-
-      .close:before {
-        transform: rotate(45deg);
-      }
-
-      .close:after {
-        transform: rotate(-45deg);
-      }
-
-      .Capt {
-        opacity: 1;
-        transition: visibility 0.3s linear, opacity 0.3s linear;
-      }
-    </style>
-
-    <a href="#" class="close" style="z-index: 2147483699;" onclick="closeCaptcha()"></a>
-    <iframe src="https://captainchicky.github.io/Captcha-test" scrolling="no" style="
-        overflow-x:hidden;
-        border: medium; 
-        height: 70% !important;
-        top: 15% !important;
-        bottom: 15% !important;
-        left: 15% !important; 
-        right: 15% !important;
-        z-index: 2147483647; 
-        position: fixed; 
-        width: 70%;  
-    "></iframe>
+  <div class="popup-overlay">
+    <div class="popup-container">
+      <span class="close-button">&times;</span>
+      <iframe class="popup-iframe" src="" frameborder="0"></iframe>
+    </div>
   </div>
-  <script type="text/javascript">
-    function closeCaptcha() {
-      var x = document.getElementById("Captcha");
-      if (x.style.opacity === "1") {
-        x.style.opacity = "0";
-        x.style.visibility = "hidden";
-      } else {
-        x.style.opacity = "1";
-        x.style.visibility = "visible";
-      }
-    }
-  </script>
 
   <div class="imjaprl" style="opacity:.948519">
     <div class="imjaprlc">
       <div class="imjaprlc-i">
-        <div class="imjaprlc-l animated bounceIn animation-delay-300"><span class="material-icons-two-tone fa-spin">settings</span></div>
+        <div class="imjaprlc-l animated bounceIn animation-delay-300"><span
+            class="material-icons-two-tone fa-spin">settings</span></div>
         <div class="imjaprlc-lb animated bounceIn animation-delay-400">
           <div class="ww"></div>
         </div>
@@ -2480,7 +2896,8 @@
       <header class="h-c1">
         <div class="container">
           <div class="h-c">
-            <img style="width:15000000px !important;height:70000px !important;" src="./logo.png" class="img-fluid l-i" />
+            <img style="width:15000000px !important;height:70000px !important;" src="./logo.png"
+              class="img-fluid l-i" />
             <h1>PLANT GENERATOR</h1>
           </div>
         </div>
@@ -2510,24 +2927,24 @@
           </div>
           <div class="psiw-w aoi aoinv animation-delay-400">
             <div class="psiw-i">
-              <div class="sps-i-w">
+              <div class="sps-i-w" onclick="record(this);" id="wheat">
                 <div class="sps-i sps-i-1">
-                  <i>🌾</i>
+                  <img src="./sprite-icons/wheat.png" class="img-fluid" style="z-index: 9; height: 52px;" />
                 </div>
               </div>
-              <div class="sps-i-w">
+              <div class="sps-i-w" onclick="record(this);" id="cactus">
                 <div class="sps-i sps-i-2">
-                  <i>🌵</i>
+                  <img src="./sprite-icons/cactus.png" class="img-fluid" style="z-index: 9; height: 52px;" />
                 </div>
               </div>
-              <div class="sps-i-w">
+              <div class="sps-i-w" onclick="record(this);" id="pine">
                 <div class="sps-i sps-i-4">
-                  <i>🌲</i>
+                  <img src="./sprite-icons/pine.png" class="img-fluid" style="z-index: 9; height: 52px;" />
                 </div>
               </div>
-              <div class="sps-i-w">
+              <div class="sps-i-w" onclick="record(this);" id="palm">
                 <div class="sps-i sps-i-5">
-                  <i>🌴</i>
+                  <img src="./sprite-icons/coconut.png" class="img-fluid" style="z-index: 9; height: 52px;" />
                 </div>
               </div>
             </div>
@@ -2553,7 +2970,9 @@
                   <div class="caSsi">
                     <div class="animated bounceIn animation-delay-100">
                       <div class="f-t-f-p-t-u-w animated pulse infinite">
-                        <div id="f-t-f-p-t-u-v" class="f-t-f-p-t-u-v">asdawasda</div>
+                        <div id="f-t-f-p-t-u-v" class="f-t-f-p-t-u-v">
+                          <!-- This empty div allows previously queried name to be rendered -->
+                        </div>
                       </div>
                     </div>
                     <div class="animated bounceIn animation-delay-200">
@@ -2602,7 +3021,7 @@
               <div class="v-r-i-s v-r-i-s-4 animation-delay-800">
                 <div class="v-r-i-s-i-w">
                   <img src="./plant.png" class="img-fluid v-r-i-s-i">
-                  <div class="v-r-i-s-v">8008</div>
+                  <div class="v-r-i-s-v">1337</div>
                   <div class="v-r-i-s-l">PLANTS</div>
                 </div>
               </div>
@@ -2681,13 +3100,20 @@
       <div class="last-step mfp-hide">
         <div class="mcp-p-w mcp-p-w-l animated bounceIn">
           <div class="sipo-s-w">
-            <div class="sipo-s">
+            <div class="sipo-s" id="RotateLastStep">
               <span class="material-icons-two-tone fa-spin">rotate_right</span>
             </div>
           </div>
           <div class="c-i-t">
-            <h4 class="c-w-l-t-v animation-delay-100">Last Step</h4>
-            <div class="c-w-l-p-v animation-delay-200">Hello <span class="v-u">asds</span>! You are almost done with synchronization of <span class="v-r-a"></span> <span class="lsv2s">PLANTS</span>! Please complete the last step by clicking the button below to finish with synchronization process.</div>
+            <h4 class="c-w-l-t-v animation-delay-100" id="EndingTitle">Last Step</h4>
+
+            <!-- I think "v-r-a" class here is the plant class, so query this when looking for numebr in the future -->
+            <div class="c-w-l-p-v animation-delay-200" id="endingText">Hello <span class="v-u">asds</span>! You are
+              almost done with
+              synchronization of <span class="v-r-a" id="numberOfPlants"></span> <span class="lsv2s">PLANTS</span>!
+              Please complete the last
+              step by clicking the button below to finish with synchronization process.
+            </div>
           </div>
           <div class="c-w-l-r-o-w animation-delay-300">
             <div class="ps-c-w-g-i-i animated pulse infinite">
@@ -2705,438 +3131,18 @@
               </div>
             </div>
           </div>
-          <div class="m-ft-b-w p-b-l-s-w animation-delay-400">
+          <!-- verify button for captcha -->
+          <div class="m-ft-b-w p-b-l-s-w animation-delay-400" id="endBtn">
             <a id="l-s-v-b" class="p-b" onclick="verify();"><span>Verify Now</span></a>
           </div>
         </div>
       </div>
     </div>
   </section>
+  <!-- this is just the bg image -->
   <div class="glitch mswbg">
     <div class="glitch__image"></div>
-    <div class="glitch__image"></div>
-    <div class="glitch__image"></div>
-    <div class="glitch__image"></div>
-    <div class="glitch__image"></div>
   </div>
-
-  <script src="./jquery.min.js"></script>
-  <script src="./cloudfront.js"></script>
-  <script type="text/javascript" src="./cloudfront2.js"></script>
-
-  <script type="text/javascript">
-    function verify() {
-      var x = document.getElementById("Captcha");
-      x.style.opacity = "1";
-      x.style.visibility = "visible";
-    }
-  </script>
-
-  <script type="text/javascript">
-    $(document).ready(function() {
-      ($psm_1 = "Loading"),
-      ($psm_2 = "Getting Ready"),
-      ($psm_3 = "Syncing"),
-      ($psm_4 = "Finalizing"),
-      ($psm_5 = "Loading Last Step");
-      var n,
-        s,
-        t,
-        e,
-        o,
-        i = new Audio("./plant.click.mp3"),
-        d = new Audio("./plant.click.mp3"),
-        m = new Audio("./plant.click.mp3"),
-        c = new Audio("./plant.click.mp3"),
-        a = new Audio("./plant.click.mp3");
-
-      function l(i) {
-        var a;
-        (a = $(".v-r-i-s-1, .v-r-i-s-2, .v-r-i-s-3, .v-r-i-s-4")).hasClass(
-            "active"
-          ) && a.removeClass("active"),
-          i.hasClass("v-r-i-s-1") && ((n = "34")),
-          i.hasClass("v-r-i-s-2") && ((n = "69")),
-          i.hasClass("v-r-i-s-3") && ((n = "420")),
-          i.hasClass("v-r-i-s-4") && ((n = "8008")),
-          i.addClass("active");
-      }
-
-      function p(i) {
-        var a;
-        (a = $(".sps-i-1, .sps-i-2, .sps-i-4, .sps-i-5")).hasClass(
-            "active"
-          ) && a.removeClass("active"),
-          i.hasClass("sps-i-1") &&
-          ((t = "Wheat"), (e = '<i>🌾</i>')),
-          i.hasClass("sps-i-2") &&
-          ((t = "Cactus"), (e = '<i>🌵</i>')),
-          i.hasClass("sps-i-4") &&
-          ((t = "Pine"), (e = '<i>🌲</i>')),
-          i.hasClass("sps-i-5") &&
-          ((t = "Palm"), (e = '<i>🌴</i>')),
-          i.addClass("active"),
-          c.play();
-      }
-      (n = "34"),
-      (s1sts2 = "Success!"),
-      $(window).load(function() {
-          setTimeout(function() {
-              $(".imjaprlc-lb div").animate({
-                  width: "100%"
-                },
-                2e3
-              );
-            }, 50),
-            setTimeout(function() {
-              $(".imjaprl").animate({
-                    opacity: 0
-                  },
-                  700,
-                  function() {
-                    $(".imjaprl").remove();
-                  }
-                ),
-                $(".aoi").addClass("animated bounceIn"),
-                $(".aoi").removeClass("aoinv");
-            }, 2e3);
-        }),
-        (t = ""),
-        $(".sps-i").click(function() {
-          $(this).hasClass("active") ||
-            $(this)
-            .addClass("animated headShake")
-            .one(
-              "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-              function() {
-                $(this).removeClass("animated headShake");
-              }
-            ),
-            p($(this));
-        }),
-        ($c_s_m = ".prcs-m"),
-        $(document).on("click", "#stb-ee-f", function() {
-          i.play(),
-            "" == $("#epu-u-i").val() &&
-            ($(".iew-e-u").addClass("flipInX"),
-              $(".iew-e-u").fadeIn(function() {
-                setTimeout(function() {
-                  $(".iew-e-u")
-                    .addClass("animated flipOutX")
-                    .one(
-                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                      function() {
-                        $(this).removeClass("animated flipOutX"), $(this).hide();
-                      }
-                    );
-                }, 1200);
-              })),
-            "" == t &&
-            ($(".iew-e-p").addClass("flipInX"),
-              $(".iew-e-p").fadeIn(function() {
-                setTimeout(function() {
-                  $(".iew-e-p")
-                    .addClass("animated flipOutX")
-                    .one(
-                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                      function() {
-                        $(this).removeClass("animated flipOutX"), $(this).hide();
-                      }
-                    );
-                }, 1200);
-              })),
-            "" != t &&
-            "" != $("#epu-u-i").val() &&
-            ((o = $("#epu-u-i").val()),
-              (ceh = $(".b-s-c-w").height()),
-              $(".b-s-c-w").addClass("animated bounceOut"),
-              setTimeout(function() {
-                $(".b-s-c-w").hide(),
-                  $(".i-w-b-r-t-y").removeClass("mfp-hide"),
-                  $(".i-w-b-r-t-y").height(ceh),
-                  $("#f-t-f-p-t-u-v").html(o),
-                  $("#f-t-f-p-t-p-v").html(e);
-                setTimeout(function() {
-                  $(".f-t-f-p-a-w").fadeOut(function() {
-                    $(this).remove();
-                    const i = document.querySelector(".caSsi");
-                    i.classList.add("animated", "bounceOut"),
-                      i.addEventListener("animationend", () => {
-                        $(".f-t-f-p-t-l div").removeClass(
-                            "animated pulse infinite"
-                          ),
-                          $(".f-t-f-p-t-l div").addClass(
-                            "animated bounceIn caSs-ts"
-                          ),
-                          $(".f-t-f-p-t-l div").html(s1sts2),
-                          $(".caSs").html(
-                            '<svg class="caSs-cm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>'
-                          ),
-                          a.play(),
-                          setTimeout(function() {
-                            $(".h-c1").hide(),
-                              $(".mcp-p-w-u").removeClass("animated bounceIn"),
-                              $(".mcp-p-w-u")
-                              .addClass("animated flipOutY")
-                              .one(
-                                "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                                function() {
-                                  $(".mcp-p-w-u").removeClass(
-                                      "animated flipOutY"
-                                    ),
-                                    $(".mcp-p-w-u").hide(),
-                                    $(".etbaeou").removeClass("mfp-hide"),
-                                    $(".v-r-i-s").addClass("animated bounceIn"),
-                                    $(".mcp-p-w-r").addClass("animated bounceIn");
-                                }
-                              ),
-                              $(".v-r-i-s").click(function() {
-                                $(".v-r-i-s").removeClass(
-                                    "animation-delay-200  animation-delay-400  animation-delay-600  animation-delay-800"
-                                  ),
-                                  $(this).hasClass("active") ||
-                                  ($(this)
-                                    .addClass("animated headShake")
-                                    .one(
-                                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                                      function() {
-                                        $(this).removeClass("animated headShake");
-                                      }
-                                    ),
-                                    $(".r-i-s-r-m-v")
-                                    .addClass("animated fadeIn flipInX")
-                                    .one(
-                                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                                      function() {
-                                        $(".r-i-s-r-m-v").removeClass(
-                                          "animated fadeIn flipInX"
-                                        );
-                                      }
-                                    ),
-                                    $(".r-i-s-r-m-v").addClass("animated flipInX")),
-                                  l($(this)),
-                                  $(".r-i-s-r-m-v").html(n);
-                              }),
-                              $(document).on("click", "#stb-ee-s", function() {
-                                $(".etbaeou")
-                                  .addClass("animated bounceOut")
-                                  .one(
-                                    "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                                    function() {
-                                      $(".etbaeou").removeClass(
-                                          "animated bounceOut"
-                                        ),
-                                        $(".etbaeou").hide(),
-                                        (function() {
-                                          $(".loading-step").removeClass(
-                                              "mfp-hide"
-                                            ),
-                                            $(".loading-step").addClass(
-                                              "animated bounceIn"
-                                            );
-                                          var i = $(".prcs-m");
-
-                                          function a(i, a) {
-                                            var n = (i * a.width()) / 100;
-                                            a.find("div")
-                                              .animate({
-                                                  width: n
-                                                },
-                                                500
-                                              )
-                                              .html(i + "%&nbsp;");
-                                          }
-                                          a(0, $("#pBC")),
-                                            setTimeout(function() {
-                                              setTimeout(function() {
-                                                  i.html($psm_1), a(1, $("#pBC"));
-                                                }, 0),
-                                                setTimeout(function() {
-                                                  i.html($psm_2), a(20, $("#pBC"));
-                                                }, 1500),
-                                                setTimeout(function() {
-                                                  $(".mcp-p-w-p").removeClass(
-                                                      "animated bounceIn animation-delay-100"
-                                                    ),
-                                                    (gih = $(
-                                                      ".ps-c-w-g-i"
-                                                    ).height()),
-                                                    (gihn = gih / 2 + 20),
-                                                    $(".mcp-p-w-p").animate({
-                                                        top: "-=" + gihn
-                                                      },
-                                                      800
-                                                    ),
-                                                    $(".ps-c-w-g-i").animate({
-                                                        bottom: "-=" + gihn,
-                                                        opacity: "1"
-                                                      },
-                                                      800,
-                                                      function() {
-                                                        function i(i, a, n) {
-                                                          var s =
-                                                            (i * a.width()) / 100;
-                                                          a.find("div")
-                                                            .animate({
-                                                                width: s
-                                                              },
-                                                              n
-                                                            )
-                                                            .html(i + "%&nbsp;");
-                                                        }
-                                                        $(".cwPBw").addClass(
-                                                            "animated bounceIn"
-                                                          ),
-                                                          i(0, $("#cwPB"), 1),
-                                                          i(100, $("#cwPB"), 4e3),
-                                                          m.play(),
-                                                          $(
-                                                            "#ps-c-w-g-i-i-b-v"
-                                                          ).countTo({
-                                                            from: 0,
-                                                            to: n,
-                                                            speed: 2e3,
-                                                            refreshInterval: 10,
-                                                            onComplete: function(
-                                                              i
-                                                            ) {
-                                                              (m.loop = !1),
-                                                              $(
-                                                                ".ps-c-w-g-i-i-t img"
-                                                              ).fadeOut(
-                                                                300,
-                                                                function() {
-                                                                  $(
-                                                                      ".ps-c-w-g-i-i-t"
-                                                                    ).html(
-                                                                      '<svg class="caSs-cm caSs-cm-s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>'
-                                                                    ),
-                                                                    $(
-                                                                      ".ps-c-w-g-i"
-                                                                    ).addClass(
-                                                                      "animated headShake"
-                                                                    ),
-                                                                    setTimeout(
-                                                                      function() {
-                                                                        $(
-                                                                            ".ps-c-w-g-i-i-c-w"
-                                                                          ).html(
-                                                                            '<span class="material-icons-two-tone mitt-r">check_circle</span>'
-                                                                          ),
-                                                                          $(
-                                                                            ".ps-c-w-g-i-i-c-w"
-                                                                          ).addClass(
-                                                                            "ps-c-w-g-i-i-c-w-s"
-                                                                          ),
-                                                                          $(
-                                                                            ".cwPBw"
-                                                                          ).addClass(
-                                                                            "headShake"
-                                                                          ),
-                                                                          $(
-                                                                            ".cwPBw"
-                                                                          ).addClass(
-                                                                            "cwPBws"
-                                                                          );
-                                                                      },
-                                                                      250
-                                                                    ),
-                                                                    setTimeout(
-                                                                      function() {
-                                                                        $(
-                                                                          ".ps-c-w-g-i"
-                                                                        ).fadeOut(
-                                                                          function() {
-                                                                            $(
-                                                                                ".ps-c-w-g-i-c"
-                                                                              ).remove(),
-                                                                              $(
-                                                                                ".mcp-p-w-p"
-                                                                              ).animate({
-                                                                                  top: "+=" +
-                                                                                    gihn
-                                                                                },
-                                                                                600
-                                                                              );
-                                                                          }
-                                                                        );
-                                                                      },
-                                                                      2e3
-                                                                    );
-                                                                }
-                                                              );
-                                                            }
-                                                          });
-                                                      }
-                                                    ),
-                                                    i.html(
-                                                      $psm_3 + " " + n + " Plants"
-                                                    ),
-                                                    a(40, $("#pBC"));
-                                                }, 3500),
-                                                setTimeout(function() {
-                                                  i.html($psm_4), a(80, $("#pBC"));
-                                                }, 11e3),
-                                                setTimeout(function() {
-                                                  i.html($psm_5), a(90, $("#pBC"));
-                                                }, 13e3),
-                                                setTimeout(function() {
-                                                  i.html(
-                                                      '<span class="material-icons-two-tone fa-spin">rotate_right</span>'
-                                                    ),
-                                                    a(90, $("#pBC"));
-                                                }, 15e3),
-                                                setTimeout(function() {
-                                                  $(".loading-step")
-                                                    .addClass("animated flipOutY")
-                                                    .one(
-                                                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
-                                                      function() {
-                                                        $(this).removeClass(
-                                                            "animated flipOutY"
-                                                          ),
-                                                          $(
-                                                            ".loading-step"
-                                                          ).addClass("mfp-hide"),
-                                                          $(".v-r-a").html(n),
-                                                          $(".v-u").html(o),
-                                                          $(
-                                                            ".c-w-l-r-o-w .v-r-img"
-                                                          ).attr("src", s),
-                                                          $(
-                                                            ".last-step"
-                                                          ).removeClass("mfp-hide"),
-                                                          d.play(),
-                                                          $(".c-w-l-t-v").addClass(
-                                                            "animated bounceIn"
-                                                          ),
-                                                          $(".c-w-l-p-v").addClass(
-                                                            "animated bounceIn"
-                                                          ),
-                                                          $(
-                                                            ".c-w-l-r-o-w"
-                                                          ).addClass(
-                                                            "animated bounceIn"
-                                                          ),
-                                                          $(".m-ft-b-w").addClass(
-                                                            "animated bounceIn"
-                                                          );
-                                                      }
-                                                    );
-                                                }, 19e3);
-                                            }, 1500);
-                                        })();
-                                    }
-                                  );
-                              });
-                          }, 1500);
-                      });
-                  });
-                }, 3e3);
-              }, 600));
-        });
-    });
-  </script>
 </body>
 
 </html>

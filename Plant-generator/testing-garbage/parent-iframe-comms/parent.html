@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CAPTCHA Popup Example</title>
+    <style>
+        /* Button styles */
+        .captcha-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #428bca;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Popup styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-container {
+            position: relative;
+            width: 400px;
+            max-width: 90%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .popup-iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+    </style>
+    <script>
+        window.document.addEventListener('myCustomEvent', handleEvent, false)
+        function handleEvent(e) {
+            console.log(e.detail) // outputs: {foo: 'bar'}
+            indow.open('http://www.yahoo.com','_blank');
+        }
+    </script>
+</head>
+
+<body>
+    <button class="captcha-button">Open CAPTCHA</button>
+
+    <div class="popup-overlay">
+        <div class="popup-container">
+            <span class="close-button">&times;</span>
+            <iframe class="popup-iframe" src="iframe.html"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Get the elements
+        var button = document.querySelector('.captcha-button');
+        var overlay = document.querySelector('.popup-overlay');
+        var closeButton = document.querySelector('.close-button');
+
+        // Function to open the popup
+        function openPopup() {
+            overlay.style.display = 'flex';
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            overlay.style.display = 'none';
+        }
+
+        // Add event listeners
+        button.addEventListener('click', openPopup);
+        closeButton.addEventListener('click', closePopup);
+    </script>
+</body>
+
+</html>

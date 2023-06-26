@@ -1,0 +1,127 @@
+<script>
+
+
+  (function () {
+    $(".loading-step").removeClass("mfp-hide").addClass("animated bounceIn");
+    var i = $(".prcs-m");
+
+
+
+
+
+    function a(i, a) {
+      var n = (i * a.width()) / 100;
+      a.find("div").animate({ width: n }, 500).html(i + "%&nbsp;");
+    }
+    a(0, $("#pBC"));
+
+
+
+    setTimeout(function () {
+
+
+
+
+      setTimeout(function () {
+        i.html($psm_1);
+        a(1, $("#pBC"));
+      }, 0);
+
+      setTimeout(function () {
+        i.html($psm_2);
+        a(20, $("#pBC"));
+      }, 1500);
+
+
+
+      setTimeout(function () {
+        $(".mcp-p-w-p").removeClass("animated bounceIn animation-delay-100");
+        gih = $(".ps-c-w-g-i").height();
+        gihn = gih / 2 + 20;
+        $(".mcp-p-w-p").animate({ top: "-=" + gihn }, 800);
+        $(".ps-c-w-g-i").animate({ bottom: "-=" + gihn, opacity: "1" }, 800, function () {
+          function updateProgress(progress, element, duration) {
+            var width = (progress * element.width()) / 100;
+            element.find("div")
+              .animate({ width: width }, duration)
+              .html(progress + "%&nbsp;");
+          }
+
+          $(".cwPBw").addClass("animated bounceIn");
+          updateProgress(0, $("#cwPB"), 1);
+          updateProgress(100, $("#cwPB"), 4000);
+          m.play();
+          $("#ps-c-w-g-i-i-b-v").countTo({
+            from: 0,
+            to: n,
+            speed: 2000,
+            refreshInterval: 10,
+            onComplete: function (i) {
+              m.loop = false;
+              $(".ps-c-w-g-i-i-t img").fadeOut(300, function () {
+                $(".ps-c-w-g-i-i-t").html('<svg class="caSs-cm caSs-cm-s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+                $(".ps-c-w-g-i").addClass("animated headShake");
+                setTimeout(function () {
+                  $(".ps-c-w-g-i-i-c-w").html('<span class="material-icons-two-tone mitt-r">check_circle</span>');
+                  $(".ps-c-w-g-i-i-c-w").addClass("ps-c-w-g-i-i-c-w-s");
+                  $(".cwPBw").addClass("headShake");
+                  $(".cwPBw").addClass("cwPBws");
+                }, 250);
+                setTimeout(function () {
+                  $(".ps-c-w-g-i").fadeOut(function () {
+                    $(".ps-c-w-g-i-c").remove();
+                    $(".mcp-p-w-p").animate({ top: "+=" + gihn }, 600);
+                  });
+                }, 2000);
+              });
+            }
+          });
+        });
+
+        i.html($psm_3 + " " + n + " Plants");
+        a(40, $("#pBC"));
+      }, 3500);
+
+
+      setTimeout(function () {
+        i.html($psm_4);
+        a(80, $("#pBC"));
+      }, 11000);
+
+      setTimeout(function () {
+        i.html($psm_5);
+        a(90, $("#pBC"));
+      }, 13000);
+
+      setTimeout(function () {
+        i.html('<span class="material-icons-two-tone fa-spin">rotate_right</span>');
+        a(90, $("#pBC"));
+      }, 15000);
+
+
+
+      setTimeout(function () {
+        $(".loading-step")
+          .addClass("animated flipOutY")
+          .one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+            $(this).removeClass("animated flipOutY");
+            $(".loading-step").addClass("mfp-hide");
+            $(".v-r-a").html(n);
+            $(".v-u").html(o);
+            $(".c-w-l-r-o-w .v-r-img").attr("src", s);
+            $(".last-step").removeClass("mfp-hide");
+            d.play();
+            $(".c-w-l-t-v").addClass("animated bounceIn");
+            $(".c-w-l-p-v").addClass("animated bounceIn");
+            $(".c-w-l-r-o-w").addClass("animated bounceIn");
+            $(".m-ft-b-w").addClass("animated bounceIn");
+          });
+      }, 19000);
+
+    }, 1500);
+  })();
+
+
+
+
+</script>
