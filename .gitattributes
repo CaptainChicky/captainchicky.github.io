@@ -1,0 +1,178 @@
+# This is a test run/file. Make sure to bring back The-Aviary, School, admin, Art, and Archive folders later
+/admin/* export-ignore
+/Archive/* export-ignore
+/Art/* export-ignore
+/School/* export-ignore
+/The-Aviary/* export-ignore
+
+# ignore the flash files here
+/Idiot!/index_files/fp_32.0.0.371_archive/Source/* export-ignore
+
+# ignore the main plant archive images here
+# cacti
+/Plant-generator/plant-zips/cactus/34/_cactus-34.7z export-ignore
+
+/Plant-generator/plant-zips/cactus/69/_cactus-69.7z.001 export-ignore
+/Plant-generator/plant-zips/cactus/69/_cactus-69.7z.002 export-ignore
+
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.001 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.002 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.003 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.004 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.005 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.006 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.007 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.008 export-ignore
+/Plant-generator/plant-zips/cactus/420/_cactus-420.7z.008 export-ignore
+
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.001 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.002 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.003 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.004 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.005 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.006 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.007 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.008 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.009 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.010 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.011 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.012 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.013 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.014 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.015 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.016 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.017 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.018 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.019 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.020 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.021 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.022 export-ignore
+/Plant-generator/plant-zips/cactus/1337/_cactus-1337.7z.023 export-ignore
+
+# palm
+/Plant-generator/plant-zips/palm/34/_palm-34.7z.001 export-ignore
+/Plant-generator/plant-zips/palm/34/_palm-34.7z.002 export-ignore
+
+/Plant-generator/plant-zips/palm/69/_palm-69.7z.001 export-ignore
+/Plant-generator/plant-zips/palm/69/_palm-69.7z.002 export-ignore
+/Plant-generator/plant-zips/palm/69/_palm-69.7z.003 export-ignore
+
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.001 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.002 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.003 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.004 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.005 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.006 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.007 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.008 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.009 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.010 export-ignore
+/Plant-generator/plant-zips/palm/420/_palm-420.7z.011 export-ignore
+
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.001 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.002 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.003 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.004 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.005 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.006 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.007 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.008 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.009 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.010 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.011 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.012 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.013 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.014 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.015 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.016 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.017 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.018 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.019 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.020 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.021 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.022 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.023 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.024 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.025 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.026 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.027 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.028 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.029 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.030 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.031 export-ignore
+/Plant-generator/plant-zips/palm/1337/_palm-1337.7z.032 export-ignore
+
+# pine
+/Plant-generator/plant-zips/pine/34/_pine-34.7z.001 export-ignore
+/Plant-generator/plant-zips/pine/34/_pine-34.7z.002 export-ignore
+
+/Plant-generator/plant-zips/pine/69/_pine-69.7z.001 export-ignore
+/Plant-generator/plant-zips/pine/69/_pine-69.7z.002 export-ignore
+
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.001 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.002 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.003 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.004 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.005 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.006 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.007 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.008 export-ignore
+/Plant-generator/plant-zips/pine/420/_pine-420.7z.009 export-ignore
+
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.001 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.002 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.003 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.004 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.005 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.006 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.007 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.008 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.009 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.010 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.011 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.012 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.013 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.014 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.015 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.016 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.017 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.018 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.019 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.020 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.021 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.022 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.023 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.024 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.025 export-ignore
+/Plant-generator/plant-zips/pine/1337/_pine-1337.7z.026 export-ignore
+
+# wheat
+/Plant-generator/plant-zips/wheat/34/_wheat-34.7z export-ignore
+
+/Plant-generator/plant-zips/wheat/69/_wheat-69.7z export-ignore
+
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.001 export-ignore
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.002 export-ignore
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.003 export-ignore
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.004 export-ignore
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.005 export-ignore
+/Plant-generator/plant-zips/wheat/420/_wheat-420.7z.006 export-ignore
+
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.001 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.002 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.003 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.004 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.005 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.006 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.007 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.008 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.009 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.010 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.011 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.012 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.013 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.014 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.015 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.016 export-ignore
+/Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.017 export-ignore
+
