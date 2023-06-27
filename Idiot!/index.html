@@ -374,8 +374,40 @@
                 With administrator permissions, delete everything in this folder. Repeat for <i>%SYSTEMROOT%\SysWOW64\Macromed\Flash</i>, <i>%APPDATA%\Adobe\Flash Player</i>, and <i>%APPDATA%\Macromedia\Flash Player</i>.
                 Then, perform a system restart.
                 <br><br>
-                Now, we can install a version of Flash that does not have the kill switch. Download <a href="./index_files/fp_32.0.0.371_archive.zip">this</a> .zip archive of v32.0.0.371 
-                Flash player installers, or alternatively, download it from <a href="https://web.archive.org/web/20200618035158/https://fpdownload.macromedia.com/pub/flashplayer/installers/archive/fp_32.0.0.371_archive.zip">archive.org</a>.
+                Now, we can install a version of Flash that does not have the kill switch. <s>Download <a id="HyperlinkToItself" href="#HyperlinkToItself">this</a> .zip archive of v32.0.0.371 Flash player installers</s>...
+            </p>
+            <p style="color:rgb(0, 110, 6)">
+                Second Edit 2023: In order to avoid using git LFS anymore for this repo dir, I've decided to unzip the previous file and zip each part for smaller file size, at the expense 
+                of there being multiple files. So, here is the index of all the files in the archive "<i>fp_32.0.0.371_archive.zip</i>":
+            <p>
+            <ul style="color:rgb(0, 110, 6)">
+                <li>
+                    Installers <br>
+                    <ul style="color:rgb(0, 110, 6);">
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Linux]32_0_r0_371.7z">Linux Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Mac]32_0_r0_371.7z">Mac OS Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Windows_EXE]32_0_r0_371.7z">Windows .EXE Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Windows_MSI]32_0_r0_371.7z">Windows .MSI Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Uninstallers]32_0_r0_371.7z">Uninstallers (Mac OS and Windows only)</a></li>
+                    </ul>
+                </li>
+                <li style="margin-top: 10px;">
+                    Debuggers
+                    <ul style="color:rgb(0, 110, 6)">
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Linux]32_0_r0_371_debug.7z">Linux Debuggers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Mac]32_0_r0_371_debug.7z">Mac OS Debuggers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Windows]32_0_r0_371_debug.7z">Windows Debuggers</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p style="color:rgb(0, 110, 6)">
+                All files are compressed here using 7zip, so get 7zip yourself to unpack them. Also, I haven't <i>removed</i> the source .zip archive, but for all intents and purposes, 
+                it might as well be gone lol, because I've chopped it up into 100MB files and shoved them into the <i>./index_files/fp_32.0.0.371_archive/Source/</i> directory with a "_"
+                in front of each files' names, meaning Jerkyll (what GitHub Pages uses to build this website) will ignore them. Yes, I removed the link on the crossed out text above as well.
+                Furthermore, the source repo for this site is also private 😜 so you'll just have to either find the source archive yourself (<i>cough cough</i> literally read below this edit), or use the 8 links above.
+            </p>
+            <p>
+                ...or alternatively, download it from <a href="https://web.archive.org/web/20200618035158/https://fpdownload.macromedia.com/pub/flashplayer/installers/archive/fp_32.0.0.371_archive.zip">archive.org</a>.
                 For a full index of all Flash versions, please <a href="./index_files/flashplayerarchive_archive.torrent">torrent</a> it, or visit <a href="https://archive.org/details/flashplayerarchive">archive.org</a> for direct downloads.
                 <br><br>
                 Once you have the Flash v32.0.0.371 .zip archive, navigate to the directory <i>./32_0_r0_371/</i> and run <i>flashplayer32_0r0_371_winax.msi</i> to install ActiveX Flash. 
