@@ -1,0 +1,4 @@
+exclude:
+  - '_*'
+
+# This makes the build exclude all files and directories that begin with _
