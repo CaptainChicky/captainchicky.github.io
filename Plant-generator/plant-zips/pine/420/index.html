@@ -60,6 +60,17 @@
       /* Add some spacing between text and cursor */
     }
 
+    .flashing-cursor-red {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background-color: red;
+      /* Neon green cursor color */
+      animation: cursor-blink 1s infinite;
+      margin-left: 5px;
+      /* Add some spacing between text and cursor */
+    }
+
     @keyframes cursor-blink {
       0% {
         opacity: 1;
@@ -78,6 +89,12 @@
 
 <body>
   <h1>Your Files</h1>
+  <h3 style="color:red; margin-right: 10px;">
+    <span style="font-size: 20px;">NOTE:</span> Because this project is a proof-of-concept, I have decided to remove the actual picture files from the Jerkyll build (by adding a "_" in front of the file name
+    so the the build won't include these files). This decision was made after I had already committed these files into the repo, because the build kept running out of memory (so the site wouldn't update). 
+    The actual <i>image archive files</i> are still here, just not accessible via the hyperlinks below because they are all renamed and excluded from the build. However, 
+    the hash list and 7zip installer links still work, as these files are small in size. Note that the hashes of the renamed files are the same as the old files.<span class="flashing-cursor-red"></span>
+  </h3><br>
   <p><abbr title="Or, you cheated and just directly navigated to this link 😐, but I'd like to think not.">You have
       passed the CAPTCHA.</abbr><span class="flashing-cursor"></span></p>
   <p>Here are your requested files:<span class="flashing-cursor"></span></p><br>
