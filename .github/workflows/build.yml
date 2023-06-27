@@ -171,3 +171,9 @@ jobs:
           echo "Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.015" >> .git/info/sparse-checkout
           echo "Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.016" >> .git/info/sparse-checkout
           echo "Plant-generator/plant-zips/wheat/1337/_wheat-1337.7z.017" >> .git/info/sparse-checkout
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
