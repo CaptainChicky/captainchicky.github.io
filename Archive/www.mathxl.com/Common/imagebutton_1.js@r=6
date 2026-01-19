@@ -1,0 +1,385 @@
+var imgButtonList = new Array();
+var imgButtonArray = new Array();
+
+function imgButton(name, normal_image, rollover_image, down_image, disabled_image, click_image, reset_on_click, group_index, group_helper_name, disabled, selected, toggle, disableNavigationHandling) {
+  this.name = name
+  this.selected=selected;
+  this.disabled=disabled;
+  this.toggle = toggle;
+  this.disableNavigationHandling = disableNavigationHandling;
+
+ 
+  this.normal_image = new Image();
+  this.normal_image.src = normal_image;
+
+  //this is used to reset all the images with this set to the same index and reset_on_click=true;
+  this.reset_on_click=reset_on_click;
+  this.group_index=group_index;
+  this.group_helper_name = group_helper_name; // used to get the name of the hidden field storing selected button name
+  
+  this.useClick=(click_image!=="");
+  if (this.useClick && click_image !== 'ignore' ) {
+      this.click_image = new Image();
+      this.click_image.src = click_image;
+  }
+  
+  this.useRollover=rollover_image!=="";
+  if(this.useRollover) {
+      this.rollover_image = new Image();
+      this.rollover_image.src = rollover_image;
+  }
+
+  this.useDown=down_image!=="";
+  if(this.useDown) {
+      this.down_image = new Image();
+      this.down_image.src = down_image;
+  }
+  
+  this.useDisabled=disabled_image!=="";
+  if(this.useDisabled)
+  {
+      this.disabled_image = new Image();
+      this.disabled_image.src = disabled_image;
+  }
+
+  this.startdisabled=false;
+}
+
+function imgGetHiddenField(group_helper_name) {
+ 
+  return document.getElementById(group_helper_name);
+}
+
+function imgMouseOver(e) {
+  var event = e ? e : window.event;  // to handle both NS and IE events
+  var target = event.target ? event.target : event.srcElement;
+  var name = target.id ? target.id : target.name;
+  //JS: 10.10.06:  Don't do mouseover and mouseout if disabled.  It doesn't return to disabled state.
+  // CA also do not produce rollover image if mouse cursor is over a selected button.
+  if (!isImageDisabled(name) && !isImageSelected(name))
+    target.src = imgButtonList[name].rollover_image.src;
+}
+
+function isImageSelected(name) {
+    return isButtonSelected(name);
+
+}
+
+function isButtonSelected(name) {
+    return $(jQueryify(name)).hasClass("active");
+}
+
+function imgGenFilterClick(lnk) { // called from AssignmentFilterButtons.ascx: sets the selected filter state (works with update panels and formtracker!)
+    if (typeof FormTrackerChangedFlag !== 'undefined') {
+        if (!ConfirmLeavePage())
+            return false;
+    }
+    
+    var target = lnk; // child image
+    var name = target.id ? target.id : target.name;
+
+    imgGenSetButtonState(target, name);
+    return true;
+}
+
+// CA for Comment 23100 - http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+function isChrome() {
+	var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0; // EC notice this JS error while looking at another comment, isOpera was not defined
+    var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+    return isChrome;
+}
+
+function isSafari() {
+    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+    return isSafari;
+}
+
+function imgGenSetButtonState(target, name) {
+    if (imgButtonList[name]) {
+        var currentlySelected = imgButtonList[name].selected;
+        var hiddenHelperField = imgGetHiddenField(imgButtonList[name].group_helper_name);
+        if (imgButtonList[name].toggle && currentlySelected) {
+            target.src = imgButtonList[name].normal_image.src;
+            imgButtonList[name].selected = false;
+            // if it's there clear selectedName for this group
+            if (hiddenHelperField)
+                hiddenHelperField.value = "";
+
+            return;
+        }
+
+        if (imgButtonList[name].toggle)
+          return;
+
+        
+        imgButtonList[name].selected = true;
+        if (hiddenHelperField) {
+            hiddenHelperField.value = name;
+        }
+
+        if (imgButtonList[name].reset_on_click) {
+            
+            // Activate the button if it on group button
+            var btn = document.getElementsByName(name);
+            if (btn.length > 0)
+                activeButton('#' + btn[0].id);
+            else {
+                btn = document.getElementById(name);
+                if (btn)
+                    activeButton(name);
+            }
+
+            var resetIndex = imgButtonList[name].group_index;
+            for (var i = 0; i < imgButtonArray.length; i++) {
+                var imgName = imgButtonArray[i];
+                if ((imgButtonList[imgName].reset_on_click) && (imgButtonList[imgName].group_index === resetIndex)) {
+                    if (imgButtonList[imgName].name !== name && !imgButtonList[imgName].disabled) {
+
+                            resetImage(imgButtonList[imgName].name);
+
+                        imgButtonList[imgName].selected = false;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+function imgOnClick(e) { // this will not get called if the button is in an update panel unless you call imgButtonInit after the update panel is refreshed!
+  
+  var event = e ? e : window.event;  // to handle both NS and IE events
+  var target = event.target ? event.target : event.srcElement;
+  var name = target.id ? target.id : target.name;
+  //var name = target.name ? target.name : target.id;
+
+  //if the flag exists and it is true.  
+  //Don't change the click state of the buttons.
+  //it also has to be a reset on click button.
+  //This includes items such as the left nav and filter buttons
+  // CA If navigation handling is disabled, ignore FormTracker check. This flag is meant to be set in cases where OnClientClick does not result in navigating behavior.
+  if ((typeof (FormTrackerChangedFlag) !== "undefined") && imgButtonList[name] && !imgButtonList[name].disableNavigationHandling)
+    {
+        if ((FormTrackerChangedFlag) && (imgButtonList[name].reset_on_click))
+        return;
+    }
+
+  imgGenSetButtonState(target, name);
+}
+
+
+
+function imgMouseOut(e) {
+  var event = e ? e : window.event;  // to handle both NS and IE events
+  var target = event.target ? event.target : event.srcElement;
+  var name = target.id ? target.id : target.name;
+
+  //JS: 10.10.06:  Don't do mouseover and mouseout if disabled.  It doesn't return to disabled state.
+  if (!isImageDisabled(name))
+  {
+      if (imgButtonList[name].selected && imgButtonList[name].useClick)
+        target.src = imgButtonList[name].click_image.src;
+      else
+        target.src = imgButtonList[name].normal_image.src;
+  }
+}
+
+function imgMouseDown(e) {
+  var event = e ? e : window.event;  // to handle both NS and IE events
+  var target = event.target ? event.target : event.srcElement;
+  var name = target.id ? target.id : target.name;
+
+  //JS: 10.10.06:  Don't do mouseover and mouseout if disabled.  It doesn't return to disabled state.
+  if (!isImageDisabled(name))
+    target.src = imgButtonList[name].down_image.src;
+}
+
+//To enable, use resetImage
+function isImageDisabled(name) {
+    return isButtonDisabled(name);
+}
+
+
+function isButtonDisabled(name) {
+    return $(jQueryify(name)).hasClass("disabled");
+}
+//To enable, use resetImage
+
+function disableImageByObj(img) {
+
+    if (img) {
+
+        if (img.indexOf('#') > 0)
+            disableButton(img);
+        else
+            disableButton('#' + img);
+    }
+}
+
+function resetImageByObj(img) {
+    if (img) {
+        if (img.indexOf('#') > 0)
+            enableButton(img);
+        else
+            enableButton('#' + img);
+    }
+
+}
+
+//To enable, use resetImage
+function disableImage(name)
+{
+    //name could be button name or id
+    
+    var imgcol = document.getElementsByName(name);
+    if (imgcol.length > 0) {
+        var img = imgcol[0];
+        if (img) {
+            disableButton('#' + img.id);
+            imgButtonList[name].startdisabled = true;
+
+        }
+    } else {
+        var btn = document.getElementById(name);
+        if (btn) {
+            disableButton(name);
+            imgButtonList[name].startdisabled = true;
+        }
+            
+    }
+}
+
+function resetImage(name)
+{
+  // do all images with matching name
+  // name could be button name or id
+    var imgcol = document.getElementsByName(name);
+    if (imgcol.length > 0) {
+        var img = imgcol[0];
+        if (img) {
+            resetButton('#' + img.id);
+        }
+    } else {
+        var btn = document.getElementById(name);
+        if (btn)
+            resetButton(name);
+    }
+
+
+}
+
+function addImageButton(name,normal_image,rollover_image,down_image,disabled_image, click_image, reset_on_click, group_index, group_helper_name, disabled, selected, toggle, disableNavigationHandling) {
+    imgButtonList[name] = new imgButton(name, normal_image, rollover_image, down_image, disabled_image, click_image, reset_on_click, group_index, group_helper_name, disabled, selected, toggle, disableNavigationHandling);
+
+    if (imgButtonArray.indexOf(name) < 0)
+        imgButtonArray.push(name);
+}
+
+// CA XL-3642 Fixed a delay that occurs when clicking a button - the button stays selected until the postback is completed. To address the issue, the following "function cloning" procedure is required. 
+function cloneFunction(func)  {
+    var that = func;
+    var temp = function temporary() { return that.apply(this, arguments); };
+    for (var key in func) {
+        if (this.hasOwnProperty(key)) {
+            temp[key] = this[key];
+        }
+    }
+    return temp;
+};
+
+var imgButtonInitialized = false;
+function imgButtonInit() {
+    //update panel issue
+  if (imgButtonInitialized)
+    return;
+
+    for (var j=0; j<imgButtonArray.length; j++)
+	{
+		var name=imgButtonArray[j];	
+        
+
+        // do all images with matching id (legacy)
+        var img = document.getElementById(name);
+        if (img) {
+            if (!imgButtonList[name].disabled)
+              img.style.cursor="pointer";
+            if (!imgButtonList[name].disabled) {
+                if (imgButtonList[name].useRollover)
+                {
+                img.onmouseover = imgMouseOver;
+                img.onmouseout  = imgMouseOut;
+                }
+                if (imgButtonList[name].useDown) {
+                img.onmousedown = imgMouseDown;
+                img.onmouseup = imgMouseOut;
+                }
+                if (imgButtonList[name].useClick) {
+
+                    if (img.onclick)
+                        img.exClick = cloneFunction(img.onclick);
+
+                    img.onclick = function (oEvent) {
+                        imgOnClick(oEvent);
+                        if (this.exClick) {
+                            return this.exClick(oEvent);
+                        }
+                    };
+                }
+            }
+            
+            
+                
+        }
+    }
+    imgButtonInitialized = true;
+}
+
+function _imgButtonInit() {
+  if (typeof(imgButtonInit)!="undefined")
+    imgButtonInit(); // have to call a different one that's defined in the page but underscore one needs to be defined at time of attach call
+}
+
+// bootstrap button functions
+
+function enableButton(btn) {
+	btn = jQueryify(btn);
+    $(btn).removeClass('disabled');
+}
+
+function disableButton(btn) {
+	btn = jQueryify(btn);
+    $(btn).removeClass('active');
+    $(btn).addClass('disabled');
+}
+
+function activeButton(btn) {
+	btn = jQueryify(btn);
+    $(btn).addClass('active');
+}
+
+function resetButton(btn) {
+	btn = jQueryify(btn);
+    $(btn).removeClass('active');
+    $(btn).removeClass('disabled');
+}
+
+
+
+if (typeof String.prototype.startsWith != 'function') {
+	String.prototype.startsWith = function (str) {
+		return this.slice(0, str.length) === str;
+	};
+}
+
+function jQueryify(name) {
+
+	if (typeof name == "object")
+		return name;
+
+	if (name.startsWith("#"))
+		return name;
+	
+	return '#' + name;
+}
+

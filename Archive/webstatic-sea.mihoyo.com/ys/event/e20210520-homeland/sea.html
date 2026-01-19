@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <!-- HTTP 1.1 -->
+  <meta http-equiv="pragma" content="no-cache">
+  <!-- HTTP 1.0 -->
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta name="applicable-device" content="mobile">
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="Copyright" content="miHoYo">
+  <meta name="Description" content="">
+  <meta name="Keywords" content="">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="format-detection" content="email=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-status-bar-style" content="black-translucent">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+    <link id="icon" rel="shortcut icon" href="https://genshin.mihoyo.com/favicon.ico">
+  
+<link href="runtime.71a9ffe1cae7638a3f94.css" rel="stylesheet"><link href="styles.357c7fc858bbbb98202a.css" rel="stylesheet"></head>
+<body>
+  <div id="app"></div>
+  <script id="vconsole" type="text/javascript" data-src="https://webstatic.mihoyo.com/dora/lib/vconsole/3.2.0/vconsole.min.js"></script>
+  
+    <script src="https://webstatic-sea.mihoyo.com/dora/lib/vue-sentry/2.6.11/vue.min.js"></script>
+    <script>
+      Sentry.init({
+        dsn: 'https://2d2044ee9ba34d41b1deb282529024b0@sentry-sea.mihoyo.com/9',
+        integrations: [new Sentry.Integrations.Vue({Vue, attachProps: true, logErrors: true})],
+        ignoreErrors: [
+          'The play() request was interrupted',
+          'The operation was aborted',
+          '$ is not defined',
+          'mihoyo-event-dialog-cancel',
+          "play() failed because the user didn't interact with the document first",
+          'The play method is not allowed by the user agent or the platform in the current context'
+        ]
+      });
+    </script>
+  
+  
+    <script src="https://webstatic-sea.mihoyo.com/dora/biz/mihoyo-account-flow-sea/v2/main.js"></script>
+  
+  <script src="https://webstatic-sea.mihoyo.com/dora/biz/mihoyo-analysis/v2/main.js"></script>
+<script type="text/javascript">/*! Copyright © 2011 - 2021 miHoYo. All Rights Reserved */!function(e){function t(t){for(var n,a,i=t[0],c=t[1],f=t[2],p=0,s=[];p<i.length;p++)a=i[p],Object.prototype.hasOwnProperty.call(o,a)&&o[a]&&s.push(o[a][0]),o[a]=0;for(n in c)Object.prototype.hasOwnProperty.call(c,n)&&(e[n]=c[n]);for(l&&l(t);s.length;)s.shift()();return u.push.apply(u,f||[]),r()}function r(){for(var e,t=0;t<u.length;t++){for(var r=u[t],n=!0,i=1;i<r.length;i++){var c=r[i];0!==o[c]&&(n=!1)}n&&(u.splice(t--,1),e=a(a.s=r[0]))}return e}var n={},o={manifest:0},u=[];function a(t){if(n[t])return n[t].exports;var r=n[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,a),r.l=!0,r.exports}a.e=function(e){var t=[],r=o[e];if(0!==r)if(r)t.push(r[2]);else{var n=new Promise((function(t,n){r=o[e]=[t,n]}));t.push(r[2]=n);var u,i=document.createElement("script");i.charset="utf-8",i.timeout=120,a.nc&&i.setAttribute("nonce",a.nc),i.src=function(e){return a.p+""+({home:"home",detail:"detail",m:"m",postM:"postM"}[e]||e)+"."+{home:"24f05cb5df",detail:"1f9e381f9a",m:"23bc06eb30",postM:"fe490cb200"}[e]+".js"}(e);var c=new Error;u=function(t){i.onerror=i.onload=null,clearTimeout(f);var r=o[e];if(0!==r){if(r){var n=t&&("load"===t.type?"missing":t.type),u=t&&t.target&&t.target.src;c.message="Loading chunk "+e+" failed.\n("+n+": "+u+")",c.name="ChunkLoadError",c.type=n,c.request=u,r[1](c)}o[e]=void 0}};var f=setTimeout((function(){u({type:"timeout",target:i})}),12e4);i.onerror=i.onload=u,document.head.appendChild(i)}return Promise.all(t)},a.m=e,a.c=n,a.d=function(e,t,r){a.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},a.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.t=function(e,t){if(1&t&&(e=a(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(a.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)a.d(r,n,function(t){return e[t]}.bind(null,n));return r},a.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return a.d(t,"a",t),t},a.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},a.p="",a.oe=function(e){throw console.error(e),e};var i=window.webpackJsonp=window.webpackJsonp||[],c=i.push.bind(i);i.push=t,i=i.slice();for(var f=0;f<i.length;f++)t(i[f]);var l=c;r()}([]);</script><script type="text/javascript" src="vendors.799060c851.js"></script><script type="text/javascript" src="runtime.0295cf6f00.js"></script><script type="text/javascript" src="styles.8f61758f7e.js"></script><script type="text/javascript" src="sea.d6ccba4f37.js"></script></body>
+</html>

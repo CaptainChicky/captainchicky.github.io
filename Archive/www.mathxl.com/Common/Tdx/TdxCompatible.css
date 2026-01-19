@@ -1,0 +1,63 @@
+﻿@font-face {
+    font-family: 'TT Commons';
+    src:url('Fonts/TTCommons/TTCommons2.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Hind';
+    src: url('Fonts/Hind/Hind-Regular.ttf') format('truetype');
+}
+
+.xlbootstrap3 #mainTopNavContainer {
+    background-color: #000;
+    text-align: center;
+    border-bottom: 4px solid #808A95;
+    z-index: 10001;
+}
+.xlbootstrap3 #mainTopNavContainer .course-title {
+   font-size: 18px;
+   font-weight: 500;
+   font-family: TT Commons;
+   color: #05112A;
+   line-height: 21px;
+}
+
+
+/*.xlbootstrap3 #mainTopNavContainer .course-title {
+    margin: 15px auto;
+    color: #05112A;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 21px;
+    line-height: 21px;
+    text-align: left;
+    margin-left: 5px;
+    font-weight: bold;
+    font-family: TT Commons;
+} */   
+
+.xlbootstrap3 #mainTopNav > :first-child > a {
+    font-weight: 400;
+    font-family: Hind;
+    font-style: normal;
+    font-size: 16px;
+    color: #05112A;
+}
+
+.xlbootstrap3 .navbar-text {
+    font-weight: 400;
+    font-family: Hind;
+    font-style: normal;
+    color: #05112A;
+}
+
+.xlbootstrap3 .navbar-inverse .navbar-text {
+    color: #05112A !important;
+}
+
+.xlbootstrap3 #mainTopNav > :last-child > span {
+    font-weight: 400;
+    font-size: 16px;
+    font-style: normal;
+}

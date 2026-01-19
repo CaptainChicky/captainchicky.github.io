@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'Samsung Sharp Sans Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Samsung Sharp Sans Regular'), url('assets/fonts/samsungsharpsans.woff') format('woff');
+  }
+  
+
+  @font-face {
+  font-family: 'Samsung Sharp Sans Medium';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Samsung Sharp Sans Medium'), url('assets/fonts/samsungsharpsans-medium.woff') format('woff');
+  }
+  
+
+  @font-face {
+  font-family: 'Samsung Sharp Sans Bold';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Samsung Sharp Sans Bold'), url('assets/fonts/samsungsharpsans-bold.woff') format('woff');
+  }
+
+*{
+  box-sizing: border-box;
+}
+
+video {
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  @media (max-width:500px){
+    video{
+    object-fit: contain;
+    }
+  }
+
+  .audio-button img{
+    position:absolute;
+    top:50px;
+    right:50px;
+    width:50px;
+    height:50px;
+  }
+
+  .safety{
+    font-family: "Samsung Sharp Sans Bold";
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .safety h1{
+    font-size: 3rem;
+    padding:50px;
+  }
+
+  .safety .brand {
+    width: 150px;
+    height: auto;
+    position: absolute;
+    top: 30px;
+    left: 50px;
+}

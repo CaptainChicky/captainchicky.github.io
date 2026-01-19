@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://datatracker.ietf.org/doc/html/rfc4287 -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>bamsoftware.com updates</title>
+<link href="https://www.bamsoftware.com/"/>
+<link rel="self" href="https://www.bamsoftware.com/news.xml"/>
+<author><name>David Fifield</name></author>
+<id>urn:uuid:4e32f245-d49f-b6fb-eeed-a66835dac128</id>
+
+<updated>2023-06-26T07:45:59Z</updated>
+
+<entry>
+<title>"Network Responses to Russia's Invasion of Ukraine in 2022: A Cautionary Tale for Internet Freedom"</title>
+<link href="https://www.bamsoftware.com/david/resume/#pubs"/>
+<id>urn:uuid:bfdd0472-0f74-c85c-81ef-a648101bf212</id>
+<updated>2023-06-26T07:45:59Z</updated>
+<published></published>
+<summary>Added a new paper to CV.</summary>
+</entry>
+
+<entry>
+<title>"SEDES: Metrical Position in Greek Hexameter"</title>
+<link href="https://www.bamsoftware.com/david/resume/#pubs"/>
+<id>urn:uuid:3e10f643-5a5a-5e94-c9b4-2f124d3bcc09</id>
+<updated>2023-06-26T07:45:59Z</updated>
+<published></published>
+<summary>Added a new paper to CV.</summary>
+</entry>
+
+</feed>

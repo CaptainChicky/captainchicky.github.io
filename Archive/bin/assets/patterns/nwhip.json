@@ -1,0 +1,68 @@
+{
+  "name": "nwhip",
+  "description": "N-whip pattern - fires multiple spreads of bullets with varying speeds and angles",
+  "parameters": {
+    "numberOfWhips": {
+      "type": "int",
+      "default": 5,
+      "description": "Number of bullet spreads to fire"
+    },
+    "numberOfBullets": {
+      "type": "int",
+      "default": 8,
+      "description": "Number of bullets in each whip"
+    },
+    "baseBulletSpeed": {
+      "type": "float",
+      "default": 4,
+      "description": "Initial bullet speed"
+    },
+    "speedChange": {
+      "type": "float",
+      "default": 1,
+      "description": "Speed increase per bullet"
+    },
+    "fireAngle": {
+      "type": "float",
+      "default": 90,
+      "description": "Base firing angle in degrees (0=right, 90=down, 180=left, 270=up)"
+    },
+    "angleChange": {
+      "type": "float",
+      "default": 2,
+      "description": "Angle rotation per bullet (salt value)"
+    },
+    "bulletDelay": {
+      "type": "int",
+      "default": 3,
+      "description": "Frames to wait between each bullet spread"
+    },
+    "patternDelay": {
+      "type": "int",
+      "default": 60,
+      "description": "Frames to wait before repeating the full pattern"
+    }
+  },
+  "script": [
+    {"control": "SetSpeed", "value": "$baseBulletSpeed"},
+    {"control": "SetAngle", "value": "$fireAngle"},
+    {
+      "control": "Loop",
+      "actions": [
+        {
+          "control": "Rep",
+          "count": "$numberOfBullets",
+          "actions": [
+            {"control": "NWay", "count": "$numberOfWhips", "angle": 90, "speed": 0},
+            {"control": "AddAngle", "delta": "$angleChange"},
+            {"control": "AddSpeed", "delta": "$speedChange"},
+            {"control": "Wait", "frames": "$bulletDelay"}
+          ]
+        },
+        {"control": "SetSpeed", "value": "$baseBulletSpeed"},
+        {"control": "SetAngle", "value": "$fireAngle"},
+        {"control": "Wait", "frames": "$patternDelay"}
+      ]
+    }
+  ]
+}

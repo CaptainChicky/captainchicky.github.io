@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+	<!--[if IE 8]>
+		<html xmlns="http://www.w3.org/1999/xhtml" class="ie8" lang="zh-CN">
+	<![endif]-->
+	<!--[if !(IE 8) ]><!-->
+		<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+	<!--<![endif]-->
+	<head>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>登录 &lsaquo; 猫之秋名山 &#8212; WordPress</title>
+	<link rel='dns-prefetch' href='//s.w.org' />
+<link rel='stylesheet' id='dashicons-css'  href='https://sakura.myacgcat.top/wp-includes/css/dashicons.min.css?ver=5.0.16' type='text/css' media='all' />
+<link rel='stylesheet' id='buttons-css'  href='https://sakura.myacgcat.top/wp-includes/css/buttons.min.css?ver=5.0.16' type='text/css' media='all' />
+<link rel='stylesheet' id='forms-css'  href='https://sakura.myacgcat.top/wp-admin/css/forms.min.css?ver=5.0.16' type='text/css' media='all' />
+<link rel='stylesheet' id='l10n-css'  href='https://sakura.myacgcat.top/wp-admin/css/l10n.min.css?ver=5.0.16' type='text/css' media='all' />
+<link rel='stylesheet' id='login-css'  href='https://sakura.myacgcat.top/wp-admin/css/login.min.css?ver=5.0.16' type='text/css' media='all' />
+<link rel="stylesheet" type="text/css" href="https://sakura.myacgcat.top/wp-content/themes/sakura/inc/login.css?" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jquery/jquery@1.8.2/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" rel="stylesheet">
+<style>body{font-family:"Noto Serif SC","Source Han Serif SC","Source Han Serif","source-han-serif-sc","PT Serif","SongTi SC","MicroSoft Yahei",Georgia,serif !important;}</style>
+	<meta name='robots' content='noindex,noarchive' />
+	<meta name='referrer' content='strict-origin-when-cross-origin' />
+		<meta name="viewport" content="width=device-width" />
+		</head>
+	<body class="login login-action-login wp-core-ui  locale-zh-cn">
+		<div id="login">
+		<h1><a href="http://sakura.myacgcat.top/" title="猫之秋名山" tabindex="-1">猫之秋名山</a></h1>
+	
+<form name="loginform" id="loginform" action="https://sakura.myacgcat.top/wp-login.php" method="post">
+	<p>
+		<label for="user_login">用户名或邮箱地址<br />
+		<input type="text" name="log" id="user_login" class="input" value="" size="20" /></label>
+	</p>
+	<p>
+		<label for="user_pass">密码<br />
+		<input type="password" name="pwd" id="user_pass" class="input" value="" size="20" /></label>
+	</p>
+		<p class="forgetmenot"><label for="rememberme"><input name="rememberme" type="checkbox" id="rememberme" value="forever"  /> 记住我</label></p>
+	<p class="submit">
+		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="登录" />
+		<input type="hidden" name="redirect_to" value="https://sakura.myacgcat.top/wp-admin/" />
+		<input type="hidden" name="testcookie" value="1" />
+	</p>
+</form>
+
+<p id="nav">
+	<a href="https://sakura.myacgcat.top/wp-login.php?action=lostpassword">忘记密码？</a>
+</p>
+
+<script type="text/javascript">
+function wp_attempt_focus(){
+setTimeout( function(){ try{
+d = document.getElementById('user_login');
+d.focus();
+d.select();
+} catch(e){}
+}, 200);
+}
+
+wp_attempt_focus();
+if(typeof wpOnload=='function')wpOnload();
+</script>
+
+	<p id="backtoblog"><a href="http://sakura.myacgcat.top/">&larr; 返回到猫之秋名山</a></p>
+		
+	</div>
+
+	
+	<script type="text/javascript" src="https://sakura.myacgcat.top/wp-content/themes/sakura/js/login.js"></script>
+<script type="text/javascript">
+jQuery("body").prepend("<div class=\"loading\"><img src=\"https://cdn.jsdelivr.net/gh/moezx/cdn@3.1.9/img/Sakura/images/login_loading.gif\" width=\"58\" height=\"10\"></div><div id=\"bg\"><img /></div>");
+jQuery('#bg').children('img').attr('src', 'http://sakura.myacgcat.top/wp-content/uploads/2020/04/灰.jpg').load(function(){
+	resizeImage('bg');
+	jQuery(window).bind("resize", function() { resizeImage('bg'); });
+	jQuery('.loading').fadeOut();
+});</script>
+<script>
+	function verificationOK(){
+		var x, y, z = "verification";
+		var x=$('#loginform').find('input[name="verification"]').val();
+		//var x=document.forms["loginform"]["verification"].value; //原生js实现
+		var y=$('#registerform').find('input[name="verification"]').val();
+		var z=$('#lostpasswordform').find('input[name="verification"]').val();
+		if (x=="verification" || y=="verification" || z=="verification"){
+		  alert("Please slide the block to verificate!");
+		  return false;
+	  }
+	}
+	$(document).ready(function(){
+		$( '<p><div id="verification-slider"><div id="slider"><div id="slider_bg"></div><span id="label">»</span><span id="labelTip">Slide to Verificate</span></div><input type="hidden" name="verification" value="verification" /></div><p>' ).insertBefore( $( ".submit" ) );
+		$('form').attr('onsubmit','return verificationOK();');
+        $('h1 a').attr('style','background-image: url(https://www.z4a.net/images/2020/12/03/_.png); ');
+		$(".forgetmenot").replaceWith('<p class="forgetmenot">Remember Me<input name="rememberme" id="rememberme" value="forever" type="checkbox"><label for="rememberme" style="float: right;margin-top: 5px;transform: scale(2);margin-right: -10px;"></label></p>');
+	});
+	</script><script type="text/javascript">
+		var startTime = 0;
+		var endTime = 0;
+		var numTime = 0;
+		$(function () {
+			var slider = new SliderUnlock("#slider",{
+			successLabelTip : "OK"
+		},function(){
+			var sli_width = $("#slider_bg").width();
+			$('#verification-slider').html('').append('<input id="verification-ok" class="input" type="text" size="25" value="OK!" name="verification" disabled="true" />');
+
+			endTime = nowTime();
+			numTime = endTime-startTime;
+			endTime = 0;
+			startTime = 0;
+			// 获取到滑动使用的时间 滑动的宽度
+			// alert( numTime );
+			// alert( sli_width );
+		});
+			slider.init();
+		})
+
+		/**
+		* 获取时间精确到毫秒
+		* @type
+		*/
+		function nowTime(){
+			var myDate = new Date();
+			var H = myDate.getHours();//获取小时
+			var M = myDate.getMinutes(); //获取分钟
+			var S = myDate.getSeconds();//获取秒
+			var MS = myDate.getMilliseconds();//获取毫秒
+			var milliSeconds = H * 3600 * 1000 + M * 60 * 1000 + S * 1000 + MS;
+			return milliSeconds;
+		}
+	</script>
+	<script type="text/javascript" src="https://sakura.myacgcat.top/wp-content/themes/sakura/user/verification.js"></script>	<div class="clear"></div>
+	</body>
+	</html>
+	
+<!--
+Performance optimized by W3 Total Cache. Learn more: https://www.boldgrid.com/w3-total-cache/
+
+Object Caching 5/8 objects using memcached
+Page Caching using memcached (Requested URI is rejected) 
+
+Served from: sakura.myacgcat.top @ 2022-07-13 15:24:42 by W3 Total Cache
+-->

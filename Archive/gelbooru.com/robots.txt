@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /index.php?page=post&id=213234&s=view
+Disallow: /public

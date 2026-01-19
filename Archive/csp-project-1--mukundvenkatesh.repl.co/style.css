@@ -1,0 +1,155 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+.navbar {
+  overflow: visible;
+  background-color: #333;
+  position: fixed;
+  width: 100%
+}
+
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.subnav {
+  float: left;
+  overflow: hidden;
+  
+}
+
+.subnav .subnavbtn {
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  display: inline-block;
+}
+
+.navbar a:hover, .subnav:hover .subnavbtn {
+  background-color: red;
+}
+
+.subnav-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color: red;
+  width: 100%;
+  z-index: 1;
+}
+
+.subnav-content a {
+  float: left;
+  color: white;
+  text-decoration: none;
+}
+
+.subnav-content a:hover {
+  background-color: #eee;
+  color: black;
+}
+
+.subnav:hover .subnav-content {
+  display: block;
+}
+html, body {
+ scroll-behavior: smooth;
+}
+body {
+  background-image: url('abstract.jpg');
+  background-size: contain;
+  background-attachment: fixed;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  color: white;
+}
+
+h1 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: normal;
+  font-size: 32px;
+  margin: 0;
+  background-color: #e45463;
+  padding: 10px;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  display: block;
+  align: left;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.portfolio-container {
+  padding: 10px;
+  padding-top: 120px;
+}
+
+h3 {
+  color: white;
+  background-color: #3454cc;
+  margin-bottom: 0px;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.portfolio {
+  box-shadow: 0px 0px 10px 0px black;
+  margin-bottom: 50px;
+}
+
+p {
+  font-family: 'Courier Prime', monospace;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+}
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  position: fixed;
+}
+.categories > a {
+  display: inline-block;
+  margin: 3px;
+  padding: 3px;
+  background-color: white;
+  
+}
+@media (max-width: 800px) {
+  .header {
+    flex-direction: column;
+  }
+  body {
+    background-image: url('https://csp-project-1--mukundvenkatesh.repl.co/abstract.png')
+  }
+}

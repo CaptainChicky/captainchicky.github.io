@@ -1,0 +1,1091 @@
+
+<!-- saved from url=(0065)https://fas.org/man/dod-101/navy/docs/es310/SNR_PROP/snr_prop.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+<title>Sonar Propagation</title>
+
+
+
+<meta name="GENERATOR" content="Internet Assistant for Microsoft Word 2.04z">
+
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<a href="https://fas.org/man/dod-101/navy/docs/es310/syllabus.htm"><img src="./Sonar Propagation_files/up.gif"> Introduction to
+   Naval Weapons  Engineering</a><br><hr>
+
+
+
+<p>
+
+Sonar Propagation
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00001.GIF"><br>
+
+<br>
+
+<br>
+
+        By virtue of the fact that the speed that acoustic waves
+
+travel at depends on the properties of the medium (i.e. sea water),
+
+the propagation of sonar will be complicated.  So complicated
+
+in fact that it will be impossible to accurately predict without
+
+the use of a computer model. However, sonar systems rely heavily
+
+on operator input and control to maximize their performance. 
+
+Many of the decisions made regarding the maneuvering of the ship
+
+carrying the sonar system will also affect the sonar's performance.
+
+ Therefore a detailed knowledge of the salient features of sonar
+
+propagation is essential to its successful employment. We begin
+
+with a simple model for the transmission loss.<br>
+
+</p><p>
+
+Transmission Loss Formula
+
+</p><p>
+
+        Transmission loss (TL) can be predicted, to a very rough
+
+degree, solely on the basis of a few factors.  These factors are
+
+range, and frequency.  <br>
+
+</p><p>
+
+Range Effect
+
+</p><p>
+
+        The simplest case, which is the identical case used in
+
+electro-optics and radar, is to assume all of the acoustic energy
+
+is uniformly distributed in all directions.  In sonar this is
+
+termed <i>spherical spreading loss</i>, since the intensity will
+
+fall off proportional to the surface area of a sphere.<br>
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00002.GIF"><tt>Figure 1.  Spherical spreading.<br>
+
+<br>
+
+</tt>        
+
+</p><p>
+
+Since the area over which the energy is distributed at range,
+
+R,  is 4<font face="Symbol">p</font>R<sup>2</sup>, the ratio of
+
+any two intensity levels at different ranges can be computed.
+
+ If we take the decibel equivalent, and take the first range as
+
+one meter, which happens to be where the source level is defined,
+
+we obtain the spherical spreading loss f part of TL:<br>
+
+<br>
+
+TL<sub>spherical</sub> = -10 Log { I(R)/I(1 m)} = -10 Log{1/R<sup>2</sup>}
+
+<br>
+
+<br>
+
+TL<sub>spherical</sub> = 20 Log(R) .<br>
+
+<br>
+
+The negative sign was included since TL is defined to be positive
+
+quantity, and is subtracted in the SNR equations.  <br>
+
+<br>
+
+        When the acoustic energy reaches either the surface or
+
+the bottom of the ocean, it is generally reflected back.  A long
+
+range, all of the acoustic energy will tend to confined between
+
+two planes, one at the surface and the other at the bottom.  Therefore,
+
+the energy can no longer spread out like the spherical spreading
+
+case, but now becomes <i>cylindrical spreading</i>.<br>
+
+<img src="./Sonar Propagation_files/IMG00003.GIF">
+
+</p><p>
+
+Figure 2. Cylindrical spreading.<br>
+
+<br>
+
+        
+
+</p><p>
+
+The area over which the energy is distributed now varies directly
+
+with range, R.  The common factors will cancel, and the transmission
+
+loss between two ranges will be 10 Log( R).  Explicitly this means
+
+<br>
+
+<br>
+
+SPL(R<sub>2</sub>) = SPL(R<sub>1</sub>) - 10 Log(R<sub>2</sub>/R<sub>1</sub>).
+
+<br>
+
+<br>
+
+It would be nice if we could choose R<sub>1</sub> to be one meter
+
+in which case SPL(R<sub>1</sub>) = SL, but this would be incorrect.
+
+ That would be akin to claiming that the spreading losses where
+
+cylindrical starting from one meter.  Clearly, in regions where
+
+the water depth is larger than the range, the spreading must be
+
+spherical.  <br>
+
+<br>
+
+        The question now becomes:  at what range does the spreading
+
+loss transition between the spherical and cylindrical case.  
+
+If the source where located exactly in the middle (halfway between
+
+the surface and bottom), then it seems plausible to make the transition
+
+when the range is one-half the water depth since this is when
+
+the surface of the sphere will just touch the bottom and top.
+
+ The transition range will depend on the location of the source
+
+and the depth of water.  For purposes we assume the transition
+
+range to be 1000 m, since the average ocean depth is about 2000
+
+m.  <br>
+
+<br>
+
+        At 1000 m, the  transmission loss  due solely to spherical
+
+spreading will be 60 dB.  Taking this as the starting point for
+
+cylindrical spreading, we can patch the two equations together
+
+by adding 30 dB to the 10 Log(R) spreading.  This is proven below:
+
+<br>
+
+<br>
+
+TL<sub>spherical</sub>(at 1000 m) = 20 Log (1000) = 60 dB<br>
+
+<br>
+
+TL<sub>cylindrical</sub>(at 1000m) = 10 Log(1000) = 30 dB<br>
+
+<br>
+
+If we wish to apply the TL<sub>cylindrical </sub>formula starting
+
+at 1 m, then we must add the difference at 1000m, therefore<br>
+
+<br>
+
+TL<sub>cylindrical</sub> (R) = 10 Log(R) + 30 dB.  (valid when
+
+R &gt; 1000 m)<br>
+
+<br>
+
+        At ranges of less than 1000 m, you must use the spreading
+
+spreading loss formula, TL<sub>spherical </sub> = 20 Log(R).<br>
+
+</p><p>
+
+absorption/scattering
+
+</p><p>
+
+        Like air in electro-optics, the intervening water between
+
+the source and receiver will either absorb some of the acoustic
+
+energy passing through it.  The dependence on range will be identical
+
+to Bougher's law, but now in decibel form:<br>
+
+<br>
+
+Tl<sub>abs </sub>= - 10 Log( e<sup>-<font face="Symbol">b</font>R</sup>)
+
+= (10 <font face="Symbol">b</font>)R<br>
+
+<br>
+
+where <font face="Symbol">b</font> is the extinction coefficient.
+
+ The factor of 10 and a unit conversion into km is absorbed in
+
+the definition of  the absorption coefficient, <font face="Symbol">a</font>
+
+ <font face="Symbol">b</font>/100, therefore<br>
+
+<br>
+
+Tl<sub>abs</sub> = <font face="Symbol">a</font> R.<br>
+
+<br>
+
+<br>
+
+<br>
+
+where <font face="Symbol">a</font> has units of dB/km.  The absorption
+
+coefficient has a strong frequency dependence, meaning much greater
+
+losses at higher frequency.  The absorption coefficient can be
+
+calculated from a formula:<br>
+
+<img src="./Sonar Propagation_files/IMG00004.GIF"><br>
+
+<br>
+
+ <br>
+
+<br>
+
+where f is in kHz, and the result for a is in dB/km.<br>
+
+<br>
+
+or using a graph:<br>
+
+<br>
+
+<img src="./Sonar Propagation_files/IMG00005.GIF">Figure 3.  Absorption coefficient<br>
+
+as a function of frequency.<br>
+
+        <br>
+
+</p><p>
+
+Other losses
+
+</p><p>
+
+        Many other things can happen to the acoustic wave as it
+
+propagates.  For example the energy may scatter off particles
+
+or biologics.  Energy will be lost upon reflection from the surface
+
+and bottom.  And lastly, by but far the greatest factor of all
+
+will be the change in the propagation due to the variations in
+
+the speed with temperature, depth and salinity.  The change in
+
+speed will tend to distort the perfect spherical or cylindrical
+
+shape of the wave front.  This does not, however, always result
+
+in greater transmission losses.  As we shall soon see, there are
+
+many conditions which tend to concentrate acoustic energy resulting
+
+in a lower than expected transmission loss. <br>
+
+<br>
+
+        All of these factors just discussed can be lumped into
+
+a single term, A, called the <i>transmission loss anomaly</i>.
+
+ This is surely artificial and is only used in order to be able
+
+to write a complete equation for TL.  All deviations from the
+
+predicted result can be explained away in the term A.  The equation
+
+so written is<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+TL = 10 Log(R) + 30 + <font face="Symbol">a</font>R + A<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+        If you ignore, the last two terms, the range dependence
+
+is very straight forward, and can be used to generate some rules
+
+of thumb:<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+TL  60 dB at 1 km<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+TL  70 dB at 10 km<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+TL  80 dB at 100 km.<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+This is based on nothing but the spherical and cylindrical spreading
+
+losses, assuming the source is exactly in the middle of 2000 m
+
+deep water.  What one finds in practice, are variations about
+
+these baseline numbers.  This can also be shown in graphical form,
+
+TL vs. range.  <br>
+
+<img src="./Sonar Propagation_files/IMG00006.GIF">
+
+</p><p>
+
+Figure 4.  Geometrical<br>
+
+transmission loss curve.<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+Propagation Paths
+
+</p><p>
+
+        To gain further insight into how the environment can affect
+
+propagation, we first study how the propagation speed varies in
+
+the ocean. <br>
+
+</p><p>
+
+The Sound Velocity Profile (SVP)
+
+</p><p>
+
+        The largest variation is the speed of sound in water occurs
+
+with changes is depth.  Obviously the pressure increases with
+
+depth causing a uniform increase of +1.7 m/s for every 100 m.
+
+ Furthermore, the ambient temperature changes with depth.   A
+
+plot of propagation speed (velocity) as a function of depth, is
+
+called the <i>sound velocity profile</i> (SVP), and it is the
+
+fundamental tool for predicting how sound will travel.  Neglecting
+
+salinity, the SVP can be obtained from sampling the ambient temperature
+
+at various depths (the pressure contribution never varies).  An
+
+inexpensive probe to do this is called an expendable bathythermograph
+
+(XBT).  The resulting SVP looks like this:<br>
+
+<img src="./Sonar Propagation_files/IMG00007.GIF">
+
+</p><p>
+
+Figure 5.  Oean layers.<br>
+
+ <br>
+
+<br>
+
+</p><p>
+
+The SVP reveals some common structure to the ocean.  The water
+
+can be divided into three vertical regions.  <br>
+
+<br>
+
+The surface (seasonal) layer is at the top and is the most variable
+
+part.  As the name suggests, the profile will changes depending
+
+on the time of day (diurnal variation) and the season (seasonal
+
+variation).  During the day, the heat from the sun (insolation)
+
+causes the water at the very top to be warmer than the water below.
+
+ Since the condition of warm over cold is stable, the condition
+
+is quite common.  Late in the afternoon, particularly on a bright
+
+day, the surface temperture will be the greatest and so one would
+
+expect the greatest gradient (change with depth).<br>
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00008.GIF">Figure 6.  Diurnal variation in<br>
+
+SVP.<br>
+
+<br>
+
+</p><p>
+
+The main thermocline connects the seasonal layer with the uniformly
+
+cold water found deep in the ocean.  Below about 500 m, all of
+
+the world's oceans are at about 34<sup>o</sup> F.  The positive
+
+gradient in the deep isothermal region is solely due to the pressure
+
+effect.  <br>
+
+<br>
+
+        In the summer, the seasonal layer tends to have a strongly
+
+negative gradient, for the same reason as given to explain the
+
+diurnal variation.  So the summer profile looks like:<br>
+
+<img src="./Sonar Propagation_files/IMG00009.GIF">
+
+</p><p>
+
+Figure 7.  Summer SVP.<br>
+
+<br>
+
+        
+
+</p><p>
+
+In winter, the water is generally warmer than the air.  A lot
+
+of heat is lost through advection and radiation.  However, one
+
+would not expect to see cold water setting on top of warm water
+
+for very long.  Convection brings the warm water to the surface
+
+destroying the effect.  The surface layer tends to be closer to
+
+isothermal than anything else. Additionally, strong winter storms
+
+and their large waves frequently mix the surface layer to a depth
+
+of up to 100 m.  For the nearly isothermal surface layer, one
+
+could expect a weakly positive gradient above the main thermocline.
+
+ <br>
+
+<br>
+
+<img src="./Sonar Propagation_files/IMG00010.GIF">
+
+</p><p>
+
+Figure 8.  Winter SVP.<br>
+
+ <br>
+
+<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+Ray Tracing
+
+</p><p>
+
+        The change of propagation speed with depth will manifest
+
+itself through refraction of the sound.  A graphical method of
+
+illustrating the effects is called ray tracing.  The basic idea
+
+is to draw lines perpendicular to the wave fronts and follow their
+
+paths.  For a typical sonar array, these lines start equally spaced
+
+within the beam capability of the array (discussed in the next
+
+chapter).<br>
+
+<img src="./Sonar Propagation_files/IMG00011.GIF">
+
+</p><p>
+
+Figure 9.  Ray tracing.<br>
+
+<br>
+
+        
+
+</p><p>
+
+As the rays go deeper, they begin to refract.  Recall how differences
+
+in the index of refraction (which are a measure of the propagation
+
+speed) affected electromagnetic waves.  As the rays move into
+
+a medium which has a slower propagation speed, they tend to become
+
+more vertical.  On the whole, the rays will deflect downward in
+
+a negative gradient.<br>
+
+<img src="./Sonar Propagation_files/IMG00012.GIF">
+
+</p><p>
+
+Figure 10.  Negative SVP<br>
+
+gradient.<br>
+
+<br>
+
+<br>
+
+        
+
+</p><p>
+
+As you might expect, the opposite effect occurs when the gradient
+
+is positive.  As the rays enter deeper water the propagation speed
+
+increases and the rays bend upwards.<br>
+
+<br>
+
+<img src="./Sonar Propagation_files/IMG00013.GIF">Figure 11.  Positive SVP gradient.<br>
+
+        <br>
+
+        <br>
+
+All of the rays will be deflected upwards.  When the rays reach
+
+the surface, the will be reflected back downwards and the same
+
+process begins again.  Naturally, some of the energy is lost and
+
+the reflection, but the overall effect is to trap the sound in
+
+a relatively small layer below the surface.  The sound does not
+
+reach the deeper regions, so the transmission less than you would
+
+expect for cylindrical spreading.  This effect is called a <i>surface
+
+duct</i>.<br>
+
+<img src="./Sonar Propagation_files/IMG00014.GIF">
+
+</p><p>
+
+Figure 12.  Surface duct.<br>
+
+<br>
+
+<br>
+
+<br>
+
+        
+
+</p><p>
+
+The other common propagation modes occur during combinations of
+
+positive and negative gradients.  A positive gradient over a negative
+
+gradient produces a special kind of propagation, where the rays
+
+split at the boundary which is called the <i>layer</i>.  The depth
+
+of maximum sound velocity which ocurs on the layer is called the
+
+<i>layer depth </i>(LD).<i>  <br>
+
+<br>
+
+<img src="./Sonar Propagation_files/IMG00015.GIF"></i>
+
+</p><p>
+
+Figure 13.  Sonic layer.<br>
+
+<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00016.GIF"> <br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00017.GIF"><br>
+
+<br>
+
+<br>
+
+</p><p>
+
+        Above the layer, the positive gradient will produce a
+
+surface duct as previously described.  When rays penetrate below
+
+the layer, they are deflected downward.  Therefore, the rays diverge
+
+above and below the layer. Beyond a certain minimum range, the
+
+rays from the source will never reach locations just below the
+
+layer.  This is called <i>the shadow zone.  </i>It is a favored
+
+depth for submarines to operate at for just this very reason.
+
+ The optimum depth to operate at, called best depth (BD), is a
+
+function of the layer depth.  The best depth can be calculated
+
+from <br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+For the case where the negative gradient is over the positive,
+
+rays which originate at the boundary will be deflected back towards
+
+the middle, regardless if they go up or down.  This forms a <i>sound
+
+channel</i>, where the rays are then confined to the small region
+
+above and below the axis, called the <i>sound channel axis</i>.
+
+<br>
+
+<br>
+
+<img src="./Sonar Propagation_files/IMG00018.GIF">
+
+</p><p>
+
+Figure 14.  Sound channel.<br>
+
+<br>
+
+</p><p>
+
+The sound channel will not work for rays that begin at the surface,
+
+like in the other cases.  The source must be located near the
+
+axis.  Several sonar systems have features which allow them to
+
+be placed near the sound channel axis.  For example, sonobouys,
+
+which are small self-contained sonar  systems, have a setting
+
+which places them at a typical sound channel axis depth.<br>
+
+<br>
+
+<br>
+
+        Another special type of propagation occurs when the water
+
+is so deep that no sound can reach the bottom without being deflected
+
+upwards by the normal positive gradient found in the deep isothermal
+
+layer.  This situation requires a minimum of 200 m of <i>depth
+
+excess </i>which is defined as<br>
+
+<br>
+
+depth excess:  the distance from the lower boundary of the sound
+
+channel to the bottom.<br>
+
+<br>
+
+When all of the sound rays are returned to near the surface, they
+
+tend to converge into a small region.  Therefore the sound pressure
+
+level is increased dramatically in this region known as a <i>convergence
+
+zones </i>(CZ). <br>
+
+<img src="./Sonar Propagation_files/IMG00019.GIF">
+
+</p><p>
+
+Figure 15.  Convergence<br>
+
+zone.<br>
+
+<br>
+
+</p><p>
+
+The convergence zone tends to be at large distances, typically
+
+20-30 nm from the source.  It is possible to have multiple convergence
+
+zones, which will occur at regular intervals.  For example, if
+
+the first CZ is at 30 nm, the second CZ would be at 60 nm.  The
+
+CZ is only a few miles wide, and therefore, contacts which are
+
+acquired through convergence zones tend to appear and disappear
+
+quickly.  <br>
+
+<br>
+
+        It may be possible for a ship to have a rather limited
+
+sonar range due to regular transmission losses but multiple convergence
+
+zones.  These zones form protective rings about the ship.  A hostile
+
+submarine closing in on the ship would be detected as it passes
+
+through the various convergence zones, thereby alerting the ship
+
+to its presence.  The ship could then deploy mobile ASW assets
+
+like a helicopter to handle the submarine.<br>
+
+<br>
+
+</p><p>
+
+<img src="./Sonar Propagation_files/IMG00020.GIF">Figure 16.  Annulus of CZ.<br>
+
+<br>
+
+<br>
+
+<br>
+
+        
+
+</p><p>
+
+Finally the last type of propagation occurs in when the sound
+
+is strongly reflected from the ocean floor.  The rays tends to
+
+converge near the surface, resulting in a reduced transmission
+
+loss.  This is called <i>bottom bounce</i> propagation.  Rays
+
+from bottom bounce can be identified from the others because of
+
+the larger angle of incidence.  Typical bottom bound comes into
+
+the sonar at angles of more than 30<sup>o</sup> from horizontal.
+
+ <br>
+
+<img src="./Sonar Propagation_files/IMG00021.GIF">
+
+</p><p>
+
+Figure 17.  Bottom bounce.<br>
+
+                <br>
+
+</p><p>
+
+Only certain ocean floor conditions are conducive to bottom bounce
+
+propagation.  Flat and hard ocean floors tend to be the best.
+
+ Soft mud, on the other hand is the worst. <br>
+
+<br>
+
+                <br>
+
+</p><p>
+
+Figure of Merit
+
+</p><p>
+
+        Because the propagation of acoustics waves in the ocean
+
+is fairly complicated, the use of a formula for transmission loss
+
+is of limited accuracy.  Computer models can be used to produce
+
+much more accurate plots of TL as a function of range, known as
+
+transmission loss curves.  Here is a typical TL curve showing
+
+some of the features just discussed:<br>
+
+<img src="./Sonar Propagation_files/IMG00022.GIF">
+
+</p><p>
+
+Figure 18.  Typical TL<br>
+
+curve.<br>
+
+<br>
+
+</p><p>
+
+In comparision to the geometrical TL (spherical and cylindrical
+
+spreading losses) you will note there are certain ranges where
+
+the TL actually goes down with increased range.  These are locations
+
+where the refraction effects of the ocean cause the sound rays
+
+to concentrate.  This example illustrates the effect of bottom
+
+bound and CZ.  <br>
+
+<br>
+
+        Given an accurate transmission loss curve, we are now
+
+in a position to estimate the maximum detection range of a sonar
+
+system.  Recall that detection is possible whenever<br>
+
+<br>
+
+SNR &lt; DT.<br>
+
+<br>
+
+        To solve for range, we only need rearrange terms to isolate
+
+the range dependence.  For the passive case, define figure of
+
+merit, FOM<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+FOM<sub>passive</sub>  SL + DI - NL - DT<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+Now the detection criterion becomes<br>
+
+<br>
+
+FOM &gt; TL.  <br>
+
+<br>
+
+Which leads to the following interpretation:<br>
+
+<br>
+
+Figure of Merit (FOM) is the maximum transmission loss the system
+
+can have and still be able to detect the target (at 50% of the
+
+time).  <br>
+
+<br>
+
+        If FOM is known, then the maximum range can be determined
+
+by plotting the FOM as a horizontal line on the TL curve.  All
+
+ranges where the FOM &gt; TL (remember that TL is increasing in
+
+the down direction), are detectable.  <br>
+
+<img src="./Sonar Propagation_files/IMG00023.GIF">
+
+</p><p>
+
+Figure 19.  Determining<br>
+
+maximum detection range from FOM.<br>
+
+<br>
+
+</p><p>
+
+In this example, the FOM = 75 dB.  From the graph, it is apparent
+
+that FOM &gt; TL everywhere less than 18 km, which is the maximum
+
+detection range.  <br>
+
+<br>
+
+<br>
+
+</p><p>
+
+FOM<sub>active</sub>  SL + TS + DI - NL - DT<br>
+
+<br>
+
+<br>
+
+</p><p>
+
+        For active systems, there are (at least) two complications.
+
+ First the FOM is modified so that <br>
+
+<br>
+
+Secondly, the transmission loss is incurred twice, as the sound
+
+travels to the target and back.  You could use a separate curve
+
+with twice the TL vs. range, or alternatively, use one-half the
+
+FOM, which is the preferred method.  So for active systems, the
+
+detection criterion is:<br>
+
+<br>
+
+<br>
+
+FOM &gt; 2 TL or FOM/2 &gt; TL.<br>
+
+<br>
+
+Therefore, you calculate FOM and then plot FOM/2 on the TL curve
+
+to obtain range in the same manner.  <br>
+
+<br>
+
+  <br>
+
+<br>
+
+
+
+
+
+</p><div id="UMS_TOOLTIP" style="position: absolute; cursor: pointer; z-index: 2147483647; background: transparent; top: -100000px; left: -100000px;"></div></body><div id="TAG_ID4TOOLBAR_UMS_GUID" style="display: none;">FD5D7DF9-C9DB-5C4F-AC0F-37A060B62BD5</div><div id="tmtoolbar_ums_injected" style="display: none;">init_ums</div><div id="UMSSendDataEventElement" style="display: none;">init_ums</div></html>

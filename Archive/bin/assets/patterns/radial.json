@@ -1,0 +1,33 @@
+{
+  "name": "radial",
+  "description": "Fires bullets in all directions around the enemy",
+  "parameters": {
+    "bulletCount": {
+      "type": "int",
+      "default": 16,
+      "description": "Number of bullets to fire"
+    },
+    "bulletSpeed": {
+      "type": "float",
+      "default": 5,
+      "description": "How fast bullets travel"
+    },
+    "rotationSpeed": {
+      "type": "float",
+      "default": 10,
+      "description": "How much to rotate the pattern each time (optional)"
+    }
+  },
+  "script": [
+    {"control": "SetSpeed", "value": "$bulletSpeed"},
+    {"control": "SetAngle", "value": 0},
+    {
+      "control": "Loop",
+      "actions": [
+        {"control": "Radial", "count": "$bulletCount", "speed": "$bulletSpeed"},
+        {"control": "AddAngle", "delta": "$rotationSpeed"},
+        {"control": "Wait", "frames": 20}
+      ]
+    }
+  ]
+}

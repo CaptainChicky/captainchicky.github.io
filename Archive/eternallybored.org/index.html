@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Does anybody ever read this text?</title>
+<link rel='shortcut icon' href='/favicon.ico' type='image/gif' />
+<style type="text/css">
+/*<![CDATA[*/
+ body { background-color: #000000; color: #ffffff; }
+
+ a { text-decoration: none; }
+ a.right { float: right; }
+ a.left { float: left; }
+ :link { color: #00ffff; border: none; }
+ :visited { color: #00cccc; border: none; }
+ :hover { color: #00ff00; border: none; }
+ .css1{
+  position:absolute;top:0px;left:0px;
+  width:16px;height:16px;
+  font-family:Arial;
+  font-size:16px;
+  text-align:center;
+  font-weight:bold;
+ }
+ .css2{
+  position:absolute;top:0px;left:0px;
+  width:10px;height:10px;
+  font-family:Arial;
+  font-size:10px;
+  text-align:center;
+ }
+/*]]>*/
+</style>
+</head>
+<body>
+<a class="left" href="//ip.eternallybored.org/">What's my IP?</a>
+<a class="right" href="misc/">Random stuff</a>
+<script type="text/javascript">
+<!-- Silly Clock 3 (updated) by http://www.btinternet.com/~kurt.grigg/javascript
+//modified by ender:
+// - now works in Firebird 0.7
+// - limit the clock to the document area
+// - added onresize handler
+//fix by SpecLad: proper alignment in Opera 10
+//updated for Firefox 24
+
+//Hide from old Netscape 4.
+if (!document.layers){
+
+//Clock colours
+dCol='#00ff00';//date colour.
+fCol='#ffffff';//face colour.
+sCol='#ffffff';//seconds colour.
+mCol='#00ff00';//minutes colour.
+hCol='#00ff00';//hours colour.
+
+//Controls
+kgy1=0; //Y distance from mouse.
+kgx1=0; //X distance from mouse.
+kgv1=0.4;  //Follow/delay speed.
+kgv2=10;   //Run speed (timeout).
+
+
+//Alter nothing below! Alignments will be lost!
+var ie=(navigator.appName == "Microsoft Internet Explorer")?true:false;
+var n7=(document.getElementById&&!ie);
+var o7=(navigator.appName.indexOf("Opera") != -1) && (parseInt(navigator.appVersion) <= 7);
+if (o7) n7=false;
+kgd=new Array("SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY");
+kgm=new Array("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER");
+date=new Date();
+day=date.getDate();
+year=date.getYear();
+if (year < 2000) year=year+1900; 
+tmpdate=" "+kgd[date.getDay()]+" "+day+" "+kgm[date.getMonth()]+" "+year;
+D=tmpdate.split("");
+N='1 2 3 4 5 6 7 8 9 10 11 12';
+N=N.split(" ");
+F=N.length;
+H='...';
+H=H.split("");
+M='....';
+M=M.split("");
+S='.....';
+S=S.split("");
+Dy=new Array();
+Dx=new Array();
+DY=new Array();
+DX=new Array();
+kgh1=40;
+kgw1=40;
+if (n7) {
+ kgmy=document.documentElement.clientHeight/2;
+ kgmx=document.documentElement.clientWidth/2;
+} else {
+ kgmy=document.body.clientHeight/2;
+ kgmx=document.body.clientWidth/2;
+}
+kgs=0;
+kga1=360/F;
+kga2=360/D.length;
+kgh2=kgh1/5.5;
+kgw2=kgw1/5.5;
+kgy2=-7;
+kgx2=-3;
+tmr=null;
+tmps=new Array();
+tmpm=new Array(); 
+tmph=new Array();
+tmpf=new Array(); 
+tmpd=new Array();
+if (ie){ 
+document.write('<div id="anti_scrollbars" style="position:absolute;top:0px;left:0px"><div style="position:relative">'); 
+}
+algn=new Array();
+for (i=0; i < D.length; i++){
+algn[i]=(parseInt(D[i]) || D[i]==0)?10:9;
+document.write('<div id="_date'+i+'" class="css2" style="font-size:'+algn[i]+'px;color:'+dCol+'">'+D[i]+'</div>');
+tmpd[i]=document.getElementById("_date"+i).style;
+}
+for (i=0; i < F; i++){
+document.write('<div id="_face'+i+'" class="css2" style="color:'+fCol+'">'+N[i]+'</div>');
+tmpf[i]=document.getElementById("_face"+i).style; 
+}
+for (i=0; i < H.length; i++){
+document.write('<div id="_hours'+i+'" class="css1" style="color:'+hCol+'">'+H[i]+'</div>');
+tmph[i]=document.getElementById("_hours"+i).style;
+}
+for (i=0; i < M.length; i++){
+document.write('<div id="_minutes'+i+'" class="css1" style="color:'+mCol+'">'+M[i]+'</div>');
+tmpm[i]=document.getElementById("_minutes"+i).style; 
+}
+for (i=0; i < S.length; i++){
+document.write('<div id="_seconds'+i+'" class="css1" style="color:'+sCol+'">'+S[i]+'</div>');
+tmps[i]=document.getElementById("_seconds"+i).style;         
+}
+if (ie){ 
+document.write('</div></div>');
+}
+var vis=true;
+function onoff(){
+if (vis==true){ 
+vis=false;
+document.con1.con2.value="Clock On";
+}
+else{ 
+vis=true;
+document.con1.con2.value="Clock Off";
+Delay();
+}
+kill();
+}
+function kill(){
+if (vis){ 
+//O7.50 works better with Netscape routines; should test with older versions
+document.onmousemove=(n7||o7)?mouseNS:mouseIEO;
+}
+else document.onmousemove=null;
+} 
+if (n7||o7){
+ if (window.captureEvents)
+  window.captureEvents(Event.MOUSEMOVE);
+ function mouseNS(e){
+ kgmy = e.pageY+kgy1-(window.pageYOffset);
+ kgmx = e.pageX+kgx1;
+ if (kgmx<80) kgmx=80;
+ if (o7){
+  if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
+  if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
+ } else {
+  if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
+  if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
+ }
+ if (kgmy<80) kgmy=80;
+ if (!vis) kill();
+ }
+if (n7||o7)document.onmousemove=mouseNS;
+}
+var dbg=0;
+if (ie){
+ function mouseIEO(){
+ if (document.documentElement) //ie6 in strict mode
+  kgmy=event.clientY+kgy1+document.documentElement.scrollTop;
+ else //not tested, should be used by IE5, IE6 in quirks mode
+  kgmy=event.clientY+kgy1+document.body.scrollTop;
+
+ kgmx=event.clientX+kgx1;
+ if (kgmx<80) kgmx=80;
+ if (document.documentElement && document.documentElement.clientHeight > 0) {
+  if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
+  if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
+ } else {
+  if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
+  if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
+ }
+ if (kgmy<80) kgmy=80;
+ if (!vis) kill();
+
+ }
+document.onmousemove=mouseIEO;
+}
+var sum=parseInt(D.length+F+H.length+M.length+S.length)+1;
+for (i=0; i < sum; i++){
+Dy[i]=0;
+Dx[i]=0;
+if (n7) {
+ DY[i]=document.documentElement.clientHeight/2;
+ DX[i]=document.documentElement.clientWidth/2;
+} else {
+ DY[i]=document.body.clientHeight/2;
+ DX[i]=document.body.clientWidth/2;
+}
+}
+
+function ClockAndAssign(){
+time=new Date();
+secs=time.getSeconds();
+sec=Math.PI*(secs-15)/30;
+mins=time.getMinutes();
+min=Math.PI*(mins-15)/30;
+hrs=time.getHours();
+hr=Math.PI*(hrs-3)/6+Math.PI*parseInt(time.getMinutes())/360;
+if (ie){
+anti_scrollbars.style.top=window.document.body.scrollTop;
+}
+//added +'px' for mozilla firebird compatibility
+for (i=0; i < S.length; i++){
+ tmps[i].top=Dy[D.length+F+H.length+M.length+i]+kgy2+(i*kgh2)*Math.sin(sec)+kgs+'px';
+ tmps[i].left=Dx[D.length+F+H.length+M.length+i]+kgx2+(i*kgw2)*Math.cos(sec)+'px';
+ }
+for (i=0; i < M.length; i++){
+ tmpm[i].top=Dy[D.length+F+H.length+i]+kgy2+(i*kgh2)*Math.sin(min)+kgs+'px';
+ tmpm[i].left=Dx[D.length+F+H.length+i]+kgx2+(i*kgw2)*Math.cos(min)+'px';
+ }
+for (i=0; i < H.length; i++){
+ tmph[i].top=Dy[D.length+F+i]+kgy2+(i*kgh2)*Math.sin(hr)+kgs+'px';
+ tmph[i].left=Dx[D.length+F+i]+kgx2+(i*kgw2)*Math.cos(hr)+'px';
+ }
+for (i=0; i < F; i++){
+ tmpf[i].top=Dy[D.length+i]+kgh1*Math.sin(-1.0471+i*kga1*Math.PI/180)+kgs+'px';
+ tmpf[i].left=Dx[D.length+i]+kgw1*Math.cos(-1.0471+i*kga1*Math.PI/180)+'px';
+ }
+for (i=0; i < D.length; i++){
+ tmpd[i].top=Dy[i]+kgh1*1.5*Math.sin(-sec+i*kga2*Math.PI/180)+kgs+'px';
+ tmpd[i].left=Dx[i]+kgw1*1.5*Math.cos(-sec+i*kga2*Math.PI/180)+'px';
+ }
+if (!vis)clearTimeout(tmr);
+}
+function Delay(){
+kgs=(ie)?0:window.pageYOffset;
+Dy[0]=(vis)?Math.round(DY[0]+=((kgmy)-DY[0])*kgv1):-100;
+Dx[0]=(vis)?Math.round(DX[0]+=((kgmx)-DX[0])*kgv1):-100;
+for (i=1; i < sum; i++){
+Dy[i]=(vis)?Math.round(DY[i]+=(Dy[i-1]-DY[i])*kgv1):-100;
+Dx[i]=(vis)?Math.round(DX[i]+=(Dx[i-1]-DX[i])*kgv1):-100;
+}
+tmr=setTimeout('Delay()',kgv2);
+ClockAndAssign();
+}
+window.onload=Delay;
+window.onresize=WindowResize;
+}
+function WindowResize(){
+ if (kgmx<80) kgmx=80;
+ if (kgmy<80) kgmy=80;
+ if (o7){
+  if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
+  if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
+ } 
+ if (n7) {
+  if (kgmx>document.documentElement.clientWidth-80) kgmx=document.documentElement.clientWidth-80;
+  if (kgmy>document.documentElement.clientHeight-80) kgmy=document.documentElement.clientHeight-80;
+ }
+ if (ie) {
+  if (kgmx>document.body.clientWidth-80) kgmx=document.body.clientWidth-80;
+  if (kgmy>document.body.clientHeight-80) kgmy=document.body.clientHeight-80;
+ }
+}
+//-->
+</script>
+</body></html>

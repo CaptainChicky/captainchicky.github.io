@@ -1,0 +1,104 @@
+
+<!-- saved from url=(0019)https://nyanee.vip/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script async="" src="./nyanee.vip_files/js"></script>
+<script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2C626C6K5Q');
+    </script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="not anime, not streaming, not private">
+<meta property="theme-color" content="#5E8AD0">
+<meta property="og:title" content="nyanee">
+<meta property="og:description" content="Totally not an anime streaming site and totally not private.">
+<meta property="og:image" content="img/gradient.png">
+<meta property="og:site_name" content="nyanee.vip">
+<link rel="stylesheet" href="./nyanee.vip_files/loadingAnimation.css" type="text/css">
+<link rel="icon" href="https://nyanee.vip/img/solid.ico">
+<style>
+			:root {
+				--brand: #5E8AD0;
+			}
+		
+      #overlay {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position:absolute;
+        width:100%;
+        height:100%;
+        background:rgb(10,10,10);
+      }
+      #text {
+        color: white;
+        font-family: sans-serif;
+        display: none;
+      }
+			.icon {
+				position: absolute;
+				top: 0;
+				width: 100px;
+				height: 100px;
+				transition: 30s linear;
+				transform: translateY(-100px);
+			}
+    </style>
+</head>
+<body style="background-color:rgb(10,10,10);overflow:hidden">
+<div id="overlay" style="display: none;">
+<span id="text" style="display: none;">nyanee team presents...</span>
+</div>
+<video id="vid" width="100%" height="100%" loop="" data-video="0">
+<source src="rick.mp4" type="video/mp4">
+</video>
+<script src="./nyanee.vip_files/jquery-3.3.1.min.js.download"></script>
+<script src="./nyanee.vip_files/loadingAnimation.js.download"></script>
+<script>
+      let $ = jQuery;
+      $('#text').delay(500).fadeIn('medium');
+      $('#text').delay(2000).fadeOut('medium');
+      
+      let fails = -1;
+      let notified = false;
+
+      function  playVideo() {
+        fails++;
+        if(fails >= 8 && !notified) {
+          notified = true;
+          $('#text').html('Press anywhere on the browser to start.');
+          $('#text').fadeIn('medium');
+        };
+        document.getElementById("vid").play().then(function() {
+          $('#overlay').fadeOut('fast');
+					setInterval(spawnIcon, 2000);
+        }).catch(function(error) {
+          console.log(error);
+          if(error)
+            setTimeout(playVideo, 500);
+        })
+      }
+			
+			function spawnIcon() {
+				let el = document.createElement('div');
+				el.classList.add('icon');
+				el.style.left = `${Math.random() * (window.innerWidth - 100)}px`;
+				document.body.appendChild(el);
+				setTimeout(function() {
+					loadingAnimation(el);
+					el.style.transform = `translateY(${window.innerHeight}px) rotate(2000deg)`;
+					setTimeout(function() {
+						document.body.removeChild(el);
+					}, 30000)
+				}, 500)
+			}
+
+      playVideo();
+    </script>
+
+
+<div id="UMS_TOOLTIP" style="position: absolute; cursor: pointer; z-index: 2147483647; background: transparent; top: -100000px; left: -100000px;"></div><div class="icon" style="left: 1302.98px; transform: translateY(922px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 63.376px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1388.52px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1285.69px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1438.67px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 596.329px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1112.2px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 46.5845px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1663.94px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 1010.16px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div><div class="icon" style="left: 483.246px; transform: translateY(979px) rotate(2000deg);"><div class="loading-animation-box"><div class="loading-animation-part1"></div><div class="loading-animation-part2"></div></div></div></body><umsdataelement id="UMSSendDataEventElement"></umsdataelement><div id="TAG_ID4TOOLBAR_UMS_GUID" style="display: none;">68DC7ECF-BF31-A153-2D26-3ED738578222</div><div id="tmtoolbar_ums_injected" style="display: none;">init_ums</div></html>

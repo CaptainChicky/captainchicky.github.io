@@ -1,0 +1,42 @@
+{
+  "name": "random",
+  "description": "Fires bullets with random speed and angle",
+  "parameters": {
+    "minSpeed": {
+      "type": "float",
+      "default": 2,
+      "description": "Minimum bullet speed"
+    },
+    "maxSpeed": {
+      "type": "float",
+      "default": 6,
+      "description": "Maximum bullet speed"
+    },
+    "baseAngle": {
+      "type": "float",
+      "default": 90,
+      "description": "Base angle (down)"
+    },
+    "angleSpread": {
+      "type": "float",
+      "default": 15,
+      "description": "Random angle spread (± this value for 30° total range)"
+    },
+    "fireDelay": {
+      "type": "int",
+      "default": 5,
+      "description": "Frames between shots"
+    }
+  },
+  "script": [
+    {
+      "control": "Loop",
+      "actions": [
+        {"control": "RandomSpeed", "min": "$minSpeed", "max": "$maxSpeed"},
+        {"control": "RandomAngle", "min": "$baseAngle - $angleSpread", "max": "$baseAngle + $angleSpread"},
+        {"control": "Fire", "angle": 0, "speed": 0},
+        {"control": "Wait", "frames": "$fireDelay"}
+      ]
+    }
+  ]
+}

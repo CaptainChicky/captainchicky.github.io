@@ -1,0 +1,97 @@
+{
+  "name": "tests",
+  "waves": [
+    {
+      "startTime": 0,
+      "enemies": [
+        {
+          "spawnTime": 0,
+          "x": 200,
+          "y": 300,
+          "pattern": "custom_inline",
+          "health": 999,
+          "patternConfig": {
+            "patternScript": {
+              "actions": [
+                {"control": "SetAngle", "value": 90},
+                {"control": "SetSpeed", "value": 5},
+                {
+                  "control": "Loop",
+                  "actions": [
+                    {"control": "NWay", "count": 10, "angle": 90, "speed": 0},
+                    {"control": "Wait", "frames": 60},
+                    {"control": "Radial", "count": 30, "speed": 0},
+                    {"control": "Wait", "frames": 60},
+                    {
+                      "control": "Rep",
+                      "count": 12,
+                      "actions": [
+                        {"control": "Fire", "angle": 0, "speed": 0},
+                        {"control": "AddSpeed", "delta": -0.25}
+                      ]
+                    },
+                    {"control": "SetSpeed", "value": 5},
+                    {"control": "Wait", "frames": 60}
+                  ]
+                }
+              ]
+            }
+          },
+          "movementScript": {
+            "loop": false,
+            "actions": [
+              {"type": "Stop"}
+            ]
+          }
+        },
+        {
+          "spawnTime": 0,
+          "x": 800,
+          "y": 300,
+          "pattern": "custom_inline",
+          "health": 999,
+          "patternConfig": {
+            "patternScript": {
+              "actions": [
+                {"control": "SetAngle", "value": 90},
+                {"control": "SetSpeed", "value": 5},
+                {
+                  "control": "Concurrent",
+                  "branches": [
+                    [
+                      {"control": "Loop", "actions": [
+                        {"control": "Fire", "angle": 0, "speed": 0},
+                        {"control": "AddAngle", "delta": 16},
+                        {"control": "Wait", "frames": 2}
+                      ]}
+                    ],
+                    [
+                      {"control": "SetAngle", "value": 180},
+                      {"control": "Loop", "actions": [
+                        {"control": "Fire", "angle": 0, "speed": 0},
+                        {"control": "AddAngle", "delta": -8},
+                        {"control": "Wait", "frames": 0.6}
+                      ]}
+                    ],
+                    [
+                      {"control": "Loop", "actions": [
+                        {"control": "Fire", "angle": 90, "speed": 0},
+                        {"control": "Wait", "frames": 8}
+                      ]}
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          "movementScript": {
+            "loop": false,
+            "actions": [
+              {"type": "Stop"}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

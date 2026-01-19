@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/html1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>IP: 72.23.101.163</title>
+
+<style type="text/css">
+html {
+  font-family: "lucida console", monospace;
+  background-color: #000;
+  color: #ccc;
+}
+div {
+  text-align: left;
+}
+div#main,div#ip4,div#ip6 {
+  text-align: left;
+}
+span {
+  color: #fff;
+  font-weight: bold;
+  font-size: 133%;
+}
+/*div#ip4,div#ip6 {
+	display: none;
+}*/
+iframe {
+	width: 45em;
+	height: 2.5ex;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+</style>
+
+<script>
+window.addEventListener('load',onLoad,false);
+
+var xh4;
+var xh6;
+
+function onLoad()
+{
+	xh4 = new XMLHttpRequest();
+	xh6 = new XMLHttpRequest();
+
+	if (xh4) {
+		xh4.open('GET','https://ip4.eternallybored.org/?xh',true);
+		xh4.onreadystatechange = process4;
+		xh4.send('');
+		xh6.open('GET','https://ip6.eternallybored.org/?xh',true);
+		xh6.onreadystatechange = process6;
+		xh6.send('');
+	}
+}
+function showaddr(which,ip)
+{
+	var div = document.getElementById('ip'+which);
+	var span = document.createElement('span');
+	var ip1 = ip;
+	var host = '';
+	if (ip.indexOf(',')>0) {
+		ip1 = ip.substr(0, ip.indexOf(','));
+		host = ' (' + ip.substr(ip.indexOf(',')+2).trim() + ')';
+	}
+	span.appendChild(document.createTextNode(ip1));
+	div.appendChild(span);
+	if (host !== '') {
+		div.appendChild(document.createTextNode(host));
+	}
+	div.style.display = 'block';
+}
+function process4()
+{
+	if (xh4.readyState != 4 || xh4.status == 0) {
+		document.getElementById('ip4').style.display = 'none';
+		return;
+	}
+	showaddr('4',xh4.responseText);
+}
+function process6()
+{
+	if (xh6.readyState != 4 || xh6.status == 0) {
+		document.getElementById('ip6').style.display = 'none';
+		return;
+	}
+	showaddr('6',xh6.responseText);
+}
+</script>
+
+</head>
+
+<body>
+<div id='ip4'>IPv4: <noscript><iframe id="f4" scrolling="no" src="https://ip4.eternallybored.org/?if"></iframe></noscript></div>
+<div id='ip6'>IPv6: <noscript><iframe id="f6" scrolling="no" src="https://ip6.eternallybored.org/?if"></iframe></noscript></div>
+<div><br/>User-Agent: <span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36</span></div>
+</body>
+
+</html>

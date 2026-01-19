@@ -1,0 +1,527 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<h3>喋らせている最中に任意のタイミングでちょっかい出すやつ</h3>
+<font size="1">※文字を送っている最中にちょっかいボタンを押すことでセリフを変化させるものです。
+<br>　　喘ぎ変換ツールではないので、何もしなければ文面は変化しません。</font>
+<br>
+<br>ここに喋らせたいものをいれる
+<br><textarea style="Width:512px; Height:256px" id="Input"></textarea>
+<br>
+<br><button onclick="start();">喋らせる</button>
+<br>
+<br><button onclick="gTrickReserve = true;">ちょっかい</button>
+<br><input type="checkbox" id="Heart" checked />ハートマーク入れる
+<br><input type="checkbox" id="Declare" />何かに到達したら不思議なチカラで強制的に申告させる
+<br><input type="checkbox" id="OhMode" />お"モード
+<br><input type="checkbox" id="SuperTrick" />ちょっかいパワーMAX
+<br>
+<br><button onclick="gRequestReset = true;">状態リセット</button>
+<br><font size="1">※ちょっかいへの反応度合いと息切れ状態をリセットします。</font>
+
+<br>
+<br><textarea style="Width:512px; Height:256px" id="Output"></textarea>
+
+<br><p id="Debug"/>
+
+<script>
+
+var gTextCursor = -1;
+var gMessage = "";
+var gTrickReserve = false;
+var gBreath = 100;
+var gTension = 0;
+var gPrevTension = 0;
+var gIntervalTimer = null;
+var gNextInterval = 0;
+
+var gAlreadyTrick = false;
+var gFinish       = false;
+var gRequestReset = false;
+
+function start()
+{
+	var input_area = document.getElementById("Input");
+	gMessage    = input_area.value;
+    gFinish     = false;
+	gTextCursor = 0;
+
+	if( gIntervalTimer )
+    {
+        clearTimeout( gIntervalTimer );
+    }
+	update();
+}
+
+function update()
+{
+    if (gRequestReset)
+    {
+        gRequestReset = false;
+        gBreath = 100;
+        gTension = 0;
+        gPrevTension = 0;
+        gAlreadyTrick = false;
+    }
+
+	var output_area = document.getElementById("Output");
+	if( output_area )
+	{
+		output_area.scrollTop = output_area.scrollHeight;
+
+		var interval = 80 - (15 * (gTension / 1000));
+		if( gTrickReserve )
+		{
+            gAlreadyTrick = true;
+			trick();
+			interval += 100;
+		}
+
+        // なにかするまでは息継ぎ判定も含めなにもしない
+        if(gAlreadyTrick)
+        {
+    		var last_char = gMessage[gTextCursor];
+    		switch(last_char)
+    		{
+                case '\n': break;
+    			case '、': gBreath += 15; interval += 100; break;
+    			case '。': gBreath += 35; interval += 200; break;
+    			case '？': gBreath += 35; interval += 200; break;
+    			case '…': gBreath += 50; interval += 300; break;
+    			default:
+    				gBreath -= 1;
+    				gTension -= 0.5;
+    				break;
+    		}
+
+    		if( 1000 < gTension ) gTension = 1000;
+    		if( gTension <    0 ) gTension =    0;
+    		if( 200 < gBreath   ) gBreath  =  200;
+    		if( gBreath  < -100 ) gBreath  = -100;
+
+            if( 0 < gTension )
+            {
+        		if( gBreath <  0 )
+        		{
+        			gBreath += 1;
+            		if( document.getElementById("OhMode").checked )
+                    {
+            			if(Math.random() < 0.1)
+            			{
+            				insertString(gTextCursor, "…お…"); interval += 50;
+            			}
+            			if(Math.random() < 0.1)
+            			{
+            				insertString(gTextCursor, "…っんぉッ"); interval += 50;
+            			}
+                    }
+                    else
+                    {
+            			if(Math.random() < 0.1)
+            			{
+            				insertString(gTextCursor, "…う…"); interval += 50;
+            			}
+            			if(Math.random() < 0.1)
+            			{
+            				insertString(gTextCursor, "…はひ…"); interval += 50;
+            			}
+                    }
+        			if(Math.random() < 0.1)
+        			{
+        				insertString(gTextCursor, "…っはぁッ"); interval += 50;
+        			}
+        			if(Math.random() < 0.05)
+        			{
+        				insertString(gTextCursor, "…はーっ…"); interval += 50;
+        			}
+        			if(Math.random() < 0.01)
+        			{
+        				insertString(gTextCursor, "…はっ…"); interval += 50;
+        			}
+        			gBreath += 2.5;
+        		}
+        		else if( gBreath < 20 )
+        		{
+        			gBreath += 2;
+        			if(Math.random() < 0.05) { insertString(gTextCursor, "…っ"); interval += 50; }
+        		}
+        		else if( gBreath < 50 )
+        		{
+        			gBreath += 1.5;
+        			if(Math.random() < 0.2) { insertString(gTextCursor, "…"); interval += 50; }
+        		}
+            }
+
+    		if( 250 < gTension )
+    		{
+    			if(Math.random() < 0.01)
+    			{
+    				if( document.getElementById("Declare").checked )
+    				{
+                        {
+        					var str = "";
+        					if(Math.random() < 0.25) { str += "っ"; interval += 100; }
+        					if(Math.random() < 0.25) { str += "ッ"; interval += 100; }
+        					if(Math.random() < 0.25) { str += "…"; interval += 50; }
+        					str += "イきました";
+        					if( document.getElementById("OhMode").checked )
+                            {
+            					if(Math.random() < 0.25) { str += "お";   interval += 50; }
+            					if(Math.random() < 0.25) { str += "お゛"; interval += 50; }
+            					if(Math.random() < 0.25) { str += "ん";   interval += 50; }
+            					if(Math.random() < 0.25) { str += "ん゛"; interval += 50; }
+                            }
+                            else
+                            {
+            					if(Math.random() < 0.25) { str += "あ";   interval += 50; }
+            					if(Math.random() < 0.25) { str += "あ゛"; interval += 50; }
+                            }
+           					if(Math.random() < 0.25) { str += "っ"; interval += 100; }
+           					if(Math.random() < 0.25) { str += "ッ"; interval += 100; }
+           					if(Math.random() < 0.25) { str += "…"; interval += 50; }
+
+                            str = insertExclamation(str);
+        					insertString(gTextCursor, str);
+                        }
+
+    					if(Math.random() < 0.01) { trick(); }
+    					
+    					if(Math.random() < 0.25)
+    					{
+    						var top = gTextCursor - Math.floor(Math.random() * 10);
+    						if( top < 0 ) top = 0;
+    						var end = gTextCursor;
+    						var str = gMessage.substring(top, end);
+
+                            var proceed = 0;
+    						if(Math.random() < 0.25) { str += "…ッ"; interval += 100; proceed += 1; }
+    						if(Math.random() < 0.50) { str += "……"; interval += 100; proceed += 1; }
+    						if(Math.random() < 0.50) { str += "…っ"; interval += 100; proceed += 1; }
+                    		insertString(gTextCursor, str);
+                            // 遅いのですすめる
+                            gTextCursor += proceed;
+    					}
+    				}
+    			}
+    		}
+        }
+
+
+    	if( gMessage.length <= gTextCursor )
+    	{
+            if (gAlreadyTrick)
+            {
+                var str = "";
+                if(Math.random() < 0.25) { str += "ッ"; interval += 100; }
+    			if(Math.random() < 0.50) { str += "…"; interval += 100; }
+    			if(Math.random() < 0.50) { str += "っ"; interval += 100; }
+                str = insertExclamation(str);
+                insertString(gTextCursor, str);
+            }
+
+            gTextCursor = gMessage.length;
+            gFinish = true;
+        }
+		if( !gFinish )
+		{
+			gIntervalTimer = setTimeout( update, gNextInterval );
+			gNextInterval = interval;
+            gTextCursor++;
+		}
+
+		output_area.innerHTML = gMessage.substring(0, gTextCursor);
+
+		//document.getElementById("Debug").innerText = "(" + gTextCursor + "/" + gMessage.length + ")" + "\n" + 
+        //    "gNextInterval:" + gNextInterval + "\n" + 
+        //    "gTension     :" + gTension + "\n" + 
+        //    "gBreath      :" + gBreath + "\n";
+	}
+	else update();
+}
+
+function insertString( pos, str )
+{
+	if(str == "") return;
+	if(str == undefined) return;
+    if(str.includes("undefined"))
+    {
+        // わからんので暫定～～～～～～
+        return;
+    }
+
+	var message = gMessage.substring(0, pos);
+	message += str;
+	message += gMessage.substring(pos);
+	gMessage = message;
+}
+
+gReactionTable = [];
+gReactionTable['あ'] = [];
+gReactionTable['い'] = [];
+gReactionTable['う'] = [];
+gReactionTable['え'] = [];
+gReactionTable['お'] = [];
+gReactionTable['ん'] = [];
+
+gReactionTable['あ'].push('っ');
+gReactionTable['あ'].push('っく');
+gReactionTable['あ'].push('っん');
+gReactionTable['あ'].push('ん゛っ');
+gReactionTable['あ'].push('ひっ');
+gReactionTable['あ'].push('はっ');
+gReactionTable['あ'].push('っぁ゛');
+gReactionTable['あ'].push('あっ');
+gReactionTable['あ'].push('あぁっ');
+gReactionTable['あ'].push('っぁ');
+gReactionTable['あ'].push('ぁっ');
+gReactionTable['あ'].push('ひぃっ');
+gReactionTable['あ'].push('ひっ');
+gReactionTable['あ'].push('っぁ゛');
+gReactionTable['あ'].push('ん゛っ');
+gReactionTable['あ'].push('ぁぁ゛っ');
+gReactionTable['あ'].push('あ゛っ');
+gReactionTable['い'].push('ん゛っ');
+gReactionTable['い'].push('んっ'); 
+gReactionTable['い'].push('ぎっ'); 
+gReactionTable['い'].push('っ');   
+gReactionTable['い'].push('ひぃっ');
+gReactionTable['い'].push('ぎっ');
+gReactionTable['い'].push('ぎぃッ');
+gReactionTable['い'].push('んっ');
+gReactionTable['い'].push('ぁッ');
+gReactionTable['い'].push('ィっ');
+gReactionTable['い'].push('っぃん');
+gReactionTable['う'].push('ぐっ');
+gReactionTable['う'].push('ふっ');
+gReactionTable['う'].push('ん゛っ');
+gReactionTable['う'].push('ぅっ'); 
+gReactionTable['う'].push('っぐ'); 
+gReactionTable['う'].push('っん'); 
+gReactionTable['え'].push('ん゛っ');
+gReactionTable['え'].push('っ');   
+gReactionTable['え'].push('ぁッ'); 
+gReactionTable['え'].push('っ…ぇ');
+gReactionTable['え'].push('ひっ');
+gReactionTable['え'].push('ぇっん゛');
+gReactionTable['お'].push('ん゛っ');
+gReactionTable['お'].push('お゛っ');
+gReactionTable['お'].push('ぉ゛ッ');
+gReactionTable['お'].push('ぉ゛ッひ');
+gReactionTable['お'].push('っぉ');
+gReactionTable['お'].push('お゛っ');
+gReactionTable['お'].push('っぉ゛');
+gReactionTable['お'].push('おっ');
+gReactionTable['お'].push('お゛っ');
+gReactionTable['お'].push('おぅ゛っ');
+gReactionTable['お'].push('ぉっ');
+gReactionTable['お'].push('ぅ゛っ');
+gReactionTable['お'].push('ォっ');
+
+gReactionTable['ん'].push('んっ');
+gReactionTable['ん'].push('お゛っ');
+gReactionTable['ん'].push('ぅ゛っ');
+gReactionTable['ん'].push('うっ');
+
+function trick()
+{
+	var last_char = gMessage[gTextCursor-1];
+
+	var is_hit = false;
+
+	var last_char_kind = "該当なし";
+	switch(last_char)
+	{
+		case 'あ': case 'か': case 'が': case 'さ': case 'ざ': case 'た': case 'だ': case 'な': case 'は': case 'ば': case 'ま': case 'や': case 'ら': case 'わ':
+		case 'ア': case 'カ': case 'ガ': case 'サ': case 'ザ': case 'タ': case 'ダ': case 'ナ': case 'ハ': case 'バ': case 'マ': case 'ヤ': case 'ラ': case 'ワ':
+			last_char_kind = 'あ';
+			break;
+		case 'い': case 'き': case 'ぎ': case 'し': case 'じ': case 'ち': case 'ぢ': case 'に': case 'ひ': case 'び': case 'み': case 'り':
+		case 'イ': case 'キ': case 'ギ': case 'シ': case 'ジ': case 'チ': case 'ヂ': case 'ニ': case 'ヒ': case 'ビ': case 'ミ': case 'リ':
+			last_char_kind = 'い';
+			break;
+		case 'う': case 'く': case 'ぐ': case 'す': case 'ず': case 'つ': case 'づ': case 'ぬ': case 'ふ': case 'ぶ': case 'む': case 'ゆ': case 'る':
+		case 'ウ': case 'ク': case 'グ': case 'ス': case 'ズ': case 'ツ': case 'ヅ': case 'ヌ': case 'フ': case 'ブ': case 'ム': case 'ユ': case 'ル':
+			last_char_kind = 'う';
+			break;
+		case 'え': case 'け': case 'げ': case 'せ': case 'ぜ': case 'て': case 'で': case 'ね': case 'へ': case 'べ': case 'め': case 'れ':
+		case 'エ': case 'ケ': case 'ゲ': case 'セ': case 'ゼ': case 'テ': case 'デ': case 'ネ': case 'ヘ': case 'ベ': case 'メ': case 'レ':
+			last_char_kind = 'え';
+			break;
+		case 'え': case 'け': case 'げ': case 'せ': case 'ぜ': case 'て': case 'で': case 'ね': case 'へ': case 'べ': case 'め': case 'れ':
+		case 'エ': case 'ケ': case 'ゲ': case 'セ': case 'ゼ': case 'テ': case 'デ': case 'ネ': case 'ヘ': case 'ベ': case 'メ': case 'レ':
+			last_char_kind = 'お';
+			break;
+		case 'ん':
+		case 'ン':
+			last_char_kind = 'ん';
+			break;
+	}
+
+	if( document.getElementById("OhMode").checked )
+    {
+		last_char_kind = 'お';
+    }
+
+	var reaction = gReactionTable[last_char_kind];
+	if( reaction && reaction.length > 0 )
+	{
+		is_hit = true;
+		var idx = Math.floor(Math.random() * reaction.length);
+		var str = reaction[idx];
+		if( gBreath < 5 )
+        {
+            str += "…";
+        }
+		if(Math.random() < 0.2)
+        {
+            str += last_char;
+        }
+
+		str = insertExclamation(str);
+		insertString(gTextCursor, str);
+	}
+	else
+	{
+		switch(last_char)
+		{
+			case '、':
+			case '。':
+			case '？':
+			case '！':
+			case '・':
+				break;
+			default:
+				is_hit = true;
+				if(Math.random() < 0.15)
+				{
+					var str = "っ";
+					if(Math.random() < 0.2) str += "…";
+
+					if( document.getElementById("OhMode").checked )
+                    {
+    					if(Math.random() < 0.1) str += "おっ";
+    					if(Math.random() < 0.1) str += "んっ";
+    					if(Math.random() < 0.1) str += "うっ";
+    					if(Math.random() < 0.1) str += "ほっ";
+    					if(Math.random() < 0.1) str += "おっ";
+                    }
+                    else
+                    {
+    					if(Math.random() < 0.1) str += "やっ";
+    					if(Math.random() < 0.1) str += "あっ";
+    					if(Math.random() < 0.1) str += "めっ";
+    					if(Math.random() < 0.1) str += "くっ";
+    					if(Math.random() < 0.1) str += "はっ";
+                    }
+
+					if( gBreath < 5 ) str += "…";
+					if(Math.random() < 0.2) str += last_char;
+
+                    str = insertExclamation(str);
+					insertString(gTextCursor, str);
+				}
+				break;
+		}
+	}
+
+	if( gTension > 250 )
+	{
+		if(Math.random() < 0.25)
+		{
+			if( document.getElementById("Declare").checked )
+			{
+				var str = "";
+				if(Math.random() < 0.25) { str += "…"; }
+				if(Math.random() < 0.25) { str += "っ"; }
+				if(Math.random() < 0.25) { str += "ッ"; }
+				str += "イきました";
+				if(Math.random() < 0.25) { str += "あ"; }
+				if(Math.random() < 0.25) { str += "あ゛"; }
+				if(Math.random() < 0.25) { str += "っ"; }
+				if(Math.random() < 0.25) { str += "ッ"; }
+				if(Math.random() < 0.25) { str += "…"; }
+
+				str = insertExclamation(str);
+				insertString(gTextCursor, str);
+			}
+		}
+	}
+
+	if(Math.random() < 0.25)
+	{
+		var top = gTextCursor - Math.floor(Math.random() * 10);
+		if( top < 0 ) top = 0;
+		var end = gTextCursor;
+		var str = gMessage.substring(top, end);
+
+        var proceed = 0;
+		if(Math.random() < 0.25) { str += "…ッ"; proceed += 1; }
+		if(Math.random() < 0.75) { str += "…";   proceed += 0; }
+		insertString(gTextCursor, str);
+        // 遅いのですすめる
+        gTextCursor += proceed;
+	}
+
+	gPrevTension = gTension;
+	if(is_hit)
+	{
+    	if( document.getElementById("SuperTrick").checked )
+        {
+    		gTension += 500;
+        }
+        else
+        {
+    		gTension += 50;
+        }
+   		gBreath  -= 30;
+		gTrickReserve = false;
+	}
+}
+
+function insertExclamation(str)
+{
+	if( 100 < gTension )
+	{
+		if( document.getElementById("Heart").checked )
+        {
+            if(Math.random() < 0.75)
+            {
+                str += "♥";
+                // 連続♥
+                if( 200 < gTension )
+                {
+                    var num = (gTension - 200) / 500;
+                    var heart_idx = 0;
+                    for(; heart_idx < num; heart_idx++)
+                    {
+                        if(Math.random() < 0.5) str += "♥";
+                    }
+                }
+            }
+            else
+            {
+                str += "！";
+                // 連続!
+                if( 200 < gTension )
+                {
+                    var num = (gTension - 200) / 500;
+                    var heart_idx = 0;
+                    for(; heart_idx < num; heart_idx++)
+                    {
+                        if(Math.random() < 0.5) str += "！";
+                    }
+                }
+            }
+        }
+		else
+        {
+            str += "！";
+        }
+	}
+	else if( gTension > 50 )
+	{
+		str += "！";
+	}
+
+    return str;
+}
+
+</script>

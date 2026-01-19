@@ -1,0 +1,58 @@
+﻿
+/*These styles will only be applied when printing the pages.
+This must be in the common folder and be included using
+<link rel="stylesheet" type="text/css" href="siteprinting.css" media="print"/>
+*/
+.printheader
+{
+    display:block;
+}
+
+Table.printheadermaintable
+{
+    border-top: solid 1px black;   
+    border-left: solid 1px black;   
+    border-bottom: solid 1px black;   
+    border-right: solid 1px black;   
+}
+
+Table.printheadermaintable TD
+{
+    padding-left: 10px;
+    padding-right: 15px;
+    /*
+    border-top: solid 1px black;   
+    border-left: solid 1px black;   
+    border-bottom: solid 1px black;   
+    border-right: solid 1px black;
+    */
+}
+
+/*
+This fixes the printing issue
+with the footer being alone on a 2nd page
+*/
+#leftnavtable
+{
+ height:1%;
+}
+
+.leftnav,
+#mainLeftNavContainer,
+#mainLeftNav
+{
+    display:none;
+    height: 1px;
+}
+
+.siteheader,
+#mainTopNavContainer
+{
+    display:none;
+}
+
+/*Assuming the breadcrumb div always ends up with this Id*/
+#ctl00_PnlBreadCrumb
+{
+    display:none;
+}

@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[33],{1040:function(l,s,e){"use strict";e.r(s),s.default={small:"471",smallplus:"568",medium:"768",large:"1024",mobile:"767"}}},[[1040,10]]]);
+//# sourceMappingURL=learnosity.57c87fcca843710a0de6.js.map

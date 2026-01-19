@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+<meta name = 'viewport' content = 'width = device-width, initial-scale=1'>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="index.html#internet-0">Home</a>
+  <div class="subnav">
+    <button class="subnavbtn">Linking Computers<i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+      <a href="index.html#internet-3">Path</a>
+      <a href="index.html#internet-8">Data Stream/Packets</a>
+      <a href="index.html#internet-10">Routers</a>
+      <a href="index.html#internet-9">Network Redundancy</a>
+      <a href="index.html#internet-11">Bandwidth/Bit rate</a>
+      <a href="index.html#internet-16">Computing System/Computing Network/Computer Device</a>
+    </div>
+  </div> 
+  <div class="subnav">
+    <button class="subnavbtn">Protocols<i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+      <a href="index.html#internet-1">TCP</a>
+      <a href="index.html#internet-2">UDP</a>
+      <a href="index.html#internet-5">IP</a>
+      <a href="index.html#internet-7">HTTP and HTTPS</a>
+      <a href="index.html#internet-12">Protocol</a>
+    </div>
+  </div>
+  <div class="subnav">
+    <button class="subnavbtn">Miscellaneous<i class="fa fa-caret-down"></i></button>
+    <div class="subnav-content">
+      <a href="index.html#internet-0">IP Addresses</a>
+      <a href="index.html#internet-4">Fault Tolerance</a>
+      <a href="index.html#internet-6">DNS: Subdomain and Hierarchy</a>
+      <a href="index.html#internet-14">Network Reliability</a>
+      <a href="index.html#internet-15">Scalability</a>
+      <a href="index.html#internet-13">Latency</a>
+    </div>
+  </div> 
+  
+</div>
+<div class="container">
+    </div>
+</div>
+<script>
+      var html = '';
+      for (i in portfolio) {
+        var info = portfolio[i];
+        var projectsHtml = '';
+        var list = info['projects'];
+        for (p of list) {
+          projectsHtml += `<div class = 'portfolio'>
+<a href = 'https://csp-project-1--mukundvenkatesh.repl.co/${p['link']}'><img src= 'https://csp-project-1--mukundvenkatesh.repl.co/${p['image']}'> <h3> ${p['title']}</h3></a>
+<p id='desc'>${p['description']}</p></div>`;
+        }
+        html += `<div class = 'portfolio-container' id = 'internet-${i}'><h3>${info['category']}</h3>
+      ${projectsHtml}</div>`;
+      }
+      $('.container').append(html);   
+
+
+    </script>
+</body>
+</html>

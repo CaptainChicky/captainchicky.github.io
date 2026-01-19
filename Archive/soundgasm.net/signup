@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>soundgasm.net</title>
+
+        <link href='//fonts.googleapis.com/css?family=Ubuntu:400,500,700|Roboto' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/site.css" />
+        
+                
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo">Soundgasm.net Logo</a>
+        <nav>
+            <a href="https://soundgasm.net/">Home</a><a href="https://soundgasm.net/login">Login</a><a href="https://soundgasm.net/signup">Signup</a><a href="https://soundgasm.net/contact">Contact</a>        </nav>
+    </header>
+<h1>Create an Account!</h1>
+
+<div class="signupform">
+<form action="https://soundgasm.net/signup/create_member" method="post" accept-charset="utf-8" id="signupform"><div style="display:none">
+<input type="hidden" name="csrf_test_name" value="cfc9b936c5ba29362dcc6771d47e20d0" />
+</div>
+<label for="email_address">Email</label> <input type="text" name="email_address" value="" id="email_address"  /><label for="username">Username</label> <input type="text" name="username" value="" id="username"  /><label for="password">Password</label> <input type="password" name="password" value="" id="password"  /><label for="password2">Confirm Password</label> <input type="password" name="password2" value="" id="password2"  />
+<input type="submit" name="submit" value="Create Account" id="submit"  />
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /*/pop
+Disallow: /en/library/science/general-1/sci1.5-temperature.htm
+Disallow: /en/library/science/general-1/sci1.5-temperature.htm
+Sitemap: https://www.visionlearning.com/sitemap.xml

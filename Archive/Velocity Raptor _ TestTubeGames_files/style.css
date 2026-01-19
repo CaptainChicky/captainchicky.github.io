@@ -1,0 +1,2815 @@
+/*
+Theme Name: TestTubeBlog
+Theme URI: http://wordpress.org/
+Author: Andy Hall
+Author URI: http://www.testtubegames.com
+Description: Clean, elegant, timeless.  And exclusively for TestTubeGames.
+Version: 1.0
+License: 
+License URI: 
+Tags: awesome, mcrad
+Text Domain: TestTubeBlog
+*/
+
+/*
+Credit: http://www.templatemo.com
+*/
+
+body {
+margin: 0;
+padding: 0;
+color: #333;
+font-family: 'Roboto', Tahoma, Geneva, sans-serif;
+font-size: 13px;
+line-height: 1.5em;
+background-color: #f4cf80;
+background-position: top;
+background-repeat: repeat-x;
+}
+
+#home {
+background-image: url(../Images/Navigation/body_wrapper.png);
+}
+
+#subpage {
+background-image: url(../Images/Navigation/sub_body_wrapper.png);
+}
+
+#flashpage {
+background-image: url(../Images/Navigation/flash_body_wrapper.png);
+}
+
+#darkpage {
+background-image: url(../Images/Navigation/dark_body_wrapper.png);
+background-color: #000;
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 300;
+}
+#darkpage p, #darkpage li, #darkpage a {
+font-family: 'Lato', Tahoma, sans-serif;
+font-size: 16px;
+font-weight: 300;
+}
+#darkpage h2 {
+font-weight: 300;
+}
+#darkpage h1 {
+font-weight: 300;
+}
+
+
+#darkpage h4 {
+font-size: 20px;
+}
+
+
+#lightpage {
+background-image: url(../Images/Navigation/light_body_wrapper.png);
+background-color: #ffe4aa;
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 300;
+}
+#lightpage p, #lightpage li, #lightpage a {
+font-family: 'Lato', Tahoma, sans-serif;
+//font-size: 16px;
+font-size: 15px;
+//font-weight: 300;
+font-weight: 400;
+}
+#lightpage h2 {
+font-weight: 300;
+}
+#lightpage h1 {
+font-weight: 300;
+}
+#lightpage h4 {
+font-size: 20px;
+}
+
+
+a, a:link, a:visited {
+color: #0000FF;
+font-weight: normal;
+text-decoration: underline;
+}
+
+a:hover {
+text-decoration: none;
+}
+
+a.more {
+display: inline-block;
+padding-right: 20px;
+background: url(../Images/Navigation/moreArrow.png) center right no-repeat;
+font-weight: 700;
+text-decoration: none;
+}
+
+a.white:link {
+color: #FFFFFF;
+text-decoration: none;
+font-size: 14px;
+}
+a.white:active {
+color: #FFFFFF;
+text-decoration: none;
+font-size: 14px;
+}
+a.white:visited {
+color: #FFFFFF;
+text-decoration: none;
+font-size: 14px;
+}
+a.white:hover {
+color: #DDDDDD;
+text-decoration: none;
+font-size: 14px;
+}
+
+a.red:link {
+color: #FF0000;
+text-decoration: none;
+}
+a.red:active {
+color: #FF0000;
+text-decoration: none;
+}
+a.red:visited {
+color: #FF0000;
+text-decoration: none;
+}
+a.red:hover {
+color: #333333;
+text-decoration: none;
+}
+
+
+p {
+margin: 0 0 10px 0;
+padding: 0;
+}
+
+img {
+border: none;
+}
+
+blockquote {
+font-style: italic;
+margin: 0 0 0 10px;
+}
+
+cite {
+font-weight: bold;
+color: #769900;
+}
+
+cite a, cite a:link, cite a:visited {
+font-weight: bold;
+color: #769900;
+}
+
+cite span {
+font-weight: 400;
+color: #333;
+}
+
+em {
+color: #000;
+}
+
+h1, h2, h3, h4, h5, h6 {
+color: #000;
+font-weight: 300;
+font-family: 'Lato', Tahoma, sans-serif;
+}
+h1 {
+font-size: 34px;
+margin: 0 0 30px;
+padding: 5px 0
+}
+h2 {
+font-size: 28px;
+margin: 0 0 25px;
+padding: 5px 0;
+}
+h3 {
+font-size: 22px;
+margin: 0 0 20px;
+padding: 0;
+line-height: 1.2em;
+}
+h4 {
+font-size: 18px;
+margin: 0 0 15px;
+padding: 0;
+}
+h5 {
+font-size: 16px;
+margin: 0 0 10px;
+padding: 0;
+}
+h6 {
+font-size: 14px;
+margin: 0 0 5px;
+padding: 0;
+}
+
+h1.white {
+color: #FFF;
+}
+h2.white {
+color: #FFF;
+}
+h3.white {
+color: #FFF;
+}
+h4.white {
+color: #FFF;
+}
+h5.white {
+color: #FFF;
+}
+h6.white {
+color: #FFF;
+}
+
+h1.small {
+margin: 18px;
+}
+h2.small {
+margin: 14px;
+}
+h3.small {
+margin: 10px;
+}
+
+h1.huge {
+font-size: 64px;
+margin: 0 0 60px;
+padding: 10px 0
+}
+h2.huge {
+font-size: 58px;
+margin: 0 0 55px;
+padding: 10px 0
+}
+h3.huge {
+font-size: 52px;
+margin: 0 0 20px;
+padding: 10px 0
+}
+h4.huge {
+font-size: 48px;
+margin: 0 0 45px;
+padding: 5px 0
+}
+h5.huge {
+font-size: 42px;
+margin: 0 0 40px;
+padding: 5px 0
+}
+h6.huge {
+font-size: 38px;
+margin: 0 0 35px;
+padding: 5px 0
+}
+
+.cleaner {
+clear: both
+}
+.h10 {
+height: 10px
+}
+.h20 {
+height: 20px
+}
+.h30 {
+height: 30px
+}
+.h40 {
+height: 40px
+}
+.h50 {
+height: 50px
+}
+.h60 {
+height: 60px
+}
+
+.float_l {
+float: left
+}
+.float_r {
+float: right
+}
+
+.dash_r {
+border-right: 2px dashed #c49f50;
+}
+.dash_l {
+border-left: 2px dashed #c49f50;
+}
+.dash_b {
+border-bottom: 2px dashed #c49f50;
+}
+.dash_t {
+border-top: 2px dashed #c49f50;
+}
+
+.image_wrapper {
+float: left;
+border: 1px solid #FFF;
+padding: 4px;
+background: #FFF;
+margin-right: 25px;
+margin-bottom: 0px;
+}
+
+.image_wrapper2 {
+border: 1px solid #FFF;
+padding: 4px;
+background: #FFF;
+margin-right: 25px;
+margin-bottom: 0px;
+}
+
+.image_wrapper3 {
+border: 1px solid #000;
+padding: 4px;
+background: #000;
+margin-right: 25px;
+margin-bottom: 0px;
+}
+
+
+.image_fl {
+float: left;
+margin: 3px 30px 0 0;
+}
+
+.image_fr {
+float: right;
+margin: 3px 0 0 30px;
+}
+
+.bottomSpace {
+margin-bottom: 10px;
+}
+
+.templatemo_list {
+margin: 20px 0 20px 10px;
+padding: 0;
+list-style: none;
+}
+
+.templatemo_list li {
+color: #769900;
+margin: 0;
+padding: 0 0 5px 20px;
+background: url(../Images/Navigation/moreArrow.png) no-repeat scroll 0 5px;
+}
+
+.templatemo_list li a {
+/*	color: #769900; */
+	font-weight: normal;
+font-size: 12px;
+text-decoration: none;
+}
+
+.templatemo_list li a:hover {
+text-decoration: underline;
+}
+
+#flash_slider {
+width: 900px;
+height: 300px;
+margin: auto;
+margin-top: 50px;
+margin-bottom: 50px;
+}
+
+#outer_wrapper {
+width: 100%;
+background: url(../Images/Navigation/headme.png) center top no-repeat;
+}
+
+#outer_wrapper_higgs {
+width: 100%;
+background: url(../Images/Higgs/headmeHiggs.png) center top no-repeat;
+}
+
+#outer_wrapper_sliderule {
+width: 100%;
+background: url(../Images/SlideRule/headmeSlideRule.png) center top no-repeat;
+}
+
+#outer_wrapper_sundial {
+width: 100%;
+background: url(../Images/Sundial/headmeSundial.png) center top no-repeat;
+}
+#outer_wrapper_quantum {
+width: 100%;
+background: url(../Images/Quantum/headmeQuantum.png) center top no-repeat;
+}
+
+#outer_wrapper_shocktopus {
+width: 100%;
+background: url(../Images/Shocktopus/headMe.png) center top no-repeat;
+}
+
+
+#outer_wrapper_logo {
+width: 100%;
+background: url(../Images/Navigation/headme.png) center top no-repeat;
+}
+
+
+
+p.higgs {
+font-size: 22px;
+color: #000;
+line-height: 110%;
+}
+
+p.tinyText {
+font-size: 10px;
+color: #000;
+line-height: 120%;
+}
+
+
+#wrapper {
+width: 980px;
+padding: 0 10px;
+margin: 0 auto; 
+/*	background:url(../Images/templatemo_body.jpg) center top no-repeat; */
+}
+    html>body #wrapper {
+width: 960px;
+}
+
+#outer_sub_wrapper {
+width: 100%; 
+/*	background: url(../Images/sub_body_wrapper.png) center top no-repeat;*/
+}
+
+#outer_sub_wrapper_logo {
+width: 100%;
+background: url(../Images/Navigation/headme.png) center top no-repeat;
+}
+
+
+#outer_game_wrapper_corn {
+width: 100%;
+background-color: #FF7;
+margin-top: 20px;
+border-top: 2px solid #FFF;
+border-bottom: 2px solid #FFF;
+/*	background: url(../Images/sub_body_wrapper.png) center top no-repeat;*/
+}
+
+#outer_game_wrapper_r {
+width: 960px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 20px;
+}
+
+#outer_game_wrapper_bb {
+width: 960px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 0px;
+background-color: #000;
+}
+
+#outer_game_wrapper_grav2 {
+width: 964px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 0px;
+}
+
+
+#outer_game_wrapper_shock {
+width: 960px;
+height: 646px;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 0px;
+background-color: #0000;
+}
+
+#outer_game_wrapper_grav {
+width: 100%;
+background-color: #222;
+margin-top: 20px;
+border-top: 2px solid #FFF;
+border-bottom: 2px solid #FFF;
+/*	background: url(../Images/sub_body_wrapper.png) center top no-repeat;*/
+}
+
+#outer_game_wrapper_higgs {
+width: 100%;
+margin-top: 20px;
+border-top: 2px solid #000;
+border-bottom: 2px solid #000;
+background: url(../Images/Higgs/higgs_slice.png) center top;
+background-color: #888;
+}
+
+
+#outer_game_wrapper {
+width: 100%;
+background-color: #D4Af60;
+margin-top: 20px;
+border-top: 2px solid #FFF;
+border-bottom: 2px solid #FFF;
+/*	background: url(../Images/sub_body_wrapper.png) center top no-repeat;*/
+}
+
+
+#game_wrapper {
+width: 960px;
+padding: 0 0px;
+margin: 0 auto; 
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+#game_wrapper_grav {
+width: 964px;
+padding: 0 0px;
+margin: 0 auto; 
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+
+
+#game_wrapper_light {
+width: 964px;
+padding: 0 0px;
+margin: 0 auto; 
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+#left_nav {
+float: left;
+width: 200px;
+margin-top: 100px;
+margin-right:10px;
+}
+#right_side {
+float: left;
+width: 740px;
+margin-top: 100px;
+margin-left:10px;
+}
+
+
+#game_wrapper_bb {
+width: 800px;
+padding: 0 0px;
+margin: 0 auto; 
+    
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+
+#game_wrapper_shock {
+width: 800px;
+padding: 0px 0px;
+margin: 0 auto;
+height: 640px;
+    
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+
+
+#sub_wrapper {
+width: 980px;
+padding: 0 10px;
+margin: 0 auto; 
+/*	background:url(../Images/sub_body_wrapper.png) center top no-repeat; */
+}
+    html>body #sub_wrapper {
+width: 960px;
+}
+
+
+#header {
+width: 960px;
+height: 250px;
+height: 200px;
+}
+
+#header_top {
+width: 960px;
+height: 190px;
+height: 140px;
+}
+
+#header_bottom {
+width: 960px;
+height: 60px;
+}
+
+#below_header {
+width: 960px;
+height: 70px;
+color: #FFF;
+}
+
+
+#site_title {
+float: left;
+width: 520px;
+height: 105px;
+margin-top: 26px; 
+  /*  background: url(../Images/MainPage/TitleLogo.png) no-repeat top left; 
+*/
+}
+
+#site_title h1 {
+margin: 0;
+padding: 0;
+}
+
+
+#shotHolder1 {
+background-color: #000;
+padding: 10px;
+border: 2px solid #FFF;
+}
+
+
+/*menu */
+
+#menu {
+float: right;
+margin-top: 60px;
+}
+
+#socialContainer {
+float: left;
+margin-top: 27px;
+}
+#socialContainer ul {
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+font-size: 22px;
+}
+#socialContainer ul li {
+margin: 0px;
+margin-right: 7px;
+float: left;
+}
+
+#socialContainer2 {
+float: right;
+margin-top: 27px;
+margin-right: 20px;
+}
+#socialContainer2 ul {
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+font-size: 22px;
+}
+#socialContainer2 ul li {
+margin: 0px;
+margin-right: 7px;
+float: left;
+}
+
+#socialContainer3 {
+float: left;
+margin-top: 0px;
+}
+#socialContainer3 ul {
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+font-size: 22px;
+}
+#socialContainer3 ul li {
+margin: 0px;
+margin-right: 7px;
+float: left;
+}
+
+
+
+#navcontainer {
+float: right;
+margin-top: 19px;
+}
+    html>body #navcontainer {
+}
+
+#navcontainer ul {
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+font-size: 22px;
+}
+
+#navcontainer ul li {
+margin: 0px;
+margin-right: 7px;
+float: left;
+}
+
+#navcontainer ul li a {
+display: block;
+text-decoration: none;
+color: #000;
+}
+
+#navcontainer ul li a:hover {
+color: #000;
+}
+
+
+#homeicon {
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/homeF.png") no-repeat 0 0;
+background-size: 124px 82px;
+}
+
+#homeicon:hover {
+background-position: 0 -41px;
+}
+    
+#gamesicon {
+float: left;
+margin-left: 0px;
+margin-right: 0px;
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/gamesF.png") no-repeat 0 0;
+background-size: 124px 82px;
+}
+
+#gamesicon:hover {
+background-position: 0 -41px;
+}
+
+#discordicon {
+float: left;
+margin-left: 0px;
+margin-right: 0px;
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/discordF.png") no-repeat;
+background-size: 124px 82px;
+}
+
+#discordicon:hover {
+background-position: 0 -41px;
+}
+
+
+#blogicon {
+float: left;
+margin-left: 0px;
+margin-right: 0px;
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/blogF.png") no-repeat 0 0;
+background-size: 124px 82px;
+}
+
+#blogicon:hover {
+background-position: 0 -41px;
+}
+
+#forumsicon {
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/forumsF.png") no-repeat 0 0;
+background-size: 124px 82px;
+}
+
+#forumsicon:hover {
+background-position: 0 -41px;
+}
+
+
+#abouticon {
+float: left;
+margin-left: 0px;
+margin-right: 0px;
+width: 124px;
+height: 41px;
+background: url("../Images/Navigation/aboutF.png") no-repeat 0 0;
+background-size: 124px 82px;
+}
+
+#abouticon:hover {
+background-position: 0 -41px;
+}
+    
+
+/*menu end */
+
+
+
+
+#intro_text {
+clear: both;
+height: 110px;
+padding: 30px;
+color: #000;
+font-size: 22px;
+line-height: 38px;
+width: 540px;
+font-weight: 700;
+font-family: Georgia, "Times New Roman", Times, serif
+}
+    html>body #intro_text {
+width: 480px;
+height: 50px;
+}
+
+
+#middle {
+clear: both;
+height: 140px;
+padding: 15px 30px;
+}
+    html>body #middle {
+height: 170px;
+}
+
+
+img.centeredit {
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+
+ul.Higgs {
+list-style-type: none;
+}
+
+/*ARCHIVE*/
+#standardtitlebar {
+width: 960px;
+height: 80px;
+margin-top: 60px;
+margin-bottom: -40px;
+text-align: left;
+}
+	
+#smallerTitleBar {
+width: 960px;
+margin-top: 60px;
+margin-bottom: -40px;
+margin-left: 0px;
+text-align: left;
+}
+
+#smallerTitleBar h2:before {
+content: '';
+height: 2px;
+width: 100%;
+background: #000;
+position: absolute;
+z-index: -1;
+left: 0;
+top: 50%;
+margin-top: -1px;
+opacity: .2;
+}
+
+
+/* Flash Game sections */
+
+#gametitlebar {
+width: 960px;
+margin-top: 60px;
+text-align: center;
+}
+
+#gametitlebar_raptor {
+width: 960px;
+height: 187px;
+margin-top: 60px;
+text-align: center;
+background: url("../Images/Raptor/gameMenu.png") center bottom no-repeat;
+}
+    
+#gametitlebar_gravity {
+width: 960px;
+height: 60px;
+margin-top: 60px;
+text-align: center;
+}
+	
+#gametitlebar_shocktopus {
+width: 960px;
+height: 214px;
+margin-top: 60px;
+text-align: center;
+background: url("../Images/Shocktopus/gameMenu.png") center bottom no-repeat;
+}
+    
+#gametitlebar_higgs {
+	width: 960px;
+	height: 60px;
+	margin-top: 60px;
+	text-align: center;
+	/*
+width: 960px;
+height: 187px;
+margin-top: 60px;
+text-align: center;
+background: url("../Images/Higgs/gameMenu.png") center bottom no-repeat;
+*/
+}
+
+#gametitlebar_bondbreaker {
+width: 960px;
+height: 107px;
+margin-top: 30px;
+text-align: center;
+background: url("../Images/BondBreaker/gameMenu.png") center bottom no-repeat;
+}
+
+#gametitlebar_higgs2 {
+width: 960px;
+height: 187px;
+margin-top: 60px;
+text-align: center;
+background: url("../Images/Higgs/gameMenu2.png") center bottom no-repeat;
+}
+	
+#gameNav {
+float: left;
+width: 100%;
+border-bottom: 4px solid #000;
+overflow: hidden;
+position: relative;
+}
+
+#gameNav ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNav ul li {
+display: block;
+float: left;
+list-style: none;
+margin: 0;
+padding: 0;
+position: relative;
+right: 50%;
+}
+#gameNav ul li a {
+display: block;
+margin: 0 0 0 1px;
+padding: 7px 10px;
+background: #7EB6FF;
+color: #000;
+text-decoration: none;
+line-height: 1em;
+border: 1px solid #FFF;
+}
+#gameNav ul li a:hover {
+background: #9ED6FF;
+color: #000;
+}
+
+#gameNav ul li a.active,
+#gameNav ul li a.active:hover {
+color: #000;
+background: #999;
+font-weight: bold;
+}
+
+
+/*raptor specialness */
+
+#gameNavRaptor {
+float: left;
+height: 82px;
+margin-top: 105px;
+width: 100%;
+overflow: hidden;
+position: relative;
+}
+#gameNavRaptor ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+margin-top: 24px;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNavRaptor ul li {
+display: block;
+float: left;
+list-style: none;
+margin: 0;
+margin-right: 7px;
+padding: 0;
+position: relative;
+right: 50%;
+}
+#gameNavRaptor ul li a {
+display: block;
+text-decoration: none;
+color: #000;
+}
+#gameNavRaptor ul li a:hover {
+color: #000;
+}
+
+#raptorPlayNo {
+width: 131px;
+height: 51px;
+background: url("../Images/Raptor/playPushed.png") no-repeat 0 0;
+}
+    
+#raptorPlay {
+width: 131px;
+height: 51px;
+background: url("../Images/Raptor/playButton.png") no-repeat 0 0;
+}
+#raptorPlay:hover {
+background-position: 0 -51px;
+}
+    
+#rel101No {
+width: 275px;
+height: 51px;
+background: url("../Images/Raptor/rel101Pushed.png") no-repeat 0 0;
+}
+#rel101 {
+width: 275px;
+height: 51px;
+background: url("../Images/Raptor/rel101Button.png") no-repeat 0 0;
+}
+#rel101:hover {
+background-position: 0 -51px;
+}
+
+#raptorLinksNo {
+width: 131px;
+height: 51px;
+background: url("../Images/Raptor/linksPushed.png") no-repeat 0 0;
+}
+#raptorLinks {
+width: 131px;
+height: 51px;
+background: url("../Images/Raptor/linksButton.png") no-repeat 0 0;
+}
+#raptorLinks:hover {
+background-position: 0 -51px;
+}
+
+
+/*gravity specialness */
+
+#gameNavGravity {
+float: left;
+height: 62px;
+margin-top: 0px;
+width: 100%;
+overflow: hidden;
+position: relative;
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 100;
+font-size: 26px;
+color: #ccc;
+}
+#gameNavGravity ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNavGravity ul li {
+display: block;
+float: left;
+list-style: none;
+margin: 0;
+margin-right: 7px;
+margin-top: 10px;
+padding: 0;
+position: relative;
+height: 45px;
+right: 50%;
+
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 100;
+font-size: 26px;
+color: #ccc;
+}
+
+#gameNavGravity ul li a {
+display: block;
+text-decoration: none;
+opacity: 1;
+
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 300;
+font-size: 26px;
+color: #ccc;
+
+}
+#gameNavGravity ul li a:hover {
+opacity: .5;
+}
+
+#gravityPlay {
+width: 116px;
+}
+#gravityDownload {
+width: 150px;
+}
+#gravityIOTD {
+width: 214px;
+}
+#gravityOld {
+width: 183px;
+}
+
+.dull {
+opacity: .5;
+}
+.dull_higgs {
+opacity: .6;
+}
+
+
+
+
+/*shocktopus specialness */
+
+#gameNavShocktopus {
+float: left;
+height: 82px;
+margin-top: 111px;
+width: 100%;
+overflow: hidden;
+position: relative;
+}
+#gameNavShocktopus ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+margin-top: 8px;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNavShocktopus ul li {
+display: block;
+float: left;
+list-style: none;
+padding: 0;
+position: relative;
+right: 50%;
+}
+#gameNavShocktopus ul li a {
+display: block;
+text-decoration: none;
+color: #000;
+}
+#gameNavShocktopus ul li a:hover {
+color: #000;
+}
+
+#shocktopusDownload_Dull {
+width: 200px;
+height: 56px;
+margin-right: 10px;
+background: url("../Images/Shocktopus/download_button.png") no-repeat 0 0;
+background-position: 0 -56px;
+}
+#shocktopusDownload {
+width: 200px;
+height: 56px;
+margin-right: 10px;
+background: url("../Images/Shocktopus/download_button.png") no-repeat 0 0;
+}
+#shocktopusDownload:hover {
+background-position: 0 -56px;
+}
+	
+#shocktopusOnline_Dull {
+width: 200px;
+height: 56px;
+margin-right: 200px;
+background: url("../Images/Shocktopus/online_button.png") no-repeat 0 0;
+background-position: 0 -56px;
+}
+#shocktopusOnline {
+width: 200px;
+height: 56px;
+margin-right: 200px;
+background: url("../Images/Shocktopus/online_button.png") no-repeat 0 0;
+}
+#shocktopusOnline:hover {
+background-position: 0 -56px;
+}
+	
+#shocktopusFAQ_Dull {
+width: 162px;
+height: 56px;
+background: url("../Images/Shocktopus/faq_button.png") no-repeat 0 0;
+background-position: 0 -56px;
+}
+#shocktopusFAQ {
+width: 162px;
+height: 56px;
+background: url("../Images/Shocktopus/faq_button.png") no-repeat 0 0;
+}
+#shocktopusFAQ:hover {
+background-position: 0 -56px;
+}
+	
+/* BB specialness */
+#gameNavBB {
+float: left;
+height: 82px;
+margin-top: 117px;
+width: 100%;
+overflow: hidden;
+position: relative;
+}
+#gameNavBB ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+margin-top: 7px;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNavBB ul li {
+display: block;
+float: left;
+list-style: none;
+margin: 0;
+margin-right: 8px;
+margin-left: 8px;
+padding: 0;
+position: relative;
+right: 50%;
+}
+#gameNavBB ul li a {
+display: block;
+text-decoration: none;
+color: #000;
+}
+#gameNavBB ul li a:hover {
+color: #000;
+}
+
+#bb_ios {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/iOSButton.png") no-repeat 0 0;
+}
+#bb_ios:hover {
+background-position: 0 -54px;
+}
+	
+#bb_android {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/androidButton.png") no-repeat 0 0;
+}
+#bb_android:hover {
+background-position: 0 -54px;
+}
+
+#bb_html {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/htmlButton.png") no-repeat 0 0;
+}
+#bb_html:hover {
+background-position: 0 -54px;
+}
+#bb_html_p {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/webPushed.png") no-repeat 0 0;
+}
+
+#bb_web {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/unityButton.png") no-repeat 0 0;
+}
+#bb_web:hover {
+background-position: 0 -54px;
+}
+#bb_web_p {
+width: 192px;
+height: 54px;
+background: url("../Images/BondBreaker/webPushed.png") no-repeat 0 0;
+}
+
+/* higgs specialness */
+
+#gameNavHiggs {
+float: left;
+height: 82px;
+margin-top: 111px;
+width: 100%;
+overflow: hidden;
+position: relative;
+}
+#gameNavHiggs ul {
+clear: left;
+float: left;
+list-style: none;
+margin: 0;
+margin-top: 14px;
+padding: 0;
+position: relative;
+left: 50%;
+text-align: center;
+}
+#gameNavHiggs ul li {
+display: block;
+float: left;
+list-style: none;
+margin: 0;
+margin-right: 7px;
+padding: 0;
+position: relative;
+right: 50%;
+}
+#gameNavHiggs ul li a {
+display: block;
+text-decoration: none;
+color: #000;
+}
+#gameNavHiggs ul li a:hover {
+color: #000;
+}
+
+#higgsCh1 {
+width: 167px;
+height: 51px;
+background: url("../Images/Higgs/chapter1Button.png") no-repeat 0 0;
+}
+#higgsCh1:hover {
+background-position: 0 -51px;
+}
+
+#higgsCh1No {
+width: 167px;
+height: 51px;
+background: url("../Images/Higgs/chapter1pushed.png") no-repeat 0 0;
+}
+
+#higgsCh2 {
+width: 167px;
+height: 51px;
+background: url("../Images/Higgs/chapter2Button.png") no-repeat 0 0;
+}
+#higgsCh2:hover {
+background-position: 0 -51px;
+}
+
+#higgsCh2No {
+width: 167px;
+height: 51px;
+background: url("../Images/Higgs/chapter2pushed.png") no-repeat 0 0;
+}
+        
+#fromFToHiggsIPhone {
+width: 204px;
+height: 51px;
+background: url("../Images/Higgs/gameBarIPhone.png") no-repeat 0 0;
+}
+#fromFToHiggsIPhone:hover {
+background-position: 0 -51px;
+}
+
+
+
+    
+.whiteBorder {
+border: 3px solid #FFF;
+}
+.blackBorder {
+border: 3px solid #000;
+}
+
+#game_100 {
+height: 100px;
+width: 100px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+#game_800 {
+height: 600px;
+width: 800px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+#game_600 {
+height: 450px;
+width: 600px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+#game_690 {
+height: 550px;
+width: 690px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+
+/* main */
+
+#main {
+clear: both;
+width: 960px;
+padding: 30px 0;
+}
+
+#main_bb {
+clear: both;
+width: 800px;
+padding: 2px 0px 2px 0px;
+}
+#main_grav {
+clear: both;
+width: 960px;
+padding: 2px 0px 2px 0px;
+}
+
+#main_shock {
+clear: both;
+width: 800px;
+height: 640px;
+padding: 0px 0px;
+margin-left: -3px;
+background-color: #000;
+border: 3px solid #000;	
+/*	background-image: url(../Images/Shocktopus/online_coming_soon.png); */
+}
+
+
+#main p {
+margin-bottom: 10px
+}
+#main_grav p {
+margin-bottom: 10px;
+color: #ccc;
+}
+#main_grav li {
+color: #ccc;
+}
+#main_grav h4 {
+color: #2796c6;
+}
+#main_grav h3 {
+color: #2796c6;
+}
+#main_grav h2 {
+color: #2796c6;
+}
+#main_grav a {
+color: #2796c6;
+}
+
+
+#main_light p {
+margin-bottom: 10px;
+
+color: #111;
+}
+#main_light li {
+color: #000;
+}
+#main_light h4 {
+color: #111;
+}
+#main_light h3 {
+color: #111;
+}
+#main_light h2 {
+color: #111;
+}
+#main_light a {
+color: #555;
+}
+
+
+
+#content {
+width: 620px;
+float: left;
+padding-right: 35px;
+/*border-right: 2px dashed #c49f50;*/
+}
+html>body #content {
+width: 583px;
+}
+
+
+#sidebar {
+width: 300px;
+float: right;
+}
+
+.blueFill {
+background-color: #00F;
+}
+
+.col_w960 {
+width: 960px;
+margin-bottom: 30px;
+padding-bottom: 30px;
+}
+.col_w700 {
+width: 700px
+}
+.col_w650 {
+width: 650px
+}
+.col_w600 {
+width: 600px
+}
+.col_w630 {
+width: 630px
+}
+.col_w450 {
+width: 450px
+}
+.col_w300 {
+width: 300px;
+}
+.col_w250 {
+width: 250px;
+}
+.col_w300r {
+width: 300px;
+float: right;
+}
+
+.col_allw300 {
+float: left;
+width: 300px;
+margin-right: 30px
+}
+
+.col_allw300C {
+float: left;
+width: 300px;
+margin-right: 10px;
+margin-left: 10px;
+}
+
+.col_allw230C {
+float: left;
+width: 220px;
+margin-right: 10px;
+margin-left: 10px;
+}
+
+.col_allw300r {
+float: left;
+width: 300px;
+margin-right: 10px;
+margin-left: 10px;
+}
+
+
+.col_forMenu2l {
+float: left;
+width: 300px;
+margin-right: 10px;
+margin-left: 10px;
+}
+.col_forMenu2r {
+float: right;
+width: 300px;
+margin-right: 10px;
+margin-left: 10px;
+margin-top: 16px;
+}
+
+
+.col_w960_last {
+padding: 0;
+margin: 0;
+background: none
+}
+.col_last {
+margin: 0;
+border: none
+}
+
+.fp_service_box img {
+float: left;
+margin-right: 20px;
+}
+
+.fp_lw_box {
+clear: both;
+margin-bottom: 30px;
+}
+
+.fp_lw_box img {
+margin-right: 15px;
+padding-top: 3px;
+}
+
+.fp_lw_box h6 {
+margin-bottom: 0;
+}
+
+.fp_lw_box h6 a {
+font-weight: bold;
+text-decoration: none;
+}
+
+.sidebar_box {
+padding-left: 15px;
+margin-bottom: 40px;
+}
+
+#gallery {
+margin: 0;
+padding: 0;
+}
+
+
+.gallery_box {
+display: block;
+position: relative;
+float: left;
+width: 225px;
+padding: 5px;
+margin: 0 20px 20px 0;
+}
+
+html>body .gallery_box {
+width: 215px;
+}
+
+
+
+.gallery_box p {
+display: block;
+width: 200px;
+font-size: 24px;
+text-align: center;
+margin: 0px;
+margin-top: 10px;
+}
+
+
+.gb_lmb {
+margin: 0 0 20px 0;
+}
+
+.gallery_box a img {
+width: 205px;
+height: 205px;
+}
+
+a.port_detail {
+display: block;
+margin: 10px 15px 0;
+float: right;
+font-weight: bold;
+border: 1px solid #000;
+}
+
+.post_box {
+clear: both;
+margin-bottom: 30px;
+margin-top: 20px;
+padding-bottom: 20px;
+border-bottom: 2px dashed #c49f50;
+}
+
+.post_header {
+border-top: 3px dashed #c49f50;
+border-bottom: 1px dashed #c49f50;
+padding: 5px;
+margin-bottom: 20px;
+}
+
+.post_box h2 {
+font-size: 24px;
+padding: 0;
+margin-bottom: 10px;
+}
+
+.post_box p.post_meta {
+margin-bottom: 0;
+}
+
+.post_box img {
+margin-bottom: 20px;
+}
+
+#comment_section {
+clear: both;
+margin-bottom: 60px;
+width: 570px;
+}
+
+.first_level {
+margin: 0;
+padding: 0;
+}
+
+.comments {
+list-style: none;
+}
+
+.comments li {
+margin-bottom: 10px;
+list-style: none;
+}
+
+.comments li .commentbox1 {
+background: #FFDF90;
+}
+
+.comments li .commentbox2 {
+background: #FFEFA0;
+}
+
+.comments li .comment_box {
+clear: both;
+width: 100%;
+padding: 15px;
+}
+
+.comment_box .gravatar {
+float: left;
+width: 50px;
+margin-right: 15px;
+background: #fff;
+}
+
+.comment_box .gravatar img {
+margin: 0;
+width: 50px;
+height: 50px;
+}
+
+.comment_box .comment_text {
+margin: 0 0 0 65px;
+}
+
+.comment_box .comment_text p {
+margin: 0;
+}
+
+.comment_text .comment_author {
+font-size: 14px;
+font-weight: bold;
+color: #769900;
+margin-bottom: 10px;
+}
+
+.comment_text .date {
+font-size: 12px;
+font-weight: normal;
+color: #333;
+padding-left: 10px;
+}
+
+.comment_text .time {
+font-size: 12px;
+font-weight: normal;
+color: #333;
+padding-left: 10px;
+}
+
+.comment_text .reply a {
+display: block;
+clear: both;
+float: right;
+color: #000;
+font-weight: 700;
+}
+
+#comment_form {
+clear: both;
+}
+
+#comment_form h3 {
+font-size: 20px;
+border-bottom: 1px dotted #666;
+margin-bottom: 15px;
+padding-bottom: 10px;
+}
+
+#comment_form form {
+padding: 20px;
+background-color: #FFDF90;
+}
+
+#comment_form textarea {
+background: #fff;
+border: 1px solid #CCC;
+height: 162px;
+width: 372px;
+padding: 5px;
+font-family: 'Roboto', Tahoma, Geneva, sans-serif;
+font-size: 12px;
+margin-top: 5px;
+}
+html>body #comment_form textarea {
+width: 360px;
+height: 150px;
+}
+
+
+#comment_form .form_row {
+width: 100%;
+margin-bottom: 15px;
+}
+
+#comment_form form input {
+width: 230px;
+background: #fff;
+border: 1px solid #ccc;
+padding: 5px;
+font-family: 'Roboto', Tahoma, Geneva, sans-serif;
+font-size: 12px;
+margin-top: 5px;
+}
+    html>body #comment_form form input {
+width: 242px;
+}
+
+
+#comment_form .submit_btn {
+width: 80px;
+height: 30px;
+color: #000;
+background: #fff;
+border: 1px solid #ccc;
+}
+    html>body #comment_form .submit_btn {
+width: 82px;
+height: 32px;
+}
+
+
+
+.footer_wrapper {
+clear: both;
+margin-top: -1px;
+width: 100%;
+background: #171004 url("../Images/Navigation/footer_wrapper.png") top repeat-x;
+}
+
+#darkpage .footer_wrapper{
+background: #171004 url("../Images/Navigation/footer_wrapper_dark.png") top repeat-x;
+}
+#lightpage .footer_wrapper{
+background: #171004 url("../Images/Navigation/footer_wrapper_light.png") top repeat-x;
+}
+
+#footer {
+clear: both;
+margin: 0 auto;
+width: 870px;
+padding: 25px 10px 20px;
+color: #FFF;
+text-align: center;
+}
+html>body #footer {
+width: 850px;
+}
+
+
+    
+#footer table {
+font-family: 'Roboto',sans-serif;
+font-size: 14px;
+border-collapse: collapse;
+color: #FFF;
+text-align: center;
+margin: 0px auto;
+margin-top: 50px;
+}
+    
+
+#footer td {
+width: 250px;
+}
+
+#footer p, #footer li, #footer a {
+font-family: 'Lato', Tahoma, sans-serif;
+font-size: 16px;
+font-weight: 300;
+}
+
+
+
+
+.paging {
+margin: 0 0 20px;
+padding: 0;
+}
+
+.paging ul {
+margin: 0;
+padding: 0;
+list-style: none;
+}
+
+.paging ul li {
+margin: 0;
+padding: 0;
+display: inline;
+}
+
+.paging ul li a {
+float: left;
+display: block;
+text-decoration: none;
+margin-right: 5px;
+padding: 5px 10px;
+background: #FFF;
+color: #000;
+border: 1px solid #000000;
+}
+
+.paging ul li a:hover {
+background: #DDD;
+color: #000;
+}
+
+#platform_button_holder {
+float: right;
+margin-right: 10px;
+margin-top: -43px;
+}
+
+#platform_button {
+float: right;
+margin-left: 1px;
+margin-right: 1px;
+opacity: .7;
+}
+#platform_button:hover {
+opacity: 1;
+}
+
+#game_list_button {
+position: relative;
+display: block;
+margin-left: auto;
+margin-right: auto;
+z-index: 0;
+opacity: 1;
+width: 700px;
+height: 91px;
+background-color: #f6d797;
+background-color: #f2c669;
+margin-bottom: 5px;
+border-radius: 10px;
+}
+#game_list_button a {
+text-decoration: none;
+}
+
+#game_list_button:hover {
+}
+#game_list_image {
+float: left;
+margin-left: 0px;
+margin-top: 0px;
+border: 2px solid #000;
+}
+#game_list_image:hover {
+opacity: .8;
+}
+#game_list_title {
+color: #000;
+color: #6e3c1b;
+color: #502d12;
+font-size: 27px;
+padding-top: 10px;
+padding-left: 240px;
+font-family: 'Lato', Tahoma, sans-serif;
+font-weight: 300;
+}
+#game_list_description {
+color: #000;
+color: #6e3c1b;
+font-size: 14px;
+padding-left: 240px;
+font-family: 'Roboto', "Times New Roman", Times, serif;
+font-style: italic;
+font-weight: 400;
+}
+
+#image_titleLogo {
+width: 516px;
+height: 101px;
+float: left;
+background: url("../Images/MainPage/TitleLogo.png") no-repeat;
+background-size: 516px 101px;
+}
+
+#image_facebook {
+width: 30px;
+height: 30px;
+background: url("../Images/SocialMedia/facebook-logo.png") center right no-repeat;
+}
+
+#image_twitter {
+width: 30px;
+height: 30px;
+background: url("../Images/SocialMedia/twitter.png") center right no-repeat;
+}
+
+#image_youtube {
+width: 30px;
+height: 30px;
+background: url("../Images/SocialMedia/you-tube1.png") center right no-repeat;
+}
+
+#image_rss {
+width: 30px;
+height: 30px;
+background: url("../Images/SocialMedia/rss-basic.png") center right no-repeat;
+}
+
+#image_news_bar {
+margin-left: auto;
+margin-right: auto;
+width: 960px;
+height: 62px;
+background: url("../Images/Navigation/blogTitle.png") center right no-repeat;
+}
+
+#image_email {
+margin-left: auto;
+margin-right: auto;
+width: 176px;
+height: 13px;
+background: url("../Images/Navigation/email.png") center right no-repeat;
+}
+
+#image_trial_image {
+width: 150px;
+height: 150px;
+background: url("../Images/MainPage/RaptorButton.png") center right no-repeat;
+}
+
+.nav-previous {
+}
+.nav-next {
+}
+.navigation {
+}
+
+#nav-above {
+}
+
+#nav-below {
+}
+
+
+/*for blog specifically by ME! */
+
+
+
+/*This is from the twenty-eleven world!*/
+/*
+.
+.
+.
+.
+.
+.
+..
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+
+. */
+
+/* -------------------------------------------------------------- 
+   
+   Basic WordPress Blog Styles   
+     
+-------------------------------------------------------------- */   
+
+
+/* ../Images
+-------------------------------------------------------------- */
+
+.entry-content img {
+margin: 0 0 1.5em 0;
+}
+.alignleft,
+img.alignleft {
+display: inline;
+float: left;
+margin-right: 1.5em;
+}
+.alignright,
+img.alignright {
+display: inline;
+float: right;
+margin-left: 1.5em;
+}
+.aligncenter,
+img.aligncenter {
+clear: both;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+.wp-caption {
+text-align: center;
+margin-bottom: 1.5em;
+}
+.wp-caption img {
+border: 0 none;
+margin: 0;
+padding: 0;
+}
+.wp-caption p.wp-caption-text {
+margin: 0;
+}
+.wp-smiley {
+max-height: 1em;
+margin: 0 !important;
+}
+.gallery dl {
+margin: 0;
+}
+.gallery-caption {
+margin: -1.5em 0 0 0;
+}
+
+
+/* Pullquotes
+-------------------------------------------------------------- */
+
+blockquote.left {
+float: left;
+margin-left: 0;
+margin-right: 20px;
+text-align: right;
+width: 33%;
+}
+blockquote.right {
+float: right;
+margin-left: 20px;
+margin-right: 0;
+text-align: left;
+width: 33%;
+}
+
+/* The Flashy Icons and such */
+
+
+#share_grav_banner {
+float: left;
+background: url("../Images/Gravity/share_bar.png") no-repeat 0 0;
+width: 308px;
+height: 49px;
+margin-bottom: 0px;
+margin-left: 0px;
+margin-right: 18px;
+margin-top: 8px;
+}
+#share_grav_banner:hover {
+background-position: 0 -49px;
+}
+
+#full_grav_banner {
+float: left;
+background: url("../Images/Gravity/full_bar.png") no-repeat 0 0;
+width: 308px;
+height: 49px;
+margin-bottom: 0px;
+margin-left: 0px;
+margin-right: 18px;
+margin-top: 8px;
+}
+#full_grav_banner:hover {
+background-position: 0 -49px;
+}
+
+#explains_banner {
+float: left;
+background: url("../Images/Gravity/explains_bar.png") no-repeat 0 0;
+width: 308px;
+height: 49px;
+margin-bottom: 0px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 8px;
+}
+#explains_banner:hover {
+background-position: 0 -49px;
+}
+
+
+
+#higgs_banner_801 {
+background: url("../Images/Higgs/largeBannerF.png") no-repeat 0 0;
+width: 801px;
+height: 70px;
+margin-bottom: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+}
+#higgs_banner_801:hover {
+background-position: 0 -70px;
+}
+
+#improved_banner_801 {
+background: url("../Images/Gravity/new_version_bar.png") no-repeat 0 0;
+width: 801px;
+height: 49px;
+margin-bottom: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+}
+#improved_banner_801:hover {
+background-position: 0 -49px;
+}
+
+#forums_banner_801 {
+background: url("../Images/Generic/ForumsBanner_801f.png") no-repeat 0 0;
+width: 801px;
+height: 70px;
+margin-bottom: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+}
+#forums_banner_801:hover {
+background-position: 0 -70px;
+}
+
+#forums_bannerG_801 {
+background: url("../Images/Generic/ForumsBannerG_801f.png") no-repeat 0 0;
+width: 801px;
+height: 70px;
+margin-bottom: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+}
+#forums_bannerG_801:hover {
+background-position: 0 -70px;
+}
+
+#forums_bannerG_960 {
+background: url("../Images/Gravity/forums_bar.png") no-repeat 0 0;
+width: 960px;
+height: 58px;
+margin-bottom: 0px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 0px;
+}
+#forums_bannerG_960:hover {
+background-position: 0 -58px;
+}
+
+
+#forums_banner_601 {
+background: url("../Images/Generic/ForumsBanner_601f.png") no-repeat 0 0;
+width: 601px;
+height: 70px;
+margin-bottom: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+}
+#forums_banner_601:hover {
+background-position: 0 -70px;
+}
+
+
+
+
+
+
+
+.hoverable_140{
+	width: 140px;
+	height: 140px;
+	margin-bottom: 20px;
+}
+
+#bondbreaker_140 {background: url("../Images/BondBreaker/largeButton_notext_140f.png") no-repeat 0 0;}
+#bondbreaker_140:hover {background-position: 0 -140px;}
+
+#raptor_140 {background: url("../Images/Raptor/RaptorButton_notext_140f.png") no-repeat 0 0;}
+#raptor_140:hover {background-position: 0 -140px;}
+
+#gravity_140 {background: url("../Images/Gravity/GravityButton_notext_140f.png") no-repeat 0 0;}
+#gravity_140:hover {background-position: 0 -140px;}
+
+#higgs_ios_140 {background: url("../Images/Higgs/HiggsIOSButton_notext_140f.png") no-repeat 0 0;}
+#higgs_ios_140:hover {background-position: 0 -140px;}
+
+#sliderule_140 {background: url("../Images/SlideRule/SlideRuleButton_notext_140f.png") no-repeat 0 0;}
+#sliderule_140:hover {background-position: 0 -140px;}
+
+#sundial_140 {background: url("../Images/Sundial/SundialButton_notext_140f.png") no-repeat 0 0;}
+#sundial_140:hover {background-position: 0 -140px;}
+
+#shocktopus_140 {background: url("../Images/Shocktopus/ShocktopusButton_notext_140f.png") no-repeat 0 0;}
+#shocktopus_140:hover {background-position: 0 -140px;}
+
+#explains_140 {background: url("../Images/Generic/TTGExplainsButton_140f.png") no-repeat 0 0;}
+#explains_140:hover {background-position: 0 -140px;}
+
+.hoverable_205{
+	width: 205px;
+	height: 205px;
+	margin-bottom: 20px;
+}
+
+#bondbreaker_notext_205 {background: url("../Images/BondBreaker/largeButton_notext_205f.png") no-repeat 0 0;}
+#bondbreaker_notext_205:hover {background-position: 0 -205px;}
+
+#raptor_notext_205 {background: url("../Images/Raptor/RaptorButton_notext_205f.png") no-repeat 0 0;}
+#raptor_notext_205:hover {background-position: 0 -205px;}
+
+#gravity_notext_205 {background: url("../Images/Gravity/GravityButton_notext_205f.png") no-repeat 0 0;}
+#gravity_notext_205:hover {background-position: 0 -205px;}
+
+#higgs_ios_notext_205 {background: url("../Images/Higgs/HiggsIOSButton_notext_205f.png") no-repeat 0 0;}
+#higgs_ios_notext_205:hover {background-position: 0 -205px;}
+
+#shocktopus_notext_205 {background: url("../Images/Shocktopus/ShocktopusButton_notext_205f.png") no-repeat 0 0;}
+#shocktopus_notext_205:hover {background-position: 0 -205px;}
+
+#blackhole_notext_205 {background: url("../Images/BlackHole/BlackHoleButton_notext_205f.png") no-repeat 0 0;}
+#blackhole_notext_205:hover {background-position: 0 -205px;}
+
+#fittest_notext_205 {background: url("../Images/Generic/fittestF_205.png") no-repeat 0 0;}
+#fittest_notext_205:hover {background-position: 0 -205px;}
+
+#sliderule_notext_205 {background: url("../Images/SlideRule/SlideRuleButton_notext_205f.png") no-repeat 0 0;}
+#sliderule_notext_205:hover {background-position: 0 -205px;}
+
+#sundial_notext_205 {background: url("../Images/Sundial/SundialButton_notext_205f.png") no-repeat 0 0;}
+#sundial_notext_205:hover {background-position: 0 -205px;}
+
+
+#explains_205 {
+background: url("../Images/Generic/TTGExplainsButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#explains_205:hover {
+background-position: 0 -205px;
+}
+
+#iotd_205 {
+background: url("../Images/Generic/IotDButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#iotd_205:hover {
+background-position: 0 -205px;
+}
+
+#bondbreaker_205 {
+background: url("../Images/BondBreaker/largeButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#bondbreaker_205:hover {
+background-position: 0 -205px;
+}
+
+#raptor_205 {
+background: url("../Images/Raptor/RaptorButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#raptor_205:hover {
+background-position: 0 -205px;
+}
+
+#gravity_205 {
+background: url("../Images/Gravity/GravityButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#gravity_205:hover {
+background-position: 0 -205px;
+}
+
+#higgs_flash_205 {
+background: url("../Images/Higgs/HiggsCh1Button_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#higgs_flash_205:hover {
+background-position: 0 -205px;
+}
+
+#higgs_flash2_205 {
+background: url("../Images/Higgs/HiggsCh2Button_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#higgs_flash2_205:hover {
+background-position: 0 -205px;
+}
+
+#cornmaze_205 {
+background: url("../Images/CornMaze/CornMazeButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#cornmaze_205:hover {
+background-position: 0 -205px;
+}
+
+#higgs_ios_205 {
+background: url("../Images/Higgs/HiggsIOSButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#higgs_ios_205:hover {
+background-position: 0 -205px;
+}
+
+#higgs_joint_205 {
+background: url("../Images/Higgs/HiggsJointButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#higgs_joint_205:hover {
+background-position: 0 -205px;
+}
+
+#sliderule_205 {
+background: url("../Images/SlideRule/SlideRuleButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#sliderule_205:hover {
+background-position: 0 -205px;
+}
+
+#sundial_205 {
+background: url("../Images/Sundial/SundialButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#sundial_205:hover {
+background-position: 0 -205px;
+}
+
+#walk_205 {
+background: url("../Images/Walk/WalkButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#walk_205:hover {
+background-position: 0 -205px;
+}
+
+#quantum_205 {
+background: url("../Images/Quantum/QuantumButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#quantum_205:hover {
+background-position: 0 -205px;
+}
+
+#blog_205 {
+background: url("../Images/Blog/BlogButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#blog_205:hover {
+background-position: 0 -205px;
+}
+
+#forums_205 {
+background: url("../Images/Generic/ForumsButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#forums_205:hover {
+background-position: 0 -205px;
+}
+
+#nsf_205 {
+background: url("../Images/MainPage/NSFButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#nsf_205:hover {
+background-position: 0 -205px;
+}
+
+#shocktopus_205 {
+background: url("../Images/Shocktopus/ShocktopusButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#shocktopus_205:hover {
+background-position: 0 -205px;
+}
+
+#blackhole_205 {
+background: url("../Images/BlackHole/BlackHoleButton_205f.png") no-repeat 0 0;
+width: 205px;
+height: 205px;
+margin-bottom: 20px;
+}
+#blackhole_205:hover {
+background-position: 0 -205px;
+}
+
+
+#play_flash_f {
+background: url("../Images/MainPage/playFlashGames_f.png") no-repeat 0 0;
+width: 297px;
+height: 105px;
+}
+#play_flash_f:hover {
+background-position: 0 -105px;
+}
+
+#play_apps_f {
+background: url("../Images/MainPage/downloadApps_f.png") no-repeat 0 0;
+width: 297px;
+height: 105px;
+}
+#play_apps_f:hover {
+background-position: 0 -105px;
+}
+
+#app_store_f {
+background: url("../Images/Navigation/DownloadApp_f.png") no-repeat 0 0;
+width: 300px;
+height: 90px;
+}
+#app_store_f:hover {
+background-position: 0 -90px;
+}
+
+#app_store_fh {
+background: url("../Images/Navigation/DownloadApp_fh.png") no-repeat 0 0;
+width: 280px;
+height: 84px;
+}
+#app_store_fh:hover {
+background-position: 0 -84px;
+}
+
+#play_higgs_flash_f {
+background: url("../Images/Higgs/playFlashHiggsf.png") no-repeat 0 0;
+width: 300px;
+height: 89px;
+}
+#play_higgs_flash_f:hover {
+background-position: 0 -89px;
+}
+
+#goToForum_296 {
+background: url("../Images/Generic/ForumsBanner_298f.png") no-repeat 0 0;
+width: 296px;
+height: 150px;
+margin-bottom: 20px;
+}
+#goToForum_296:hover {
+background-position: 0 -150px;
+}
+
+#goToMailingList_296 {
+background: url("../Images/Generic/MailingListBanner_298f.png") no-repeat 0 0;
+width: 296px;
+height: 150px;
+margin-bottom: 20px;
+float: left;
+margin-left: 0px;
+margin-right: 0px;
+}
+#goToMailingList_296:hover {
+background-position: 0 -150px;
+}
+
+
+
+
+
+
+
+#slideshow {
+width: 800px;
+height: 650px;
+margin: 0px;
+padding: 0px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+#slides {
+position: relative;
+width: 800px;
+height: 650px;
+list-style: none;
+overflow: auto;
+padding: 0px;
+}
+#slides li {
+width: 800px;
+height: 650px;
+background-color: #f4cf80;
+}
+
+.paginationClear {
+float: left;
+list-style: none;
+height: 25px;
+margin: 15px 0 0 0px;
+padding: 0px;
+}
+.paginationClear li {
+float: left;
+cursor: pointer;
+padding: 5px 8px;
+background: #FFF;
+height: 10px;
+width: 8px;
+border: 1px solid #FFF;
+margin: 0 8px 0 0;
+text-align: center;
+color: #222
+}
+.paginationClear li:hover {
+background: #FFF;
+border: 1px solid #FFF;
+color: #000
+}
+.paginationClear li.current {
+background: #FFF;
+border: 1px solid #FFF;
+}
+
+.pagination {
+float: left;
+list-style: none;
+height: 25px;
+width: 588px;
+margin: 15px 0 0 0px;
+padding: 10px 0px 10px 0;
+}
+.pagination li {
+float: left;
+cursor: pointer;
+padding: 0px 0px;
+background: #d4af60;
+height: 24px;
+width: 24px;
+border: 0px solid #BBB;
+margin: 0 0px 0 20px;
+text-align: center;
+color: #222
+}
+.pagination li:hover {
+opacity: .2;
+background: #ffefa0;
+border: 0px solid #DDD;
+color: #000
+}
+.pagination li.current {
+opacity: .5;
+background: #ffefa0;
+border: 0px solid #DDD;
+}
+
+
+
+#thinnav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #333333;
+	font-size: 12px;
+	height: 20px;
+	font-family: 'Roboto',sans-serif;
+}
+
+#thinnav li {
+	float: left;
+}
+
+#thinnav li p {
+	display: block;
+	color: #888;
+	text-align: center;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	margin: 0px;
+	text-decoration: none;
+}
+#thinnav li a {
+	display: block;
+	color: #888;
+	text-align: center;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 4px;
+	padding-bottom: 3px;
+	text-decoration: none;
+	font-weight: normal;
+	line-height:14.5px;
+}
+
+#thinnav li a:hover {
+	background-color: #111111;
+}

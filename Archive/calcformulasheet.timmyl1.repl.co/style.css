@@ -1,0 +1,179 @@
+    body {
+    background-color: black;
+    overflow: auto;
+}
+
+
+#title {
+font-family: Verdana, Geneva, Tahoma, sans-serif;
+font-size: 70px;
+color: rgb(247, 39, 39);
+background-color: rosybrown;
+}
+#Literally{
+font-family: 'Times New Roman', Times, serif;
+}
+#Chapter1 {
+ font-size: 55px;
+  background-color: rgb(138, 138, 255);
+  margin-left: 300px;
+  margin-right: 300px;
+ border-left: 7px solid blue;
+}
+#entireThing {
+  text-align: left;
+ 
+}
+
+#Formula1 {
+  text-size: 35px;
+}
+#Chapter2 {
+ font-size: 55px;
+  background-color: rgb(138, 138, 255);
+  margin-left: 300px;
+  margin-right: 300px;
+ border-left: 7px solid blue;
+}
+a:hover {
+  background-color: springgreen;
+}
+#toc {
+  background-color: wheat;
+position: fixed;
+top: 20px;
+opacity: 65%;
+font-size: 17px;
+z-index: 1;
+animation: alternate;
+}
+
+#lmaoooo{
+  background-color: antiquewhite;
+}
+#Formula1 {
+
+ background-color: rgb(236, 197, 197);
+margin-left: 300px;
+margin-right: 300px;
+border-radius: 5px;
+
+}
+#Formula2 {
+ background-color: rgb(236, 197, 197);
+ margin-left: 300px;
+margin-right: 300px;
+border-radius: 5px;
+}
+#credentials {
+  font-size: 10px;
+}
+sub{
+    font-size: 12px;
+}
+#Bruh {
+    background-color: blue;
+
+}
+#Slopecurve {
+    
+    border-style: solid;
+   
+
+}
+.l {
+    font-size: 5px;
+    color: white;
+}
+#Chapter3 {
+  font-size: 55px;
+  background-color: rgb(138, 138, 255);
+  margin-left: 300px;
+  margin-right: 300px;
+ border-left: 7px solid blue;
+}
+  #formula3 {
+ background-color: rgb(236, 197, 197);
+ margin-left: 300px;
+margin-right: 300px;
+border-radius: 5px;
+  }
+  #proof {
+      background-color: black;
+
+  }
+  #bababooey {
+      background-color: rosybrown;
+      margin-left: 150px;
+      margin-right: 600px;
+      border-radius: 5px;
+
+
+      
+  }
+
+  #Chapter4 {
+  font-size: 55px;
+  background-color: rgb(138, 138, 255);
+  margin-left: 300px;
+  margin-right: 300px;
+ border-left: 7px solid blue;
+}
+ #formula4 {
+ background-color: rgb(236, 197, 197);
+ margin-left: 300px;
+margin-right: 300px;
+border-radius: 5px;
+  }
+
+  #bard {
+      font-size: 25px;
+      background-color: blanchedalmond;
+      animation-duration: 5s;
+      animation-name: slidein;
+  }
+  @keyframes slidein {
+      from {
+          margin-left: 100%;
+          width: 100%
+      }
+
+  }
+#hotdog {
+    position: relative;
+    margin: 5px;
+    text-align: left;
+    width: 305px;
+    z-index: -5;
+}
+#bra {
+    bottom: 305px;
+    position: relative;
+}
+#balc {
+width: 500px;
+height: 500px;
+  padding-left: 390px;
+position: fixed;
+    opacity: 60%;
+    bottom: 8px;
+    transition: transform .2s;
+
+}
+.balc:hover {
+    transform: scale(10);
+}
+
+#please {
+    font-size: 20px;
+    color: white;
+}
+
+#int {
+    background-color: black;
+}
+
+#fuckoffmax {
+    color: white;
+    font-size: 25px;
+}

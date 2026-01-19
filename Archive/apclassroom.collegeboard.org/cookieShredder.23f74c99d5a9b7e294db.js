@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[30],{1041:function(o,n){(document.cookie.match(/mp_\w+_mixpanel/g)||[]).forEach((function(o){return document.cookie=o+"=''; max-age=0; path=/; domain=.collegeboard.org;"}))}},[[1041,10]]]);
+//# sourceMappingURL=cookieShredder.23f74c99d5a9b7e294db.js.map

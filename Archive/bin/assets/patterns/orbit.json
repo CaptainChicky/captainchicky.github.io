@@ -1,0 +1,39 @@
+{
+  "name": "orbit",
+  "description": "Bullets spawn in an orbit around the enemy and fire outward",
+  "parameters": {
+    "orbitDistance": {
+      "type": "float",
+      "default": 100,
+      "description": "Distance from enemy center"
+    },
+    "bulletSpeed": {
+      "type": "float",
+      "default": 5,
+      "description": "Bullet speed"
+    },
+    "rotationSpeed": {
+      "type": "float",
+      "default": 30,
+      "description": "How fast the orbit position rotates (degrees per frame)"
+    },
+    "fireDelay": {
+      "type": "int",
+      "default": 1,
+      "description": "Frames between bullets (minimum 1)"
+    }
+  },
+  "script": [
+    {"control": "SetSpeed", "value": "$bulletSpeed"},
+    {"control": "SetAngle", "value": 90},
+    {"control": "SetOffset", "distance": "$orbitDistance", "angle": 0},
+    {
+      "control": "Loop",
+      "actions": [
+        {"control": "Fire", "angle": 0, "speed": 0},
+        {"control": "AddOffset", "distanceDelta": 0, "angleDelta": "$rotationSpeed * $fireDelay"},
+        {"control": "Wait", "frames": "$fireDelay"}
+      ]
+    }
+  ]
+}

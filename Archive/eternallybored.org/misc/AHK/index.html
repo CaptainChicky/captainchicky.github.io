@@ -1,0 +1,120 @@
+<html><head><title>Alt+Tab with mousewheel</title>
+<style>
+* {
+	font-family: "Verdana",sans-serif;
+}
+ul {
+	margin-top: 0.5ex;
+}
+</style>
+<meta name="description" content="AutoHotKey script for emulating Alt+Tab with side buttons and mousewheel">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+html {
+	font-family: "Verdana", sans-serif;
+	font-size: 11pt;
+}
+body {
+	max-width:600pt;
+	margin: 10pt auto;
+}
+div#menu {
+	float: right;
+	font-size: 9pt;
+	padding: 0.5em;
+	margin: 0.5em;
+	border: 1px solid black;
+}
+div#menu ul {
+	list-style-type: none;
+	padding: 0 0 1ex 0;
+	margin: 0;
+	font-weight: bold;
+}
+div#menu ul ul {
+	list-style-type: none;
+	padding-left: 1em;
+	margin: 0;
+	font-weight: normal;
+}
+div#content {
+	max-width: 80em;
+}
+form {
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+@media (prefers-color-scheme: dark) {
+	body {
+		color: #ddd;
+		background: #222;
+	}
+	a:link {
+		color:#0af;
+	}
+	a:visited {
+		color:#a6d;
+	}
+	div#menu {
+		border: 1px solid #ccc;
+	}
+}
+</style>
+</head><body>
+<div id="menu">
+<ul><li>Windows ports
+<ul>
+<li><a href="/misc/gifsicle/">Gifsicle</a></li>
+<li><a href="/misc/netcat/">NetCat</a></li>
+<li><a href="/misc/pciutils/">PCI Utilities</a></li>
+<li><a href="/misc/wget/">GNU Wget</a></li>
+</ul></li>
+<li>Scripts
+<ul>
+<li><a href="/misc/AHK/">AutoHotKey</a></li>
+<li><a href="/misc/xchat/">for (he)xchat</a></li>
+<li><a href="/misc/vmware/">for VMWare ESXi</a></li>
+</ul></li>
+<li>Other things
+<ul>
+<li><a href="/misc/gimp/">GIMP-related stuff</a></li>
+</ul></li>
+</ul>
+<small>Provided by <a href="mailto:jernej&#x7c;s-website@eternallybored.org" title="This is a real, working e-mail address">Jernej Simon&#269;i&#269;</a></small>
+<br><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="float:right">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form></div>
+
+<div id="content">
+Here's a small AutoHotKey script that:
+<ul><li>remaps the back button on mouse to act as Alt+Tab when you hold it down and scroll with the wheel</li>
+<li>makes the forward button on mouse act as double-click</li>
+<li>makes the mouse wheel always scroll the window under mouse pointer without switching focus to that window</li></ul>
+Note: the compiled executable must be run from Program Files on Windows Vista and newer versions of Windows, otherwise it won't work 
+<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ee671610(v=vs.85).aspx#uiaccess_requirements_for_assistive_technology_applications_">properly</a>.
+<br>
+<br>For <b>Windows 10</b> (Alt+Tab and double-click - scrolling window under mouse pointer can be enabled
+in <a href="ms-settings:mousetouchpad">Settings</a>):<br>
+<a href="WheelAltTabNoScroll32v2.exe">WheelAltTabNoScroll32v2.exe</a> - 32-bit version<br>
+<a href="WheelAltTabNoScroll64v2.exe">WheelAltTabNoScroll64v2.exe</a> - 64-bit version<br>
+<a href="WheelAltTabNoScrollv2.ahk">WheelAltTabNoScrollv2.ahk</a> - source code<br>
+<br>
+<br>For <b>Windows 8.1 and older</b> (Alt+Tab, double-click, scroll window under mouse pointer):<br>
+<a href="WheelAltTab32.exe">WheelAltTab32.exe</a> - 32-bit version<br>
+<a href="WheelAltTab64.exe">WheelAltTab64.exe</a> - 64-bit version<br>
+<a href="WheelAltTab.ahk">WheelAltTab.ahk</a> - source code<br>
+<br>
+<br>For <b>Windows 8.1 and older</b> (scroll window under mouse pointer only):<br>
+<a href="ScrollOnly32.exe">ScrollOnly32.exe</a> - 32-bit version<br>
+<a href="ScrollOnly64.exe">ScrollOnly64.exe</a> - 64-bit version<br>
+<a href="ScrollOnly.ahk">ScrollOnly.ahk</a> - source code<br>
+<br><br><h4>Update 2015-07-31:</h4> Since Windows 10 includes the ability to scroll under mouse pointer, I made a version of the
+script that just implements Alt+Tab and doubleclick.
+<h4>Update 2015-08-07:</h4>Now also sends Win+Tab when Back+Forward buttons are clicked.
+<br><br>And by request, version that only scrolls the window under mouse pointer.<br>
+<h4>Update 2016-06-09:</h4>All files now also include a SHA-256 signature.
+</div>
+</body></html>

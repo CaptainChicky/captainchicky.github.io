@@ -1,0 +1,111 @@
+.up_header {
+    width: 100%;
+    height: 97px;
+    background: #1e2427;
+    padding: 14px 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 55
+}
+
+.up_header .nav_list .logo_up a {
+    width: 150px;
+    height: 72px;
+    background-position: -8px -14px;
+}
+
+.up_header .nav_list .logo_yq a {
+    width: 172px;
+    height: 73px;
+    background-image: url("../images/logo_hjf.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-left: 30px;
+}
+
+.up_header .nav_list .nav_up ul {
+    margin-left: 57px;
+}
+
+.up_header .nav_list .nav_up ul li {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: center;
+    float: left;
+    position: relative;
+}
+
+.up_header .nav_list .nav_up ul li + li a:before {
+    content: " ";
+    width: 2px;
+    height: 19px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -9.5px;
+    background: #969696;
+}
+
+.up_header .nav_list .nav_up ul li a {
+    padding: 15px 50px;
+    font-size: 20px;
+    color: #969696;
+    display: block;
+}
+
+.up_header .nav_list .nav_up ul li a p {
+    color: #7e7a7a;
+    font-size: 12px;
+}
+
+.up_header .nav_list .nav_up ul li a:hover {
+    color: #499aad;
+}
+
+.up_header .nav_list .nav_up ul li a:hover p {
+    color: #499aad;
+}
+
+.search_box {
+    width: 207px;
+    height: 44px;
+    background-position: -178px -41px;
+    margin-top: 17px;
+    line-height: 30px;
+    padding: 0 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.search_box a {
+    width: 20px;
+    height: 20px;
+    background-position: -178px -92px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.search_box input {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    width: 80px;
+    height: 92%;
+    margin-left: 5px
+}
+
+.up_header .nav_list .nav_up ul li.select_hover a {
+    color: #499aad
+}
+
+.up_header .nav_list .nav_up ul li.select_hover p {
+    color: #499aad
+}

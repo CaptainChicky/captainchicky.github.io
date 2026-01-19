@@ -1,0 +1,34 @@
+{
+  "name": "spiral",
+  "description": "Classic spiral pattern - fires bullets while rotating",
+  "parameters": {
+    "bulletSpeed": {
+      "type": "float",
+      "default": 5,
+      "description": "How fast bullets travel"
+    },
+    "rotationChange": {
+      "type": "float",
+      "default": 12.0,
+      "description": "Degrees to rotate between each shot"
+    },
+    "fireDelay": {
+      "type": "int",
+      "default": 1,
+      "description": "Frames to wait between each bullet"
+    }
+  },
+  "script": [
+    {"control": "SetSpeed", "value": "$bulletSpeed"},
+    {"control": "SetAngle", "value": 0},
+    {
+      "control": "Loop",
+      "actions": [
+        {"control": "Fire", "angle": 0, "speed": 0},
+        {"control": "AddAngle", "delta": "$rotationChange"},
+        {"control": "Wait", "frames": "$fireDelay"}
+      ]
+    }
+  ],
+  "note": "Fire with angle:0, speed:0 uses current state values"
+}

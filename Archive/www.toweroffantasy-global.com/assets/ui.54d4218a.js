@@ -1,0 +1,1 @@
+function d(c,o){const{delay:s,type:a}=o||{delay:5e3,type:"none"},t=document.querySelector(".tips .text"),e=document.querySelector(".tips");let i;if(t&&e){const n=()=>{clearTimeout(i),t.innerHTML="",e.classList.remove("active")};e.addEventListener("click",()=>{a==="none"&&n()}),e.classList.add("active"),t.innerHTML=c,i=setTimeout(n,s)}}export{d};

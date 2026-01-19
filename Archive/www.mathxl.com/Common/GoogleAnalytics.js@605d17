@@ -1,0 +1,204 @@
+﻿
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', '__googleanalytic');
+
+    //__googleanalytic('create', gaaccount, 'auto');
+    var gaCreate = {
+      trackingId: gaaccount,
+      cookieDomain: 'auto'
+    };
+
+/* These regex objects should
+       <!-- Match all iOS 12 based browsers -->
+       <!-- Match Chrome > 50 and < 70 -->
+       <!-- Match Embedded Browser on Mac OS X 10.14 -->
+       <!-- Match Safari on Mac OS X 10.14 -->
+    */
+    var regEx = [
+      new RegExp(/\(iP.+; CPU .*OS (12+)[_\d]*.*\) AppleWebKit\//),
+      new RegExp(/Chrom[^ \/]+\/(5|6+)[\.\d]* /),
+      new RegExp(
+        /^Mozilla\/[\.\d]+ \(Macintosh;.*Mac OS X (10+)_(14+)[_\d]*.*\) AppleWebKit\/[\.\d]+ \(KHTML, like Gecko\)$/),
+      new RegExp(/\(Macintosh;.*Mac OS X (10+)_(14+)[_\d]*.*\) AppleWebKit\/(?=.*Version\/.* Safari\/)/)
+    ];
+    var ua = window.navigator.userAgent;
+    var matched = regEx.some(function (o) {
+      return o.test(ua);
+    });
+// Do not add the cookie flag if any regex matched.
+    if (!matched) {
+      gaCreate.cookieFlags = 'SameSite=None; Secure';
+    }
+
+
+    __googleanalytic('create', gaCreate);
+
+
+    if (myNavParams.institutionKeyId !== '')
+        __googleanalytic('set', 'dimension7', myNavParams.institutionKeyId);
+    
+    if (myNavParams.authSystemPartnerId !== '')
+        __googleanalytic('set', 'dimension8', myNavParams.authSystemPartnerId);
+
+    if (myNavParams.authsystemtypeId !== '')
+        __googleanalytic('set', 'dimension12', myNavParams.authsystemtypeId);
+
+
+    var pageRequest = window.location.href;
+    var pageUrl = "";
+    if (pageRequest.indexOf("#/tab/") > 0) {
+        var parts = pageRequest.split(/[#]/);
+        for (var i = 0; i < parts.length; i++) {
+            pageUrl += parts[i].split(/[?]/)[0] + ((i === (parts.length-1)) ? "" : "#");
+        }
+    } else {
+        pageUrl = pageRequest.split(/[?#]/)[0];
+    }
+
+    if (pageUrl.indexOf(".mvc") > 0)
+        __googleanalytic('set', 'location', pageUrl.substring(0,pageUrl.indexOf(".mvc")+4));
+    else
+        __googleanalytic('set', 'location', pageUrl);
+    
+
+    __googleanalytic('send', 'pageview',
+    {
+        'dimension1': environment,
+        'dimension2': myNavParams.userId,
+        'dimension3': myNavParams.productId,
+        'dimension4': myNavParams.courseId,
+        'dimension5': myNavParams.bookId,
+        'dimension6': myNavParams.userRole,
+        'dimension9': myNavParams.school,
+        'dimension10': myNavParams.bookCode,
+        'dimension11': myNavParams.authSystemId,
+        'dimension13': myNavParams.userOrigin,
+        'dimension14': myNavParams.disciplineID
+        });
+
+    var isEnabled = myNavParams.IsTelemetryEnabled.toLowerCase();
+
+    if (isEnabled === "true")
+    {
+        dataLayer.push({
+            appId: "xl",
+            sessionId: myNavParams.SessionID,
+            userTimezoneOffsetNum: UserTimeZoneOffsetNum(),
+            webBrowser: UserBrowser(),
+            userIpV4: myNavParams.IPv4,
+            userIpV6: myNavParams.IPv6,
+            deviceType: UserDevice(),
+            originatingSytemCode: "xl",
+            operatingSystemCode: UserOSName(),
+            appVersion: ""
+        });
+
+        dataLayer.push({
+            event: "usertelemetry",
+            productPlatformCode: myNavParams.ProductPlatformCode,
+            productModelName: myNavParams.ProductName,
+            contentId: "",
+            contentIdType: "",
+            courseSectionId: "",
+            messageId: Uuid(),
+            transactionDt: new Date().toISOString(),
+            transactionLocalDt: UserLocalTimeStamp(),
+            errors: [
+                {
+                    errorCode: "",
+                    errorUrl: "",
+                    errorMessage: "",
+                    errorStateCode: "",
+                    errorDetail: ""
+                }
+            ]
+        });
+    }
+
+
+    function getPageName() {
+        var url = location.href.split('/').pop();
+        return url.split('.')[0];
+
+    }
+
+    function UserOSName() {
+        var osName = "Unknown OS";
+        if (navigator.appVersion.indexOf("Win") != -1) osName = "Windows";
+        if (navigator.appVersion.indexOf("Mac") != -1) osName = "MacOS";
+        if (navigator.appVersion.indexOf("X11") != -1) osName = "UNIX";
+        if (navigator.appVersion.indexOf("Linux") != -1) osName = "Linux";
+
+        return osName;
+    }
+
+
+    function UserLocalTimeStamp() {
+        var d = new Date();
+        return d.getFullYear() +
+            '-' +
+            (d.getMonth() + 1) +
+            '-' +
+            d.getDate() +
+            'T' +
+            d.getHours() +
+            ':' +
+            d.getMinutes() +
+            ':' +
+            d.getMilliseconds();
+    };
+
+    function UserTimeZoneOffsetNum() {
+        var offset = new Date().getTimezoneOffset();
+        return offset / 60 * -1;
+    };
+
+    function Uuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
+
+    function UserBrowser() {
+        var test = function (regexp) {
+            return regexp.test(window.navigator.userAgent);
+        }
+        switch (true) {
+        case test(/edg/i):
+            return "Microsoft Edge";
+        case test(/opr/i) && (!!window.opr || !!window.opera):
+            return "Opera";
+        case test(/chrome/i) && !!window.chrome:
+            return "Google Chrome";
+        case test(/trident/i):
+            return "Microsoft Internet Explorer";
+        case test(/firefox/i):
+            return "Firefox";
+        case test(/safari/i):
+            return "Safari";
+        default:
+            return "unknown";
+        }
+    };
+
+    function UserDevice() {
+        if (navigator.userAgent.match(/mobile/i)) {
+            return 'Mobile';
+        } else if (navigator.userAgent.match(/iPad|Android|Touch/i)) {
+            return 'Tablet';
+        } else {
+            return 'Desktop';
+        }
+    };
+
+    
+
+
+
+    

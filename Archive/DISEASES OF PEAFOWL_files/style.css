@@ -1,0 +1,76 @@
+
+form.tabulate-filters td { vertical-align:top }
+form.tabulate-filters td.label { text-align:right }
+
+form.tabulate-grants label.checkbox { white-space:nowrap; display:inline-block; width:45%; border-bottom:1px solid white }
+form.tabulate-grants label.checkbox:hover { background-color:#9acfea }
+form.tabulate-grants label.checkbox.checked { color:green; border-bottom-color:#060 }
+
+form.tabulate-grants tr.select-all td,
+form.tabulate-grants td.select-all { border:1px solid #e1e1e1; background-color:#efffef; font-style:italic }
+form.tabulate-grants tr.select-all td { border-width:0 0 1px 0 }
+form.tabulate-grants td.select-all { border-width:0 1px }
+form.tabulate-grants tr.select-all td.label { border-width:0 0 0 1px; vertical-align:middle; text-align:center; font-size:larger }
+
+form.tabulate-record input.column-type-date,
+form.tabulate-record input.column-type-datetime,
+form.tabulate-record input.column-type-time { position:relative; z-index:100; width:15em }
+form.tabulate-record th.column-title { vertical-align:top; text-align:left }
+form.tabulate-record .foreign-key label { text-align:left }
+form.tabulate-record .foreign-key input.form-control { width:83% }
+form.tabulate-record .foreign-key span.input-group-addon { color:#555 }
+form.tabulate-record .point-column .map { width:450px; height:200px; border:1px solid #ddd; z-index:90 }
+form.tabulate-record tr.column-type-tinyint td.form-field label { display:inline-block; margin-right:1em }
+
+.tabulate .postbox-container.record-meta { float:none }
+.tabulate .postbox-container .related-records .hndle { cursor:pointer }
+.tabulate .postbox-container .related-records .inside { margin:0; padding:0 }
+.tabulate .postbox-container .related-records .inside p { padding:8px 12px }
+.tabulate .postbox-container .related-records .inside table.tabulate { border:0 }
+.tabulate .postbox-container .related-records .inside table.tabulate th,
+.tabulate .postbox-container .related-records .inside table.tabulate td { line-height:normal; padding:0.2em; font-size:smaller }
+
+.tabulate-change-tracker .value { font-family:monospace; background-color:#f1f1f1; color:black }
+
+.tabulate.wrap .import .stages { width:100%; height:2em; margin-left:0 }
+.tabulate.wrap .import .stages dt,
+.tabulate.wrap .import .stages dd { float:left; margin:0; padding:0.2em 1.5em }
+.tabulate.wrap .import .stages dt { border-bottom:2px solid #CCC; color:#999; font-weight:bolder }
+.tabulate.wrap .import .stages dd { border-bottom:2px dotted #CCC }
+.tabulate.wrap .import .stages dd.completed { border-bottom:2px solid #CCC; background-color:#EEE; text-decoration:line-through }
+.tabulate.wrap .import .stages dd.selected { border-bottom:2px solid #CCC; background-color:#CCC }
+.tabulate.wrap .import .required { color:#a94442 }
+
+#tabulate-quick-jump { list-style-type:none; border:1px outset black; background-color:white; padding:0.35em; width:20em; z-index:100 }
+.tabulate.wrap #tabulate-quick-jump { position:absolute; right:2em }
+#tabulate-quick-jump li { margin:0 }
+#tabulate-quick-jump input { display:none; width:100% }
+#tabulate-quick-jump li.filter { float:none; display:list-item; margin:0 }
+#tabulate-quick-jump li.filter label { display:block; text-align:right }
+#tabulate-quick-jump li.filter .text { float:left }
+#tabulate-quick-jump.expanded li { display:list-item }
+#tabulate-quick-jump.expanded input { display:block }
+#tabulate-quick-jump a { text-decoration:none; display:block }
+#tabulate-quick-jump a:hover { background-color:highlight; color:highlighttext }
+
+.tabulate.wrap table.calendar th { width:14% }
+.tabulate.wrap table.calendar td { border:1px solid #e1e1e1 }
+.tabulate.wrap table.calendar td .day { width:2.2em; float:left; font-weight:bolder }
+.tabulate.wrap table.calendar td ul { margin:0 0 0 2.4em }
+.tabulate.wrap table.calendar td ul li { margin:0 }
+
+table.tabulate.widefat th,
+table.tabulate.widefat td { padding:0.25em }
+table.tabulate.widefat thead th .sort-icons a { visibility:hidden; padding:0; display:inline }
+table.tabulate.widefat thead th.sortable:hover { background-color:#deedee }
+table.tabulate.widefat thead th.sortable:hover .sort-icons a { visibility:visible }
+table.tabulate.widefat td { line-height:1em }
+
+
+form.tabulate-schema td.primary-key,
+form.tabulate-schema td.unique { text-align:center }
+form.tabulate-schema td.reorder { font-size:smaller; white-space:nowrap }
+form.tabulate-schema td.reorder a.move {  }
+
+.tabulate.shortcode-error { border:1px solid #ccc; padding:0.5em }
+.tabulate.shortcode-error .message { color:red }

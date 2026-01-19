@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>soundgasm.net</title>
+
+        <link href='//fonts.googleapis.com/css?family=Ubuntu:400,500,700|Roboto' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/site.css" />
+        
+                
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo">Soundgasm.net Logo</a>
+        <nav>
+            <a href="https://soundgasm.net/">Home</a><a href="https://soundgasm.net/login">Login</a><a href="https://soundgasm.net/signup">Signup</a><a href="https://soundgasm.net/contact">Contact</a>        </nav>
+    </header>
+<div class="loginform">
+
+<h1>Login</h1>
+
+<form action="https://soundgasm.net/login" method="post" accept-charset="utf-8"><div style="display:none">
+<input type="hidden" name="csrf_test_name" value="cfc9b936c5ba29362dcc6771d47e20d0" />
+</div><label for='username'>Username</label><input type="text" name="username" value="" id="username"  /><label for='password'>Password</label><input type="password" name="password" value="" id="password"  /><input type="submit" name="submit" value="Login"  /></form><a href="https://soundgasm.net/passwordreset">Reset Password</a>
+</div><!-- end login_form-->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+</body>
+
+</html>

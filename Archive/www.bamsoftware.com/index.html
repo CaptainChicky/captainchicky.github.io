@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<link href="news.xml" type="application/atom+xml" rel=alternate>
+<style>
+html, body {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	background-color: #111;
+	overflow: hidden;
+}
+canvas {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+</style>
+<script type=module>
+const CTX = document.getElementsByTagName("canvas")[0].getContext("2d");
+const OFFSCREEN_CTX = (() => {
+	let canvas = document.createElement("canvas");
+	canvas.width = 1024;
+	canvas.height = 1024;
+	return canvas.getContext("2d");
+})();
+
+// assumes object-fit: cover and square aspect ratio.
+function coords(elem, clientX, clientY) {
+	let rect = elem.getBoundingClientRect();
+	if (rect.width < rect.height) {
+		return {
+			x: (event.clientX - rect.left + (rect.height - rect.width) / 2) / rect.height,
+			y: (event.clientY - rect.top) / rect.height,
+		};
+	} else {
+		return {
+			x: (event.clientX - rect.left) / rect.width,
+			y: (event.clientY - rect.top + (rect.width - rect.height) / 2) / rect.width,
+		};
+	}
+}
+
+let p = null;
+CTX.canvas.addEventListener("pointerdown", event => {
+	event.preventDefault();
+	event.target.setPointerCapture(event.pointerId);
+	p = coords(event.target, event.clientX, event.clientY);
+});
+CTX.canvas.addEventListener("pointerup", event => {
+	event.preventDefault();
+	try {
+		event.target.releasePointerCapture(event.pointerId);
+	} catch (error) {
+		if (!((error instanceof window.DOMException) && error.name === "InvalidPointerId"))
+			throw error;
+	}
+	p = null;
+});
+CTX.canvas.addEventListener("pointermove", event => {
+	event.preventDefault();
+	if (p)
+		Object.assign(p, coords(event.target, event.clientX, event.clientY));
+});
+
+function apply_epicycles(ctx, epicycles, t) {
+	for (let [radius, avel] of epicycles) {
+		ctx.rotate(avel * t * Math.PI * 2.0);
+		ctx.translate(radius, 0);
+	}
+}
+
+function zoom(ctx) {
+	ctx.translate(ctx.canvas.width/2, ctx.canvas.height/2);
+	ctx.rotate(1.0);
+	ctx.scale(1.01, 1.01);
+	ctx.translate(-ctx.canvas.width/2, -ctx.canvas.height/2);
+	ctx.drawImage(ctx.canvas, 0, 0);
+}
+
+function alpha(t, first) {
+	if (first)
+		return 1.0;
+	else if (t < 8.0)
+		return 0.0;
+	else if (t < 14.0)
+		return (t - 8.0) / (14.0 - 8.0);
+	else
+		return 1.0;
+}
+
+function with_state(ctx, f) {
+	ctx.save();
+	try {
+		return f(ctx);
+	} finally {
+		ctx.restore();
+	}
+}
+
+{
+	const TARGET_FPS = 60.0;
+
+	const EPICYCLES = [
+		[100, -0.5 * 0.18],
+		[24, 0.8 * 0.18],
+		[45, -0.2 * 0.18],
+		[5, 2.1 * 0.18],
+		[30, 0.05 * 0.18],
+	];
+
+	OFFSCREEN_CTX.lineWidth = 20;
+	OFFSCREEN_CTX.lineCap = "round";
+
+	const offset_t = Math.random()*100.0;
+	let prev_t = null;
+	let accum_t = 0.0;
+	let phase = 1.0;
+	let first = true;
+	function frame(t) {
+		t = t / 1000.0;
+		let id = window.requestAnimationFrame(frame);
+		try {
+			if (prev_t == null) {
+				prev_t = t;
+			}
+			let dt = Math.min(0.5, t - prev_t);
+			prev_t = t;
+
+			for (phase += dt * TARGET_FPS; phase >= 1.0; phase -= 1.0) {
+				accum_t += 1 / TARGET_FPS;
+
+				with_state(OFFSCREEN_CTX, ctx => zoom(ctx));
+
+				with_state(OFFSCREEN_CTX, ctx => {
+					if (p) {
+						ctx.translate(p.x*724+150, p.y*724+150);
+					} else {
+						ctx.translate(ctx.canvas.width/2, ctx.canvas.height/2);
+						apply_epicycles(ctx, EPICYCLES, accum_t + offset_t);
+						ctx.globalAlpha = alpha(accum_t, first);
+					}
+					first = false;
+
+					ctx.strokeStyle = `hsl(${(t+offset_t)*20%360},70%,50%)`;
+					ctx.beginPath();
+					ctx.moveTo(0, 0);
+					ctx.lineTo(0, 0);
+					ctx.stroke();
+				});
+			}
+
+			CTX.drawImage(OFFSCREEN_CTX.canvas, -150, -150);
+		} catch (error) {
+			window.cancelAnimationFrame(id);
+			throw error;
+		}
+	}
+	window.requestAnimationFrame(frame);
+}
+</script>
+</head>
+<body>
+<canvas width=724 height=724></canvas>
+</body>
+</html>

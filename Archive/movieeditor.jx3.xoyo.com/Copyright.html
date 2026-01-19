@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+    <meta name="renderer" content="webkit">
+    <!-- 保证移动端页面能够展示完整页面 -->
+    <meta name="robots" content="all"/>
+    <meta name="author" content="Tencent-TGideas">
+    <meta name="copyright" content="Tencent">
+    <title>《剑网3》系列动画编辑器</title>
+    <meta name="keywords" content="新剑网3,剑侠情缘3,剑网3,剑侠3,剑3,攻略,纯武侠网游,经脉加点,资料库,新手指南,天策,万花,七秀,纯阳,少林,藏剑,五毒,游戏心得,下载,客户端,更新包,官网,剑网3官网,金山">
+    <meta name="Description" content="《剑网3》系列官方动画编辑器，江湖盛景、山河锦绣尽收其中。即刻下载制作剑网3系列高清视频和美图，打造属于自己的武侠新世界！"/>
+
+    <!-- 设计：cp  | 重构：cp | 创建：2019-06-11  -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <script src="https://movieeditor.jx3.xoyo.com/jx3_xoyo_com_m_2021_01_28_lucky-tongbao/src/components/video/index.js"></script>
+</head>
+<body style="background: #eef0f4; ">
+<!-- 头部 -->
+<div class="up_header">
+    <div class="nav_list w_1200 c">
+        <div class="logo_up fl"><a href="javascript:;" class="sur t" ontouchend="PTTSendClick('btn','logo','logo');">logo</a>
+        </div>
+        <div class="logo_yq fl"><a href="javascript:;" class="sur t" ontouchend="PTTSendClick('btn','logo','logo');">logo</a>
+        </div>
+        <div class="nav_up fl">
+            <ul class="c">
+                <li>
+                    <a href="index.html">
+                        首页
+                        <p>INDEX</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="Tutorial.html" class="J_click_course">
+                        教程
+                        <p>COURSE</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="FAQ.html" class="J_click_faq">
+                        常见问题
+                        <p>FAQ</p>
+                    </a>
+                </li>
+                <li class="select_hover">
+                    <a href="Copyright.html">
+                        版权须知
+                        <p>COPYRIGHT</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--<div class="cs_up fr">-->
+        <!--<div class="search_box sur">-->
+        <!--<a href="JavaScript:;" class="sur t">搜索</a>-->
+        <!--<input type="text" placeholder="输入关键字">-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+</div>
+<!-- body -->
+<div class="banner_bg">
+    <div class="body_big w_1200">
+        <div class="slogan_font">
+            <p class="hy_font sur t">欢迎使用</p>
+            <h4 class="dh_font sur t">动画编辑器</h4>
+        </div>
+        <div class="download_a">
+            <div class="a_updownload c">
+                <a href="JavaScript:;" class="lj_download sur t fl">剑网3编辑器下载</a>
+                <a href="JavaScript:;" class="sm_download sur t fr">剑网3怀旧服编辑器下载</a>
+            </div>
+        </div>
+    </div>
+    <div class="content_nr w_1200">
+        <div class="title_js">
+            <div class="copyright_icon sur Tutorial"></div>
+
+        </div>
+        <div class="TutorialContent">
+            <div class="content_1200">
+                <div class="az_sm description">
+                    <div class="gy_title">
+                        <h3 class="bqxz_tt sur"></h3>
+                        <div class="J_copyright"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+<script src="https://zhcdn01.xoyo.com/xassets/lib/jquery/1.11.0/jquery.js"></script>
+<script src="https://zhcdn01.xoyo.com/xassets/com/pf/footer/v3/black/footer.js"></script>
+<script src="js/common.js"></script>
+<script>
+    $('.fr_navA a').click(function () {
+        $("html,body").animate({scrollTop: 0}, 0);
+    });
+
+</script>
+<script>
+    (function () {
+        g.getData.getArticleDetail({catid:"6285",id:8},function (obj) {
+            if(obj.data){
+                var copyright = obj.data[0];
+                $('.J_copyright').html(copyright.content);
+
+            }
+
+        })
+        // $.ajax({
+        //     type: 'get',
+        //     url: 'https://test-zt.xoyo.com/api.php',
+        //     data: {
+        //         op: "search_api",
+        //         action: 'get_article_list',
+        //         catid: 6208,
+        //         page: 1,
+        //         num: 100,
+        //         moreinfo: 1
+        //     },
+        //     dataType: 'jsonp',
+        //     contentType: 'application/x-www-form-urlencoded',
+        //     success: function (data) {
+        //         console.info('拉取cms文章:', data);
+        //
+        //     },
+        //     error: function (err) {
+        //         console.info('拉取cms文章错误:', err);
+        //     }
+        // })
+
+
+    }())
+</script>
+
+</html>

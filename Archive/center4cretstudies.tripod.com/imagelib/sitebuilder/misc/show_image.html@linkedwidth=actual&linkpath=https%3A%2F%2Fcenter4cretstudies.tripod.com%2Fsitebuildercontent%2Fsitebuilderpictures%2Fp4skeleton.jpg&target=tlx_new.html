@@ -1,0 +1,98 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "">
+<HTML><HEAD>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>Site Builder</TITLE>
+<style type="text/css"><!--
+    body, td {font-family:Verdana, Arial, Helvetica; font-size: 84%}
+    table {font-size: 119%}
+				--></style></HEAD>
+	
+	<BODY BGCOLOR="White" LEFTMARGIN="0" TOPMARGIN="4" MARGINHEIGHT="4" MARGINWIDTH="0">
+		<script language="javascript" type="text/javascript">
+var query = location.search;
+var ind;
+//	</script>
+		<table border="0" cellpadding="7" cellspacing="0">
+			<tr>
+				<td>
+					<TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="3"><TR BGCOLOR="#EEEEEE"><TD align="left">
+								<script language="javascript" type="text/javascript">
+ind = query.indexOf("title=");
+var after = "";
+if( ind >= 0 ) {
+	after = query.substring( ind + 6 );
+	var term = after.indexOf("&");
+	if( term > -1 )
+		after = after.substr(0, term);
+}
+if( after != "" )
+	document.write( unescape( after ) );
+else
+	document.write( "&#160;" );
+//	</script>
+							</TD><td align="right" width="1"><script language="javascript" type="text/javascript">
+ind = query.indexOf("target=");
+var after = "_self";
+if( ind >= 0 ) {
+	after = query.substring( ind + 7 );
+	var term = after.indexOf("&");
+	if( term > -1 )
+		after = after.substr(0, term);
+}
+var src = " src='";
+var width = " width='";
+var height = " height='";
+var onclick = " href='javascript:";
+if( after == "tlx_new" ) {
+	src = src + "btn_close_window.gif";
+	width = width + "73";
+	height = height + "18";
+	onclick = onclick + "close()";
+}
+else {
+	src = src + "btn_back.gif";
+	width = width + "55";
+	height = height + "18";
+	onclick = onclick + "history.back()";
+}
+src = src + "'";
+width = width + "'";
+height = height + "'";
+onclick = onclick + "'";
+document.write("<a" + onclick + "><img border='0'" + "https://center4cretstudies.tripod.com/imagelib/sitebuilder/misc/src" + width + height + "></a>");
+//	</script></td></TR></TABLE>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<script language="javascript" type="text/javascript">
+after = "";
+document.write("<img border='0'");
+ind = query.indexOf("linkedwidth=");
+if( ind >= 0 ) {
+	after = query.substring( ind + 12 );
+	var term = after.indexOf("&");
+	if( term > -1 )
+		after = after.substr(0, term);
+	if( after != "" && after != "actual")
+		document.write( " width=\"" + after + "\"" );
+}
+after = "";
+ind = query.indexOf("linkpath=");
+if( ind >= 0 ) {
+	after = query.substring( ind + 9 );
+	var term = after.indexOf("&");
+	if( term > -1 )
+		after = after.substr(0, term);
+	document.write( " src='" + after + "'" );
+}
+document.writeln(">");
+//	</script>
+				</td>
+			</tr>
+		</table>
+	</BODY>
+</HTML>
