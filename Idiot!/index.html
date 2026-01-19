@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Trojan.JS.YouAreAnIdiot</title>
+        <meta name="Author" content="Captain Chicky">
+        <link rel="icon" href="./index_files/idiot.png">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="Keywords" content="you are an idiot, you, are, an, idiot, fool, youdontknowwhoiam.org, youdontknowwhoiam, you dont know who i am, you, dont, know, who, i, am, org, dot, aregner, jazzy, adr">
+		<meta name="Description" content="The possibly very first internet JavaScript trojan ever made.">
+		<meta property="og:type" content="website">
+		<meta property="og:title" content="You are an idiot!">
+		<meta property="og:description" content="YouAreAnIdiot is possibly very first internet JavaScript trojan ever made. It is a fork bomb, so please proceed with caution.">
+		<meta property="og:image" content="http://captainchicky.github.io/Idiot!/index_files/idiot.png">
+		<meta property="og:image:secure_url" content="https://captainchicky.github.io/Idiot!/index_files/idiot.png"> 
+		<meta property="og:image:width" content="256">
+		<meta property="og:image:height" content="256">
+		<meta property="og:image:alt" content="Idiot!">
+
+        <style id="Main-CSS">
+            body {
+                background-color: black;
+            }
+            h1 {
+                font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                color: darkblue;
+                padding-left: 10px;
+            }
+            h2 {
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                color: rgb(54, 42, 133);
+                padding-left: 5px;
+            }
+            p {
+                color: black;
+                font-size: 18px;
+            }
+            ul {
+                color: black;
+                font-size: 18px;
+            }
+            abbr[title] {
+                text-decoration: none;
+            }
+            .background {
+                background-image: url('./index_files/smile!.png');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100%;
+                overflow: hidden;
+
+            }
+            .main {
+                background-color: rgb(222, 222, 222);
+                padding: 5vh 10% 0;
+                margin-top: 5vh;
+                padding-bottom: 5%;;
+                background-image: linear-gradient(to top, rgba(51, 51, 51, 0.4) 0, rgba(51, 51, 51, 0.1) 60%, transparent 100%);
+            }
+            .sticky {
+                background-color: rgb(251, 138, 255);
+                display: block;
+                color: transparent;
+                border-radius: 100%;
+                border: 3px solid rgb(0, 238, 255);
+                width: 5rem;
+                height: 5rem;
+                position: absolute;
+                margin-left: -2.5rem;
+                top: 26.5rem;
+                left: 50%;
+            }
+            .FirstHeading {
+                padding-left: 0px;
+            }
+            :link { color: #009ec5; border: none; }
+            :visited { color: #00459e; border: none; }
+            .html {
+                filter: invert(100%);
+                font-family: monospace;
+                font-size: 18px;
+                background-color: #ffffff;
+                padding: 2%;
+            }
+        </style>
+        <style id="Popup-CSS">
+            /*
+            * Popup box main css
+            * This part displays oreientation of dissapearance
+            */
+            .hover_bkgr_fricc{
+                background: rgba(255, 179, 179, 0.205);
+                display:none;
+                height:100%;
+                width: 80%;
+                position:fixed;
+                top:0;
+            }
+            /* This also helps position the popup */
+            .hover_bkgr_fricc .helper{
+                display:inline-block;
+                height:105%;
+                vertical-align:middle;
+            }
+            /* The text box popup itself */
+            .hover_bkgr_fricc > div {
+                background-color: #fff;
+                box-shadow: 10px 10px 60px #555;
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 14%;
+                margin-right: 14%;
+                width: 60%;
+                position: relative;
+                border-radius: 25px;
+                padding: 15px 5%;
+            }
+            /* Close button css */
+            .popupCloseButton {
+                background-color: #fff;
+                border: 3px solid rgb(94, 104, 160);
+                border-radius: 100px;
+                cursor: pointer;
+                display: inline-block;
+                font-family: arial;
+                font-weight: bold;
+                position: absolute;
+                top: -20px;
+                right: -20px;
+                font-size: 30px;
+                line-height: 40px;
+                width: 40px;
+                height: 40px;
+                text-align: center;
+            }
+            /* When you hover over the close button */
+            .popupCloseButton:hover {
+                background-color: #ccc;
+            }
+            /* The text that triggers popup */
+            .trigger_popup_fricc {
+                cursor: pointer;
+                display: inline-block;
+                font-weight: bold;
+            }
+        </style>
+        
+        <!-- jquery and the modal thing with the html popup JS -->
+        <script src="./index_files/jquery-3.7.0.js"></script>
+        <script>
+            $(window).on('load', function(){ 
+                $(".trigger_popup_fricc").click(function(){
+                    $('.hover_bkgr_fricc').show();
+                });
+                $('.popupCloseButton').click(function(){
+                    $('.hover_bkgr_fricc').hide();
+                });
+            });
+        </script>
+
+        <!-- copy text to clipboard, harccoded for each part -->
+        <script>
+            function myFunction() {
+              var copyText = document.getElementById("FlashLink");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999);
+              document.execCommand("copy");
+              
+              var tooltip = document.getElementById("myTooltip");
+              tooltip.innerHTML = "Copied: " + copyText.value;
+            }
+            
+            function outFunc() {
+              var tooltip = document.getElementById("myTooltip");
+              tooltip.innerHTML = "Copy link to clipboard";
+            }
+        </script>
+        <script>
+            function myFunction2() {
+              var copyText = document.getElementById("FlashLink2");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999);
+              document.execCommand("copy");
+              
+              var tooltip2 = document.getElementById("myTooltip2");
+              tooltip2.innerHTML = "Copied: " + copyText.value;
+            }
+            
+            function outFunc2() {
+              var tooltip2 = document.getElementById("myTooltip2");
+              tooltip2.innerHTML = "Copy link to clipboard";
+            }
+        </script>
+        <script>
+            function myFunction3() {
+              var copyText = document.getElementById("FlashLink3");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999);
+              document.execCommand("copy");
+              
+              var tooltip3 = document.getElementById("myTooltip3");
+              tooltip3.innerHTML = "Copied: " + copyText.value;
+            }
+            
+            function outFunc3() {
+              var tooltip3 = document.getElementById("myTooltip3");
+              tooltip3.innerHTML = "Copy link to clipboard";
+            }
+        </script>
+
+        <!-- this is the warning if the browser is too small, because lazy -->
+        <script>
+            if ($(window).width() < 1635) {
+                window.alert("Your browser window size is: " + window.innerWidth + " W x " + window.innerHeight + " L");
+                window.alert(
+                    "This is not wide enough to display this webpage properly. Please either enlarge your browser window if possible, or switch to a device which has a screen large enough to display this webpage properly."
+                    );
+                window.alert("The recommended size is 1635 in width.\nThat is, unless you want to see a broken webpage; if so, please ignore this error message.")
+            }
+        </script>
+    </head>
+    <body>
+        <div class="background"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></div>
+        <div class="sticky">&nbsp;&nbsp;<img src="./index_files/big-peacock-sprite.png" alt="peacock"></div>
+
+        <div class="main">
+
+            <center><font style="font-size: 30px;"><h1 class="FirstHeading"><u>Trojan.JS.YouAreAnIdiot</u></h1></font></center>
+
+            <p style="color: rgb(82, 30, 30); font-size: 20px;">
+
+                <b><font style="font-size: 25px; color: rgb(0, 4, 255); background:url(./index_files/rainbow.gif);">DISCLAIMER:</font></b> 
+                I am <b><u><i>not</i></u></b> responsible for any stress or damage caused to your computer, speakers, or your ears! 😉<br><br>
+                
+                <b><font style="font-size: 25px; color: rgb(0, 4, 255); background:url(./index_files/rainbow.gif);">WARNING:</font></b> Trojan.JS.YouAreAnIdiot is a <u><b>fork bomb</b></u> which is a 
+                process that continually replicates itself to deplete available system resources, slowing down or crashing the system due to resource starvation.<br><br>
+                Although it may not appear potent, it <u>WILL</u> catch you off guard whether you're prepared or not. Whether it's task manager failing to show the browser
+                processes, your taskkill command in cmd failing to execute, or anything of the like, an exception <u>WILL HAPPEN</u>.<br><br>
+                <u><b>Please save all work and wrap everything up on your PC before accessing the demonstration site!</b></u> 
+                Or better yet, <b><u>access the demonstration site on a Virtual Machine!</u></b><br><br>
+
+                <center><font style="font-size: 25px;"><a style="color: #00740f;" class="trigger_popup_fricc"><abbr title="Click me!">⮞ This has happenned to me before when I was testing the site! Please be careful! ⮜</abbr></a></font></center>
+                
+                <div class="hover_bkgr_fricc">
+                    <span class="helper"></span>
+                    <div>
+                        <div class="popupCloseButton">&times;</div>
+                        <p>
+                            It was 8:30 AM PST Wednesday April 7th, 2021. I was in Zoom Class (ELA 1-2 H)😅 but nevertheless attempting to polish
+                            up my hand-converted trojan page. I had task manager at the bottom left of my screen, and decided it would be a good time to
+                            test it out again on Internet Explorer 11. There was a bug where when I used the &lt;iframe&gt; tag, Internet Explorer 11 would prompt
+                            the user with a download of the .mp3 sound that was being played. I removed it and went with a new method of sound embed and wanted to see if it worked. 
+                            I was prepared, but nevertheless when I openned the page, I was happy to see it worked, but then realized the task manager had stopped
+                            responding and there was no entry for Internet Explorer for me to end. I panicked and tried using the command prompt, but the duplicating pages 
+                            were already lagging my computer really badly (keep in mind that I was in class still 😬). I ended up having to hard restart 
+                            and welp it was really akward rejoining and saying that "my computer suddenly restarted" to my teacher.
+                            <br><br>
+                            What I'm trying to say is, please don't go to the trojan page not only unprepared, but still having other things to do.
+                            Please close everything and finish everything before accessing it. Should you evern decide to test this on your main computer and 
+                            not on a Virtual Machine, please open a command prompt window and type in <i>taskkill /f /im *insert browser .exe name*</i> so that
+                            you can press enter to kill the browser task whenever things get out of hand!
+                        </p>
+                    </div>
+                </div>
+            </p><br>
+            <p>Anyhow, let's begin this 🤗</p><br>
+            <h1>What is this?</h1>
+            <p>
+                Trojan.JS.YouAreAnIdiot is a <u>trojan website</u>. Since it is purely JavaScript/Web based, it will not delete files or anything of that sort;
+                instead it is a fork bomb. Originally, it was hosted on <i>https://youdontknowwhoiam.com</i> which was created in 2002, afterwards turning into a
+                pornography portal, and finally shutting down in a few years later. A mirror, <i>https://youareanidiot.org</i>, created in 2004 was also availible for 
+                a few years, before turning into a different, basically blank page after 2009. In around 2015, the YouTuber going by the name danooct1 recreated the site, 
+                but it was taken down, and now the link redirects to a pastebin. In 2018, the YouTuber going by the name Endermanch hosted another mirror of 
+                the trojan at <i>https://youareanidiot.cc</i>. However, it seems that it was unfortunately taken down in 2021.
+                <br><br>
+                <font style="color:rgb(151, 0, 0)">Edit 2023: The site was only down for a few months, and was back up in 2022.</font>
+                <br><br>
+                Before 2021, if you went to <i>https://youareanidiot.cc</i> on Internet Explorer and then tried to close the tab, you were greeted with the meaning of life:
+            </p>
+            <ul style="color: rgb(82, 82, 15);"><li>Windows flying around your screen with a .swf file flashing, displaying "you are an idiot!" while singing beautifully about the fact that you are an idiot! 😳</li></ul>
+            <p>
+                Now though, all four of the sites are down and broken 😔 <font style="color:rgb(151, 0, 0)">(as said previously though, the <i>.cc</i> site ran by Endermanch is back, with an html5 reconstruction as well, so you should check it out!)</font><br>
+                But worry not! Here, I've recreated not only the original site, but created two copies of it converted into html5 as well! 😄
+                If you're wanting to directly access the recreations, don't feel like reading through all the text that will commence, 
+                and <u>have already read the warning and disclaimer</u>, here are the section links:
+            </p>
+            <ul style="color: rgb(61, 61, 11);">
+                <li><a href="#Flash-Recreation">Original recreation, with Flash.</a></li>
+                <li><a href="#AdobeAnimate-Recreation">First html5 Adobe Animate converted recreation.</a></li>
+                <li><a href="#Hand-Recreation">Second html5 hand converted recreation.</a></li>
+            </ul>
+            <p>
+                Anyhow, let's talk about the site structure itself.<br>
+                The website is constructed very simply. It has a JavaScript reference and a Flash embed.<br>
+                The Flash embed consists of of some words in Times New Roman font, and an exclamation point that is small enough such that it 
+                is barely visible without zooming in, structured like this:
+            </p>
+            <pre>
+            you are an idiot!<br>
+                ☺️ ☺️ ☺️
+            </pre>
+            <p>
+                The animation inverts 3 times per second, followed by an audio singing: "You are an idiot! ha ha ha ha ha ha ha ha ha ha ha ha ha".<br>
+                The JavaScript has a few payloads:
+            </p>
+            <ul style="color: rgb(61, 61, 11);">
+                <li>
+                    <b>bookmark() and changeTitle()</b>:<br><span style="color:rgb(82, 30, 30)">On Internet Explorer, this will bookmark the site on the user's browser, 
+                    and if the user's version of Internet Explorer is lower than 6.0, the JavaScript will also set the user's homepage to its own website. This won't work
+                    in other browsers, as they don't have the same bookmarking methods nor homepage setting methods.</span>
+                </li>
+                <li>
+                    <b>openWindow() and procreate()</b>:<br><span style="color:rgb(82, 30, 30)">This will open six small windows directing to another .html file,
+                    with the same embed and JavaScript. In browsers other than Internet Explorer, there may be errors in window size.</span>
+                </li>
+                <li>
+                    <b>altf4key(), ctrlwkey(), and delkey()</b>:<br><span style="color:rgb(82, 30, 30)">This disables the shortcuts for closing a window, which are
+                    <i>ctrl+w</i>, <i>alt+f4</i>, along with the escaping shortcut <i>ctrl+alt+del</i>. If a user attempted to use one of these shortcuts on 
+                    Internet Explorer, they will be notified with a popup alert that "[they] are an idiot!" 😉. Unfortunately, this doesn't work correctly on other browsers.</span>
+                </li>
+                <li>
+                    <b>A plethora of window sizing functions and playBall()</b>:<br><span style="color:rgb(82, 30, 30)">This is the fun part that makes the windows bounce around
+                    the screen and making them extremely hard to close 😋.</span>
+                </li>
+            </ul>
+            <p>
+                Note that the JavaScript is really outdated, and Internet Explorer 11 has been made so that it will block the JavaScript (or ActiveX as it's called)
+                control unless the domain has been added to the trusted list (or checking the option in the "Advanced → Security" setting that allows Javascript/ActiveX
+                control from a file:/// link if they want it locally). However it can be edited so it works on modern browsers. I probably can do it, as I already converted the Flash embed,
+                but considering the fact that I'm too lazy and that it still works on the Internet Explorer 11, which is likely the last version of said browser, probably not. 
+                <br><br>I'll give ya'll an update once I do it, or not do it starting from April 8th, 2021 in the space below 😅:
+                <br>
+                <font style="font-size:23px; color:rgb(30, 82, 30)">Have I updated the JavaScript yet?</font>&nbsp;&nbsp;&nbsp;&nbsp;<marquee width="5%"><span style="background-color: orange;">&nbsp;&nbsp;Kind of?&nbsp;&nbsp;</span></marquee>
+                <br><br>
+                <font style="color:rgb(151, 0, 0)">
+                    Edit 2023: Well well well, it seems that things have taken quite a turn. Internet Explorer has been discontinued, as a matter of fact, and browser security has upped quite a bit, 
+                    so in all honesty, I'm not sure what I meant in 2021 when I said that the js could be "edited" to "make it work on modern browsers". In the aspect of audio, it can sort of be made "to work", but 
+                    in the context of ActiveX control within IE, there's really nothing you can do on the website's end that will allow control. This is now solely up to the user's discretion via settings.
+                    Funnily enough, most modern browsers allow ActiveX control by default kekw.
+                    <br><br>
+                    Anyhow, what has basically been done (in the aspect of modern browsers) is that I have made it so that the audio will attempt to autoplay. If the user changed their 
+                    setting to make audio autoplay by default, then all is well. If not, as soon as any click is made on the page, the audio will autoplay. So... yes, I've updated the js... but 
+                    this isn't really what I meant when I initially wrote the prior statement about updating it... so hence the "kind of" lmao. Before you ask, no, I'm not going to bother with updating the js 
+                    anymore after this, because there's really not much else to update lol.
+                    <br><br>
+                    Also, if you do not have an IE browser on your computer because you are using a bad version of windows (<i>cough</i> windows 11 🤢🤮), <a href="./index_files/EIE11_EN-US_MCM_WIN764.EXE">here</a> is a possible 
+                    installer for IE 11. Or, consider killing yourself for using windows 11. It was taken from <a href="https://www.microsoft.com/en-us/download/details.aspx?id=41628">this</a> official link. If you're smart, which I hope you are 
+                    because I can't coninue to baby you around and guide you across every stream, you should be able to figure out ways to get IE if the link dies, such as via archive.org, or even VMs (getting 
+                    the installation disks will also be a fun learning experience tbh). 
+                </font>  
+                <br><br>
+                And that's it. There's nothing else to it! 😄. Now time to go over my re-creations! 👍
+            </p><br>
+            <h1 id="Flash-Recreation">Original recreation, with Flash</h1>
+            <p>
+                Let me get straight to the point here. Flash v32.0.0.380 and above died on January 12th, 2021 with Adobe's implementation of a timed kill switch. 
+                So thus, in order for this to work, you must fix this. Please try this on a Virtual Machine. You have been warned. Now, let's do this 🙂. 
+                <br><br>
+                First, do a check on the version of Flash you have installed. On your keyboard, type in <img src="index_files/win.png"><i>+r</i> to bring up the run box.
+                In the run box, type in <i>appwiz.cpl</i>. This brings up the applications page in the control panel. Scroll until you have found Flash, and look for your
+                Flash version, as seen here:
+            </p>
+            <center><img src="./index_files/appwiz.cpl-flashVersion.png"></center>
+            <p>
+                Now observe if the version number is above v32.0.0.380 (beta). If your version number is v32.0.0.371 or below, then it does not have the kill switch, 
+                and you can proceed past all my Flash patching directions. If your version number is v32.0.0.380 or above, continue to follow my steps.
+                <br><br>
+                I will demonstrate two different methods to bypass the kill switch. Click <a href="#FPMethod1">here</a> for method one, and <a href="#FPMethod2">here</a> for method two.
+                <br><br><font style="color:rgb(151, 0, 0)">
+                    Edit 2023: Reminscing back, there was a binary editing method I saw on the Pale Moon forums in 2021 that I never got to work on my computer lol. If you find the original thread, 
+                    you may be able to use a hex editor to directly remove the kill switch that way from one of the files in the two flash installation dirs.
+                </font>
+            </p><br>
+            <h2 id="FPMethod1">Method 1</h2>
+            <p>
+                We will first uninstall Flash. You can do this by right clicking any Flash entry and selecting uninstall. Follow all prompts until uninstallation has finished.
+                Repeat this with all entries of Flash you have in the application page.<br><br>
+                Alternatively, or if you encounter any errors, you can use <a href="./index_files/uninstall_flash_player.exe">this</a>
+                uninstaller instead. This is the most recent version of the uninstaller as of April 7th, 2021. In the future if there are any updates, you can find the updated version
+                of the uninstaller at the official Adobe Flash uninstaller homepage <a href="https://helpx.adobe.com/flash-player/kb/uninstall-flash-player-windows.html">here</a>.
+                <br><br>
+                After successfully uninstalling Flash, type in <img src="index_files/win.png"><i>+r</i> again and this time enter <i>%SYSTEMROOT%\system32\Macromed\Flash</i> into the box.
+                With administrator permissions, delete everything in this folder. Repeat for <i>%SYSTEMROOT%\SysWOW64\Macromed\Flash</i>, <i>%APPDATA%\Adobe\Flash Player</i>, and <i>%APPDATA%\Macromedia\Flash Player</i>.
+                Then, perform a system restart.
+                <br><br>
+                Now, we can install a version of Flash that does not have the kill switch. <s>Download <a id="HyperlinkToItself" href="#HyperlinkToItself">this</a> .zip archive of v32.0.0.371 Flash player installers</s>...
+            </p>
+            <p style="color:rgb(0, 110, 6)">
+                Second Edit 2023: In order to avoid using git LFS anymore for this repo dir, I've decided to unzip the previous file and zip each part for smaller file size, at the expense 
+                of there being multiple files. So, here is the index of all the files in the archive "<i>fp_32.0.0.371_archive.zip</i>":
+            <p>
+            <ul style="color:rgb(0, 110, 6)">
+                <li>
+                    Installers <br>
+                    <ul style="color:rgb(0, 110, 6);">
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Linux]32_0_r0_371.7z">Linux Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Mac]32_0_r0_371.7z">Mac OS Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Windows_EXE]32_0_r0_371.7z">Windows .EXE Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Windows_MSI]32_0_r0_371.7z">Windows .MSI Installers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371/[Uninstallers]32_0_r0_371.7z">Uninstallers (Mac OS and Windows only)</a></li>
+                    </ul>
+                </li>
+                <li style="margin-top: 10px;">
+                    Debuggers
+                    <ul style="color:rgb(0, 110, 6)">
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Linux]32_0_r0_371_debug.7z">Linux Debuggers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Mac]32_0_r0_371_debug.7z">Mac OS Debuggers</a></li>
+                        <li style="margin-top: 2px;"><a href="./index_files/fp_32.0.0.371_archive/32_0_r0_371_debug/[Windows]32_0_r0_371_debug.7z">Windows Debuggers</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <p style="color:rgb(0, 110, 6)">
+                All files are compressed here using 7zip, so get 7zip yourself to unpack them. Also, I haven't <i>removed</i> the source .zip archive, but for all intents and purposes, 
+                it might as well be gone lol, because I've chopped it up into 100MB files and shoved them into the <i>./index_files/fp_32.0.0.371_archive/Source/</i> directory with a "_"
+                in front of each files' names, meaning Jekyll will ignore them when building the website. They're also ignored in the checkout phase for the runner vm, so 
+                technically the renaming with "_" in front is a backup in case the files get past into the checkout??? Eh, idk lol. And yes, I removed the link on the crossed out text above as well.
+            </p>
+            <p>
+                ...or alternatively, download it from <a href="https://web.archive.org/web/20200618035158/https://fpdownload.macromedia.com/pub/flashplayer/installers/archive/fp_32.0.0.371_archive.zip">archive.org</a>.
+                For a full index of all Flash versions, please <a href="./index_files/flashplayerarchive_archive.torrent">torrent</a> it, or visit <a href="https://archive.org/details/flashplayerarchive">archive.org</a> for direct downloads.
+                <br><br>
+                Once you have the Flash v32.0.0.371 zip archive, navigate to the directory <i>./32_0_r0_371/</i> and run <i>flashplayer32_0r0_371_winax.msi</i> to install ActiveX Flash.
+                <font style="color:rgb(0, 110, 6)"> For refernece, this is just the "Windows .MSI Installers" download link in the edit. </font> 
+                Or, if you feel like it, run all three .msi installers in the aforementioned directory to install all versions of v32.0.0.371 Flash. Restart your computer once you have installed Flash.
+            </p><br>
+            <h2 id="FPMethod2">Method 2</h2>
+            <p>
+                <font style="color:rgb(151, 0, 0)">Edit 2023: This tool has updated immensely. Please visit the official Github page (linked below) to download the newest version at the time of reading. Or, as of 2023, <a href="./index_files/FlashPatch_1.21.exe">here</a> is the newest version v1.21 (2023/06/22).</font>
+                <br><br>
+                Download v1.5 (2021/04/02) FlashPatch, a Flash installation modifier which bypasses the January 12th, 2021 kill switch that prevents you from running Flash starting January 12th <a href="./index_files/FlashPatch.exe">here</a>.
+                As of April 7th, 2021, this is the most updated version of FlashPatch. In the future if there are any updates, you can find the updated version of FlashPatch at its official GitHub homepage <a href="https://github.com/darktohka/FlashPatch">here</a>.
+                <br><br>
+                After downloading it, please run it and click <i>Patch</i> as shown below.
+            </p>
+            <center><img src="./index_files/FPv1.5.png"></center>
+            <p>This should return system-wide Flash access. In case anything goes haywire, run the FlashPatch application again and press <i>Restore</i> to revert any changes that it made.</p>
+            <br>
+
+            <h2>The Flash site</h2>
+            <p>
+                You should have the Flash addon automatically added to all of your browsers is you followed the steps above, and if not manually add them.<br>
+                Before I give the link, note that again, <b><u>you should be doing this on a Virtual Machine</u></b>. Now that is out of the way, open Internet Explorer, which should come preinstalled with
+                all Windows 10 installation media/.isos that were created before August 17th, 2021. 
+                <br><br>
+                In the browser link entry box, enter/navigate to 
+                <abbr title="TAKE GREAT PRECAUTION WHEN GOING HERE!">
+                    <input style="width:318px" type="text" value="https://captainchicky.github.io/Idiot!/Original/Idiot!.html" id="FlashLink">
+                </abbr>
+                <div style="margin-top:-39px;margin-left:670px;" class="tooltip">
+                    <button onclick="myFunction()" onmouseout="outFunc()">
+                      <span class="tooltiptext" id="myTooltip">Copy link to clipboard</span>
+                    </button>
+                </div>
+            </p>
+            <p><font style="color:rgb(30, 82, 30)">
+                Second Edit 2023: Tbh, I've noticed this only now, but in hindsight, I find it extremely funny that I put a focus on making this site work for modern browsers in the latter sections of this writeup, 
+                yet in my instructions when I actually provide the link, I tell you to use Internet Explorer. This is slightly misleading, so I guess I'll just clarify now that you don't <i>have to</i> use IE to access
+                the site and to see the payload of the trojan, but if you want to get a payload as close to the original trojan as possible, then use IE.
+            </font></p>
+            <p>Good luck 😉.</p>
+            <br>
+
+            <h1 id="AdobeAnimate-Recreation">First html5 Adobe Animate converted recreation</h1>
+            <p>
+                Since Flash died, I wanted to convert the .swf object to an html5 canvas. A quick online search yielded in the fact that 
+                <abbr title="😉Enjoy! M0nkrus is a trusted repacker too so don't worry😄"><a href="http://w14.monkrus.ws/search?q=animate">Adobe Animate</a></abbr> could convert Flash
+                into html5. So I loaded the <a href="./Converted/Source/YouAreAnIdiot!.swf">.swf</a> into <a href="https://github.com/jindrapetrik/jpexs-decompiler">JPEX Flash Decompiler</a>, 
+                exported a <a href="./Converted/Source/YouAreAnIdiot!.fla">.fla</a> file that Adobe Animate could read. Using the conversion tool, I converted the 
+                .fla into an <a href="./Converted/Source/YouAreAnIdiot!-converted-html5-via-Adobe-Animate.fla">html5 canvas</a> <font style="color:rgb(151, 0, 0)">(which animate keeps in .fla form for some reason)</font>, and exported it.
+                <br><br>
+                And it worked!!!... sort of...<br>
+                The html5 and JavaScript were quite complicated, and I took a couple of hours to decipher and understand the code.
+                The sound would not play on modern browsers unless the user interacted with the page (i.e. a click) and even then it would take it's sweet time to arrive 
+                at one's sound outputs, but would autoplay on Internet Explorer. I took some time to center it on the page, but couldn't get sizing to work.
+                <br><br>
+                In the end, it kinda worked, but the sizing of the animation was still not very good. On the main html page, it would be too small, and on the smaller 
+                bouncy windows, the animation would be too big. Nevertheless it still worked so I guess that's something.<br><br>
+                
+                <font style="color:rgb(30, 82, 30)">And will I someday fix this sizing problem?</font>&nbsp;&nbsp;
+                <marquee direction = "up" width="3%" height="20px"><span style="background-color: rgb(0, 255, 0);">&nbsp;Yes&nbsp;</span></marquee>
+                <font style="color:rgb(151, 0, 0)"><b>SIKE! I meant</b></font>&nbsp;&nbsp;
+                <marquee width="4%"><span style="background-color: red;">&nbsp;&nbsp;No&nbsp;&nbsp;</span></marquee>
+                <br>So yea unfortunately I will not be bothering to fix this. It's just really not worth it to be honest. Hey, it's good enough alright? 😅<br>
+                As for the link, again, note that <b><u>you should be doing this on a Virtual Machine</u></b>.<br><br>
+                Open Internet Explorer, and in the browser link entry box, enter/navigate to<br>
+                <abbr title="AGAIN, TAKE GREAT PRECAUTION WHEN GOING HERE!">
+                    <input style="width:752px" type="text" value="https://captainchicky.github.io/Idiot!/Converted/html5-via-AdobeAnimate/YouAreAnIdiot!-html5-conversion-via-Adobe-Animate.html" id="FlashLink2">
+                </abbr>
+                <div style="margin-top:-39px;margin-left:761px;" class="tooltip2">
+                    <button onclick="myFunction2()" onmouseout="outFunc2()">
+                        <span class="tooltiptext2" id="myTooltip2">Copy link to clipboard</span>
+                      </button>
+                </div>
+            </p>
+            <p>And again, good luck 😉.</p><br>
+            <h1 id="Hand-Recreation">Second html5 hand converted recreation</h1>
+            <p>
+                <font style="color:rgb(151, 0, 0)">Edit 2023: Man <i>FUCK</i> the way I hardcoded this page section's html lmao I'm actually wanting to kill myself after seeing this.</font>
+                <br><br>
+                Of course, the sizing bug really bothered me, and I didn't want to go through all that code Adobe Animate generated to fix it. Thus, I opted
+                to create the animation from scratch.
+                <br><br>
+                The animation itself was simple enough. Two alternating images and some autoplaying audio. The alternating images was pretty straightforward.
+                We can use the following html below...<br>
+            </p>
+            <pre class="html">
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">div</span> <span style="color: #008000;">class</span><span style="color: black;">=</span><span style="color: #483d8b;">"wrapper"</span><span style="color: black;">></span>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: black;">&lt;</span><span style="color: #dc143c;">img</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/black.png"</span><span style="color: black;">></span>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: black;">&lt;</span><span style="color: #dc143c;">img</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/white.png"</span><span style="color: black;">></span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">/div</span><span style="color: black;">></span></pre>
+            <p>
+                ...and by adding a fade-in and fade-out CSS and then positioning them on top of each other, as shown below...
+            </p>
+            <pre class="html">
+        <span style="color: #dc143c;font-weight:bold;">@keyframes</span> <span style="color: #ff7700;">img-1</span> <span style="color: black;">{
+            0% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            44% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            50% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            94% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            100% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+        }</span>
+
+        <span style="color: #dc143c;font-weight:bold;">@keyframes</span> <span style="color: #ff7700;">img-2</span> <span style="color: black;">{
+            0% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            44% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            50% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            94% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+            100% {</span>
+                <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: black;">}
+        }</span>
+
+        <span style="color: #003249;">.wrapper</span> <span style="color: #000000;">{</span>
+            <span style="color: #66cc66;">margin-left</span><span style="color: black;">:</span> <span style="color: #008000;">16.5%</span> <span style="color: rgb(145, 156, 79);font-weight:bold;">!important</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">position</span><span style="color: black;">:</span> <span style="color: #008000;">relative</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">height</span><span style="color: black;">:</span> <span style="color: #008000;">100%</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">width</span><span style="color: black;">:</span> <span style="color: #008000;">68%</span><span style="color: black;">;
+        }</span>
+
+        <span style="color: #003249;">.wrapper img:first-child</span> <span style="color: black;">{</span>
+            <span style="color: #66cc66;">position</span><span style="color: black;">:</span> <span style="color: #008000;">absolute</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">width</span><span style="color: black;">:</span> <span style="color: #008000;">100%</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">1</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">animation</span><span style="color: black;">: img-1</span> <span style="color: #008000;">0.4s</span> <span style="color: black;">infinite</span><span style="color: black;">;
+        }</span>
+        
+        <span style="color: #003249;">.wrapper img:last-child</span> <span style="color: black;">{</span>
+            <span style="color: #66cc66;">position</span><span style="color: black;">:</span> <span style="color: #008000;">absolute</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">width</span><span style="color: black;">:</span> <span style="color: #008000;">100%</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">opacity</span><span style="color: black;">:</span> <span style="color: #008000;">0</span><span style="color: black;">;</span>
+            <span style="color: #66cc66;">animation</span><span style="color: black;">: img-2</span> <span style="color: #008000;">0.4s</span> <span style="color: black;">infinite</span><span style="color: black;">;
+        }</span></pre>
+            <p>
+                ...we're basically halfway done!<br><br>
+
+                Unfortunately, this is where it get's really tricky. Putting the audio on the page isn't hard. Autoplaying it is. 
+                Because most modern browsers do not support autoplaying audio, I wanted to first guarentee the autoplay worked on Internet Explorer 11, 
+                and then work towards getting it to work on other browsers such as FireFox, Google Chrome, or Microsoft Edge.
+                According to <a href="https://stackoverflow.com/questions/50490304/how-to-make-audio-autoplay-on-chrome">this</a> StackOverflow question,
+                we can use an &lt;iframe&gt; tag to autoplay. Thus, we have that
+            </p>
+            <pre class="html">
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">iframe</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/Idiot!.mp3"</span> <span style="color: #008000;">type</span><span style="color: black;">=</span><span style="color: #483d8b;">"audio/mp3"</span> <span style="color: #008000;">allow</span><span style="color: black;">=</span><span style="color: #483d8b;">"autoplay"</span> <span style="color: #008000;">id</span><span style="color: black;">=</span><span style="color: #483d8b;">"audio"</span> <span style="color: #008000;">style</span><span style="color: black;">=</span><span style="color: #483d8b;">"display:none"</span><span style="color: black;">&lt;</span><span style="color: #dc143c;">/iframe</span><span style="color: black;"></span><span style="color: black;">></span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">audio</span> <span style="color: #008000;">autoplay loop</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">source</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/Idiot!.mp3"</span> <span style="color: #008000;">type</span><span style="color: black;">=</span><span style="color: #483d8b;">"audio/mp3"</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">/audio</span><span style="color: black;">></span></pre>
+            <p>
+                Good! Now, let's give it a test run! We open it up in Internet Explorer, the flashing images are working, the audio is autoplaying... wait... what's this?
+            </p>
+            <center><img src="./index_files/downloadmp3prompt.png"></center>
+            <p>
+                That's not good. It seems Internet Explorer registers the &lt;iframe> tag as a download trigger, and all subsequent windows the you.js that we will 
+                want to implement in the page in the future will have such a notification.
+                <br><br>
+                Hmm... let's try something different. What about... this?
+            </p>
+            <pre class="html">
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">audio</span> <span style="color: #008000;">id</span><span style="color: black;">=</span><span style="color: #483d8b;">"IdiotAudio"</span> <span style="color: #008000;">loop</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">source</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/Idiot!.mp3"</span> <span style="color: #008000;">type</span><span style="color: black;">=</span><span style="color: #483d8b;">"audio/mp3"</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">/audio</span><span style="color: black;">></span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">script</span><span style="color: black;">></span>
+        <span style="color: #66cc66;">var</span> <span style="color: black;">audio = document.getElementById(</span><span style="color: rgb(145, 156, 79);">"IdiotAudio"</span><span style="color: black;">).autoplay = </span><span style="color: #66cc66;">true</span><span style="color: black;">;</span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">/script</span><span style="color: black;">></span></pre>
+            <p>
+                Ok, let's see if this works. We open the page with Internet Explorer and observe what it does. Hooray! It worked! There was no download prompt and 
+                the animation along with the autoplaying audio played with no impediment!
+                <br><br>
+                Ok, now we proceed to the second step. 🤔 Will this work on modern browsers? We open it up in Google Chrome and see if it works... and the audio doesn't play.
+                😔 It would seem to be that modern browsers disallow autoplaying audio, which is for the best to be honest, but presents a pretty large problem for us
+                in attempts to recreate this. 
+                <br><br>
+                But wait... I've been testing autoplaying on a <i>local</i> file:/// link... 🤔 Let's try this on an https:// link instead. So I upload my html to the GitHub pages
+                server, and then go to the https:// link... and sure enough, <b>it worked</b>!!!
+                <br><br>
+                I did a couple more tests on different browsers, and here are the results: 
+            </p>
+            <ul style="color: rgb(61, 61, 11);">
+                <li>
+                    <b>Internet Explorer v11</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio works on file:/// and https:// links.</span>
+                </li>
+                <li>
+                    <b>Microsoft Edge v89.0.774.68</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio works on file:/// and https:// links.</span>
+                </li>
+                <li>
+                    <b>Pale Moon Browser v29.1.1 (2021-03-30)</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio works on file:/// and https:// links.</span>
+                </li>
+                <li>
+                    <b>Google Chrome v86.0.4240.183</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio works on https:// links but not on file:/// links.</span>
+                </li>
+                <li>
+                    <b>Opera v75.0.3969.149</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio works on https:// links but not on file:/// links.</span>
+                </li>
+                <li>
+                    <b>FireFox v87.0</b>:<br>
+                    <span style="color:rgb(82, 30, 30)">Autoplay audio only works on https:// links if given explicit permission, and won't work on file:/// links.</span>
+                </li>
+                <li>
+                    <b>K-Meleon v1.5.4</b>:&nbsp;<span style="color:rgb(82, 30, 30)"><font style="font-size: 10px;">By the way this is a joke 😂</font></span><br>
+                    <span style="color:rgb(82, 30, 30)">CSS animation is unsupported. Autoplay won't work on file:/// links and the browser cannot access https:// links.</span>
+                </li>
+            </ul>
+            <p>
+                Do note that sizing is still <i>kinda</i> a problem, but let's be honest here, html5 is never going to be the same as Flash 😔, so this is the best we can do for now.
+                In regards to the link, smh again I can't reiterate this enough: <b><u>you should be doing this on a Virtual Machine</u></b>!<br><br>
+                Anyhow, open Internet Explorer, and in the browser link entry box, enter/navigate to
+                <abbr title="I know this is annoying, but I have to say it again, TAKE GREAT PRECAUTION WHEN GOING HERE!">
+                    <input style="width:334px" type="text" value="https://captainchicky.github.io/Idiot!/Converted/Idiot!.html" id="FlashLink3">
+                </abbr>
+                <div style="margin-top:-39px;margin-left:957px;" class="tooltip3">
+                    <button onclick="myFunction3()" onmouseout="outFunc3()">
+                        <span class="tooltiptext3" id="myTooltip3">Copy link to clipboard</span>
+                    </button>
+                </div>
+            </p>
+            <p><font style="color:rgb(151, 0, 0)">
+                    Edit 2023: Well unfortunately, it looks like the current versions of Google Chrome (v114.0.5735.134) and FireFox (v114.0.2) block autoplay despite my script above lol. 
+                    AFAIK this is because increased security measures which are in place to prevent exactly this kind of trojan from happenning without user permission, which is good, from the user's 
+                    perspective. Of course, you can manually enable autoplaying audio in settings to allow for this kind of trojan to work, but that's not really the 
+                    same lol. Whatever. What matters tho is that this still works on IE, which is the browser this trojan was meant to be for 😊.
+                    <br><br>
+                    I've updated the js ofc to improve this slightly on modern browsers, as I've said prior. I kept the autoplaying function in case someone just had modified their browser settings to one 
+                    I could exploit. If they kept the defaults and disallowed autoplay, my goal was to add the next best thing, which was having the audio play upon any interaction, like a click.
+                    To achieve this goal, there are three steps. First, make the entire page unselectable. This is easily done with 
+            </font></p>
+                <pre class="html">
+        <span style="color: #003249;">body</span> <span style="color: black;">{</span>
+            <span style="color: #66cc66;">user-select</span><span style="color: black;">:</span> <span style="color: #008000;">none</span><span style="color: black;">;
+        }</span></pre>
+            <p><font style="color:rgb(151, 0, 0)">
+                    Second, we split the initial audio autoplay js line into two, so that we actually properly establish the audio reference variable and make the js more readable.
+                    Lastly, we add a click event listener to the document, which will play the audio as soon as any form of interaction is made on the page by the user, checking to make sure that 
+                    the audio isn't initially playing, so we don't have multiple audios playing on one page.
+            </font></p>
+                <pre class="html">
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">audio</span> <span style="color: #008000;">id</span><span style="color: black;">=</span><span style="color: #483d8b;">"IdiotAudio"</span> <span style="color: #008000;">loop</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">source</span> <span style="color: #008000;">src</span><span style="color: black;">=</span><span style="color: #483d8b;">"./<i>path</i>/Idiot!.mp3"</span> <span style="color: #008000;">type</span><span style="color: black;">=</span><span style="color: #483d8b;">"audio/mp3"</span><span style="color: black;">>&lt;</span><span style="color: #dc143c;">/audio</span><span style="color: black;">></span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">script</span><span style="color: black;">&gt;</span>
+        <span style="color: #66cc66;">var</span> <span style="color: black;">audio = document.getElementById(</span><span style="color: rgb(145, 156, 79);">"IdiotAudio"</span><span style="color: black;">);</span>
+        <span style="color: black;">audio.autoplay = </span><span style="color: #66cc66;">true</span><span style="color: black;">;</span>
+    <span style="color: black;">&lt;/</span><span style="color: #dc143c;">script</span><span style="color: black;">&gt;</span>
+    <span style="color: black;">&lt;</span><span style="color: #dc143c;">script</span><span style="color: black;">&gt;</span>
+        <span style="color: black;">audio.loop = </span><span style="color: #66cc66;">true</span><span style="color: black;">;</span>
+        <span style="color: black;">document.addEventListener(</span><span style="color: rgb(145, 156, 79);">'click'</span><span style="color: black;">,</span> <span style="color: #66cc66;">function</span><span style="color: black;">() {</span>
+            <span style="color: #66cc66;">if</span> <span style="color: black;">(audio.paused) {</span>
+            <span style="color: black;">audio.play();
+          }
+        });</span>
+    <span style="color: black;">&lt;/</span><span style="color: #dc143c;">script</span><span style="color: black;">&gt;</span></pre>
+            <p><font style="color:rgb(151, 0, 0)">
+                That is pretty much it for the new 2023 update lol. Have fun.
+            </font></p>
+            <p>Lastly, good luck as per usual 😉.</p><br>
+            <h1>Thanks for visiting!</h1>
+            <p>
+                So basically I'm done here! 😊 I was able to recreate not only the original Flash site, but also two versions of it in html5 as well!
+                All of the recreations have a working animation and the window moving mechanism. I've also established an in depth explanation for each of the 
+                recreations here on this very page! The end, I guess 😘.
+                <br><br>
+                This is the first webdev project I've ever completed <s>(excluding the fact that I might update the you.js to a newer more compatable version, 
+                but let's be honest here, I probably won't since I'm really lazy 😜)</s> <font style="color:rgb(151, 0, 0)">yea no</font>, and I'm pretty proud of myself 🤣. The idea sprung up in November 2020 when
+                I got interested in the JavaScript trojan itself from danooct1's YouTube video, and I completed the project on 16:00 PST April 8th 2021.
+                I'll probably work on my other projects in the meantime and clean up my webpage. 
+                <br><br>
+                Thanks for giving this a read! Cya! 
+                <br><br>
+            </p>
+            <p style="margin-left:25%;margin-top:-30px;">
+                ~ Chicky   
+            </p>
+            <img style="margin-left:30%;margin-top:-70px;" src="./index_files/big-peacock-sprite.png">
+            <p>
+                <font style="color:rgb(151, 0, 0)">
+                    Edit 2023: It's June 24th at 6:30 in the morning and I literally did not sleep bruh. The urge to fix this website has won over my sleep schedule 💀 fuck me bruh.
+                    But regardless, I've fixed up a few errors, added 2023 commentary, and had my fair share of cringe at the bad practices in coding I had in 2021. This will be probably the last time 
+                    I touch this hellhole of a directory.
+                </font>
+            </p>
+        </div>
+    </body>
+</html>
