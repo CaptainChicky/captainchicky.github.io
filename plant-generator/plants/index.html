@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Your Files</title>
+  <link rel="shortcut icon" type="image/x-icon" href="./fileicon.png">
+  <style>
+    html {
+      min-height: 100vh;
+      cursor: none;
+      /* Hide default cursor */
+    }
+
+    body {
+      margin-left: 20px;
+      background-color: black;
+      color: #00ff00;
+      /* Neon green text color */
+      font-family: monospace;
+      opacity: 0;
+      /* start invisible */
+      transition: opacity 1s ease-in-out;
+    }
+
+    abbr[title] {
+      border-bottom: none !important;
+      cursor: inherit !important;
+      text-decoration: none !important;
+    }
+
+    a {
+      color: #00ff00;
+      /* Neon green link color */
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      animation: neon-glow 1s infinite alternate;
+    }
+
+    @keyframes neon-glow {
+      0% {
+        text-shadow: 0 0 5px #00ff00, 0 0 20px #00ff00, 0 0 35px #00ff00;
+      }
+
+      100% {
+        text-shadow: 0 0 20px #00ff00, 0 0 35px #00ff00, 0 0 50px #00ff00;
+      }
+    }
+
+    .file-icon {
+      color: #00ff00;
+      /* Neon green file icon color */
+      font-size: 18px;
+      margin-right: 5px;
+    }
+
+    .flashing-cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.2em;
+      background-color: #00ff00;
+      /* Neon green cursor color */
+      animation: cursor-blink 1s infinite;
+      margin-left: 0.05em;
+      /* Add some spacing between text and cursor */
+    }
+
+    .flashing-cursor-red {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.2em;
+      background-color: red;
+      /* Neon green cursor color */
+      animation: cursor-blink 1s infinite;
+      margin-left: 0.05em;
+      /* Add some spacing between text and cursor */
+    }
+
+    @keyframes cursor-blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .text-glowRED {
+      text-shadow: none;
+      transition: text-shadow 0.3s ease-in-out;
+    }
+
+    .text-glowRED:hover {
+      text-shadow: 0 0 8px #ff0000, 0 0 12px #ff0000, 0 0 16px #ff0000;
+    }
+
+    .text-glowGREEN {
+      text-shadow: none;
+      transition: text-shadow 0.3s ease-in-out;
+    }
+
+    .text-glowGREEN:hover {
+      text-shadow: 0 0 8px #00ff00, 0 0 12px #00ff00, 0 0 16px #00ff00;
+    }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+
+  <script>
+    // Parse query parameters
+    const params = new URLSearchParams(window.location.search);
+
+    var plant = params.get("plant");
+    var number = params.get("number");
+    var validConfig;
+
+    // Define allowed plants and numbers
+    const allowedPlants = ["cactus", "palm", "pine", "wheat"];
+    const allowedNumbers = ["34", "69", "420", "1337"]; // string comparison is fine since URL params are strings
+
+    if (!plant || !number) {
+      validConfig = 0;
+      console.error("❌ Missing required URL parameters");
+    } else if (!allowedPlants.includes(plant) || !allowedNumbers.includes(number)) {
+      validConfig = 0;
+      console.error("❌ Invalid plant or number!");
+    } else {
+      validConfig = 1;
+      // Debug output
+      console.log("Raw query string:", params);
+      console.log("Plant param:", plant);
+      console.log("Number param:", number);
+
+      // Optional: log all params as an object
+      const allParams = {};
+      for (const [key, value] of params.entries()) {
+        allParams[key] = value;
+      }
+      console.log("All params:", allParams);
+    }
+
+    // Remove query parameters
+    let cleanUrl; // globalize the cleanUrl for later
+    if (window.history && window.history.replaceState) {
+      cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  </script>
+</head>
+
+<body>
+  <h1 class="title-of-page"><u>Your Files</u></h1>
+  <h3 class="text-glowRED" style="color:red; margin-right: 10px;">
+    <span style="font-size: 20px;">NOTE:</span>
+    The images are modified to be grotesque and may surprise you. Viewer discretion is advised.
+    <span class="flashing-cursor-red"></span>
+  </h3><br>
+
+  <div class="main-body">
+    <p class="text-glowGREEN">
+      <abbr title="Or, you cheated and just directly navigated to this link 😐, but I'd like to think not.">
+        You have passed the CAPTCHA.
+      </abbr>
+      <span class="flashing-cursor"></span>
+    </p>
+
+    <p class="text-glowGREEN">Here are your requested files: <span class="flashing-cursor"></span></p>
+
+    <ul id="file-list"></ul>
+  </div>
+
+  <script>
+    if (validConfig === 1) {
+
+      document.body.style.transition = "none";
+      document.body.style.opacity = "1"; // make sure it’s fully visible immediately
+
+      // -----------------------------
+      // Generate file list (VALID)
+      // -----------------------------
+
+      const indexMap = {
+        "34": 2,
+        "69": 2,
+        "420": 3,
+        "1337": 4
+      };
+
+      const maxIndex = indexMap[number];
+      const ul = document.getElementById("file-list");
+
+      for (let i = 1; i <= maxIndex; i++) {
+        const li = document.createElement("li");
+        li.style.marginBottom = "4px";
+
+        const iconSpan = document.createElement("span");
+        iconSpan.className = "file-icon";
+
+        const iconImg = document.createElement("img");
+        iconImg.src = "./fileicon.png";
+        iconImg.style.height = "22px";
+        iconImg.style.marginBottom = "-5px";
+
+        iconSpan.appendChild(iconImg);
+
+        const link = document.createElement("a");
+        link.textContent = `${number} ${plant} ${i}`;
+        link.href = "#"; // prevent default navigation
+
+        // Open image in new tab without showing full path
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          const win = window.open("", "_blank");
+          if (!win) return;
+
+          const doc = win.document;
+          doc.open();
+
+          // Build document safely
+          const html = doc.createElement("html");
+          const head = doc.createElement("head");
+          const body = doc.createElement("body");
+
+          const title = doc.createElement("title");
+          title.textContent = `${number} ${plant} ${i}`;
+
+          const style = doc.createElement("style");
+          style.textContent = `
+            body {
+              margin: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: black;
+            }
+            img {
+              max-width: 100%;
+              max-height: 100%;
+            }
+          `;
+
+          const img = doc.createElement("img");
+          img.src = `./${plant}/${number}${plant}${i}.avif`;
+
+          head.appendChild(title);
+          head.appendChild(style);
+          body.appendChild(img);
+
+          html.appendChild(head);
+          html.appendChild(body);
+          doc.appendChild(html);
+
+          doc.close();
+
+          // Replace URL with parent page
+          win.history.replaceState({}, "", cleanUrl);
+        });
+
+        li.appendChild(iconSpan);
+        li.appendChild(link);
+        ul.appendChild(li);
+      }
+
+      // -----------------------------
+      // Hash-list link
+      // -----------------------------
+
+      const hashLi = document.createElement("li");
+      hashLi.style.marginBottom = "4px";
+
+      const hashIcon = document.createElement("span");
+      hashIcon.className = "file-icon";
+
+      const hashImg = document.createElement("img");
+      hashImg.src = "./fileicon.png";
+      hashImg.style.height = "22px";
+      hashImg.style.marginBottom = "-5px";
+
+      hashIcon.appendChild(hashImg);
+
+      const hashLink = document.createElement("a");
+      hashLink.textContent = "Hash List";
+      hashLink.href = "#";
+
+      hashLink.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        try {
+          const res = await fetch(`./${plant}/hash-list.txt`);
+          const text = await res.text();
+
+          // Split entries on blank lines
+          const entries = text.split(/\n\s*\n/);
+
+          // Keep only matching entries (e.g. 34wheat, 1337wheat)
+          const filtered = entries.filter(entry => {
+            const match = entry.match(/^Name:\s*(.+)$/m);
+            if (!match) return false;
+            return match[1].startsWith(`${number}${plant}`);
+          });
+
+          openHashViewer(filtered.join("\n\n"));
+        } catch (err) {
+          console.error("Failed to load hash list:", err);
+        }
+      });
+
+      hashLi.appendChild(hashIcon);
+      hashLi.appendChild(hashLink);
+      ul.appendChild(hashLi);
+
+    } else {
+
+      // Fake authentication prompt
+      const user = prompt("Enter username:");
+      const pass = prompt("Enter password:");
+
+      alert(
+        "AUTHENTICATION FAILED\n\n" +
+        "Invalid credentials or insufficient privileges.\n" +
+        "This incident has been logged."
+      );
+
+      // make the main warning fade in
+      document.body.style.opacity = "0";
+      setTimeout(() => {
+        document.body.style.opacity = "1";
+      }, 100);
+
+      // disable bringing up devtools or right click when on this page lol
+      document.addEventListener("contextmenu", e => e.preventDefault());
+
+      document.addEventListener("keydown", e => {
+        if (
+          e.key === "F12" ||
+          (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) ||
+          (e.ctrlKey && e.key === "U")
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      // -----------------------------
+      // Invalid config UI (BLOCKED)
+      // -----------------------------
+
+      const title = document.querySelector(".title-of-page");
+      if (title) {
+        title.innerHTML = `
+          <style>
+            @keyframes pulse {
+              0%, 100% { 
+                text-shadow: 0 0 5px red, 0 0 5px red;
+              }
+              50% { 
+                text-shadow: 0 0 10px red, 0 0 20px red, 0 0 20px red;
+              }
+            }
+            .warning-pulse {
+              animation: pulse 1.5s infinite;
+              font-weight: bold;
+              font-size: 50px;
+            }
+          </style>
+          <u class="warning-pulse" style="color:red;">UNAUTHORIZED</u>
+          <span class="flashing-cursor-red"></span>
+        `;
+      }
+
+      const warning = document.querySelector(".text-glowRED");
+      if (warning) {
+        warning.innerHTML = `
+          <div style="border: 2px solid #cc0000; padding: 20px; max-width: 800px;">
+            <span style="font-size: 20px; font-weight: bold; color: #cc0000;">⚠ Access Violation Notice</span><br><br>
+            This request has been flagged as an attempt to access restricted digital materials outside of approved channels. 
+            All data associated with this request has been logged for security review and potential legal action.<br><br>
+            <strong>Further attempts may result in:</strong>
+            <ul style="margin-top: 10px;">
+              <li>Immediate suspension or termination of normal access</li>
+              <li>Referral to appropriate law enforcement agencies</li>
+              <li>Civil and/or criminal prosecution to the fullest extent of the law</li>
+              <li>Liability for damages and legal costs</li>
+            </ul>
+            <em>Unauthorized access to protected systems or materials constitutes a violation of the Computer Fraud and Abuse Act (18 U.S.C. § 1030).</em>
+          </div>
+        `;
+      }
+
+      const mainBody = document.querySelector(".main-body");
+      if (mainBody) mainBody.innerHTML = "";
+    }
+  </script>
+
+  <!-- This is required for processing the hash link, see the above <script> tag lol -->
+  <script>
+    function openHashViewer(content) {
+      const win = window.open("", "_blank");
+      if (!win) return;
+
+      const doc = win.document;
+      doc.open();
+
+      const html = doc.createElement("html");
+      const head = doc.createElement("head");
+      const body = doc.createElement("body");
+
+      const title = doc.createElement("title");
+      title.textContent = "Hash List";
+
+      const style = doc.createElement("style");
+      style.textContent = `
+        body {
+          margin: 20px;
+          background: white;
+          color: black;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+          font-size: 14px;
+        }
+        pre {
+          white-space: pre-wrap;
+          line-height: 1.4;
+        }
+        @media (prefers-color-scheme: dark) {
+          body {
+            background: black;
+            color: white;
+          }
+        }
+      `;
+
+      const pre = doc.createElement("pre");
+      pre.textContent = content || "No matching entries found.";
+
+      head.appendChild(title);
+      head.appendChild(style);
+      body.appendChild(pre);
+
+      html.appendChild(head);
+      html.appendChild(body);
+      doc.appendChild(html);
+
+      doc.close();
+
+      // Replace URL with parent page
+      win.history.replaceState({}, "", cleanUrl);
+    }
+  </script>
+
+</body>
+
+</html>

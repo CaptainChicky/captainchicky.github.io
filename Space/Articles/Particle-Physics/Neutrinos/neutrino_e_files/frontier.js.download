@@ -1,0 +1,20 @@
+var subSecTitle = new Array()
+subSecTitle[0] = "ª«²z«eªu"
+subSecTitle[1] = "Frontiers of physics"
+var anchorName = "frontier"
+
+var pages = new Array(
+"maglev",
+"laser",
+"biochaos",
+"g-lens",
+"zepto",
+"chaos",
+"univexpand",
+"blackhole",
+"fusion",
+"spacecraft",
+"hubble",
+"neutrino",
+"neutrino_news"
+)

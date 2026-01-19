@@ -1,0 +1,2 @@
+(function($){$(document).ready(function(){$('#btn-lazyload-controller').on('click',function(){var icon=$('i',$(this));if(icon.hasClass('fa-toggle-on')){icon.removeClass('fa-toggle-on');icon.addClass('fa-toggle-off');window.wpmanga.setCookie('wpmanga-lazyload-images','on',30);}else{icon.addClass('fa-toggle-on');icon.removeClass('fa-toggle-off');window.wpmanga.setCookie('wpmanga-lazyload-images','off',30);}
+location.reload();});});})(jQuery);

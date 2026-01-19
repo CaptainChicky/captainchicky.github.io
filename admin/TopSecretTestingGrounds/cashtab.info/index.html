@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confetti Countdown Test</title>
+</head>
+
+<body>
+    <!-- create confetti -->
+    <script src="./js/confetti.browser.min.js"></script>
+    <script type="text/javascript">
+        // Set the confetti duration in seconds
+        const confettiDurationSeconds = 3;
+
+        // Calculate the end time for the confetti effect
+        // Date.now() returns the current timestamp in milliseconds since January 1, 1970 (Unix timestamp)
+        const confettiEndTime = Date.now() + confettiDurationSeconds * 1000;
+
+        // Function to create confetti particles
+        function createConfetti() {
+            // Create two bursts of confetti particles, one from the left and one from the right
+            confetti({
+                particleCount: 7,         // Number of confetti particles in the burst
+                angle: 60,                // Angle of projection (60 degrees, towards the top-right)
+                spread: 55,               // Spread of particles (how wide the burst is)
+                origin: { x: 0 },         // Starting point for the burst (0 = left side)
+            });
+
+            confetti({
+                particleCount: 7,         // Number of confetti particles in the burst
+                angle: 120,               // Angle of projection (120 degrees, towards the top-left)
+                spread: 55,               // Spread of particles (how wide the burst is)
+                origin: { x: 1 },         // Starting point for the burst (1 = right side)
+            });
+
+            // Check if the current time is before the confettiEndTime
+            if (Date.now() < confettiEndTime) {
+                // Continue creating confetti by requesting the next animation frame
+                requestAnimationFrame(createConfetti);
+            }
+        }
+
+        // Start the confetti effect
+        createConfetti();
+    </script>
+
+
+    <!-- get the current date -->
+    <p class="date-paragraph" id="formatted-date"></p>
+    <script>
+        // JavaScript function to get the formatted date with a specified offset and format type
+        function getFormattedDateWithOffset(daysOffset, formatType) {
+            // Get the current date by subtracting the provided number of days offset from the current timestamp
+            var currentDate = new Date(Date.now() - daysOffset * 24 * 60 * 60 * 1000);
+
+            // Arrays to store the names of days and months
+            var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var monthNames = ["January", "February", "March", "April", "Maybe", "June", "July", "August", "September", "October", "November", "December"];
+
+            // Check if the daysOffset is null, 0, undefined, or an empty string and set it to 0 if so
+            var isOffsetValid = new Boolean(daysOffset == null || daysOffset == 0 || daysOffset == undefined || daysOffset == "");
+            if (isOffsetValid == true) {
+                daysOffset = 0;
+            }
+
+            // Check the value of the formatType argument to determine the date format to return
+            if (formatType == "day_name_only" && isOffsetValid) {
+                // If formatType is "day_name_only" and the offset is valid, return the name of the day
+                return dayNames[currentDate.getDay()];
+            } else if (formatType == "top_date" && isOffsetValid) {
+                // If formatType is "top_date" and the offset is valid, return the full formatted date string
+                return dayNames[currentDate.getDay()] + ", " + monthNames[currentDate.getMonth()] + " " + currentDate.getDate() + ", " + currentDate.getFullYear();
+            } else {
+                // If formatType is not provided or invalid, return a default date format (date + month name)
+                return currentDate.getDate() + " " + monthNames[currentDate.getMonth()];
+            }
+        }
+
+        // Call the getFormattedDateWithOffset function with daysOffset = 0 and formatType = "top_date"
+        // Display the formatted date in the specified element with ID "formatted-date"
+        document.getElementById("formatted-date").innerText = "Today's date is: " + getFormattedDateWithOffset(0, "top_date");
+    </script>
+
+    <!-- create countdown timer -->
+    <p>
+        We will be launching 🚀 in <b><span id="countdownDisplay"></span> minutes!</b>
+    </p>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script>
+        // use "localStorage.clear();" to clear the storage "counter" value and reset the timer to a new random value
+        // Generate a random value between 900 (15 minutes) and 1800 (30 minutes)
+        var initialCountdownSeconds = Math.floor(Math.random() * (1800 - 900 + 1)) + 900;
+        var remainingSeconds;
+
+        // Check if there is a value stored in the "counter" key of localStorage
+        // localStorage is sort of equivalent to cookie but less "storage"-y.
+        // It's not sent to the server with every request, unlike cookies.
+        if (localStorage.getItem("counter")) {
+            // If the stored value is less than or equal to zero, set the initial value to the random generated value
+            if (localStorage.getItem("counter") <= 0) {
+                remainingSeconds = initialCountdownSeconds;
+            } else {
+                // Otherwise, retrieve the stored value from localStorage
+                remainingSeconds = localStorage.getItem("counter");
+            }
+        } else {
+            // If there's no value in localStorage, set the initial value to the random generated value
+            remainingSeconds = initialCountdownSeconds;
+        }
+
+        // Function to update the display of the countdown timer
+        var updateCountdownDisplay = function () {
+            var minutes = Math.floor(remainingSeconds / 60);
+            var seconds = remainingSeconds % 60;
+            if (minutes < 10) minutes = '0' + minutes; // Pad single-digit minutes with a leading zero
+            if (seconds < 10) seconds = '0' + seconds; // Pad single-digit seconds with a leading zero
+            $('#countdownDisplay').text(minutes + ':' + seconds); // Update the content of the countdownDisplay element with the formatted time
+        };
+
+        // Update the display with the initial countdown value
+        updateCountdownDisplay();
+
+        // Function that decrements the countdown value and updates the display
+        var countdown = function () {
+            if (remainingSeconds == 0) {
+                // If the countdown reaches zero, reset the value to the initial random generated value
+                localStorage.setItem("counter", initialCountdownSeconds);
+                remainingSeconds = 0;
+            } else {
+                // Otherwise, decrement the value by 1 second and update localStorage with the new value
+                remainingSeconds = parseInt(remainingSeconds) - 1;
+                localStorage.setItem("counter", remainingSeconds);
+            }
+            updateCountdownDisplay(); // Update the display with the new countdown value
+        };
+
+        // Set up an interval to call the countdown function every 1000ms (1 second)
+        var interval = setInterval(function () { countdown(); }, 1000);
+    </script>
+</body>
+
+</html>

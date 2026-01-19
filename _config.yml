@@ -1,0 +1,4 @@
+# This makes the Jekyll build exclude all files and directories that begin with a "_".
+# This feature is on by default, but just in case, I will keep this config file here.
+exclude:
+  - '_*'

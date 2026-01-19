@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <title>Random NFT Generator</title>
+  <style>
+    div {
+  height: 10px;
+  width: 10px;
+  float: left;
+}
+    body {
+      position:absolute;
+      margin-left:34%;
+      margin-right:34%;
+    }
+  </style>
+  <script>
+$(document).ready(function(){
+  for(var i=0; i<400; i++){
+    var color ='#'+Math.random().toString(16).substr(2,6);
+    var div = $('<div>').css('background-color', color);
+    $('body').append(div);
+    if(!div.attr('style')) console.log(color);
+  }
+});
+  </script>
+</head>
+<body>
+  <div id="box" style="width:50px;height:50px;">
+  </div>
+</body>
+</html>

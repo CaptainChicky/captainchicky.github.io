@@ -1,0 +1,577 @@
+<html>
+    <head>
+        <title>Zip Bombs</title>
+        <!-- Sets a cool embed when sharing link and some stuff on the tabs of the website -->
+        <link rel="icon" href="./Zip Bomb Files/zip-icon.svg">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="Author" content="Captain Chicky">
+        <meta name="Keywords" content="zip, bomb, compression, zip bomb, chicky, captain chicky, article">
+        <meta name="Description" content="Article about zip bombs.">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Zip Bombs">
+        <meta property="og:description" content="A [currently incomplete] article on zip bombs and the science behind them.">
+        <meta property="og:url" content="https://captainchicky.github.io"> 
+        <meta property="og:image" content="http://captainchicky.github.io/Zip-Bomb/Zip%20Bomb%20Files/zip-icon.png">
+        <meta property="og:image:secure_url" content="https://captainchicky.github.io/Zip-Bomb/Zip%20Bomb%20Files/zip-icon.png"> 
+        <meta property="og:image:width" content="256">
+        <meta property="og:image:height" content="256">
+        <meta property="og:image:alt" content="zip-icon">
+        <style>
+            /* sets main text css */
+            body {
+                background-color: blanchedalmond;
+            }
+            p {
+                color: navy;
+                font-family: "Verdana", Sans-serif;
+                margin-right: 400px;
+                padding-left: 22px;
+            }
+            span {
+                color: darkblue;
+                font-family: "Verdana", Sans-serif;
+                margin-right: 400px;
+                padding-left: 22px;                
+            }
+            ol {
+                margin-right: 400px;
+            }
+            ul {
+                margin-right: 400px;
+            }
+            h2 {
+                padding-left: 45px;
+                font-family: "Georgia", serif;
+            }
+            h3 {
+                padding-left: 35px;
+                color: midnightblue; 
+            }
+            h4 {
+                padding-left: 28px;
+                color:rgb(40, 69, 73)
+            }
+            code {
+                color:rgb(0, 152, 199);
+                text-shadow: 0 0 1px #FF0000, 0 0 2px #0000FF;
+                font-size: 150%;
+            }
+            img {
+                margin-left: 25px; 
+            }
+            img:hover {
+                box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+            }
+            /* Cool blockquote css */
+            blockquote {
+                background: #ffdede;
+                border-left: 20px solid rgb(161, 161, 161);
+                margin: 1.5em 10px;
+                margin-right: 425px;
+                padding: 0.5em 10px;
+                quotes: "\201C""\201D";
+            }
+            blockquote:before {
+              color: #ccc;
+              content: open-quote;
+              font-size: 3em;
+              line-height: 0.1em;
+              margin-right: 0.25em;
+              vertical-align: -0.4em;
+            }
+            blockquote:after {
+              color: #ccc;
+              content: close-quote;
+              font-size: 3em;
+              line-height: 0.1em;
+              margin-right: 0.25em;
+              vertical-align: -0.4em;
+            }
+            blockquote p {
+              display: inline;
+            }
+            /* creates a right margin comment system using the <aside> tag */
+            aside {
+             	float: right;
+            	clear: right;
+              	width: 20vw;
+             	margin-right: -0.1vw;
+            	margin-bottom: 0.5rem;
+            	background-color: rgba(0, 255, 255, 0.308);
+            	font-size: 0.8rem;
+              	padding: 0.5rem;
+             	overflow: auto;
+            }
+            aside :first-child {
+              	margin-top: 0;
+            }
+            aside :last-child {
+               	margin-bottom: 0;
+            }
+            aside ul {
+            	padding-left: 1em;
+             	list-style-type: none;
+            }
+            /* table css */
+            table, th, td {
+              border: 1px solid black;
+              border-collapse: collapse;
+            }
+            th, td {
+              padding: 3px;
+              text-align: center;
+            }
+            th {
+              background-color: rgb(194, 194, 194);
+              color: rgb(0, 0, 0);
+            }
+        </style>
+        <!-- 
+            to-do list:
+                add a custum context menu for each latex eq showing source code
+                finish writing and useing inspect convert all mathjax into chtml
+        -->
+
+        
+        <!--MathJax latex integration-->
+        <!--
+            Polyfill basically helps bring some JavaScript to the browser so that
+            the browser can support MathJax in case if its a really old one and doesn't have
+            MathJax support.
+
+            I've added a local copy of the script here:
+            ./Zip Bomb Files/polyfill.js
+
+            I've also archived a copy of the v4.37.0 source code here:
+            ./Zip Bomb Files/polyfill-service-4.37.0.zip
+        -->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <!--
+            MathJax is what integrates LaTeX into the website page.
+
+            I've included a local copy of the script here:
+            ./Zip Bomb Files/tex-mml-chtml.js
+        -->
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body>
+        <center>
+            <h1><u><b>The Zip Bomb</b></u></h1>
+        </center>
+        <h2>What is a zip bomb?</h2>
+        <p>First and foremost, let's start with the definitions.</p>
+        <blockquote>
+            A <b>zip bomb</b> is a <i>usually</i> malicious compressed file that is usually designed to render useless 
+            an antivirus engine to create an opening for another computer virus.
+        </blockquote>
+        <p>
+            Normally, a zip bomb negates an antivirus engine by tricking it into scanning the entire archive, 
+            which takes up an unimaginably large amount of time, disk space, and memory. However, 
+            modern antivirus engines are able to recongnize when a file is a zip bomb, and will avoid scanning through it.
+        </p>
+        <p>
+            Despite this, what I'm looking at isn't its ability to destroy antivirus engines or create opening for other 
+            viruses to attack - instead, let's take a look into the marvelous compression ability of zip bombs, and the science behind it.
+        </p>
+        <p>When talking about zip bombs, I will split them into two catagories:</p>
+        <ol>
+            <li><b>Traditional zip bombs.</b></li>
+            <li><b>The "better" zip bombs.</b></li>
+        </ol>
+        <p>
+            You have have heard of another type of "zip bomb": the <b>zip quine</b>. 
+            However, I would like for you to note that this is an entirely different thing compared to a zip bomb. 
+            While it <i>can</i> be used in theory to disable antivirus engines &c like how zip bombs do, 
+            they are <i>much more sophisticated</i> compared to zip bombs and deserves its own article that I will write sometime in the future.
+        </p>
+        <aside>
+            A zip quine is a quine - something that replicates itself. In a more technical sense, it is a program that will give its source code when run.
+            Meanwhile before I write the article, go search up some examples! There's two famous ones so go take a look! ^^
+        </aside>
+        <p>That leaves us with the two types of zip bombs, the traditional and the better ones. So without further ado, let's take a look at them.</p>
+        <h2>Traditional zip bombs</h2>
+        <blockquote>
+            A&nbsp<b>traditional zip bomb</b> is one that <i>uses recursive zipping to acheive high levels of compression.</i>
+        </blockquote>
+        <p>
+            A zip bomb that use the .zip format
+            must cope with the fact that the compression algorithm .zips most commonly use, <i>DEFLATE</i>,
+            cannot achieve a compression ratio greater than 1032. Why? Well let's take a look.
+        </p>
+        <h3>
+            Compression
+        </h3>
+        <h4>
+            <u>Example 1 - intuition</u>
+        </h4>
+        <p>
+            First, let's understand what compression actually is. Take a look at the image below:
+            <br><br>
+            <img src="Zip Bomb Files/Figure1.png">
+            <br><br>
+            How would you describe this image?
+            <br>
+            Well, we can say that: <u>the <i>top-left box is blue</i>, the <i>top-middle box is blue</i>, the <i>top-right box is blue</i>, 
+            the <i>middle-left box is blue</i>, the <i>middle-middle box is blue</i>, the <i>middle-right box is blue</i>,
+            the <i>bottom-left box is blue</i>, the <i>bottom-middle box is blue</i>, and the <i>bottom right box is blue</i>.</u>
+            <br><br>
+            <i>Whew</i>, that was certainly a mouthful wasn't it? If you were trying to describe to someone this image in the most efficient and effective way,
+            the method I used would certainly <b>not</b> be a viable one. So instead, let's try something else. 
+            <br><br>
+            How about this? We can say that: <u>there are <i>9 boxes</i>, arranged in a <i>3x3 pattern</i>, where <i>all the boxes are blue.</i></u>
+            <br><br>
+            That was certainly a much more efficient way of describing the image, without the redundancies of having to denote each box as blue individually.
+            What we have done here, is what data compression does. It takes a file and subtracts the redundancies that may be contained in the file, effectively
+            compressing it, lowering the file size.
+            <br><br>
+            Now notice something - we can shorten the description even further! Looking back at our "compressed" description, we see that we can take away 
+            "<u>there are <i>9 boxes</i></u>" and still have our description be feasibly understood, and reconstructed perfectly.
+            <br><br>
+            This is an example of how different compression algorithms work, and how some are able to compress more than others in different cases. 
+            They each have their own methods of reducing and eliminating redundant data within a file, while still maintaining the ability to perfectly
+            reconstruct the original file itself - <i>lossless compression</i>.
+            <br><br>
+            Then there are <i>lossy compression</i> algorithms. Referring back to our aforementioned example, let's just say instead that <u><i>all boxes are blue</i></u>.
+            We can see how this still describes our image, but when trying to reconstruct it, we don't know how many boxes there are. We can estimate that there may be
+            around 4-16 of them, but we can't be sure, since there is no information regarding it after compression.
+        </p>
+        <p>Let's take a dive into a more rigorous example of compression.</p>
+        <h4>
+            <u>Example 2 - rigorous</u>
+        </h4>
+        <p>
+            In a typical file, the data is divided into <i>bytes</i>. Unless there is a special exception, a byte is 8 bits long, where a single bit is a 0 or a 1.
+            In UTF-8 encoding, each byte represents a single character. For example, the character, and in this case, byte, "0" is encoded by the bits "00110000". 
+            Note that in other non-latin based languages, such as Mandarin or Arabic, a character may be multiple bytes.
+            <br><br>
+            However, not every byte of data encodes as much information as others in a sense. For example, think of all the English words you can that start with "Q" or "T". 
+            How many of them don't have a "U" or "H" immediately superceeding the "Q" or "T"? Likely none of them! Knowing this, how much "information" do you think the "U" and "H" 
+            actually contain, in a sense? What if you omit the "U" and "H"s, or replace the two letter pairs with a just a single character?
+            <br><br>
+            Again, we can see the points I have shown in <font size="1"><u><b>Example 1</b></u></font> surface: remove the redundant information - this is the essence of data compression.
+            <br><br>
+            Now let's think of vowels in the English language. Vowels are part of a very small set of the alphabet, and thus will convey less information than consonants. 
+            In fact, you could get rid of vowels completely and still understand what a sentence means. For example, let's try to take away the vowels from the following sentence:
+        </p>
+        <blockquote>This is a sentence without vowels and will still be readable.</blockquote>
+        <p>We get:</p>
+        <blockquote>Ths s&nbsp sntnc wtht vwls nd wll stll b rdbl.</blockquote>
+        <p>
+            Try that with consonants, and all meaning is lost:
+        </p>
+        <blockquote>This is a sentence without consonants and will <b>not</b> be readable.</blockquote>
+        <blockquote>i i a eee iou ooa a i <b>o</b> e eaae.</blockquote>
+        <p>
+            Now there, this <b><i>does not</i></b> mean that vowels are not important, and that they can be ignored. This just means they carry less information than 
+            consonants, and when compressing, can be valued less than consonants. This is what data compression tries to achieve: it looks at data, 
+            gets an idea of how much information each character conveys, and then tries to minimize that. And as a result, a single character may no longer be 8 bits long - 
+            a very common character may be represented by only a few bits.
+            <br><br>
+            Revisiting the "QU" and "TH" observation I have noted above, we have that groups of characters may be common enough that we can represent them by a smaller number of bytes. 
+            For example, with the "QU" example above, if you're using "QU" words often enough, we could replace them with fewer than 16 bits. And words with "TH" in them? 
+            We could also replace every instance of "TH" with something less than 16 bits. What about the word "THE"? 
+            That's a very common word that takes up 24 bits uncompressed, but could take up fewer bits.
+            <br><br>
+            I believe this is good enough of an analogy. If you, dear reader, still don't understand parts of these two examples, please give it a slow and detailed re-read.<br>
+            With that, we can move on: let's look at zip files.
+        </p>
+        <h3>Zip and DEFLATE</h3>
+        <p>
+            While zip files may use a variety of compression algorithms, the compression algorithm
+            <i>DEFLATE</i> is the <a href="https://en.wikipedia.org/wiki/ZIP_(file_format)#:~:text=DEFLATE%20is%20the%20most%20common.">most common</a>.
+            As a result, almost all zip bombs utilize this algorithm, and thus, we'll take a look at this algorithm in particular.
+        </p>
+        <p>
+            The algorithm <i>DEFLATE</i> is actually a combination of two algorithms, LZ77 and Huffman Coding.
+        </p>
+        <img src="Zip Bomb Files/deflate_process.png">
+        <h4>
+            <u>LZ77</u>
+        </h4>
+        <p>
+            LZ77 is a <b>dictionary based</b> compression algorithm.
+        </p>
+        <blockquote>
+            A <b>dictionary based algorithm</b> is one that replaces an occurrence of a particular sequence of bytes in data with a reference to a previous occurrence of that sequence.
+        </blockquote>
+        <p>
+            What LZ77 does is that it looks for groupings of bytes, and when it finds a repeat of a grouping, it will encode the superceeding groups in a <b>length-distance pair</b>. 
+        </p>
+        <blockquote>
+            A <b>length-distance pair</b> denotes the amount of characters that are repeated - L, the distance where the preceeding repeating group can be found - D, and
+            the character immediately superceeding the longest matching group - C.
+        </blockquote>
+        <p>
+            Firt off, I would like to remark the fact that the "C" aspect of a length-distance pair is usually a temporary element, and will be excluded from the final result.
+            The reason of adding the third element C in the length-distance pair is for handling the case where no match is found in the search buffer. 
+            In that case, the values of both D and L are 0, and C is the first character in current look-ahead buffer.
+        </p>
+        <p>
+            Now there, note that searches for length-distance pairs do not occur across the entire file, but instead only is made in a fixed number of bytes at one time. 
+            This is to keep the distance number from getting really big and impairing the data compression efforts. For example, suppose you're trying to compress a multi-gigabyte 
+            word document explaining the proof for Fermat's Last Theorem where you use the word "cringe" once at the beginning and once at the end, it won't make sense to have a distance 
+            value that represents a position several gigabytes in size, since at some point, the number of bits needed to store the length-distance pair will surpass the bytes 
+            you're compressing. This fixed number of bytes is the <b>sliding window</b>.
+        </p>
+        <blockquote>The <b>sliding window</b> is the length of bytes the LZ77 algorithm will look in to data group repeats, and maintains the historical data for future reference.</blockquote>
+        <p>
+            The sliding window contains two parts, a <i>search buffer</i>, and a <i>look-ahead buffer</i>. The search buffer contains the dictionary - the recent encoded data, 
+            and the look-ahead buffer contains the next portion of input data sequence to be encoded. 
+            In ZIP files, the sliding window is usually either <data value="32000">32<abbr title=Kilobyte(s)>KB</abbr></data> or <data value="64000">64<abbr title=Kilobyte(s)>KB</abbr></data>.
+        </p>
+        <p>
+            As an example, I have created a visual on the LZ77 algorithm that will "compress" the string "<code>axrrmaxrbaxssr</code>" below. If you don't understand any part of it,
+            please give it a careful re-analysis and refer to the color-coding of the different elements I've included.
+        </p>
+        <img src="Zip Bomb Files/LZ77_process.png">
+        <p>
+            Notive that due to the really inefficient way I've chosen to represent the length-distance pairs, and because this is a very small example, 
+            we've actually made the example string longer. However, even with my inefficient representation, longer strings with more repetition would show noticeable size improvements.
+        </p>
+        <p>
+            An interesting side-note is that in a length-distance pair, the length can actually be greater that the distance value. 
+            So you could have "length 5, distance 1" which would mean copying the last character five times.
+        </p>
+        <h4>
+            <u>Huffman Coding</u>
+        </h4>
+        <p>
+            Huffman encoding is a <i>statistical compression method</i>. It encodes data symbols, such as characters with <b>variable-length codes</b>, 
+            and lengths of the codes are based on the frequencies of corresponding symbols.
+            <br><br>
+            Huffman encoding, as well as other variable-length coding methods, has two properties:
+        </p>
+        <ol>
+            <li>Codes for <b>more frequently occurring</b> data symbols are <i>shorter</i> than codes for less frequently occurring data symbols.</li>
+            <li>
+                Each code can be <b>uniquely decoded</b>. This requires the codes to be <b>prefix codes</b>, meaning any code for one symbol is not a prefix of codes for other symbols. 
+                For example, if code “<code>0</code>” is used for symbol “<code>A</code>”, then code “<code>01</code>” cannot be used for symbol “<code>B</code>” as code “<code>0</code>” 
+                is a prefix of code “<code>01</code>”. The prefix property guarantees when decoding there is no ambiguity in determining where the symbol boundaries are.
+            </li>
+        </ol>
+        <p>Huffman encoding has two steps:</p>
+        <ol>
+            <li>Build a Huffman tree from original data symbols. A Huffman tree is a binary tree structure.</li>
+            <li>Traverse the Huffman Tree and assign codes to data symbols.</li>
+        </ol>
+        <p>
+            Huffman codes can be <i>fixed/static</i> or <i>dynamic</i>, and both are used in <i>DEFLATE</i>.
+        </p>
+        <ul>
+            <li>
+                Fixed Huffman codes can be created by examining a large number of data sets, and finding typical code lengths. When using fixed Huffman coding, 
+                the same codes are used for all the input data symbols.
+            </li>
+            <li>Dynamic Huffman codes are generated by breaking input data into blocks, and generating codes for each data block.</li>
+        </ul>
+        <p>
+            Here is an example of Huffman Encoding of the text "<code>this is an example of a huffman tree</code>":
+        </p>
+        <img src="Zip Bomb Files/Huffman_tree.svg">
+        <table style="margin-top:-420px; margin-left:800px; margin-bottom: 30px;">
+            <thead><tr>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Char</th>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Freq</th>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Code</th>
+            </tr></thead><tbody>
+            <tr>
+            <td>space</td>
+            <td>7</td>
+            <td>111
+            </td></tr>
+            <tr>
+            <td>a</td>
+            <td>4</td>
+            <td>010
+            </td></tr>
+            <tr>
+            <td>e</td>
+            <td>4</td>
+            <td>000
+            </td></tr>
+            <tr>
+            <td>f</td>
+            <td>3</td>
+            <td>1101
+            </td></tr>
+            <tr>
+            <td>h</td>
+            <td>2</td>
+            <td>1010
+            </td></tr>
+            <tr>
+            <td>i</td>
+            <td>2</td>
+            <td>1000
+            </td></tr>
+            <tr>
+            <td>m</td>
+            <td>2</td>
+            <td>0111
+            </td></tr>
+            <tr>
+            <td>n</td>
+            <td>2</td>
+            <td>0010
+            </td></tr>
+            <tr>
+            <td>s</td>
+            <td>2</td>
+            <td>1011
+            </td></tr>
+            <tr>
+            <td>t</td>
+            <td>2</td>
+            <td>0110
+            </td></tr>
+            <tr>
+            <td>l</td>
+            <td>1</td>
+            <td>11001
+            </td></tr>
+            <tr>
+            <td>o</td>
+            <td>1</td>
+            <td>00110
+            </td></tr>
+            <tr>
+            <td>p</td>
+            <td>1</td>
+            <td>10011
+            </td></tr>
+            <tr>
+            <td>r</td>
+            <td>1</td>
+            <td>11000
+            </td></tr>
+            <tr>
+            <td>u</td>
+            <td>1</td>
+            <td>00111
+            </td></tr>
+            <tr>
+            <td>x</td>
+            <td>1</td>
+            <td>10010
+            </td></tr></tbody><tfoot></tfoot>
+        </table>
+        <p>
+            To the right is a chart showing the frequencies and bits that encode each character after using Huffman Coding. Encoding the sentence with this code requires 135 bits, 
+            as opposed to 288 bits if 36 characters of 8 bits were used. Of course, this assumes that the code tree structure is known to the decoder and thus does not need to be 
+            counted as part of the transmitted information.
+        </p>
+        <p>
+            All of this assumes that characters don't occur with the exact same frequency, which is generally true of human languages. 
+            Random data however may have all bytes having identical frequencies, in which case the data becomes incompressible. 
+            Thus, by intuition we can see that this is why you generally can't run a .zip file through <i>DEFLATE</i> and get a smaller file out of it. 
+            In fact, doing so may sometimes result in a slightly larger file, as zips have a certain amount of overhead to describe the files it stores.
+        </p>
+        <h4>
+            <u>CRC-32 check</u>
+        </h4>
+        <p>
+            Although this isn't important for our purpose, I thought it would be worth mentioning that .zip files also contains a CRC-32 hash of each compressed file within it. 
+            CRC-32 is a hash algorithm that generates a string called a hash after looking at a file and its contents. There are 2<sup>32</sup>=4,294,967,296 different hashes CRC-32
+            can generate, so it's possible for two files to have the same hash. However, when decompressing data with errors having the original file and the error file having the same CRC-32 
+            value is so incredibly unlikely, so it's doubtful if it's ever happened in the history of the world. 
+        </p>
+        <h4>
+            <u>A DEFLATE encoded zip's compression limit</u>
+        </h4>
+        <p>
+            Now that we understand how zips and <i>DEFLATE</i> works, let's try to see how well it can compress data.
+            By intuition, and from the explanation above, we can reason that a compression algorithm will work the best if a file is extremely redundant; 
+            for instance, a file filled with zeroes. So therefore, let's test how well <i>DEFLATE</i> can compress a file filled with a lot of zeroes.
+            <br><br>
+            We create a <data value="50000000">50<abbr title=Megabyte(s)>MB</abbr></data> file filled with zeros and compress it using <i>DEFLATE</i>. 
+            It should compress to be roughly around <data value="48605">49<abbr title=Kilobyte(s)>KB</abbr></data> as demonstrated <a href="./Zip Bomb Files/0.zip">here</a>.
+            So thus, empirically, <i>DEFLATE</i> is capable of compression factors exceeding 1000:1. 
+        </p>
+        <p>
+            To find the theoretical limit, let's dive deeper into the <i>DEFLATE</i> algorithm and zip file structure itself.
+            The limit comes from the fact that one length-distance pair can represent at most 258 output bytes. 
+            A length requires at least one bit and a distance requires at least one bit, so two bits in can give 258 bytes out, 
+            or eight bits in give 1032 bytes out. A dynamic block has no length restriction, so you could get arbitrarily close to the limit of 1032:1.
+        </p>
+        <p>
+            We can also note that the current implementation limits its dynamic blocks to about <data value="8000">8<abbr title=Kilobyte(s)>KB</abbr></data> 
+            (corresponding to <data value="8000000">8<abbr title=Megabyte(s)>MB</abbr></data> of input data); together with a few bits of overhead, this implies 
+            an actual compression limit of about 1030:1. Not only that, but the compressed data stream is itself likely to be rather compressible 
+            (in this special case only), so running it through <i>DEFLATE</i> again should produce further gains.
+        </p>
+        <p>
+            Due to this reason, traditional zip bombs rely on recursive decompression, nesting zip files within zip files to get an extra factor of ~1032 with each layer.
+            Referring back to the original purpose of these traditional zip bombs - to disable antiviruses, these nested zips will only work on antivirus engines
+            that scan recursively into each nest of zips, and now as of March 2021, most will not. 
+        </p>
+        <aside>
+            I haven't been able to find the original author for 42.zip. If anyone knows, please ping me on twitter(profile link is on my github account homepage).
+        </aside>
+        <p>
+            The best-known zip bomb, <a href="./42.html">42.zip</a>, expands to a formidable <data value="4503599626321920">4.5<abbr title=Petabyte(s)>PB</abbr></data> 
+            if all six of its layers are fully and recursively unzipped, but a negligable <data value="558432">0.6<abbr title=Megabyte(s)>MB</abbr></data>
+            if one were to only unzip the top layer.
+        </p>
+        <h3>
+            The Traditional Zip Bomb
+        </h3>
+        <p>
+            Ok, I lied. Although <i>in theory</i>, the ratio 1030:1 is the greatest the <i>DEFLATE</i> algorithm can achieve, we underestimated file redundancy and how that can 
+            dramatically compress a file. <a href="./Zip Bomb Files/0 (2).zip">Here</a> we can see how compressing a <data value="4000000000">4<abbr title=Gigabyte(s)>GB</abbr></data>
+            file of zeros becomes <data value="137508">138<abbr title=Kilobyte(s)>KB</abbr></data>, giving us a ratio of 29089:1.
+        </p>
+        <p>
+            Why is this? Well, the length-distance pairs although limited at a maximum of 258 bytes, is extremely repetitive. In a <data value="4000000000">4<abbr title=Gigabyte(s)>GB</abbr></data>
+            file of repeating data, there would be such a frequent occurance of the <i>same</i> length-distance pairs such that when <i>DEFLATE</i> applies the Huffman Algorithm, 
+            the encoding of the length-distance pairs will be shortenned to the extent that they may be just 1 single bit. This will drastically increase compression ratio, 
+            beyond even the theoretical limit. In our initial calculation, we assumed the Huffman Algorithm was capped in it's efficiecy by the restrictions of the length-distance pairs themselves,
+            but it would appear to be not so.
+        </p>
+        <p>
+            As we test compressing larger and larger files, as shown <a href="Zip Bomb Files/0-First level compression.zip">here</a>, we see that our ratio remains at a similar point as the previous
+            test, this time reaching 29090:1. 
+            <br><br>
+            Further tests can be found...
+        </p>
+        <ul>
+            <li><a href="Zip Bomb Files/1-single.zip">here</a> with ratio 29089:1.</li>
+            <li><a href="Zip Bomb Files/Zip Bomb Test 16-end.zip">here</a> with ratio 29090:1.</li>
+            <li><a href="Zip Bomb Files/[-single.zip">here</a> with ratio 29101:1.</li>
+            <li><a href="Zip Bomb Files/[-16.zip">here</a> with ratio 29102:1.</li>
+        </ul>
+        <span><font size="-2">(Uh if you're looking at the files inside the zips and asking why they are repeating characters I'll explain why below in the "Constructing a traditional zip bomb" section lol.)</font></span>
+        <p>
+            It would seem that the maximum compression ratio evens out at around 29100:1. Let's attempt to calculate why this is. By dividing 29100 by 1032, we arrive at \( \frac{2425}{86}\approx 28.2 \). We can reason
+            that the efficiency of the Huffman Algorithm must account for 28 times more efficiency. Math time!
+        </p>
+        <p>
+            We can calculate the percentage of compression by using this formula: \[ 1-\frac{\text{Compressed size}}{\text{Uncompressed size}} \]
+            First let's assume a compression efficiency percentage of let's say, 80%. WLOG then let's say that we compressed a file of 10000 bytes. We can thus reason that 
+            we have compressed the 10000 bytes into \( 10000-(10000\cdot 80\%)=2000 \) bytes. Thus our compression ratio would be 5:1, and by this, we can see that the percentage of 
+            efficiency must be arbitrarily close to 100%.  
+        </p>
+        <span><font size="-2">
+            (If you're wondering why I'm converting between percentage efficiency and compression ratio it's because the research papers on Huffman Coding efficiency 
+            apparently are all in percentages lol. So annoyingggggg aaaaaaaaaa)
+        </font></span>
+        <p>
+            To go in reverse, we reverse our process. Since LZ77 has accounted for the <b>1032</b>\( \cdot \)28:1 part of the ratio, we focus on the 28:1 ratio Huffman Coding brings us.
+            <br><br>
+            WLOG again assume a file with size of 10000 bytes has been compressed. Thus we have such that \[ \text{Uncompressed size}=10000 \] 
+            \[ \implies\frac{10000}{\text{Compressed size}}=\frac{28}{1} \]
+            \[ \implies\text{Compressed size}=\frac{2500}{7}\approx 357\text{ bytes} \]
+            Therefore the percentage would be equal to approximately
+            \[ \implies1-\frac{\frac{2500}{7}}{10000}=\frac{27}{28}\approx\boxed{96.4\%} \]
+        </p>
+        <p>
+            This is not an unreasonable value, and as seen in <a href="Zip Bomb Files/Huffman code efficiencies for extensions of sources.pdf">Fenwick (1994)</a>. 
+        </p>
+        <h4>
+            <u>Constructing a traditional zip bomb</u>
+        </h4>
+        <p>
+            Now let's move onto creating these marvelous compression phenomenon. We shall do this 
+        will finish after school lol ie may idk
+        </p>
+    </body>
+</html>

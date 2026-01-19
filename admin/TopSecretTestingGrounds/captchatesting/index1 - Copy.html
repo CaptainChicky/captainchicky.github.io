@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sample JavaScript Image CAPTCHA</title>
+    <script src="./jquery-3.5.1.js"></script>
+</head>
+
+<body>
+    <form>
+        <div id="captcha">
+            <p>Please enter the text from the image:</p>
+            <img id="captcha-image" src="" />
+            <br>
+            <input type="text" id="captcha-solution" />
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+
+    <script>
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.width = 200;
+        canvas.height = 60;
+    
+        // Set the font and fill color
+        context.font = '30px Georgia';
+        context.fillStyle = '#333';
+    
+        // Generate a random string of 12 characters
+        var captchaText = Math.random().toString(36).slice(-12);
+    
+        // Add some noise to the image
+        for (var i = 0; i < canvas.width; i++) {
+            for (var j = 0; j < canvas.height; j++) {
+                var rand = Math.floor(Math.random() * 2);
+                if (rand === 1) {
+                    context.fillStyle = 'rgb(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() *
+                        255) + ',' + Math.floor(Math.random() * 255) + ')';
+                    context.fillRect(i, j, 1, 1);
+                }
+            }
+        }
+    
+        // Add the text to the image
+        var r = Math.floor(Math.random() * 200);
+        var g = Math.floor(Math.random() * 200);
+        var b = Math.floor(Math.random() * 200);
+        var rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+        context.fillStyle = rgb;
+    
+        // Apply a random distortion to the text
+        var x = Math.floor(Math.random() * 20) - 10;
+        var y = Math.floor(Math.random() * 20) - 10;
+        context.transform(1, x / 100, y / 100, 1, 0, 0);
+    
+        // Add the text to the image
+        context.fillText(captchaText, 10, 40);
+    
+        // Add additional obfuscation elements
+        for (i = 0; i < Math.random() * 10; i++) {
+            context.beginPath();
+            context.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            context.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            context.stroke();
+        }
+    
+        for (i = 0; i < Math.random() * 15; i++) {
+            context.beginPath();
+            context.arc(Math.random() * canvas.width, Math.random() * canvas.height, 10, 0, 2 * Math.PI);
+            context.stroke();
+        }
+    
+        // Get the data URL of the generated image
+        var dataUrl = canvas.toDataURL();
+    
+        // Set the src attribute of an img element to the data URL
+        document.getElementById('captcha-image').src = dataUrl;
+    
+        // Validate the solution when the form is submitted
+        $('form').submit(function (event) {
+            event.preventDefault();
+            var solution = $('#captcha-solution').val();
+            if (solution.toLowerCase() === captchaText.toLowerCase()) {
+                alert('Correct!');
+            } else {
+                alert('Incorrect. Please try again.');
+            }
+        });
+    </script>
+    
+</body>
+
+</html>

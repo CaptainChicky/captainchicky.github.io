@@ -1,0 +1,34 @@
+<font face="Verdana">
+    <center><font size="+3"><font color="#FF0000"><strong>2.7z</strong></font></font></center>
+    <br>
+    Click here to download <a href="./2.7z">2.7z</a>(2.485 bytes zipped)<br>
+    <br>
+    The file contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped, which again contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped files, which contains 16 files with the size of 4.3GB.<br>
+    <br>
+    So, if you extract all files, you will most likely run out of space :-)<br>
+    <br>
+</font>
+<tt>
+    <pre>
+        16 x              4,294,967,295 = 68,719,476,720              (68  GB)
+        16 x             68,719,476,720 = 1,099,511,627,520           (1   TB)
+        16 x          1,099,511,627,520 = 17,592,186,040,320          (17  TB)
+        16 x         17,592,186,040,320 = 281,474,976,645,120         (281 TB)
+        16 x        281,474,976,645,120 = 4,503,599,626,321,920       (4.5 PB)
+        16 x      4,503,599,626,321,920 = 72,057,594,021,150,720      (72  PB)
+        16 x     72,057,594,021,150,720 = 1,152,921,504,338,411,520   (1   EB)
+        16 x  1,152,921,504,338,411,520 = 18,446,744,069,414,584,320  (18  EB)
+        16 x 18,446,744,069,414,584,320 = 295,147,905,110,633,349,120 (295 EB)
+    </pre>
+</tt>
+<br>
+<font face="Verdana">Password: 42</font>
+<p><br>
+This is my attempt at recreating a <b>zip bomb</b> - a small compressed file that seemingly holds an unimaginably large amount of data inside.
+<br>
+This time though, instead of using traditional zip compression algorithms, I use 7zip the handful of compmression algorithms it already has to nest each loop of zips.
+<br>
+The original infamous zip bomb, 42.zip that inspired me into looking into zip bombs and consequently making this can be found <a href=./42.html>here</a>.
+<br>
+More information can be found on my zip bomb <a href=./index.html>homepage</a>.
+    <div id="UMS_TOOLTIP" style="position: absolute; cursor: pointer; z-index: 2147483647; background: transparent; top: -100000px; left: -100000px;"></div>

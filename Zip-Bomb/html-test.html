@@ -1,0 +1,1891 @@
+<html>
+    <head>
+        <title>Zip Bombs</title>
+        <!-- Sets a cool embed when sharing link and some stuff on the tabs of the website -->
+        <link rel="icon" href="./Zip Bomb Files/zip-icon.svg">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="Author" content="Captain Chicky">
+        <meta name="Keywords" content="zip, bomb, compression, zip bomb, chicky, captain chicky, article">
+        <meta name="Description" content="Article about zip bombs.">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Zip Bombs">
+        <meta property="og:description" content="A [currently incomplete] article on zip bombs and the science behind them.">
+        <meta property="og:url" content="https://captainchicky.github.io"> 
+        <meta property="og:image" content="http://captainchicky.github.io/Zip-Bomb/Zip%20Bomb%20Files/zip-icon.png">
+        <meta property="og:image:secure_url" content="https://captainchicky.github.io/Zip-Bomb/Zip%20Bomb%20Files/zip-icon.png"> 
+        <meta property="og:image:width" content="256">
+        <meta property="og:image:height" content="256">
+        <meta property="og:image:alt" content="zip-icon">
+        <style id="MainCSS"> 
+            /* sets main text css */
+            body {
+                background-color: blanchedalmond;
+            }
+            p {
+                color: navy;
+                font-family: "Verdana", Sans-serif;
+                margin-right: 400px;
+                padding-left: 22px;
+            }
+            span {
+                color: darkblue;
+                font-family: "Verdana", Sans-serif;
+                margin-right: 400px;
+                padding-left: 22px;                
+            }
+            ol {
+                margin-right: 400px;
+            }
+            ul {
+                margin-right: 400px;
+            }
+            h2 {
+                padding-left: 45px;
+                font-family: "Georgia", serif;
+            }
+            h3 {
+                padding-left: 35px;
+                color: midnightblue; 
+            }
+            h4 {
+                padding-left: 28px;
+                color:rgb(40, 69, 73)
+            }
+            code {
+                color:rgb(0, 152, 199);
+                text-shadow: 0 0 1px #FF0000, 0 0 2px #0000FF;
+                font-size: 150%;
+            }
+            img {
+                margin-left: 25px; 
+            }
+            img:hover {
+                box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+            }
+            /* Cool blockquote css */
+            blockquote {
+                background: #ffdede;
+                border-left: 20px solid rgb(161, 161, 161);
+                margin: 1.5em 10px;
+                margin-right: 425px;
+                padding: 0.5em 10px;
+                quotes: "\201C""\201D";
+            }
+            blockquote:before {
+                color: #ccc;
+                content: open-quote;
+                font-size: 3em;
+                line-height: 0.1em;
+                margin-right: 0.25em;
+                vertical-align: -0.4em;
+            }
+            blockquote:after {
+                color: #ccc;
+                content: close-quote;
+                font-size: 3em;
+                line-height: 0.1em;
+                margin-right: 0.25em;
+                vertical-align: -0.4em;
+            }
+            blockquote p {
+                display: inline;
+            }
+            /* creates a right margin comment system using the <aside> tag */
+            aside {
+               	float: right;
+              	clear: right;
+              	width: 20vw;
+               	margin-right: -0.1vw;
+              	margin-bottom: 0.5rem;
+              	background-color: rgba(0, 255, 255, 0.308);
+              	font-size: 0.8rem;
+              	padding: 0.5rem;
+               	overflow: auto;
+            }
+            aside :first-child {
+              	margin-top: 0;
+            }
+            aside :last-child {
+               	margin-bottom: 0;
+            }
+            aside ul {
+              	padding-left: 1em;
+               	list-style-type: none;
+            }
+            /* table css */
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 3px;
+                text-align: center;
+            }
+            th {
+                background-color: rgb(194, 194, 194);
+                color: rgb(0, 0, 0);
+            }
+        </style>
+        <style id="MJX-CHTML-styles">
+            mjx-container[jax="CHTML"] {
+                line-height: 0;
+            }
+
+            mjx-container [space="1"] {
+                margin-left: .111em;
+            }
+
+            mjx-container [space="2"] {
+                margin-left: .167em;
+            }
+
+            mjx-container [space="3"] {
+                margin-left: .222em;
+            }
+/* ugh lmao this is gonna take a long while someday i'll finish formatting this */
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-math {
+  display: inline-block;
+  text-align: left;
+  line-height: 0;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 100%;
+  font-size-adjust: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  word-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+  padding: 1px 0;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="CHTML"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-math {
+  padding: 0;
+}
+
+mjx-container[jax="CHTML"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="CHTML"][justify="right"] {
+  text-align: right;
+}
+
+mjx-mrow {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-inferredMrow {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mi {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mo {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-stretchy-h {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-stretchy-h > * {
+  display: table-cell;
+  width: 0;
+}
+
+mjx-stretchy-h > * > mjx-c {
+  display: inline-block;
+  transform: scalex(1.0000001);
+}
+
+mjx-stretchy-h > * > mjx-c::before {
+  display: inline-block;
+  padding: .001em 0;
+  width: initial;
+}
+
+mjx-stretchy-h > mjx-ext {
+  overflow: hidden;
+  width: 100%;
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c::before {
+  transform: scalex(500);
+}
+
+mjx-stretchy-h > mjx-ext > mjx-c {
+  width: 0;
+}
+
+mjx-stretchy-h > mjx-beg > mjx-c {
+  margin-right: -.1em;
+}
+
+mjx-stretchy-h > mjx-end > mjx-c {
+  margin-left: -.1em;
+}
+
+mjx-stretchy-v {
+  display: inline-block;
+}
+
+mjx-stretchy-v > * {
+  display: block;
+}
+
+mjx-stretchy-v > mjx-beg {
+  height: 0;
+}
+
+mjx-stretchy-v > mjx-end > mjx-c {
+  display: block;
+}
+
+mjx-stretchy-v > * > mjx-c {
+  transform: scaley(1.0000001);
+  transform-origin: left center;
+  overflow: hidden;
+}
+
+mjx-stretchy-v > mjx-ext {
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+  border: 0px solid transparent;
+  overflow: hidden;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c::before {
+  width: initial;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-c {
+  transform: scaleY(500) translateY(.1em);
+  overflow: visible;
+}
+
+mjx-mark {
+  display: inline-block;
+  height: 0px;
+}
+
+mjx-mn {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-ms {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mspace {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mpadded {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-rbox {
+  display: inline-block;
+  position: relative;
+}
+
+mjx-menclose {
+  display: inline-block;
+  text-align: left;
+  position: relative;
+}
+
+mjx-menclose > mjx-dstrike {
+  display: inline-block;
+  left: 0;
+  top: 0;
+  position: absolute;
+  border-top: 0.067em solid;
+  transform-origin: top left;
+}
+
+mjx-menclose > mjx-ustrike {
+  display: inline-block;
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  border-top: 0.067em solid;
+  transform-origin: bottom left;
+}
+
+mjx-menclose > mjx-hstrike {
+  border-top: 0.067em solid;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  transform: translateY(0.034em);
+}
+
+mjx-menclose > mjx-vstrike {
+  border-left: 0.067em solid;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(0.034em);
+}
+
+mjx-menclose > mjx-rbox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border: 0.067em solid;
+  border-radius: 0.267em;
+}
+
+mjx-menclose > mjx-cbox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border: 0.067em solid;
+  border-radius: 50%;
+}
+
+mjx-menclose > mjx-arrow {
+  position: absolute;
+  left: 0;
+  bottom: 50%;
+  height: 0;
+  width: 0;
+}
+
+mjx-menclose > mjx-arrow > * {
+  display: block;
+  position: absolute;
+  transform-origin: bottom;
+  border-left: 0.268em solid;
+  border-right: 0;
+  box-sizing: border-box;
+}
+
+mjx-menclose > mjx-arrow > mjx-aline {
+  left: 0;
+  top: -0.034em;
+  right: 0.201em;
+  height: 0;
+  border-top: 0.067em solid;
+  border-left: 0;
+}
+
+mjx-menclose > mjx-arrow[double] > mjx-aline {
+  left: 0.201em;
+  height: 0;
+}
+
+mjx-menclose > mjx-arrow > mjx-rthead {
+  transform: skewX(0.464rad);
+  right: 0;
+  bottom: -1px;
+  border-bottom: 1px solid transparent;
+  border-top: 0.134em solid transparent;
+}
+
+mjx-menclose > mjx-arrow > mjx-rbhead {
+  transform: skewX(-0.464rad);
+  transform-origin: top;
+  right: 0;
+  top: -1px;
+  border-top: 1px solid transparent;
+  border-bottom: 0.134em solid transparent;
+}
+
+mjx-menclose > mjx-arrow > mjx-lthead {
+  transform: skewX(-0.464rad);
+  left: 0;
+  bottom: -1px;
+  border-left: 0;
+  border-right: 0.268em solid;
+  border-bottom: 1px solid transparent;
+  border-top: 0.134em solid transparent;
+}
+
+mjx-menclose > mjx-arrow > mjx-lbhead {
+  transform: skewX(0.464rad);
+  transform-origin: top;
+  left: 0;
+  top: -1px;
+  border-left: 0;
+  border-right: 0.268em solid;
+  border-top: 1px solid transparent;
+  border-bottom: 0.134em solid transparent;
+}
+
+mjx-menclose > dbox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -0.3em;
+  width: 0.6em;
+  border: 0.067em solid;
+  border-radius: 50%;
+  clip-path: inset(0 0 0 0.3em);
+  box-sizing: border-box;
+}
+
+mjx-mfrac {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-frac {
+  display: inline-block;
+  vertical-align: 0.17em;
+  padding: 0 .22em;
+}
+
+mjx-frac[type="d"] {
+  vertical-align: .04em;
+}
+
+mjx-frac[delims] {
+  padding: 0 .1em;
+}
+
+mjx-frac[atop] {
+  padding: 0 .12em;
+}
+
+mjx-frac[atop][delims] {
+  padding: 0;
+}
+
+mjx-dtable {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-dtable > * {
+  font-size: 2000%;
+}
+
+mjx-dbox {
+  display: block;
+  font-size: 5%;
+}
+
+mjx-num {
+  display: block;
+  text-align: center;
+}
+
+mjx-den {
+  display: block;
+  text-align: center;
+}
+
+mjx-mfrac[bevelled] > mjx-num {
+  display: inline-block;
+}
+
+mjx-mfrac[bevelled] > mjx-den {
+  display: inline-block;
+}
+
+mjx-den[align="right"], mjx-num[align="right"] {
+  text-align: right;
+}
+
+mjx-den[align="left"], mjx-num[align="left"] {
+  text-align: left;
+}
+
+mjx-nstrut {
+  display: inline-block;
+  height: .054em;
+  width: 0;
+  vertical-align: -.054em;
+}
+
+mjx-nstrut[type="d"] {
+  height: .217em;
+  vertical-align: -.217em;
+}
+
+mjx-dstrut {
+  display: inline-block;
+  height: .505em;
+  width: 0;
+}
+
+mjx-dstrut[type="d"] {
+  height: .726em;
+}
+
+mjx-line {
+  display: block;
+  box-sizing: border-box;
+  min-height: 1px;
+  height: .06em;
+  border-top: .06em solid;
+  margin: .06em -.1em;
+  overflow: hidden;
+}
+
+mjx-line[type="d"] {
+  margin: .18em -.1em;
+}
+
+mjx-msqrt {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-root {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+mjx-surd {
+  display: inline-block;
+  vertical-align: top;
+}
+
+mjx-sqrt {
+  display: inline-block;
+  padding-top: .07em;
+}
+
+mjx-sqrt > mjx-box {
+  border-top: .07em solid;
+}
+
+mjx-sqrt.mjx-tall > mjx-box {
+  padding-left: .3em;
+  margin-left: -.3em;
+}
+
+mjx-mroot {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msub {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msubsup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-script {
+  display: inline-block;
+  padding-right: .05em;
+}
+
+mjx-script > * {
+  display: block;
+}
+
+mjx-munder {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-over {
+  text-align: left;
+}
+
+mjx-munder:not([limits="false"]) {
+  display: inline-table;
+}
+
+mjx-munder > mjx-row {
+  text-align: left;
+}
+
+mjx-under {
+  padding-bottom: .1em;
+}
+
+mjx-mover {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mover:not([limits="false"]) {
+  padding-top: .1em;
+}
+
+mjx-mover:not([limits="false"]) > * {
+  display: block;
+  text-align: left;
+}
+
+mjx-munderover {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-munderover:not([limits="false"]) {
+  padding-top: .1em;
+}
+
+mjx-munderover:not([limits="false"]) > * {
+  display: block;
+}
+
+mjx-mmultiscripts {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-prescripts {
+  display: inline-table;
+  padding-left: .05em;
+}
+
+mjx-scripts {
+  display: inline-table;
+  padding-right: .05em;
+}
+
+mjx-prescripts > mjx-row > mjx-cell {
+  text-align: right;
+}
+
+mjx-mfenced {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mtable {
+  display: inline-block;
+  text-align: center;
+  vertical-align: .25em;
+  position: relative;
+  box-sizing: border-box;
+}
+
+mjx-labels {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+mjx-table {
+  display: inline-block;
+  vertical-align: -.5ex;
+}
+
+mjx-table > mjx-itable {
+  vertical-align: middle;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+mjx-labels > mjx-itable {
+  position: absolute;
+  top: 0;
+}
+
+mjx-mtable[justify="left"] {
+  text-align: left;
+}
+
+mjx-mtable[justify="right"] {
+  text-align: right;
+}
+
+mjx-mtable[justify="left"][side="left"] {
+  padding-right: 0 ! important;
+}
+
+mjx-mtable[justify="left"][side="right"] {
+  padding-left: 0 ! important;
+}
+
+mjx-mtable[justify="right"][side="left"] {
+  padding-right: 0 ! important;
+}
+
+mjx-mtable[justify="right"][side="right"] {
+  padding-left: 0 ! important;
+}
+
+mjx-mtable[align] {
+  vertical-align: baseline;
+}
+
+mjx-mtable[align="top"] > mjx-table {
+  vertical-align: top;
+}
+
+mjx-mtable[align="bottom"] > mjx-table {
+  vertical-align: bottom;
+}
+
+mjx-mtable[side="right"] mjx-labels {
+  min-width: 100%;
+}
+
+mjx-mtr {
+  display: table-row;
+  text-align: left;
+}
+
+mjx-mtr[rowalign="top"] > mjx-mtd {
+  vertical-align: top;
+}
+
+mjx-mtr[rowalign="center"] > mjx-mtd {
+  vertical-align: middle;
+}
+
+mjx-mtr[rowalign="bottom"] > mjx-mtd {
+  vertical-align: bottom;
+}
+
+mjx-mtr[rowalign="baseline"] > mjx-mtd {
+  vertical-align: baseline;
+}
+
+mjx-mtr[rowalign="axis"] > mjx-mtd {
+  vertical-align: .25em;
+}
+
+mjx-mlabeledtr {
+  display: table-row;
+  text-align: left;
+}
+
+mjx-mlabeledtr[rowalign="top"] > mjx-mtd {
+  vertical-align: top;
+}
+
+mjx-mlabeledtr[rowalign="center"] > mjx-mtd {
+  vertical-align: middle;
+}
+
+mjx-mlabeledtr[rowalign="bottom"] > mjx-mtd {
+  vertical-align: bottom;
+}
+
+mjx-mlabeledtr[rowalign="baseline"] > mjx-mtd {
+  vertical-align: baseline;
+}
+
+mjx-mlabeledtr[rowalign="axis"] > mjx-mtd {
+  vertical-align: .25em;
+}
+
+mjx-mtd {
+  display: table-cell;
+  text-align: center;
+  padding: .215em .4em;
+}
+
+mjx-mtd:first-child {
+  padding-left: 0;
+}
+
+mjx-mtd:last-child {
+  padding-right: 0;
+}
+
+mjx-mtable > * > mjx-itable > *:first-child > mjx-mtd {
+  padding-top: 0;
+}
+
+mjx-mtable > * > mjx-itable > *:last-child > mjx-mtd {
+  padding-bottom: 0;
+}
+
+mjx-tstrut {
+  display: inline-block;
+  height: 1em;
+  vertical-align: -.25em;
+}
+
+mjx-labels[align="left"] > mjx-mtr > mjx-mtd {
+  text-align: left;
+}
+
+mjx-labels[align="right"] > mjx-mtr > mjx-mtd {
+  text-align: right;
+}
+
+mjx-mtr mjx-mtd[rowalign="top"], mjx-mlabeledtr mjx-mtd[rowalign="top"] {
+  vertical-align: top;
+}
+
+mjx-mtr mjx-mtd[rowalign="center"], mjx-mlabeledtr mjx-mtd[rowalign="center"] {
+  vertical-align: middle;
+}
+
+mjx-mtr mjx-mtd[rowalign="bottom"], mjx-mlabeledtr mjx-mtd[rowalign="bottom"] {
+  vertical-align: bottom;
+}
+
+mjx-mtr mjx-mtd[rowalign="baseline"], mjx-mlabeledtr mjx-mtd[rowalign="baseline"] {
+  vertical-align: baseline;
+}
+
+mjx-mtr mjx-mtd[rowalign="axis"], mjx-mlabeledtr mjx-mtd[rowalign="axis"] {
+  vertical-align: .25em;
+}
+
+mjx-maction {
+  display: inline-block;
+  text-align: left;
+  position: relative;
+}
+
+mjx-maction > mjx-tool {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  z-index: 500;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+mjx-maction[toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+mjx-mglyph {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-mglyph > img {
+  display: inline-block;
+  border: 0;
+  padding: 0;
+}
+
+mjx-semantics {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-annotation {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-annotation-xml {
+  display: inline-block;
+  text-align: left;
+  font-family: initial;
+  line-height: normal;
+}
+
+mjx-TeXAtom {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-c {
+  display: inline-block;
+}
+
+mjx-utext {
+  display: inline-block;
+  padding: .75em 0 .2em 0;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+
+mjx-c.mjx-c20::before {
+  padding: 0 0.25em 0 0;
+  content: " ";
+}
+
+mjx-c.mjx-c25::before {
+  padding: 0.75em 0.833em 0.056em 0;
+  content: "%";
+}
+
+mjx-c.mjx-c28::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: "(";
+}
+
+mjx-c.mjx-c29::before {
+  padding: 0.75em 0.389em 0.25em 0;
+  content: ")";
+}
+
+mjx-c.mjx-c2E::before {
+  padding: 0.12em 0.278em 0 0;
+  content: ".";
+}
+
+mjx-c.mjx-c30::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "0";
+}
+
+mjx-c.mjx-c31::before {
+  padding: 0.666em 0.5em 0 0;
+  content: "1";
+}
+
+mjx-c.mjx-c32::before {
+  padding: 0.666em 0.5em 0 0;
+  content: "2";
+}
+
+mjx-c.mjx-c33::before {
+  padding: 0.665em 0.5em 0.022em 0;
+  content: "3";
+}
+
+mjx-c.mjx-c34::before {
+  padding: 0.677em 0.5em 0 0;
+  content: "4";
+}
+
+mjx-c.mjx-c35::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "5";
+}
+
+mjx-c.mjx-c36::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "6";
+}
+
+mjx-c.mjx-c37::before {
+  padding: 0.676em 0.5em 0.022em 0;
+  content: "7";
+}
+
+mjx-c.mjx-c38::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "8";
+}
+
+mjx-c.mjx-c39::before {
+  padding: 0.666em 0.5em 0.022em 0;
+  content: "9";
+}
+
+mjx-c.mjx-c3D::before {
+  padding: 0.583em 0.778em 0.082em 0;
+  content: "=";
+}
+
+mjx-c.mjx-c43::before {
+  padding: 0.705em 0.722em 0.021em 0;
+  content: "C";
+}
+
+mjx-c.mjx-c55::before {
+  padding: 0.683em 0.75em 0.022em 0;
+  content: "U";
+}
+
+mjx-c.mjx-c62::before {
+  padding: 0.694em 0.556em 0.011em 0;
+  content: "b";
+}
+
+mjx-c.mjx-c63::before {
+  padding: 0.448em 0.444em 0.011em 0;
+  content: "c";
+}
+
+mjx-c.mjx-c64::before {
+  padding: 0.694em 0.556em 0.011em 0;
+  content: "d";
+}
+
+mjx-c.mjx-c65::before {
+  padding: 0.448em 0.444em 0.011em 0;
+  content: "e";
+}
+
+mjx-c.mjx-c69::before {
+  padding: 0.669em 0.278em 0 0;
+  content: "i";
+}
+
+mjx-c.mjx-c6D::before {
+  padding: 0.442em 0.833em 0 0;
+  content: "m";
+}
+
+mjx-c.mjx-c6E::before {
+  padding: 0.442em 0.556em 0 0;
+  content: "n";
+}
+
+mjx-c.mjx-c6F::before {
+  padding: 0.448em 0.5em 0.01em 0;
+  content: "o";
+}
+
+mjx-c.mjx-c70::before {
+  padding: 0.442em 0.556em 0.194em 0;
+  content: "p";
+}
+
+mjx-c.mjx-c72::before {
+  padding: 0.442em 0.392em 0 0;
+  content: "r";
+}
+
+mjx-c.mjx-c73::before {
+  padding: 0.448em 0.394em 0.011em 0;
+  content: "s";
+}
+
+mjx-c.mjx-c74::before {
+  padding: 0.615em 0.389em 0.01em 0;
+  content: "t";
+}
+
+mjx-c.mjx-c79::before {
+  padding: 0.431em 0.528em 0.204em 0;
+  content: "y";
+}
+
+mjx-c.mjx-c7A::before {
+  padding: 0.431em 0.444em 0 0;
+  content: "z";
+}
+
+mjx-c.mjx-cA0::before {
+  padding: 0 0.25em 0 0;
+  content: "\A0";
+}
+
+mjx-c.mjx-c2212::before {
+  padding: 0.583em 0.778em 0.082em 0;
+  content: "\2212";
+}
+
+mjx-c.mjx-c2248::before {
+  padding: 0.483em 0.778em 0 0;
+  content: "\2248";
+}
+
+mjx-c.mjx-c22C5::before {
+  padding: 0.31em 0.278em 0 0;
+  content: "\22C5";
+}
+
+mjx-c.mjx-c27F9::before {
+  padding: 0.525em 1.638em 0.024em 0;
+  content: "\27F9";
+}
+        </style>
+    </head>
+    <body>
+        <center>
+            <h1><u><b>The Zip Bomb</b></u></h1>
+        </center>
+        <h2>What is a zip bomb?</h2>
+        <p>First and foremost, let's start with the definitions.</p>
+        <blockquote>
+            A <b>zip bomb</b> is a <i>usually</i> malicious compressed file that is usually designed to render useless 
+            an antivirus engine to create an opening for another computer virus.
+        </blockquote>
+        <p>
+            Normally, a zip bomb negates an antivirus engine by tricking it into scanning the entire archive, 
+            which takes up an unimaginably large amount of time, disk space, and memory. However, 
+            modern antivirus engines are able to recongnize when a file is a zip bomb, and will avoid scanning through it.
+        </p>
+        <p>
+            Despite this, what I'm looking at isn't its ability to destroy antivirus engines or create opening for other 
+            viruses to attack - instead, let's take a look into the marvelous compression ability of zip bombs, and the science behind it.
+        </p>
+        <p>When talking about zip bombs, I will split them into two catagories:</p>
+        <ol>
+            <li><b>Traditional zip bombs.</b></li>
+            <li><b>The "better" zip bombs.</b></li>
+        </ol>
+        <p>
+            You have have heard of another type of "zip bomb": the <b>zip quine</b>. 
+            However, I would like for you to note that this is an entirely different thing compared to a zip bomb. 
+            While it <i>can</i> be used in theory to disable antivirus engines &amp;c like how zip bombs do, 
+            they are <i>much more sophisticated</i> compared to zip bombs and deserves its own article that I will write sometime in the future.
+        </p>
+        <aside>
+            A zip quine is a quine - something that replicates itself. In a more technical sense, it is a program that will give its source code when run.
+            Meanwhile before I write the article, go search up some examples! There's two famous ones so go take a look! ^^
+        </aside>
+        <p>That leaves us with the two types of zip bombs, the traditional and the better ones. So without further ado, let's take a look at them.</p>
+        <h2>Traditional zip bombs</h2>
+        <blockquote>
+            A&nbsp;<b>traditional zip bomb</b> is one that <i>uses recursive zipping to acheive high levels of compression.</i>
+        </blockquote>
+        <p>
+            A zip bomb that use the .zip format
+            must cope with the fact that the compression algorithm .zips most commonly use, <i>DEFLATE</i>,
+            cannot achieve a compression ratio greater than 1032. Why? Well let's take a look.
+        </p>
+        <h3>
+            Compression
+        </h3>
+        <h4>
+            <u>Example 1 - intuition</u>
+        </h4>
+        <p>
+            First, let's understand what compression actually is. Take a look at the image below:
+            <br><br>
+            <img src="Zip Bomb Files/Figure1.png">
+            <br><br>
+            How would you describe this image?
+            <br>
+            Well, we can say that: <u>the <i>top-left box is blue</i>, the <i>top-middle box is blue</i>, the <i>top-right box is blue</i>, 
+            the <i>middle-left box is blue</i>, the <i>middle-middle box is blue</i>, the <i>middle-right box is blue</i>,
+            the <i>bottom-left box is blue</i>, the <i>bottom-middle box is blue</i>, and the <i>bottom right box is blue</i>.</u>
+            <br><br>
+            <i>Whew</i>, that was certainly a mouthful wasn't it? If you were trying to describe to someone this image in the most efficient and effective way,
+            the method I used would certainly <b>not</b> be a viable one. So instead, let's try something else. 
+            <br><br>
+            How about this? We can say that: <u>there are <i>9 boxes</i>, arranged in a <i>3x3 pattern</i>, where <i>all the boxes are blue.</i></u>
+            <br><br>
+            That was certainly a much more efficient way of describing the image, without the redundancies of having to denote each box as blue individually.
+            What we have done here, is what data compression does. It takes a file and subtracts the redundancies that may be contained in the file, effectively
+            compressing it, lowering the file size.
+            <br><br>
+            Now notice something - we can shorten the description even further! Looking back at our "compressed" description, we see that we can take away 
+            "<u>there are <i>9 boxes</i></u>" and still have our description be feasibly understood, and reconstructed perfectly.
+            <br><br>
+            This is an example of how different compression algorithms work, and how some are able to compress more than others in different cases. 
+            They each have their own methods of reducing and eliminating redundant data within a file, while still maintaining the ability to perfectly
+            reconstruct the original file itself - <i>lossless compression</i>.
+            <br><br>
+            Then there are <i>lossy compression</i> algorithms. Referring back to our aforementioned example, let's just say instead that <u><i>all boxes are blue</i></u>.
+            We can see how this still describes our image, but when trying to reconstruct it, we don't know how many boxes there are. We can estimate that there may be
+            around 4-16 of them, but we can't be sure, since there is no information regarding it after compression.
+        </p>
+        <p>Let's take a dive into a more rigorous example of compression.</p>
+        <h4>
+            <u>Example 2 - rigorous</u>
+        </h4>
+        <p>
+            In a typical file, the data is divided into <i>bytes</i>. Unless there is a special exception, a byte is 8 bits long, where a single bit is a 0 or a 1.
+            In UTF-8 encoding, each byte represents a single character. For example, the character, and in this case, byte, "0" is encoded by the bits "00110000". 
+            Note that in other non-latin based languages, such as Mandarin or Arabic, a character may be multiple bytes.
+            <br><br>
+            However, not every byte of data encodes as much information as others in a sense. For example, think of all the English words you can that start with "Q" or "T". 
+            How many of them don't have a "U" or "H" immediately superceeding the "Q" or "T"? Likely none of them! Knowing this, how much "information" do you think the "U" and "H" 
+            actually contain, in a sense? What if you omit the "U" and "H"s, or replace the two letter pairs with a just a single character?
+            <br><br>
+            Again, we can see the points I have shown in <font size="1"><u><b>Example 1</b></u></font> surface: remove the redundant information - this is the essence of data compression.
+            <br><br>
+            Now let's think of vowels in the English language. Vowels are part of a very small set of the alphabet, and thus will convey less information than consonants. 
+            In fact, you could get rid of vowels completely and still understand what a sentence means. For example, let's try to take away the vowels from the following sentence:
+        </p>
+        <blockquote>This is a sentence without vowels and will still be readable.</blockquote>
+        <p>We get:</p>
+        <blockquote>Ths s&nbsp; sntnc wtht vwls nd wll stll b rdbl.</blockquote>
+        <p>
+            Try that with consonants, and all meaning is lost:
+        </p>
+        <blockquote>This is a sentence without consonants and will <b>not</b> be readable.</blockquote>
+        <blockquote>i i a eee iou ooa a i <b>o</b> e eaae.</blockquote>
+        <p>
+            Now there, this <b><i>does not</i></b> mean that vowels are not important, and that they can be ignored. This just means they carry less information than 
+            consonants, and when compressing, can be valued less than consonants. This is what data compression tries to achieve: it looks at data, 
+            gets an idea of how much information each character conveys, and then tries to minimize that. And as a result, a single character may no longer be 8 bits long - 
+            a very common character may be represented by only a few bits.
+            <br><br>
+            Revisiting the "QU" and "TH" observation I have noted above, we have that groups of characters may be common enough that we can represent them by a smaller number of bytes. 
+            For example, with the "QU" example above, if you're using "QU" words often enough, we could replace them with fewer than 16 bits. And words with "TH" in them? 
+            We could also replace every instance of "TH" with something less than 16 bits. What about the word "THE"? 
+            That's a very common word that takes up 24 bits uncompressed, but could take up fewer bits.
+            <br><br>
+            I believe this is good enough of an analogy. If you, dear reader, still don't understand parts of these two examples, please give it a slow and detailed re-read.<br>
+            With that, we can move on: let's look at zip files.
+        </p>
+        <h3>Zip and DEFLATE</h3>
+        <p>
+            While zip files may use a variety of compression algorithms, the compression algorithm
+            <i>DEFLATE</i> is the <a href="https://en.wikipedia.org/wiki/ZIP_(file_format)#:~:text=DEFLATE%20is%20the%20most%20common.">most common</a>.
+            As a result, almost all zip bombs utilize this algorithm, and thus, we'll take a look at this algorithm in particular.
+        </p>
+        <p>
+            The algorithm <i>DEFLATE</i> is actually a combination of two algorithms, LZ77 and Huffman Coding.
+        </p>
+        <img src="Zip Bomb Files/deflate_process.png">
+        <h4>
+            <u>LZ77</u>
+        </h4>
+        <p>
+            LZ77 is a <b>dictionary based</b> compression algorithm.
+        </p>
+        <blockquote>
+            A <b>dictionary based algorithm</b> is one that replaces an occurrence of a particular sequence of bytes in data with a reference to a previous occurrence of that sequence.
+        </blockquote>
+        <p>
+            What LZ77 does is that it looks for groupings of bytes, and when it finds a repeat of a grouping, it will encode the superceeding groups in a <b>length-distance pair</b>. 
+        </p>
+        <blockquote>
+            A <b>length-distance pair</b> denotes the amount of characters that are repeated - L, the distance where the preceeding repeating group can be found - D, and
+            the character immediately superceeding the longest matching group - C.
+        </blockquote>
+        <p>
+            Firt off, I would like to remark the fact that the "C" aspect of a length-distance pair is usually a temporary element, and will be excluded from the final result.
+            The reason of adding the third element C in the length-distance pair is for handling the case where no match is found in the search buffer. 
+            In that case, the values of both D and L are 0, and C is the first character in current look-ahead buffer.
+        </p>
+        <p>
+            Now there, note that searches for length-distance pairs do not occur across the entire file, but instead only is made in a fixed number of bytes at one time. 
+            This is to keep the distance number from getting really big and impairing the data compression efforts. For example, suppose you're trying to compress a multi-gigabyte 
+            word document explaining the proof for Fermat's Last Theorem where you use the word "cringe" once at the beginning and once at the end, it won't make sense to have a distance 
+            value that represents a position several gigabytes in size, since at some point, the number of bits needed to store the length-distance pair will surpass the bytes 
+            you're compressing. This fixed number of bytes is the <b>sliding window</b>.
+        </p>
+        <blockquote>The <b>sliding window</b> is the length of bytes the LZ77 algorithm will look in to data group repeats, and maintains the historical data for future reference.</blockquote>
+        <p>
+            The sliding window contains two parts, a <i>search buffer</i>, and a <i>look-ahead buffer</i>. The search buffer contains the dictionary - the recent encoded data, 
+            and the look-ahead buffer contains the next portion of input data sequence to be encoded. 
+            In ZIP files, the sliding window is usually either <data value="32000">32<abbr title="Kilobyte(s)">KB</abbr></data> or <data value="64000">64<abbr title="Kilobyte(s)">KB</abbr></data>.
+        </p>
+        <p>
+            As an example, I have created a visual on the LZ77 algorithm that will "compress" the string "<code>axrrmaxrbaxssr</code>" below. If you don't understand any part of it,
+            please give it a careful re-analysis and refer to the color-coding of the different elements I've included.
+        </p>
+        <img src="Zip Bomb Files/LZ77_process.png">
+        <p>
+            Notive that due to the really inefficient way I've chosen to represent the length-distance pairs, and because this is a very small example, 
+            we've actually made the example string longer. However, even with my inefficient representation, longer strings with more repetition would show noticeable size improvements.
+        </p>
+        <p>
+            An interesting side-note is that in a length-distance pair, the length can actually be greater that the distance value. 
+            So you could have "length 5, distance 1" which would mean copying the last character five times.
+        </p>
+        <h4>
+            <u>Huffman Coding</u>
+        </h4>
+        <p>
+            Huffman encoding is a <i>statistical compression method</i>. It encodes data symbols, such as characters with <b>variable-length codes</b>, 
+            and lengths of the codes are based on the frequencies of corresponding symbols.
+            <br><br>
+            Huffman encoding, as well as other variable-length coding methods, has two properties:
+        </p>
+        <ol>
+            <li>Codes for <b>more frequently occurring</b> data symbols are <i>shorter</i> than codes for less frequently occurring data symbols.</li>
+            <li>
+                Each code can be <b>uniquely decoded</b>. This requires the codes to be <b>prefix codes</b>, meaning any code for one symbol is not a prefix of codes for other symbols. 
+                For example, if code “<code>0</code>” is used for symbol “<code>A</code>”, then code “<code>01</code>” cannot be used for symbol “<code>B</code>” as code “<code>0</code>” 
+                is a prefix of code “<code>01</code>”. The prefix property guarantees when decoding there is no ambiguity in determining where the symbol boundaries are.
+            </li>
+        </ol>
+        <p>Huffman encoding has two steps:</p>
+        <ol>
+            <li>Build a Huffman tree from original data symbols. A Huffman tree is a binary tree structure.</li>
+            <li>Traverse the Huffman Tree and assign codes to data symbols.</li>
+        </ol>
+        <p>
+            Huffman codes can be <i>fixed/static</i> or <i>dynamic</i>, and both are used in <i>DEFLATE</i>.
+        </p>
+        <ul>
+            <li>
+                Fixed Huffman codes can be created by examining a large number of data sets, and finding typical code lengths. When using fixed Huffman coding, 
+                the same codes are used for all the input data symbols.
+            </li>
+            <li>Dynamic Huffman codes are generated by breaking input data into blocks, and generating codes for each data block.</li>
+        </ul>
+        <p>
+            Here is an example of Huffman Encoding of the text "<code>this is an example of a huffman tree</code>":
+        </p>
+        <img src="Zip Bomb Files/Huffman_tree.svg">
+        <table style="margin-top:-420px; margin-left:800px; margin-bottom: 30px;">
+            <thead><tr>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Char</th>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Freq</th>
+            <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Code</th>
+            </tr></thead><tbody>
+            <tr>
+            <td>space</td>
+            <td>7</td>
+            <td>111
+            </td></tr>
+            <tr>
+            <td>a</td>
+            <td>4</td>
+            <td>010
+            </td></tr>
+            <tr>
+            <td>e</td>
+            <td>4</td>
+            <td>000
+            </td></tr>
+            <tr>
+            <td>f</td>
+            <td>3</td>
+            <td>1101
+            </td></tr>
+            <tr>
+            <td>h</td>
+            <td>2</td>
+            <td>1010
+            </td></tr>
+            <tr>
+            <td>i</td>
+            <td>2</td>
+            <td>1000
+            </td></tr>
+            <tr>
+            <td>m</td>
+            <td>2</td>
+            <td>0111
+            </td></tr>
+            <tr>
+            <td>n</td>
+            <td>2</td>
+            <td>0010
+            </td></tr>
+            <tr>
+            <td>s</td>
+            <td>2</td>
+            <td>1011
+            </td></tr>
+            <tr>
+            <td>t</td>
+            <td>2</td>
+            <td>0110
+            </td></tr>
+            <tr>
+            <td>l</td>
+            <td>1</td>
+            <td>11001
+            </td></tr>
+            <tr>
+            <td>o</td>
+            <td>1</td>
+            <td>00110
+            </td></tr>
+            <tr>
+            <td>p</td>
+            <td>1</td>
+            <td>10011
+            </td></tr>
+            <tr>
+            <td>r</td>
+            <td>1</td>
+            <td>11000
+            </td></tr>
+            <tr>
+            <td>u</td>
+            <td>1</td>
+            <td>00111
+            </td></tr>
+            <tr>
+            <td>x</td>
+            <td>1</td>
+            <td>10010
+            </td></tr></tbody><tfoot></tfoot>
+        </table>
+        <p>
+            To the right is a chart showing the frequencies and bits that encode each character after using Huffman Coding. Encoding the sentence with this code requires 135 bits, 
+            as opposed to 288 bits if 36 characters of 8 bits were used. Of course, this assumes that the code tree structure is known to the decoder and thus does not need to be 
+            counted as part of the transmitted information.
+        </p>
+        <p>
+            All of this assumes that characters don't occur with the exact same frequency, which is generally true of human languages. 
+            Random data however may have all bytes having identical frequencies, in which case the data becomes incompressible. 
+            Thus, by intuition we can see that this is why you generally can't run a .zip file through <i>DEFLATE</i> and get a smaller file out of it. 
+            In fact, doing so may sometimes result in a slightly larger file, as zips have a certain amount of overhead to describe the files it stores.
+        </p>
+        <h4>
+            <u>CRC-32 check</u>
+        </h4>
+        <p>
+            Although this isn't important for our purpose, I thought it would be worth mentioning that .zip files also contains a CRC-32 hash of each compressed file within it. 
+            CRC-32 is a hash algorithm that generates a string called a hash after looking at a file and its contents. There are 2<sup>32</sup>=4,294,967,296 different hashes CRC-32
+            can generate, so it's possible for two files to have the same hash. However, when decompressing data with errors having the original file and the error file having the same CRC-32 
+            value is so incredibly unlikely, so it's doubtful if it's ever happened in the history of the world. 
+        </p>
+        <h4>
+            <u>A DEFLATE encoded zip's compression limit</u>
+        </h4>
+        <p>
+            Now that we understand how zips and <i>DEFLATE</i> works, let's try to see how well it can compress data.
+            By intuition, and from the explanation above, we can reason that a compression algorithm will work the best if a file is extremely redundant; 
+            for instance, a file filled with zeroes. So therefore, let's test how well <i>DEFLATE</i> can compress a file filled with a lot of zeroes.
+            <br><br>
+            We create a <data value="50000000">50<abbr title="Megabyte(s)">MB</abbr></data> file filled with zeros and compress it using <i>DEFLATE</i>. 
+            It should compress to be roughly around <data value="48605">49<abbr title="Kilobyte(s)">KB</abbr></data> as demonstrated <a href="./Zip Bomb Files/0.zip">here</a>.
+            So thus, empirically, <i>DEFLATE</i> is capable of compression factors exceeding 1000:1. 
+        </p>
+        <p>
+            To find the theoretical limit, let's dive deeper into the <i>DEFLATE</i> algorithm and zip file structure itself.
+            The limit comes from the fact that one length-distance pair can represent at most 258 output bytes. 
+            A length requires at least one bit and a distance requires at least one bit, so two bits in can give 258 bytes out, 
+            or eight bits in give 1032 bytes out. A dynamic block has no length restriction, so you could get arbitrarily close to the limit of 1032:1.
+        </p>
+        <p>
+            We can also note that the current implementation limits its dynamic blocks to about <data value="8000">8<abbr title="Kilobyte(s)">KB</abbr></data> 
+            (corresponding to <data value="8000000">8<abbr title="Megabyte(s)">MB</abbr></data> of input data); together with a few bits of overhead, this implies 
+            an actual compression limit of about 1030:1. Not only that, but the compressed data stream is itself likely to be rather compressible 
+            (in this special case only), so running it through <i>DEFLATE</i> again should produce further gains.
+        </p>
+        <p>
+            Due to this reason, traditional zip bombs rely on recursive decompression, nesting zip files within zip files to get an extra factor of ~1032 with each layer.
+            Referring back to the original purpose of these traditional zip bombs - to disable antiviruses, these nested zips will only work on antivirus engines
+            that scan recursively into each nest of zips, and now as of March 2021, most will not. 
+        </p>
+        <aside>
+            I haven't been able to find the original author for 42.zip. If anyone knows, please ping me on twitter(profile link is on my github account homepage).
+        </aside>
+        <p>
+            The best-known zip bomb, <a href="./42.html">42.zip</a>, expands to a formidable <data value="4503599626321920">4.5<abbr title="Petabyte(s)">PB</abbr></data> 
+            if all six of its layers are fully and recursively unzipped, but a negligable <data value="558432">0.6<abbr title="Megabyte(s)">MB</abbr></data>
+            if one were to only unzip the top layer.
+        </p>
+        <h3>
+            The Traditional Zip Bomb
+        </h3>
+        <p>
+            Ok, I lied. Although <i>in theory</i>, the ratio 1030:1 is the greatest the <i>DEFLATE</i> algorithm can achieve, we underestimated file redundancy and how that can 
+            dramatically compress a file. <a href="./Zip Bomb Files/0 (2).zip">Here</a> we can see how compressing a <data value="4000000000">4<abbr title="Gigabyte(s)">GB</abbr></data>
+            file of zeros becomes <data value="137508">138<abbr title="Kilobyte(s)">KB</abbr></data>, giving us a ratio of 29089:1.
+        </p>
+        <p>
+            Why is this? Well, the length-distance pairs although limited at a maximum of 258 bytes, is extremely repetitive. In a <data value="4000000000">4<abbr title="Gigabyte(s)">GB</abbr></data>
+            file of repeating data, there would be such a frequent occurance of the <i>same</i> length-distance pairs such that when <i>DEFLATE</i> applies the Huffman Algorithm, 
+            the encoding of the length-distance pairs will be shortenned to the extent that they may be just 1 single bit. This will drastically increase compression ratio, 
+            beyond even the theoretical limit. In our initial calculation, we assumed the Huffman Algorithm was capped in it's efficiecy by the restrictions of the length-distance pairs themselves,
+            but it would appear to be not so.
+        </p>
+        <p>
+            As we test compressing larger and larger files, as shown <a href="Zip Bomb Files/0-First level compression.zip">here</a>, we see that our ratio remains at a similar point as the previous
+            test, this time reaching 29090:1. 
+            <br><br>
+            Further tests can be found...
+        </p>
+        <ul>
+            <li><a href="Zip Bomb Files/1-single.zip">here</a> with ratio 29089:1.</li>
+            <li><a href="Zip Bomb Files/Zip Bomb Test 16-end.zip">here</a> with ratio 29090:1.</li>
+            <li><a href="Zip Bomb Files/[-single.zip">here</a> with ratio 29101:1.</li>
+            <li><a href="Zip Bomb Files/[-16.zip">here</a> with ratio 29102:1.</li>
+        </ul>
+        <span><font size="-2">(Uh if you're looking at the files inside the zips and asking why they are repeating characters I'll explain why below in the "Constructing a traditional zip bomb" section lol.)</font></span>
+        <p>
+            It would seem that the maximum compression ratio evens out at around 29100:1. Let's attempt to calculate why this is. By dividing 29100 by 1032, we arrive at <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" sre-explorer-id="8" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="24" style="font-size: 123.5%; position: relative;"><mjx-math data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="5" data-semantic-children="2,4" data-semantic-content="3" data-semantic-speech="StartFraction 2425 Over 86 EndFraction almost equals 28.2" class="MJX-TEX" aria-hidden="true"><mjx-mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="2" data-semantic-children="0,1" data-semantic-parent="5"><mjx-frac><mjx-num><mjx-nstrut></mjx-nstrut><mjx-mn class="mjx-n" size="s" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="0" data-semantic-parent="2"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c34"></mjx-c><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c35"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line></mjx-line><mjx-row><mjx-den><mjx-dstrut></mjx-dstrut><mjx-mn class="mjx-n" size="s" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="1" data-semantic-parent="2"><mjx-c class="mjx-c38"></mjx-c><mjx-c class="mjx-c36"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="3" data-semantic-parent="5" data-semantic-operator="relseq,≈"><mjx-c class="mjx-c2248"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="4" data-semantic-type="number" data-semantic-role="float" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="4" data-semantic-parent="5"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c38"></mjx-c><mjx-c class="mjx-c2E"></mjx-c><mjx-c class="mjx-c32"></mjx-c></mjx-mn></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-="" data-semantic-children="2,4" data-semantic-content="3" data-semantic-speech="StartFraction 2425 Over 86 EndFraction almost equals 28.2"><mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-="" data-semantic-children="0,1" data-semantic-parent="5"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="2">2425</mn><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="2">86</mn></mfrac><mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="5" data-semantic-operator="relseq,≈">≈</mo><mn data-semantic-type="number" data-semantic-role="float" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="5">28.2</mn></math></mjx-assistive-mml></mjx-container>. We can reason
+            that the efficiency of the Huffman Algorithm must account for 28 times more efficiency. Math time!
+        </p>
+        <p>
+            We can calculate the percentage of compression by using this formula: <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" sre-explorer-id="9" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="25" style="font-size: 123.5%; position: relative;"><mjx-math data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-id="5" data-semantic-children="0,4" data-semantic-content="1" data-semantic-speech="1 minus StartFraction Compressed size Over Uncompressed size EndFraction" display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="0" data-semantic-parent="5"><mjx-c class="mjx-c31"></mjx-c></mjx-mn><mjx-mo class="mjx-n" space="3" data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="1" data-semantic-parent="5" data-semantic-operator="infixop,−"><mjx-c class="mjx-c2212"></mjx-c></mjx-mo><mjx-mfrac space="3" data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="4" data-semantic-children="2,3" data-semantic-parent="5"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-id="2" data-semantic-parent="4"><mjx-c class="mjx-c43"></mjx-c><mjx-c class="mjx-c6F"></mjx-c><mjx-c class="mjx-c6D"></mjx-c><mjx-c class="mjx-c70"></mjx-c><mjx-c class="mjx-c72"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c64"></mjx-c><mjx-c class="mjx-c20"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c69"></mjx-c><mjx-c class="mjx-c7A"></mjx-c><mjx-c class="mjx-c65"></mjx-c></mjx-mtext></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-id="3" data-semantic-parent="4"><mjx-c class="mjx-c55"></mjx-c><mjx-c class="mjx-c6E"></mjx-c><mjx-c class="mjx-c63"></mjx-c><mjx-c class="mjx-c6F"></mjx-c><mjx-c class="mjx-c6D"></mjx-c><mjx-c class="mjx-c70"></mjx-c><mjx-c class="mjx-c72"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c64"></mjx-c><mjx-c class="mjx-c20"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c69"></mjx-c><mjx-c class="mjx-c7A"></mjx-c><mjx-c class="mjx-c65"></mjx-c></mjx-mtext></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-="" data-semantic-children="0,4" data-semantic-content="1" data-semantic-speech="1 minus StartFraction Compressed size Over Uncompressed size EndFraction"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="5">1</mn><mo data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-="" data-semantic-parent="5" data-semantic-operator="infixop,−">−</mo><mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-="" data-semantic-children="2,3" data-semantic-parent="5"><mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-="" data-semantic-parent="4">Compressed size</mtext><mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-="" data-semantic-parent="4">Uncompressed size</mtext></mfrac></math></mjx-assistive-mml></mjx-container>
+            First let's assume a compression efficiency percentage of let's say, 80%. WLOG then let's say that we compressed a file of 10000 bytes. We can thus reason that 
+            we have compressed the 10000 bytes into <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" sre-explorer-id="10" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="26" style="font-size: 123.5%; position: relative;"><mjx-math data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="14" data-semantic-children="13,9" data-semantic-content="8" data-semantic-speech="10000 minus left parenthesis 10000 dot 80 percent sign right parenthesis equals 2000" class="MJX-TEX" aria-hidden="true"><mjx-mrow data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-id="13" data-semantic-children="0,12" data-semantic-content="1" data-semantic-parent="14"><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="0" data-semantic-parent="13"><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn><mjx-mo class="mjx-n" space="3" data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="1" data-semantic-parent="13" data-semantic-operator="infixop,−"><mjx-c class="mjx-c2212"></mjx-c></mjx-mo><mjx-mrow space="3" data-semantic-type="fenced" data-semantic-role="leftright" data-semantic-id="12" data-semantic-children="11" data-semantic-content="2,7" data-semantic-parent="13"><mjx-mo class="mjx-n" data-semantic-type="fence" data-semantic-role="open" data-semantic-id="2" data-semantic-parent="12" data-semantic-operator="fenced"><mjx-c class="mjx-c28"></mjx-c></mjx-mo><mjx-mrow data-semantic-type="punctuated" data-semantic-role="endpunct" data-semantic-id="11" data-semantic-children="10,6" data-semantic-content="6" data-semantic-parent="12"><mjx-mrow data-semantic-type="infixop" data-semantic-role="multiplication" data-semantic-id="10" data-semantic-children="3,5" data-semantic-content="4" data-semantic-parent="11"><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="3" data-semantic-parent="10"><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn><mjx-mo class="mjx-n" space="3" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="4" data-semantic-parent="10" data-semantic-operator="infixop,⋅"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="3" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="5" data-semantic-parent="10"><mjx-c class="mjx-c38"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-mrow><mjx-mi class="mjx-n" data-semantic-type="punctuation" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="nemeth:number" data-semantic-id="6" data-semantic-parent="11" data-semantic-operator="punctuated"><mjx-c class="mjx-c25"></mjx-c></mjx-mi></mjx-mrow><mjx-mo class="mjx-n" data-semantic-type="fence" data-semantic-role="close" data-semantic-id="7" data-semantic-parent="12" data-semantic-operator="fenced"><mjx-c class="mjx-c29"></mjx-c></mjx-mo></mjx-mrow></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="8" data-semantic-parent="14" data-semantic-operator="relseq,="><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="4" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="9" data-semantic-parent="14"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-="" data-semantic-children="13,9" data-semantic-content="8" data-semantic-speech="10000 minus left parenthesis 10000 dot 80 percent sign right parenthesis equals 2000"><mrow xmlns="http://www.w3.org/1999/xhtml" data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-="" data-semantic-children="0,12" data-semantic-content="1" data-semantic-parent="14"><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="13">10000</mn><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-="" data-semantic-parent="13" data-semantic-operator="infixop,−">−</mo><mrow data-semantic-type="fenced" data-semantic-role="leftright" data-semantic-="" data-semantic-children="11" data-semantic-content="2,7" data-semantic-parent="13"><mo xmlns="http://www.w3.org/1998/Math/MathML" stretchy="false" data-semantic-type="fence" data-semantic-role="open" data-semantic-="" data-semantic-parent="12" data-semantic-operator="fenced">(</mo><mrow data-semantic-type="punctuated" data-semantic-role="endpunct" data-semantic-="" data-semantic-children="10,6" data-semantic-content="6" data-semantic-parent="12"><mrow data-semantic-type="infixop" data-semantic-role="multiplication" data-semantic-="" data-semantic-children="3,5" data-semantic-content="4" data-semantic-parent="11"><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="10">10000</mn><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-="" data-semantic-parent="10" data-semantic-operator="infixop,⋅">⋅</mo><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="10">80</mn></mrow><mi xmlns="http://www.w3.org/1998/Math/MathML" mathvariant="normal" data-semantic-type="punctuation" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="11" data-semantic-operator="punctuated">%</mi></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" stretchy="false" data-semantic-type="fence" data-semantic-role="close" data-semantic-="" data-semantic-parent="12" data-semantic-operator="fenced">)</mo></mrow></mrow><mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="14" data-semantic-operator="relseq,=">=</mo><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="14">2000</mn></math></mjx-assistive-mml></mjx-container> bytes. Thus our compression ratio would be 5:1, and by this, we can see that the percentage of 
+            efficiency must be arbitrarily close to 100%.  
+        </p>
+        <span><font size="-2">
+            (If you're wondering why I'm converting between percentage efficiency and compression ratio it's because the research papers on Huffman Coding efficiency 
+            apparently are all in percentages lol. So annoyingggggg aaaaaaaaaa)
+        </font></span>
+        <p>
+            To go in reverse, we reverse our process. Since LZ77 has accounted for the <b>1032</b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" sre-explorer-id="11" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="27" style="font-size: 123.5%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="nemeth:number" data-semantic-id="0" data-semantic-speech="dot"><mjx-c class="mjx-c22C5"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-speech="dot">⋅</mo></math></mjx-assistive-mml></mjx-container>28:1 part of the ratio, we focus on the 28:1 ratio Huffman Coding brings us.
+            <br><br>
+            WLOG again assume a file with size of 10000 bytes has been compressed. Thus we have such that <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" sre-explorer-id="12" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="28" style="font-size: 123.5%; position: relative;"><mjx-math data-semantic-type="punctuated" data-semantic-role="text" data-semantic-id="6" data-semantic-children="0,4" data-semantic-collapsed="(6 (c 5) 0 4)" data-semantic-speech="Uncompressed size equals 10000" display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-id="0" data-semantic-parent="6"><mjx-c class="mjx-c55"></mjx-c><mjx-c class="mjx-c6E"></mjx-c><mjx-c class="mjx-c63"></mjx-c><mjx-c class="mjx-c6F"></mjx-c><mjx-c class="mjx-c6D"></mjx-c><mjx-c class="mjx-c70"></mjx-c><mjx-c class="mjx-c72"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c64"></mjx-c><mjx-c class="mjx-c20"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c69"></mjx-c><mjx-c class="mjx-c7A"></mjx-c><mjx-c class="mjx-c65"></mjx-c></mjx-mtext><mjx-mrow data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="4" data-semantic-children="3,2" data-semantic-content="1" data-semantic-parent="6"><mjx-mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-id="3" data-semantic-parent="4"></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="1" data-semantic-parent="4" data-semantic-operator="relseq,="><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="4" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="2" data-semantic-parent="4"><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-mrow></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" data-semantic-type="punctuated" data-semantic-role="text" data-semantic-="" data-semantic-children="0,4" data-semantic-collapsed="(6 (c 5) 0 4)" data-semantic-speech="Uncompressed size equals 10000"><mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-="" data-semantic-parent="6">Uncompressed size</mtext><mrow xmlns="http://www.w3.org/1999/xhtml" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-="" data-semantic-children="3,2" data-semantic-content="1" data-semantic-parent="6"><mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="4"></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="4" data-semantic-operator="relseq,=">=</mo><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="4">10000</mn></mrow></math></mjx-assistive-mml></mjx-container> 
+            <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" sre-explorer-id="13" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="29" style="font-size: 123.5%; position: relative;"><mjx-math display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mstyle><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mrow data-semantic-type="multirel" data-semantic-role="unknown" data-semantic-id="11" data-semantic-children="10,5,9" data-semantic-content="1,6" data-semantic-speech="long right double arrow StartFraction 10000 Over Compressed size EndFraction equals StartFraction 28 Over 1 EndFraction"><mjx-mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-id="10" data-semantic-parent="11"></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-id="1" data-semantic-parent="11" data-semantic-operator="multirel"><mjx-c class="mjx-c27F9"></mjx-c></mjx-mo><mjx-mstyle space="4"><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="5" data-semantic-children="3,4" data-semantic-parent="11"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="3" data-semantic-parent="5"><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-id="4" data-semantic-parent="5"><mjx-c class="mjx-c43"></mjx-c><mjx-c class="mjx-c6F"></mjx-c><mjx-c class="mjx-c6D"></mjx-c><mjx-c class="mjx-c70"></mjx-c><mjx-c class="mjx-c72"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c64"></mjx-c><mjx-c class="mjx-c20"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c69"></mjx-c><mjx-c class="mjx-c7A"></mjx-c><mjx-c class="mjx-c65"></mjx-c></mjx-mtext></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="6" data-semantic-parent="11" data-semantic-operator="multirel"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mfrac space="4" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="9" data-semantic-children="7,8" data-semantic-parent="11"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="7" data-semantic-parent="9"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c38"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="8" data-semantic-parent="9"><mjx-c class="mjx-c31"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-mrow></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mstyle scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mrow xmlns="http://www.w3.org/1999/xhtml" data-semantic-type="multirel" data-semantic-role="unknown" data-semantic-="" data-semantic-children="10,5,9" data-semantic-content="1,6" data-semantic-speech="long right double arrow StartFraction 10000 Over Compressed size EndFraction equals StartFraction 28 Over 1 EndFraction"><mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="11"></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" stretchy="false" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-="" data-semantic-parent="11" data-semantic-operator="multirel">⟹</mo><mstyle xmlns="http://www.w3.org/1998/Math/MathML" scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mfrac xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="fraction" data-semantic-role="division" data-semantic-="" data-semantic-children="3,4" data-semantic-parent="11"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="5">10000</mn><mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit" data-semantic-="" data-semantic-parent="5">Compressed size</mtext></mfrac><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="11" data-semantic-operator="multirel">=</mo><mfrac xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-="" data-semantic-children="7,8" data-semantic-parent="11"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="9">28</mn><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="9">1</mn></mfrac></mrow></math></mjx-assistive-mml></mjx-container>
+            <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" sre-explorer-id="14" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="30" style="font-size: 123.5%; position: relative;"><mjx-math display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mstyle><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mrow space="4" data-semantic-type="punctuated" data-semantic-role="text" data-semantic-id="16" data-semantic-children="1,3,12,10" data-semantic-collapsed="(16 (c 13 14 15) 1 3 12 10)" data-semantic-speech="long right double arrow Compressed size equals StartFraction 2500 Over 7 EndFraction almost equals 357 bytes"><mjx-mo class="mjx-n" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-annotation="nemeth:number" data-semantic-id="1" data-semantic-parent="16"><mjx-c class="mjx-c27F9"></mjx-c></mjx-mo><mjx-mstyle space="4"><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-id="3" data-semantic-parent="16"><mjx-c class="mjx-c43"></mjx-c><mjx-c class="mjx-c6F"></mjx-c><mjx-c class="mjx-c6D"></mjx-c><mjx-c class="mjx-c70"></mjx-c><mjx-c class="mjx-c72"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c64"></mjx-c><mjx-c class="mjx-c20"></mjx-c><mjx-c class="mjx-c73"></mjx-c><mjx-c class="mjx-c69"></mjx-c><mjx-c class="mjx-c7A"></mjx-c><mjx-c class="mjx-c65"></mjx-c></mjx-mtext><mjx-mrow data-semantic-type="multirel" data-semantic-role="equality" data-semantic-id="12" data-semantic-children="11,7,9" data-semantic-content="4,8" data-semantic-parent="16"><mjx-mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-id="11" data-semantic-parent="12"></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="4" data-semantic-parent="12" data-semantic-operator="multirel"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mfrac space="4" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="12"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="5" data-semantic-parent="7"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c35"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="6" data-semantic-parent="7"><mjx-c class="mjx-c37"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="8" data-semantic-parent="12" data-semantic-operator="multirel"><mjx-c class="mjx-c2248"></mjx-c></mjx-mo><mjx-mn class="mjx-n" space="4" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="9" data-semantic-parent="12"><mjx-c class="mjx-c33"></mjx-c><mjx-c class="mjx-c35"></mjx-c><mjx-c class="mjx-c37"></mjx-c></mjx-mn></mjx-mrow><mjx-mtext class="mjx-n" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-id="10" data-semantic-parent="16"><mjx-c class="mjx-cA0"></mjx-c><mjx-c class="mjx-c62"></mjx-c><mjx-c class="mjx-c79"></mjx-c><mjx-c class="mjx-c74"></mjx-c><mjx-c class="mjx-c65"></mjx-c><mjx-c class="mjx-c73"></mjx-c></mjx-mtext></mjx-mrow></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mstyle scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mrow xmlns="http://www.w3.org/1999/xhtml" data-semantic-type="punctuated" data-semantic-role="text" data-semantic-="" data-semantic-children="1,3,12,10" data-semantic-collapsed="(16 (c 13 14 15) 1 3 12 10)" data-semantic-speech="long right double arrow Compressed size equals StartFraction 2500 Over 7 EndFraction almost equals 357 bytes"><mo xmlns="http://www.w3.org/1998/Math/MathML" stretchy="false" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="16">⟹</mo><mstyle xmlns="http://www.w3.org/1998/Math/MathML" scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mtext xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-="" data-semantic-parent="16">Compressed size</mtext><mrow data-semantic-type="multirel" data-semantic-role="equality" data-semantic-="" data-semantic-children="11,7,9" data-semantic-content="4,8" data-semantic-parent="16"><mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="12"></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="12" data-semantic-operator="multirel">=</mo><mfrac xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-="" data-semantic-children="5,6" data-semantic-parent="12"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="7">2500</mn><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="7">7</mn></mfrac><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="12" data-semantic-operator="multirel">≈</mo><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="12">357</mn></mrow><mtext xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="clearspeak:unit;nemeth:number" data-semantic-="" data-semantic-parent="16">&nbsp;bytes</mtext></mrow></math></mjx-assistive-mml></mjx-container>
+            Therefore the percentage would be equal to approximately
+            <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" display="true" sre-explorer-id="15" tabindex="0" ctxtmenu_oldtabindex="0" ctxtmenu_counter="31" style="font-size: 123.5%; position: relative;"><mjx-math display="true" class="MJX-TEX" aria-hidden="true" style="margin-left: 0px; margin-right: 0px;"><mjx-mstyle><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mrow data-semantic-type="multirel" data-semantic-role="unknown" data-semantic-id="21" data-semantic-children="19,20,13,18" data-semantic-content="1,10,14" data-semantic-speech="long right double arrow 1 minus StartStartFraction StartFraction 2500 Over 7 EndFraction OverOver 10000 EndEndFraction equals StartFraction 27 Over 28 EndFraction almost equals StartEnclose box 96.4 percent sign EndEnclose"><mjx-mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-id="19" data-semantic-parent="21"></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-id="1" data-semantic-parent="21" data-semantic-operator="multirel"><mjx-c class="mjx-c27F9"></mjx-c></mjx-mo><mjx-mstyle space="4"><mjx-mspace style="width: 0.278em;"></mjx-mspace></mjx-mstyle><mjx-mrow data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-id="20" data-semantic-children="3,9" data-semantic-content="4" data-semantic-parent="21"><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="3" data-semantic-parent="20"><mjx-c class="mjx-c31"></mjx-c></mjx-mn><mjx-mo class="mjx-n" space="3" data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="4" data-semantic-parent="20" data-semantic-operator="infixop,−"><mjx-c class="mjx-c2212"></mjx-c></mjx-mo><mjx-mfrac space="3" data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="9" data-semantic-children="7,8" data-semantic-parent="20"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9"><mjx-frac><mjx-num><mjx-nstrut></mjx-nstrut><mjx-mn class="mjx-n" size="s" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="5" data-semantic-parent="7"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c35"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line></mjx-line><mjx-row><mjx-den><mjx-dstrut></mjx-dstrut><mjx-mn class="mjx-n" size="s" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="6" data-semantic-parent="7"><mjx-c class="mjx-c37"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="8" data-semantic-parent="9"><mjx-c class="mjx-c31"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c><mjx-c class="mjx-c30"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac></mjx-mrow><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="10" data-semantic-parent="21" data-semantic-operator="multirel"><mjx-c class="mjx-c3D"></mjx-c></mjx-mo><mjx-mfrac space="4" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="13" data-semantic-children="11,12" data-semantic-parent="21"><mjx-frac type="d"><mjx-num><mjx-nstrut type="d"></mjx-nstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="11" data-semantic-parent="13"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c37"></mjx-c></mjx-mn></mjx-num><mjx-dbox><mjx-dtable><mjx-line type="d"></mjx-line><mjx-row><mjx-den><mjx-dstrut type="d"></mjx-dstrut><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-id="12" data-semantic-parent="13"><mjx-c class="mjx-c32"></mjx-c><mjx-c class="mjx-c38"></mjx-c></mjx-mn></mjx-den></mjx-row></mjx-dtable></mjx-dbox></mjx-frac></mjx-mfrac><mjx-mo class="mjx-n" space="4" data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="14" data-semantic-parent="21" data-semantic-operator="multirel"><mjx-c class="mjx-c2248"></mjx-c></mjx-mo><mjx-menclose space="4" data-semantic-type="enclose" data-semantic-role="box" data-semantic-id="18" data-semantic-children="17" data-semantic-parent="21"><mjx-box style="border: 0.067em solid; padding: 0.2em;"><mjx-mrow><mjx-mstyle><mjx-mrow data-semantic-type="punctuated" data-semantic-role="endpunct" data-semantic-id="17" data-semantic-children="15,16" data-semantic-content="16" data-semantic-parent="18"><mjx-mn class="mjx-n" data-semantic-type="number" data-semantic-role="float" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-id="15" data-semantic-parent="17"><mjx-c class="mjx-c39"></mjx-c><mjx-c class="mjx-c36"></mjx-c><mjx-c class="mjx-c2E"></mjx-c><mjx-c class="mjx-c34"></mjx-c></mjx-mn><mjx-mi class="mjx-n" data-semantic-type="punctuation" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="nemeth:number" data-semantic-id="16" data-semantic-parent="17" data-semantic-operator="punctuated"><mjx-c class="mjx-c25"></mjx-c></mjx-mi></mjx-mrow></mjx-mstyle></mjx-mrow></mjx-box></mjx-menclose></mjx-mrow></mjx-math><mjx-assistive-mml role="presentation" unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mstyle scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mrow xmlns="http://www.w3.org/1999/xhtml" data-semantic-type="multirel" data-semantic-role="unknown" data-semantic-="" data-semantic-children="19,20,13,18" data-semantic-content="1,10,14" data-semantic-speech="long right double arrow 1 minus StartStartFraction StartFraction 2500 Over 7 EndFraction OverOver 10000 EndEndFraction equals StartFraction 27 Over 28 EndFraction almost equals StartEnclose box 96.4 percent sign EndEnclose"><mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="21"></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" stretchy="false" data-semantic-type="relation" data-semantic-role="arrow" data-semantic-="" data-semantic-parent="21" data-semantic-operator="multirel">⟹</mo><mstyle xmlns="http://www.w3.org/1998/Math/MathML" scriptlevel="0"><mspace width="thickmathspace"></mspace></mstyle><mrow data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-="" data-semantic-children="3,9" data-semantic-content="4" data-semantic-parent="21"><mn xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="20">1</mn><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-="" data-semantic-parent="20" data-semantic-operator="infixop,−">−</mo><mfrac xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="fraction" data-semantic-role="division" data-semantic-="" data-semantic-children="7,8" data-semantic-parent="20"><mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-="" data-semantic-children="5,6" data-semantic-parent="9"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="7">2500</mn><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="7">7</mn></mfrac><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="9">10000</mn></mfrac></mrow><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="21" data-semantic-operator="multirel">=</mo><mfrac xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-="" data-semantic-children="11,12" data-semantic-parent="21"><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="13">27</mn><mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple" data-semantic-="" data-semantic-parent="13">28</mn></mfrac><mo xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relation" data-semantic-role="equality" data-semantic-="" data-semantic-parent="21" data-semantic-operator="multirel">≈</mo><menclose xmlns="http://www.w3.org/1998/Math/MathML" notation="box" data-semantic-type="enclose" data-semantic-role="box" data-semantic-="" data-semantic-children="17" data-semantic-parent="21"><mrow><mstyle displaystyle="true" scriptlevel="0"><mrow data-semantic-type="punctuated" data-semantic-role="endpunct" data-semantic-="" data-semantic-children="15,16" data-semantic-content="16" data-semantic-parent="18"><mn data-semantic-type="number" data-semantic-role="float" data-semantic-font="normal" data-semantic-annotation="clearspeak:simple;nemeth:number" data-semantic-="" data-semantic-parent="17">96.4</mn><mi mathvariant="normal" data-semantic-type="punctuation" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-annotation="nemeth:number" data-semantic-="" data-semantic-parent="17" data-semantic-operator="punctuated">%</mi></mrow></mstyle></mrow></menclose></mrow></math></mjx-assistive-mml></mjx-container>
+        </p>
+        <p>
+            This is not an unreasonable value, and as seen in <a href="Zip Bomb Files/Huffman code efficiencies for extensions of sources.pdf">Fenwick (1994)</a>. 
+        </p>
+        <h4>
+            <u>Constructing a traditional zip bomb</u>
+        </h4>
+        <p>
+            Now let's move onto creating these marvelous compression phenomenon. We shall do this 
+        will finish after school lol ie may idk
+        </p>
+    </body>
+</html>

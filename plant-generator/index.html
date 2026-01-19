@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html>
+<!--
+  If you're reading this, welcome! This can be considered my second ever "completed" webdev project.
+  It's technically not all mine, as basically the entire animation is from a scammer website lmfao, but in all honesty
+  if you scam people, then there is no copyright for you, so this code is 100% by me pretty much :)
+
+  This directory was first made 2 years ago, and I had a half-assed attempt at making a website, as well as never finishing it.
+  Today in 2023, I spent around 40 hours just analyzing/rewriting the js, and finally incorporating the captcha iframe and finzalizing everything.
+
+  ====================
+  Erm 2026, i've polished this goofy ass shit up removed /garbage-testing/ because well, it had no value and was garbage, and fixed the stupid
+  download thing with just a direct filename link instead of making manual directories. have fun looking at the deobfuscated js too btw lol
+  And i should note that the images i now server are processed to be grotesque with various techniques encoded in the python files at the root dir.
+  You should take a look!
+
+  Notably, we have the following files you should check out
+   - `./plants/cactus/convolve.py`  (relies on kernls present in `./plants/cactus/numerals/*`)
+   - `./plants/palm/distorder.py`
+   - `./plants/pine/phase.py`
+   - `./plants/wheat/cell.py`
+   - `./plants/avifandmetadata.py` (i used to convert large .png files into smaller .avif files)
+   - `./plants/hashing.ps1` (used to generate all `hash-list.txt` files)
+  ====================
+
+  It was an interesting learning expereince with js in general and how iframe/parent communication works.
+  Also, funny thing is that I had to use powershell to hash everything lol, so thank god my powershell skills aren't rusty. 
+  The hashing file "hashing.ps1" is in the /plants/ subdir if you're also curious. 
+
+  Initially my thought was to make a backend using flask or node, but GitHub Pages is a bitch and only hosts static sites so oh well :)
+
+  But anyhow, I pulled the images served after solving the captcha from Gelbooru and some are ecchi :3 Be careful lmao if you're actually 
+  wanting to see all the images I've pulled. This was a concept website anyways so don't get caught up in the content. 
+  Look at the js/iframe/animations instead xD. I also made a cool terminal html page for the downloads part. It was pretty fun :D
+
+  Thanks for visiting my website, and I hope you enjoy the plants you get! ;)
+-->
+
+<head>
+  <title>Plant Generator</title>
+  <meta name="description" content="Get free plants online!" />
+  <meta property="og:title" content="Plant Generator" />
+  <meta property="og:description" content="Get free plants online!" />
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- main CSS -->
+  <link href="./media/css/style.css" rel="stylesheet" />
+
+  <!-- iframe css -->
+  <style>
+    /* Popup styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-container {
+      position: relative;
+      width: 400px;
+      max-width: 90%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .popup-iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+  </style>
+
+  <!--Favicon-->
+  <link rel="shortcut icon" type="image/x-icon" href="./media/img/favicon.png">
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="./media/css/all.css">
+  <link href="./media/css/font.css" rel="stylesheet">
+
+  <!-- js spam -->
+  <script src="./media/js/jquery-2.2.4.min.js"></script>
+  <script type="text/javascript" src="./media/js/cloudfront.js"></script>
+
+  <!-- iframe js, defer to load only after html page loads -->
+  <script src="./media/js/captcha.js" defer></script>
+
+  <!-- listenner for successful captcha -->
+  <script>
+    window.document.addEventListener('myCustomEvent', handleEvent, false)
+    function handleEvent(e) {
+      console.log(e.detail); // outputs: {foo: 'Success!'}
+
+      SelectedNumber = document.getElementById("numberOfPlants").innerHTML;
+
+      // constructs and opens link
+      var stringlink = "./plants/?plant=" + encodeURIComponent(ClickedOnElementID) + "&number=" + encodeURIComponent(SelectedNumber);
+      window.open(stringlink, '_blank');
+
+      // hides last page loading div
+      document.getElementById('RotateLastStep').style.display = 'none';
+
+      // closes captcha
+      closePopup();
+
+      // replaces last page texts
+      document.getElementById('endingText').innerHTML = 'Enjoy your plants!';
+      document.getElementById('EndingTitle').innerHTML = 'Complete';
+
+      // replaces last page button
+      const anchorElement = document.getElementById('l-s-v-b');
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = '<center><p style="color: white; font-size: 23.4px">Thank you!</p></center>';
+
+      anchorElement.parentNode.replaceChild(tempContainer.firstChild, anchorElement);
+    }
+  </script>
+
+  <!-- for the two global variables at the end -->
+  <script>
+    // global scope declaration
+    var ClickedOnElementID;
+    var SelectedNumber;
+
+    function record(element) {
+      ClickedOnElementID = element.id;
+      console.log("Clicked element ID: " + ClickedOnElementID);
+    }
+  </script>
+
+  <!-- main script for the aniamtions, everything seems to be working fine so don't touch -->
+  <script type="text/javascript">
+    // Deobfuscated plane selection and animation script
+    //
+    // The code is wrapped inside the $(document).ready() function, which ensures that the code executes when the document (webpage) has finished loading.
+    //
+    // The code initializes several constants like PROGRESS_MSG_LOADING, PROGRESS_MSG_READY, PROGRESS_MSG_SYNCING, PROGRESS_MSG_FINALIZING, 
+    // and PROGRESS_MSG_LAST_STEP with string values for progress messages displayed during the loading sequence.
+    //
+    // It defines and assigns values to multiple audio objects (audioClick1, audioClick2, audioCountingLoop, audioPlantSelect, audioSuccess) 
+    // using audio files located in the ./media/ subdirectory. All five audio objects point to the same sound file (plant.click.mp3).
+    //
+    // Two functions are defined within the code: selectVarietyLevel(clickedElement) and selectPlant(clickedElement).
+    //     The selectVarietyLevel(clickedElement) function is used to add and remove the "active" class from variety level selection buttons (.v-r-i-s-1 through .v-r-i-s-4) 
+    //     based on the clicked element's class, and sets the variable selectedPlantQuantity to the selected plant quantity ("34", "69", "420", or "1337").
+    //
+    //     The selectPlant(clickedElement) function is used to add and remove the "active" class from plant selection buttons (.sps-i-1, .sps-i-2, .sps-i-4, .sps-i-5) 
+    //     and updates variables selectedPlantName (plant name: "Wheat", "Cactus", "Pine", or "Palm") and selectedPlantImageSrc (plant image HTML) based on the clicked 
+    //     element's class. It also plays the audio object audioPlantSelect.
+    //
+    // The code attaches a click event handler to elements with the class .sps-i. When clicked, if the element is not already active, the handler adds a 
+    // "headShake" animation and executes the selectPlant($(this)) function, passing the clicked element as an argument.
+    //
+    // The code sets initial values for some variables: selectedPlantQuantity is set to "34" (default plant quantity), successMessage is set to "Success!", 
+    // and selectedPlantName is set to an empty string (no plant selected yet). Variables selectedPlantImageSrc and enteredUsername are declared but not initialized. 
+    //
+    // The code defines a $(window).load() event handler, which triggers when all the content on the window has finished loading. Inside the handler, there are 
+    // two main animations: first, a loading bar animates to 100% width over 2 seconds, then the loading screen fades out and is removed from the DOM 
+    // while the main content appears with a "bounceIn" animation.
+    //
+    // The code attaches a click event handler to an element with the id #stb-ee-f (first submit button). When clicked, the handler plays the 
+    // audio object audioClick1, performs validation checks on the username input field (#epu-u-i) and plant selection (variable selectedPlantName), 
+    // and displays error messages if either is empty. If both validations pass, it stores the username in variable enteredUsername, transitions to a 
+    // confirmation screen displaying the selected username and plant image, shows a success message with checkmark animation and plays audio object audioSuccess, 
+    // then transitions to the variety level selection screen where users can choose plant quantities.
+    //
+    // A dynamically added click event handler for variety level buttons (.v-r-i-s) is created after the confirmation screen. When clicked, if not already active, 
+    // it adds a "headShake" animation, executes the selectVarietyLevel($(this)) function to update the selected quantity, 
+    // and displays the selected number with a "flipInX" animation.
+    //
+    // Another click event handler is attached to the second submit button (#stb-ee-s). When clicked, it hides the variety selection screen 
+    // and initiates a complex loading sequence that spans approximately 19 seconds with multiple stages: (1) displays "Loading" message at 1% progress, 
+    // (2) displays "Getting Ready" at 20% progress, (3) displays "Syncing X Plants" at 40% progress while showing an animated plant counting sequence 
+    // that counts from 0 to the selected quantity (using the countTo plugin) with a progress bar and looping audio (audioCountingLoop), displays a 
+    // success checkmark when complete, (4) displays "Finalizing" at 80% progress, (5) displays "Loading Last Step" at 90% progress, (6) displays a spinning 
+    // icon at 90% progress, and finally (7) transitions to the final results screen showing the username, selected plant quantity, and plant image with 
+    // "bounceIn" animations while playing audio object audioClick2.
+    //
+    // There are numerous setTimeout() functions used throughout the code to delay and sequence the various actions, animations, and screen transitions, 
+    // creating a smooth multi-step user experience flow.
+    //
+    // The progressMessageElement variable stores a reference to the element displaying progress messages during the loading sequence 
+    // (selector: PROGRESS_MESSAGE_SELECTOR which is ".prcs-m").
+
+    $(document).ready(function () {
+      // ============================================================================
+      // PROGRESS MESSAGE CONSTANTS
+      // ============================================================================
+      const PROGRESS_MSG_LOADING = "Loading";
+      const PROGRESS_MSG_READY = "Getting Ready";
+      const PROGRESS_MSG_SYNCING = "Syncing";
+      const PROGRESS_MSG_FINALIZING = "Finalizing";
+      const PROGRESS_MSG_LAST_STEP = "Loading Last Step";
+
+      // ============================================================================
+      // STATE VARIABLES
+      // ============================================================================
+      let selectedPlantQuantity;        // Stores: "34", "69", "420", or "1337"
+      let selectedPlantImageSrc;        // Stores the plant image source for display
+      let selectedPlantName;            // Stores: "Wheat", "Cactus", "Pine", or "Palm"
+      let enteredUsername;              // Stores user input from username field
+
+      // ============================================================================
+      // AUDIO OBJECTS
+      // ============================================================================
+      // All audio files point to the same sound effect, but can be changed if needed
+      const audioClick1 = new Audio("./media/plant.click.mp3");
+      const audioClick2 = new Audio("./media/plant.click.mp3");
+      const audioCountingLoop = new Audio("./media/plant.click.mp3");
+      const audioPlantSelect = new Audio("./media/plant.click.mp3");
+      const audioSuccess = new Audio("./media/plant.click.mp3");
+
+      // ============================================================================
+      // FUNCTION: selectVarietyLevel
+      // Handles clicking on variety/quantity level buttons (34, 69, 420, 1337)
+      // ============================================================================
+      function selectVarietyLevel(clickedElement) {
+        const allVarietyButtons = $(".v-r-i-s-1, .v-r-i-s-2, .v-r-i-s-3, .v-r-i-s-4");
+
+        // Remove active class from all buttons
+        if (allVarietyButtons.hasClass("active")) {
+          allVarietyButtons.removeClass("active");
+        }
+
+        // Set the selected quantity based on which button was clicked
+        if (clickedElement.hasClass("v-r-i-s-1")) {
+          selectedPlantQuantity = "34";
+        } else if (clickedElement.hasClass("v-r-i-s-2")) {
+          selectedPlantQuantity = "69";
+        } else if (clickedElement.hasClass("v-r-i-s-3")) {
+          selectedPlantQuantity = "420";
+        } else if (clickedElement.hasClass("v-r-i-s-4")) {
+          selectedPlantQuantity = "1337";
+        }
+
+        // Mark clicked button as active
+        clickedElement.addClass("active");
+      }
+
+      // ============================================================================
+      // FUNCTION: selectPlant
+      // Handles clicking on plant selection buttons (Wheat, Cactus, Pine, Palm)
+      // ============================================================================
+      function selectPlant(clickedElement) {
+        const allPlantButtons = $(".sps-i-1, .sps-i-2, .sps-i-4, .sps-i-5");
+
+        // Remove active class from all plant buttons
+        if (allPlantButtons.hasClass("active")) {
+          allPlantButtons.removeClass("active");
+        }
+
+        // Set the selected plant name and image based on which button was clicked
+        if (clickedElement.hasClass("sps-i-1")) {
+          selectedPlantName = "Wheat";
+          selectedPlantImageSrc = '<img src="./media/img/sprites/wheat.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (clickedElement.hasClass("sps-i-2")) {
+          selectedPlantName = "Cactus";
+          selectedPlantImageSrc = '<img src="./media/img/sprites/cactus.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (clickedElement.hasClass("sps-i-4")) {
+          selectedPlantName = "Pine";
+          selectedPlantImageSrc = '<img src="./media/img/sprites/pine.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        } else if (clickedElement.hasClass("sps-i-5")) {
+          selectedPlantName = "Palm";
+          selectedPlantImageSrc = '<img src="./media/img/sprites/coconut.png" class="img-fluid" style="z-index: 9; height: 52px;" />';
+        }
+
+        // Mark clicked button as active and play click sound
+        clickedElement.addClass("active");
+        audioPlantSelect.play();
+      }
+
+      // ============================================================================
+      // INITIALIZATION
+      // ============================================================================
+      selectedPlantQuantity = "34";  // Default quantity
+      const successMessage = "Success!";
+
+      // ============================================================================
+      // INITIAL PAGE LOAD ANIMATION
+      // ============================================================================
+      $(window).load(function () {
+        // Animate the loading bar to 100% width over 2 seconds
+        setTimeout(function () {
+          $(".imjaprlc-lb div").animate({
+            width: "100%"
+          }, 2000);
+        }, 50);
+
+        // After loading bar completes, fade out loader and show main content
+        setTimeout(function () {
+          $(".imjaprl").animate({
+            opacity: 0
+          }, 700, function () {
+            $(".imjaprl").remove();
+          });
+
+          $(".aoi").addClass("animated bounceIn");
+          $(".aoi").removeClass("aoinv");
+        }, 2000);
+      });
+
+      // Initialize selected plant name as empty
+      selectedPlantName = "";
+
+      // ============================================================================
+      // PLANT SELECTION CLICK HANDLER
+      // ============================================================================
+      $(".sps-i").click(function () {
+        if (!$(this).hasClass("active")) {
+          // Add shake animation to provide visual feedback
+          $(this).addClass("animated headShake").one(
+            "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+            function () {
+              $(this).removeClass("animated headShake");
+            }
+          );
+
+          selectPlant($(this));
+        }
+      });
+
+      // Selector for progress message element
+      const PROGRESS_MESSAGE_SELECTOR = ".prcs-m";
+
+      // ============================================================================
+      // SUBMIT BUTTON CLICK HANDLER (First Step)
+      // ============================================================================
+      $(document).on("click", "#stb-ee-f", function () {
+        audioClick1.play();
+
+        // Validate username input
+        if ($("#epu-u-i").val() == "") {
+          // Show error message for empty username
+          $(".iew-e-u")
+            .addClass("flipInX")
+            .fadeIn(function () {
+              setTimeout(function () {
+                $(".iew-e-u")
+                  .addClass("animated flipOutX")
+                  .one(
+                    "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                    function () {
+                      $(this).removeClass("animated flipOutX").hide();
+                    }
+                  );
+              }, 1200);
+            });
+        }
+
+        // Validate plant selection
+        if (selectedPlantName === '') {
+          // Show error message for no plant selected
+          $(".iew-e-p").addClass("flipInX").fadeIn(function () {
+            setTimeout(function () {
+              $(".iew-e-p").addClass("animated flipOutX").one(
+                "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                function () {
+                  $(this).removeClass("animated flipOutX").hide();
+                }
+              );
+            }, 1200);
+          });
+        }
+        // Both username and plant are selected - proceed to next step
+        else if (selectedPlantName !== "" && $("#epu-u-i").val() !== "") {
+          enteredUsername = $("#epu-u-i").val();
+          const currentHeight = $(".b-s-c-w").height();
+          $(".b-s-c-w").addClass("animated bounceOut");
+
+          setTimeout(function () {
+            // Hide first screen and show confirmation screen
+            $(".b-s-c-w").hide();
+            $(".i-w-b-r-t-y").removeClass("mfp-hide");
+            $(".i-w-b-r-t-y").height(currentHeight);
+
+            // Display selected username and plant image
+            $("#f-t-f-p-t-u-v").html(enteredUsername);
+            $("#f-t-f-p-t-p-v").html(selectedPlantImageSrc);
+
+            setTimeout(() => {
+              // Hide loading animation wrapper
+              $(".f-t-f-p-a-w").fadeOut(() => {
+                $(this).remove();
+                const loadingSpinner = document.querySelector(".caSsi");
+                loadingSpinner.classList.add("animated", "bounceOut");
+
+                loadingSpinner.addEventListener("animationend", () => {
+                  // Show success message with checkmark
+                  $(".f-t-f-p-t-l div")
+                    .removeClass("animated pulse infinite")
+                    .addClass("animated bounceIn caSs-ts");
+                  $(".f-t-f-p-t-l div").html(successMessage);
+                  $(".caSs").html('<svg class="caSs-cm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+
+                  audioSuccess.play();
+
+                  setTimeout(function () {
+                    // Transition to variety selection screen
+                    $(".h-c1").hide();
+                    $(".mcp-p-w-u").removeClass("animated bounceIn").addClass("animated flipOutY").one(
+                      "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                      function () {
+                        $(".mcp-p-w-u").removeClass("animated flipOutY").hide();
+                        $(".etbaeou").removeClass("mfp-hide");
+                        $(".v-r-i-s").addClass("animated bounceIn");
+                        $(".mcp-p-w-r").addClass("animated bounceIn");
+                      }
+                    );
+
+                    // ====================================================================
+                    // VARIETY LEVEL SELECTION CLICK HANDLER
+                    // ====================================================================
+                    $(".v-r-i-s").click(function () {
+                      $(".v-r-i-s").removeClass("animation-delay-200 animation-delay-400 animation-delay-600 animation-delay-800");
+
+                      if (!$(this).hasClass("active")) {
+                        // Add shake animation for feedback
+                        $(this).addClass("animated headShake").one(
+                          "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                          function () {
+                            $(this).removeClass("animated headShake");
+                          }
+                        );
+
+                        // Animate the result display
+                        $(".r-i-s-r-m-v").addClass("animated fadeIn flipInX").one(
+                          "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                          function () {
+                            $(".r-i-s-r-m-v").removeClass("animated fadeIn flipInX");
+                          }
+                        );
+
+                        $(".r-i-s-r-m-v").addClass("animated flipInX");
+                      }
+
+                      selectVarietyLevel($(this));
+                      // Display selected quantity
+                      $(".r-i-s-r-m-v").html(selectedPlantQuantity);
+                    });
+
+                    // ====================================================================
+                    // SUBMIT BUTTON CLICK HANDLER (Second Step - Start Loading)
+                    // ====================================================================
+                    $(document).on("click", "#stb-ee-s", function () {
+                      $(".etbaeou").addClass("animated bounceOut").one(
+                        "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend",
+                        function () {
+                          $(".etbaeou").removeClass("animated bounceOut").hide();
+
+                          // ================================================================
+                          // LOADING SEQUENCE WITH PROGRESS BAR
+                          // ================================================================
+                          (function () {
+                            $(".loading-step").removeClass("mfp-hide").addClass("animated bounceIn");
+                            const progressMessageElement = $(PROGRESS_MESSAGE_SELECTOR);
+
+                            /**
+                             * Updates a progress bar to a specific percentage
+                             * @param {number} percentage - The target percentage
+                             * @param {jQuery} element - The progress bar element
+                             */
+                            function updateProgressBar(percentage, element) {
+                              const width = (percentage * element.width()) / 100;
+                              element.find("div").animate({ width: width }, 500).html(percentage + "%&nbsp;");
+                            }
+
+                            // Initialize progress bar at 0%
+                            updateProgressBar(0, $("#pBC"));
+
+                            setTimeout(function () {
+                              // Step 1: Loading (1%)
+                              setTimeout(function () {
+                                progressMessageElement.html(PROGRESS_MSG_LOADING);
+                                updateProgressBar(1, $("#pBC"));
+                              }, 0);
+
+                              // Step 2: Getting Ready (20%)
+                              setTimeout(function () {
+                                progressMessageElement.html(PROGRESS_MSG_READY);
+                                updateProgressBar(20, $("#pBC"));
+                              }, 1500);
+
+                              // Step 3: Syncing with plant counting animation (40%)
+                              setTimeout(function () {
+                                $(".mcp-p-w-p").removeClass("animated bounceIn animation-delay-100");
+
+                                // Calculate heights for plant growth animation
+                                const plantImageHeight = $(".ps-c-w-g-i").height();
+                                const plantImageOffset = plantImageHeight / 2 + 20;
+
+                                // Animate plant appearing from bottom
+                                $(".mcp-p-w-p").animate({ top: "-=" + plantImageOffset }, 800);
+                                $(".ps-c-w-g-i").animate({
+                                  bottom: "-=" + plantImageOffset,
+                                  opacity: "1"
+                                }, 800, function () {
+                                  /**
+                                   * Smoothly updates progress bar over a duration
+                                   * @param {number} progress - Target percentage
+                                   * @param {jQuery} element - Progress bar element
+                                   * @param {number} duration - Animation duration in ms
+                                   */
+                                  function updateProgress(progress, element, duration) {
+                                    const width = (progress * element.width()) / 100;
+                                    element.find("div")
+                                      .animate({ width: width }, duration)
+                                      .html(progress + "%&nbsp;");
+                                  }
+
+                                  // Show and animate the plant counting progress bar
+                                  $(".cwPBw").addClass("animated bounceIn");
+                                  updateProgress(0, $("#cwPB"), 1);
+                                  updateProgress(100, $("#cwPB"), 4000);
+
+                                  // Play counting sound effect (looping)
+                                  audioCountingLoop.play();
+
+                                  // Animate number counting up to selected quantity
+                                  $("#ps-c-w-g-i-i-b-v").countTo({
+                                    from: 0,
+                                    to: selectedPlantQuantity,
+                                    speed: 2000,
+                                    refreshInterval: 10,
+                                    onComplete: function (value) {
+                                      // Stop looping audio
+                                      audioCountingLoop.loop = false;
+
+                                      // Replace loading image with success checkmark
+                                      $(".ps-c-w-g-i-i-t img").fadeOut(300, function () {
+                                        $(".ps-c-w-g-i-i-t").html('<svg class="caSs-cm caSs-cm-s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="caSs-cm-ci" cx="26" cy="26" r="25" fill="none"/><path class="caSs-cm-ch" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+
+                                        // Shake animation for emphasis
+                                        $(".ps-c-w-g-i").addClass("animated headShake");
+
+                                        setTimeout(function () {
+                                          // Show success icon
+                                          $(".ps-c-w-g-i-i-c-w").html('<span class="material-icons-two-tone mitt-r">check_circle</span>');
+                                          $(".ps-c-w-g-i-i-c-w").addClass("ps-c-w-g-i-i-c-w-s");
+                                          $(".cwPBw").addClass("headShake");
+                                          $(".cwPBw").addClass("cwPBws");
+                                        }, 250);
+
+                                        setTimeout(function () {
+                                          // Hide plant counting section
+                                          $(".ps-c-w-g-i").fadeOut(function () {
+                                            $(".ps-c-w-g-i-c").remove();
+                                            $(".mcp-p-w-p").animate({ top: "+=" + plantImageOffset }, 600);
+                                          });
+                                        }, 2000);
+                                      });
+                                    }
+                                  });
+                                });
+
+                                progressMessageElement.html(PROGRESS_MSG_SYNCING + " " + selectedPlantQuantity + " Plants");
+                                updateProgressBar(40, $("#pBC"));
+                              }, 3500);
+
+                              // Step 4: Finalizing (80%)
+                              setTimeout(function () {
+                                progressMessageElement.html(PROGRESS_MSG_FINALIZING);
+                                updateProgressBar(80, $("#pBC"));
+                              }, 11000);
+
+                              // Step 5: Loading Last Step (90%)
+                              setTimeout(function () {
+                                progressMessageElement.html(PROGRESS_MSG_LAST_STEP);
+                                updateProgressBar(90, $("#pBC"));
+                              }, 13000);
+
+                              // Step 6: Show spinning icon (90%)
+                              setTimeout(function () {
+                                progressMessageElement.html('<span class="material-icons-two-tone fa-spin">rotate_right</span>');
+                                updateProgressBar(90, $("#pBC"));
+                              }, 15000);
+
+                              // Step 7: Complete loading and show final results
+                              setTimeout(function () {
+                                $(".loading-step")
+                                  .addClass("animated flipOutY")
+                                  .one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+                                    $(this).removeClass("animated flipOutY");
+                                    $(".loading-step").addClass("mfp-hide");
+
+                                    // Populate final results screen
+                                    $(".v-r-a").html(selectedPlantQuantity);
+                                    $(".v-u").html(enteredUsername);
+                                    $(".c-w-l-r-o-w .v-r-img").attr("src", selectedPlantImageSrc);
+
+                                    // Show final results with animations
+                                    $(".last-step").removeClass("mfp-hide");
+                                    audioClick2.play();
+                                    $(".c-w-l-t-v").addClass("animated bounceIn");
+                                    $(".c-w-l-p-v").addClass("animated bounceIn");
+                                    $(".c-w-l-r-o-w").addClass("animated bounceIn");
+                                    $(".m-ft-b-w").addClass("animated bounceIn");
+                                  });
+                              }, 19000);
+
+                            }, 1500);
+                          })();
+                        }
+                      );
+                    });
+                  }, 1500);
+                });
+              });
+            }, 3000);
+          }, 600);
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="popup-overlay">
+    <div class="popup-container">
+      <span class="close-button">&times;</span>
+      <iframe class="popup-iframe" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <div class="imjaprl" style="opacity:.948519">
+    <div class="imjaprlc">
+      <div class="imjaprlc-i">
+        <div class="imjaprlc-l animated bounceIn animation-delay-300"><span
+            class="material-icons-two-tone fa-spin">settings</span></div>
+        <div class="imjaprlc-lb animated bounceIn animation-delay-400">
+          <div class="ww"></div>
+        </div>
+      </div>
+    </div>
+    <div class="imjaprl-bd-w"></div>
+    <div class="imjaprl-bd-w2"></div>
+  </div>
+  <section class="mvp-w">
+    <div class="container">
+      <header class="h-c1">
+        <div class="container">
+          <div class="h-c">
+            <img style="width:15000000px !important;height:70000px !important;" src="./media/img/logo.png"
+              class="img-fluid l-i" />
+            <h1>PLANT GENERATOR</h1>
+          </div>
+        </div>
+      </header>
+      <div class="mcp-p-w mcp-p-w-u aoi aoinv">
+        <div class="sipo-s-w">
+          <div class="sipo-s aoi aoinv animation-delay-100">
+            <span>1</span>
+          </div>
+        </div>
+        <div class="b-s-c-w">
+          <div class="c-i-t aoi aoinv animation-delay-200">
+            <span class="c-i-t-v">Please enter your username and <br><u>select your plant</u></span>
+          </div>
+          <div class="epu-f-w">
+            <div id="u-f" class="aoi aoinv animation-delay-300">
+              <div class="epu-u-i-w">
+                <span class="material-icons-two-tone">☘</span>
+                <input id="epu-u-i" class="epu-u-i" spellcheck="false" placeholder="Your Username..." />
+              </div>
+            </div>
+            <div class="iew-e iew-e-u">
+              <div class="iew-e-i">
+                <span>Please enter your username.</span>
+              </div>
+            </div>
+          </div>
+          <div class="psiw-w aoi aoinv animation-delay-400">
+            <div class="psiw-i">
+              <div class="sps-i-w" onclick="record(this);" id="wheat">
+                <div class="sps-i sps-i-1">
+                  <img src="./media/img/sprites/wheat.png" class="img-fluid" style="z-index: 9; height: 52px;" />
+                </div>
+              </div>
+              <div class="sps-i-w" onclick="record(this);" id="cactus">
+                <div class="sps-i sps-i-2">
+                  <img src="./media/img/sprites/cactus.png" class="img-fluid" style="z-index: 9; height: 52px;" />
+                </div>
+              </div>
+              <div class="sps-i-w" onclick="record(this);" id="pine">
+                <div class="sps-i sps-i-4">
+                  <img src="./media/img/sprites/pine.png" class="img-fluid" style="z-index: 9; height: 52px;" />
+                </div>
+              </div>
+              <div class="sps-i-w" onclick="record(this);" id="palm">
+                <div class="sps-i sps-i-5">
+                  <img src="./media/img/sprites/coconut.png" class="img-fluid" style="z-index: 9; height: 52px;" />
+                </div>
+              </div>
+            </div>
+            <div class="iew-e iew-e-p">
+              <div class="iew-e-i">
+                <span>Please select your plant.</span>
+              </div>
+            </div>
+          </div>
+          <div class="m-ft-b-w aoi aoinv animation-delay-500">
+            <div id="stb-ee-f" class="p-b"><span>Proceed</span></div>
+          </div>
+        </div>
+        <!-- somewhere here is a search js thing fix it -->
+        <div class="i-w-b-r-t-y animated bounceIn mfp-hide" style="height:433px">
+          <div class="f-t-f-p-w">
+            <div class="f-t-f-p-i">
+              <div class="f-t-f-p-t-w">
+                <div class="f-t-f-p-t-l">
+                  <div class="animated pulse infinite">Searching...</div>
+                </div>
+                <div class="caSs">
+                  <div class="caSsi">
+                    <div class="animated bounceIn animation-delay-100">
+                      <div class="f-t-f-p-t-u-w animated pulse infinite">
+                        <div id="f-t-f-p-t-u-v" class="f-t-f-p-t-u-v">
+                          <!-- This empty div allows previously queried name to be rendered -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="animated bounceIn animation-delay-200">
+                      <div class="f-t-f-p-t-p-w animated pulse infinite">
+                        <div id="f-t-f-p-t-p-v" class="f-t-f-p-t-p-v"><i class="fab fa-apple"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="f-t-f-p-a-w animation-delay-400">
+                <img src="./media/img/search.png" class="mgi img-fluid ssa">
+              </div>
+            </div>
+          </div>
+          <script type="text/javascript">
+            s1sts2 = "Success!";
+          </script>
+        </div>
+      </div>
+      <div class="etbaeou mfp-hide">
+        <div class="r-vb-s-w-o">
+          <div class="r-vb-s-w-l">
+            <div class="v-r-i-s-w">
+              <div class="v-r-i-s v-r-i-s-1 active animation-delay-200">
+                <div class="v-r-i-s-i-w">
+                  <img src="./media/img/plant.png" class="img-fluid v-r-i-s-i">
+                  <div class="v-r-i-s-v">34</div>
+                  <div class="v-r-i-s-l">PLANTS</div>
+                </div>
+              </div>
+              <div class="v-r-i-s v-r-i-s-2 animation-delay-400">
+                <div class="v-r-i-s-i-w">
+                  <img src="./media/img/plant.png" class="img-fluid v-r-i-s-i">
+                  <div class="v-r-i-s-v">69</div>
+                  <div class="v-r-i-s-l">PLANTS</div>
+                </div>
+              </div>
+              <div class="v-r-i-s v-r-i-s-3 animation-delay-600">
+                <div class="v-r-i-s-i-w">
+                  <img src="./media/img/plant.png" class="img-fluid v-r-i-s-i">
+                  <div class="v-r-i-s-v">420</div>
+                  <div class="v-r-i-s-l">PLANTS</div>
+                </div>
+              </div>
+              <div class="v-r-i-s v-r-i-s-4 animation-delay-800">
+                <div class="v-r-i-s-i-w">
+                  <img src="./media/img/plant.png" class="img-fluid v-r-i-s-i">
+                  <div class="v-r-i-s-v">1337</div>
+                  <div class="v-r-i-s-l">PLANTS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="r-vb-s-w-r">
+            <div class="mcp-p-w mcp-p-w-r">
+              <div class="sipo-s-w">
+                <div class="sipo-s">
+                  <span>2</span>
+                </div>
+              </div>
+              <div class="c-i-t">
+                <span class="c-i-t-v">Select the amount of plants</span>
+              </div>
+              <div class="r-i-s-o-w">
+                <div class="r-i-s-i-w">
+                  <div class="r-i-s-w">
+                    <div class="r-i-s-r-w animated fadeIn animation-delay-200">
+                      <div class="r-i-s-r-h-w"><span>Selected Amount</span></div>
+                      <img src="./media/img/plant.png" class="img-fluid r-i-s-r-w-i">
+                      <div class="r-i-s-r-m-w">
+                        <div class="r-i-s-r-m-v">34</div>
+                        <div class="r-i-s-r-m-l">PLANTS</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="m-ft-b-w animated bounceIn animation-delay-1000">
+                <div id="stb-ee-s" class="p-b"><span>Proceed</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="loading-step mfp-hide">
+        <div class="mcp-p-w mcp-p-w-p animated bounceIn">
+          <div class="sipo-s-w">
+            <div class="sipo-s">
+              <span>3</span>
+            </div>
+          </div>
+          <div class="p-i-w">
+            <div class="prcs-l">
+              <span class="material-icons-two-tone fa-spin">settings</span>
+            </div>
+            <div class="prcs-m">Loading...</div>
+            <div id="pBC" class="p-lb">
+              <div>&nbsp;</div>
+            </div>
+          </div>
+        </div>
+        <div class="ps-c-w-g-i-c">
+          <div class="ps-c-w-g-i">
+            <div class="ps-c-w-g-i-i">
+              <div class="ps-c-w-g-i-i-c-w">
+                <span class="material-icons-two-tone fa-spin">settings</span>
+              </div>
+              <div class="ps-c-w-g-i-i-t">
+                <img src="./media/img/plant.png" class="img-fluid ps-c-w-g-i-i-t-i">
+              </div>
+              <div class="ps-c-w-g-i-i-b">
+                <div id="ps-c-w-g-i-i-b-v" class="ps-c-w-g-i-i-b-v">0</div>
+                <div class="ps-c-w-g-i-i-b-l">PLANTS</div>
+              </div>
+              <div class="cwPBw">
+                <div id="cwPB" class="p-lb">
+                  <div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="last-step mfp-hide">
+        <div class="mcp-p-w mcp-p-w-l animated bounceIn">
+          <div class="sipo-s-w">
+            <div class="sipo-s" id="RotateLastStep">
+              <span class="material-icons-two-tone fa-spin">rotate_right</span>
+            </div>
+          </div>
+          <div class="c-i-t">
+            <h4 class="c-w-l-t-v animation-delay-100" id="EndingTitle">Last Step</h4>
+
+            <!-- I think "v-r-a" class here is the plant class, so query this when looking for numebr in the future -->
+            <div class="c-w-l-p-v animation-delay-200" id="endingText">
+              Hello <span class="v-u">asds</span>! You are almost done with
+              synchronization of <span class="v-r-a" id="numberOfPlants"></span> <span class="lsv2s">PLANTS</span>!
+              Please complete the last step by clicking the button below to finish with synchronization process.
+            </div>
+          </div>
+          <div class="c-w-l-r-o-w animation-delay-300">
+            <div class="ps-c-w-g-i-i animated pulse infinite">
+              <div class="ps-c-w-g-i-i-t1 v-r-img">
+                <img src="./media/img/plant.png" class="img-fluid ps-c-w-g-i-i-t-i">
+              </div>
+              <div class="ps-c-w-g-i-i-b">
+                <div id="ps-c-w-g-i-i-b-v" class="ps-c-w-g-i-i-b-v v-r-a">34</div>
+                <div class="ps-c-w-g-i-i-b-l">PLANTS</div>
+              </div>
+              <div class="cwPBw">
+                <div id="cwPB" class="p-lb">
+                  <div style="width:150px">0%&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- verify button for captcha -->
+          <div class="m-ft-b-w p-b-l-s-w animation-delay-400" id="endBtn">
+            <a id="l-s-v-b" class="p-b" onclick="verify();"><span>Verify Now</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- this is just the bg image -->
+  <div class="glitch mswbg">
+    <div class="glitch__image"></div>
+  </div>
+</body>
+
+</html>

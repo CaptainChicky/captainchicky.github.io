@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- No cache tags that somehow don't work lmao, but i'll keep it here bec too lazy to test if it breaks if i remove -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- og embeds -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Aviary">
+    <meta property="og:description"
+        content="Welcome to The Aviary, where a haunting nexus of entertainment interwine into a macabre tapestry. Descend into an abyss of clandestine research, and beware as you traverse the ominous halls, for here lies a realm of tortured creatures and deranged minds, forever trapped in a nightmarish symphony of feathers and despair.">
+    <meta property="og:image" content="http://captainchicky.github.io/The-Aviary/images/head.png">
+    <meta property="og:image:secure_url" content="https://captainchicky.github.io/The-Aviary/images/head.png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Trolling moment">
+
+    <title>Welcome Page | The Aviary: Preview</title>
+
+    <link rel="icon" href="../images/logo/logo.png" sizes="any">
+    <link rel="icon" href="../images/logo/logo.svg" type="image/svg+xml">
+
+    <!-- CSS -->
+    <!-- import a font -->
+    <link href="../fonts/Signika-Light300/Signika-Light300.css" rel="stylesheet">
+
+    <!--background -->
+    <style>
+        /* background section css */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("../images/sparrow-bg.png");
+            background-repeat: repeat;
+            background-size: auto;
+            z-index: -1;
+            background-position: calc(-65%) calc(-25%);
+        }
+    </style>
+
+    <!-- header -->
+    <style>
+        /* header section css */
+        #Title {
+            font-size: 30px;
+            line-height: 1.1em;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 0;
+            letter-spacing: -0.2px;
+            white-space: nowrap;
+        }
+
+        #selectionNav {
+            display: flex;
+            text-align: center;
+            font-size: 15px;
+            white-space: nowrap;
+            padding-left: 10px;
+        }
+
+        #selectionNav a:nth-child(2) {
+            color: rgb(141, 173, 45);
+            text-decoration: none;
+            transition: color 0.4s;
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            width: 114px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        #selectionNav a:not(:nth-child(2)) {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            transition: color 0.4s;
+            display: inline-block;
+            height: 40px;
+            vertical-align: middle;
+            line-height: 40px;
+            width: 114px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        #selectionNav a:not(:first-child) {
+            border-left: 1px solid rgb(141, 173, 45);
+        }
+
+        #selectionNav a:hover {
+            color: rgb(0, 138, 252);
+        }
+
+        #header {
+            background-color: #e3e3e3;
+            width: 940px;
+            margin: 0 auto;
+            padding: 25px;
+            height: 90px;
+            font-family: 'Signika', sans-serif;
+            position: sticky;
+            /* Make the header sticky */
+            top: 0;
+            /* Stick to the top of the viewport */
+            z-index: 100;
+            /* for the transformation */
+            transition: transform 0.5s ease;
+        }
+
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+    </style>
+
+    <!-- body section css -->
+    <style>
+        /* body image section css */
+        #body {
+            background-color: #e3e3e3;
+            width: 940px;
+            margin: 0 auto;
+            border-left: 10px;
+            padding-top: 0;
+            padding-left: 25px;
+            padding-right: 25px;
+        }
+
+        #sectionLogo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* content css */
+        #content h2 {
+            font-family: 'Signika', sans-serif;
+            font-size: 24px;
+            color: rgb(94, 115, 30);
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        @font-face {
+            font-family: 'Arial black';
+            src: url('../fonts/Arial-Black/ariblk.ttf') format('truetype');
+        }
+
+        #content h1 {
+            font-family: Arial black, sans-serif;
+            font-weight: lighter;
+            font-size: 63px;
+            white-space: nowrap;
+            color: black;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 10px;
+            margin-left: -2.1px;
+        }
+
+        @font-face {
+            font-family: 'Libre Baskerville';
+            src: url('../fonts/Libre-Baskerville/libre-baskerville.regular.ttf') format('truetype');
+        }
+
+        #content p {
+            margin: 0 5px;
+            color: black;
+            font-family: "Georgia", "Palatino", "Book Antiqua", "Palatino Linotype", serif;
+            font-size: 14px;
+            line-height: 26px;
+            text-align: start;
+        }
+
+        /* buttons css */
+        @font-face {
+            font-family: Avenir-LT-Std-85-Heavy;
+            src: url(../fonts/Avenir-LT-Std-85/Avenir-LT-Std-85-Heavy.otf) format('opentype');
+        }
+
+        #EndButtons {
+            display: flex;
+            justify-content: left;
+        }
+
+        #back2TopBtn {
+            margin-left: 5px;
+            margin-bottom: 30px;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 11px 30px;
+            border: 2px solid black;
+            border-radius: 20px;
+            text-decoration: none;
+            color: black;
+            background-color: transparent;
+            transition: background-color 0.5s, color 0.5s;
+            font-family: Avenir-LT-Std-85-Heavy, sans-serif;
+            font-size: 13px;
+        }
+
+        #back2TopBtn:hover {
+            background-color: black;
+            color: white;
+            cursor: pointer;
+        }
+
+        @font-face {
+            font-family: Proxima-N-W01-Reg;
+            src: url(../fonts/Proxima-N-W01-Reg/Proxima-N-W01-Reg.otf) format('opentype');
+        }
+
+        #PhotosPageBtn {
+            margin-left: 28px;
+            margin-bottom: 30px;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 11px 50px;
+            border: 2px solid #20ce88;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #20ce88;
+            background-color: transparent;
+            transition: background-color 0.5s, color 0.5s;
+            font-family: Proxima-N-W01-Reg, sans-serif;
+            font-size: 13px;
+        }
+
+        #PhotosPageBtn:hover {
+            background-color: #20ce88;
+            color: white;
+            cursor: pointer;
+        }
+
+        @font-face {
+            font-family: 'Futura-LT-W01-Book';
+            src: url('../fonts/Futura-LT-W01-Book/Futura-LT-W01-Book.ttf') format('truetype');
+        }
+
+        #ExtNavBtns {
+            display: flex;
+            justify-content: left;
+        }
+
+        #ExtNavBtns a:first-child {
+            margin-left: 5px;
+            margin-bottom: 25px;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 8px 5.76px;
+            border: 2px solid rgb(29, 44, 243);
+            text-decoration: none;
+            color: rgb(29, 44, 243);
+            background-color: transparent;
+            transition: background-color 0.5s, color 0.5s;
+            font-family: Futura-LT-W01-Book, sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        #ExtNavBtns a:not(:first-child) {
+            margin-left: 10px;
+            margin-bottom: 25px;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 8px 5.76px;
+            border: 2px solid rgb(29, 44, 243);
+            text-decoration: none;
+            color: rgb(29, 44, 243);
+            background-color: transparent;
+            transition: background-color 0.5s, color 0.5s;
+            font-family: Futura-LT-W01-Book, sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        #ExtNavBtns a:hover {
+            background-color: rgb(29, 44, 243);
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- footer css -->
+    <style>
+        /* footer css */
+        #footer {
+            background-color: rgb(255, 200, 2);
+            width: 940px;
+            height: 54px;
+            display: flex;
+            margin-top: 60px;
+            margin-bottom: 6px;
+            padding: 0 25px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #footerContent {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+
+        #iconLinks img {
+            margin-top: 3.75px;
+        }
+    </style>
+
+    <!-- back to top button -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var button = document.getElementById('back2TopBtn');
+
+            document.getElementById('back2TopBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                smoothScrollTo(0, 1100); // Scroll to top with a duration of 1100 milliseconds
+            });
+
+            function smoothScrollTo(targetPosition, duration) {
+                var startPosition = window.pageYOffset;
+                var distance = targetPosition - startPosition;
+                var startTime = null;
+
+                function scrollAnimation(currentTime) {
+                    if (startTime === null) {
+                        startTime = currentTime;
+                    }
+                    var elapsedTime = currentTime - startTime;
+                    var scrollProgress = easeInOutCubic(elapsedTime, startPosition, distance, duration);
+                    window.scrollTo(0, scrollProgress);
+                    if (elapsedTime < duration) {
+                        requestAnimationFrame(scrollAnimation);
+                    }
+                }
+
+                function easeInOutCubic(t, b, c, d) {
+                    t /= d / 2;
+                    if (t < 1) {
+                        return c / 2 * t * t * t + b;
+                    } else {
+                        t -= 2;
+                        return c / 2 * (t * t * t + 2) + b;
+                    }
+                }
+
+                requestAnimationFrame(scrollAnimation);
+            }
+        });
+    </script>
+
+    <!-- header script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // scroll direction
+            let ScrollDir = false; // false = down, true = up
+            var GlobalScrollDownPos = window.pageYOffset || document.documentElement.scrollTop;
+            let lastScrollTop = 0;
+
+            function detectScrollDirection() {
+                const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (currentScrollTop > lastScrollTop) {
+                    // Scrolling down
+                    ScrollDir = false;
+                    GlobalScrollDownPos = currentScrollTop;
+                } else {
+                    // Scrolling up
+                    ScrollDir = true;
+                }
+
+                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For mobile or negative scrolling
+            }
+
+            // Attach the function to the scroll event
+            window.addEventListener('scroll', detectScrollDirection);
+
+            // if the user scrolls up from anywhere on the page more than 400px, show the header
+            window.addEventListener('scroll', function () {
+                var currentScrollPos = window.pageYOffset;
+                var scrollUpMaxDist = 250;
+
+                // note that global scroll pos should be greater than current if scrolling up
+                // since the more you scroll down, the more the yoffset increases
+                if (ScrollDir && (GlobalScrollDownPos - currentScrollPos) > scrollUpMaxDist) {
+                    header.classList.remove('hidden');
+                }
+            });
+
+            // hide header on scroll down, show on scroll up at set distances
+            var prevScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+            var header = document.getElementById('header');
+
+            window.addEventListener('scroll', function () {
+                var currentScrollPos = window.pageYOffset;
+                var scrollDownDistance = 400; // these values are in pixels
+                var scrollUpDistance = 150;
+
+                if (!ScrollDir && currentScrollPos > scrollDownDistance) {
+                    header.classList.add('hidden');
+                } else if (ScrollDir && currentScrollPos < scrollUpDistance) {
+                    header.classList.remove('hidden');
+                }
+
+                prevScrollPos = currentScrollPos;
+            });
+        });
+    </script>
+
+    <!-- for page fade in and fade out -->
+    <script src="../fade.js"></script>
+</head>
+
+<body>
+    <section id="background"></section>
+
+    <section id="header">
+        <div id="selectionNav">
+            <b>
+                <a href="../?event=fade" onclick="loadPage(event)">Warning Page</a>
+                <a style="cursor: pointer;">Welcome Page</a>
+                <a href="../photos/?event=fade" onclick="loadPage(event)">Photos</a>
+            </b>
+        </div>
+        <h1 id="Title">
+            The A<span style="letter-spacing: 0.3px;">vi</span>ary: Center of Bird Studies, Experimentations, and Enjoyment
+        </h1>
+    </section>
+
+    <div id="fadeContent">
+        <section id="body">
+            <div id="sectionLogo">
+                <img style="width: 308px; height: auto;" src="../images/The Aiviary.png" alt="The Aviary Logo">
+            </div>
+
+            <div id="content">
+                <h1>Well the fun begins now!!!!!!</h1>
+                <p>
+                    <span style="color: rgb(34, 27, 35); font-family: Libre Baskerville, serif; font-size: 23px; line-height: 26px;">Welcome!</span>
+                    to a trio of the world's most professional but useless bird websites in the history, but wait, not
+                    only the past, but also the present and future, of ornithology!
+                    <br><br>
+                    We would like to introduce you to:<br>
+                    1) 
+                    <span style="color: rgb(79, 234, 255); font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 18px; font-weight: 700; line-height: 26px;">
+                        Center of Bird Studies
+                    </span><br>
+                    2) 
+                    <span style="color: rgb(227, 65, 250); font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 18px; font-weight: 700; line-height: 26px;">
+                        Center of Bird Experimentations
+                    </span><br>
+                    3) 
+                    <span style="color: rgb(115, 255, 64); font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 18px; font-weight: 700; line-height: 26px;">
+                        Center of Bird Enjoyment
+                    </span><br>
+                    <br>
+                    These websites, in fact, are the literally ONLY places on Earth that has an aviary with birds, 
+                    ranging from small to large, past to present, and we are even researching new bird species! Just take a 
+                    few minutes of your extremely invaluable life on this planet and leaf over our three sites.
+                    We strongly believe that you will indeed very well agree with us when you say that "why in the world
+                    did I waste my time on other things?! I should become an ornithologist!"
+                </p>
+                <h2>All three operational buildings all in one location!</h2>
+                <p>
+                    At The Aviary, we have three distinct branches. All of them with a different goal and different type
+                    of experience. So we recommend you visit all three sites to get the most best, wide ranged, and OMG
+                    feelings. Let's take a look:
+                    <br><br>
+                    <span style="color: rgb(79, 234, 255); display: flex; justify-content: center; text-align: center; font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 21px; font-weight: 700; line-height: 32px;">
+                        The Center of Bird Studies
+                    </span>
+                </p>
+                <div id="sectionLogo">
+                    <img style="height: 266px; width: auto;" src="../images/The Aviary-Studies.png" alt="Center of Bird Studies Logo">
+                </div>
+                <br>
+                <p>
+                    Welcome to
+                    <span style="color: rgb(169, 169, 169); font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 7px; line-height: 26px;">
+                        Jurassic Park
+                    </span>
+                    The Center of Bird Studies, where our staff and scientists conduct research on birds, ranging from migration and nesting
+                    patterns to bird anatomy. It is our escape/hazard frequent, unsafe, people unfriendly, super duper ultra
+                    mega top secret facility complete with 10 floors of 5 star lawyers, a 22nd century Visitor's Center, a special chemical containment room, and
+                    much, much more, featuring our special bird cages in the garage/basement, which are about 2 feet across, made to hold about 4 golden eagles, in stock,
+                    with all different kinds of birds. Here, not only you can check out our published research papers, but you can also go to the bottom floor and watch
+                    our LIVE RESEARCH as it happens!!!!!! The basement is also available(if you purchase VIP tickets) to public tours, "become a scientist for the day",
+                    and evacuations(aka BirdEscapeEmergency)!
+                    <br><br>
+                    <span style="color: rgb(227, 65, 250); display: flex; justify-content: center; text-align: center; font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 21px; font-weight: 700; line-height: 32px;">
+                        Center of Bird Experimentations
+                    </span>
+                </p>
+                <div id="sectionLogo">
+                    <img style="height: 266px; width: auto;" src="../images/The Aviary-Experimentation.png" alt="Center of Bird Experimentations Logo">
+                </div>
+                <br>
+                <p>
+                    At The Center of Bird Experimentations, our staff, scientists, and ornithologists oversee various major
+                    projects(currently there are 2 going on) that are being performed. This facility is our only completely indoors facility, 
+                    featuring many important studies and enterprises. You will be surprised how well people can collaborate here, especially 
+                    when we are focusing on extracting various flying pterosaur DNA from the Cretaceous age from organic fossils,
+                    and when we are fusing hybrids of different bird species. Housing almost a house full of birds, it is suffice to announce 
+                    that it is also one of our biggest bird storing rooms. Not only such, but we also offer bird sales as low as $2,300.00 dollars 
+                    for a small birds, such as a single rufous hummingbird. Here, our unwitting test subject volunteers, err, guests, 
+                    furthermore can experience the horror, err, fun, of being mutilated, um no I mean, uh, the fun of playing with our newly made hybrid birds.
+                    <br><br>
+                    <span style="color: rgb(115, 255, 64); display: flex; justify-content: center; text-align: center; font-family: 'Georgia', 'Palatino', 'Book Antiqua', 'Palatino Linotype', serif; font-size: 21px; font-weight: 700; line-height: 32px;">
+                        Center of Bird Enjoyment
+                    </span>
+                </p>
+                <div id="sectionLogo">
+                    <img style="height: 266px; width: auto;" src="../images/The Aviary-Enjoyment.png" alt="Center of Bird Enjoyment Logo">
+                </div>
+                <br>
+                <p>
+                    The Center of Bird Enjoyment is a complete hands-on experience for our feeders and our unenlightened participants, 
+                    err, visitors. This is our outdoor Bird Theme Park and Reserve, containing more than a thousand AvianResidents. 
+                    The AvianResidents are usually outdoors during the "warm" summer months of Arizona's scorching desert(water is supplied 
+                    once a month in the form of a very small partly-filled bowl to ensure the hydration of our AvianResidents),
+                    and inside specially designed indoor cages during the freezing winters of Arizona, staying in the all-natural, artificially 
+                    man-made habitats specially designed for them. Well, like, kind of, stay in their habitats... some of the time. Eh you know,
+                    they are birds, after all. It's quite possible that maybe our Perimeter and Ceiling Fence Building and Repair Team is slacking 
+                    off, but who knows? It's just sufficient enough to say that 96% of the team have not gone home since 1976, in which they were 
+                    last seen in our field hospitals.
+                    <br><br>
+                    The Center of Bird Enjoyment is also home to several bird-watching rides and exhibits, with more than enough ambulances 
+                    and doctors in our field hospitals parked and assigned near every corner of the park to handle almost every "incident" that
+                    can arise from the improper use, well, yeah and proper use, of equipment and any other accidents that may result from the 
+                    agitation of our AvianResidents. Umm... ugh, except that one time in 1997. Please don't even bother to ask.
+                </p>
+                <h2>Alright! Now let's get going onto our websites!!!</h2>
+                <p>
+                    Since we're still right on top of the subject, let's not get all of the lovey-dovey, ooey-gooey stuff here. 
+                    The main purpose for the Warning and Welcome page is to allow some preparation time for your lunch to settle, 
+                    and to make sure that your kids are out of the room before venturing further.
+                    You see, working with birds, especially the hybrid birds, ancient birds, or even the big modern birds just isn't pretty. 
+                    Not that our sites aren't kid-friendly. I mean, it's that some of our AvianResidents to really <b>LOVE</b> kids! Just, you
+                    know, not in that way you usually think when you hear "cuddling with birds". If you feel safe sitting there at your computer, 
+                    ipad, phone, cardboard box, or whatever you use, we've put a few photos on the following page to whet your appetite.
+                    <br>
+                    <span style="line-height: 31.5px;">
+                        Note: We said "<u><b>whet</b></u> your <u><b>appetite</b></u>" and not "<u><b>wet</b></u> your
+                        <u><b>pants</b></u>". That'll happen when you get to The Aviary.
+                    </span>
+                    <br><br>
+                    Got questions? Contact us at: TheAviary@yahoo.com, [redacted], or call us at [redacted] and we'll be sure to ignore you!
+                </p>
+            </div>
+
+            <div id="EndButtons">
+                <a id="back2TopBtn">Back to Top</a>
+                <a id="PhotosPageBtn" href="../photos/?event=fade" onclick="loadPage(event)">Photos</a>
+            </div>
+
+            <script>
+                // immediate scroll to top when clicking welcome page button
+                var element = document.getElementById("PhotosPageBtn");
+                element.addEventListener("click", function () {
+                    // Scroll to the top of the page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "instant"
+                    });
+                });
+            </script>
+
+            <div id="content">
+                <p><span style="line-height: 31.5px;">
+                        Thanks for reading! We hope you enjoy wasting your time on ALL THREE of our sites and we look
+                        forward to seeing you here in person at The Aviary very soon! (Can you arrive near lunchtime?)
+                    </span></p>
+                <br><br>
+            </div>
+
+            <div id="ExtNavBtns">
+                <a>The Center of Bird Studies(unlinked)</a>
+                <a>The Center of Bird Experimentations(unlinked)</a>
+                <a>The Center of Bird Enjoyment(unlinked)</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- this script must be right after the fade content to work -->
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var event = urlParams.get("event");
+
+        // first one is the main trigger. the second one is just to prevent it fron overlaping with the next script
+        if (event === "fade" && !(event.persisted || (window.performance && String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward"))) {
+            // Fade out the current page content
+            var content = document.getElementById("fadeContent");
+            content.style.opacity = "0.2";
+
+            // wait for next frame to render before transitioning back into full opacity
+            requestAnimationFrame(function () {
+                content.style.transition = "opacity 0.8s";
+                content.style.opacity = "1";
+            });
+        }
+
+        // remove the parameter
+        // Get the current URL
+        var url = window.location.href;
+
+        // Remove the "event" query parameter from the URL
+        var updatedUrl = url.replace("?event=fade", "");
+
+        // Replace the current URL with the updated URL without the query parameter
+        history.replaceState(null, null, updatedUrl);
+    </script>
+
+    <!-- Makes the fadeContent not invisible when using forwards or back arrows lol, and sometimes plays the animation -->
+    <!-- It's supposed to be always play the animation, but something is bugged and I can't be fucked to bother to fix it -->
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            // eh this is a feature fuck this lol: 
+            // 1. strl+shift+t playing animation
+            // 2. sometimes the animation doesn't play and just displays the page for no fucking reason???????
+            // I'm wayy too lazy to try to fix this anymore. I've been webdevving for a solid 3 days on this dumb project idec anymore lmao.
+
+            // window.performance.navigation.type === 2 would be used, but nav.type is depreciated so below is alternative
+            if (event.persisted || (window.performance && String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward")) {
+                // event.persisted checks if loading from cache 
+                // window.performance checks if the window.performance object exists
+                // then checks if the navigation type is 2, which is back or forwards key
+                // somehow this still doesn't work sometimes but I can't be fucked to fix it anymore
+                // at least the page shows itself when using the back or forwards key lmfaoooo
+                console.log("Sometimes the animation doesn't play, and I'm completely fucking clueless as to why. Idfk anymore whatever.");
+
+                // Fade out the current page content
+                var content = document.getElementById("fadeContent");
+                content.style.opacity = "0.2";
+
+                // wait for next frame to render before transitioning back into full opacity
+                requestAnimationFrame(function () {
+                    content.style.transition = "opacity 0.8s";
+                    content.style.opacity = "1";
+                });
+            }
+        });
+    </script>
+
+    <section id="footer">
+        <div id="footerContent">
+            <p>© 2019 Ornithologist PHD Dr. [redacted]</p>
+        </div>
+        <div id="iconLinks">
+            <a href="https://www.twitter.com/" target="_blank"><img style="height: 25px; width: auto;"
+                    src="../images/twitter.png" alt="Twitter"></a>
+            <a href="https://www.facebook.com/" target="_blank"><img style="height: 25px; width: auto;"
+                    src="../images/facebook.png" alt="Facebook"></a>
+        </div>
+    </section>
+</body>
+
+</html>

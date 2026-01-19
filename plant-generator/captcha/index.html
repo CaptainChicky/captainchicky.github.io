@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sample JavaScript Image CAPTCHA</title>
+    <script src="./jquery-3.5.1.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        #captcha {
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #captcha p {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        #captcha h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        #captcha-image-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #captcha-image {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #captcha-refresh {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #428bca;
+            cursor: pointer;
+            margin-left: 23px;
+        }
+
+        #captcha-refresh-icon {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #428bca;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3071a9;
+        }
+
+        button[type="submit"]:focus {
+            outline: none;
+        }
+    </style>
+
+</head>
+
+<body>
+    <form>
+        <div id="captcha">
+            <h2>Verify you are a human being</h2>
+            <p>Please enter the text from the image:</p>
+            <div id="captcha-image-container">
+                <img id="captcha-image" src="" alt="" />
+                <div id="captcha-refresh" onclick="refreshCaptcha()">
+                    <span id="captcha-refresh-icon">&#8635;</span>
+                </div>
+            </div>
+            <input type="text" id="captcha-solution" />
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        var captchaText; // Declare the captchaText variable outside the function so the jquery doesnt randomly fucking error out
+
+        function refreshCaptcha() {
+            // Generate a random CAPTCHA image
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = 220;
+            canvas.height = 60;
+
+            // Set the font and fill color
+            context.font = '30px Georgia';
+            context.fillStyle = '#333';
+
+            // Generate a random string of 10 characters
+            captchaText = Math.random().toString(36).slice(-10);
+
+            // Add some noise to the image
+            for (var i = 0; i < canvas.width; i++) {
+                for (var j = 0; j < canvas.height; j++) {
+                    var rand = Math.floor(Math.random() * 2);
+                    if (rand === 1) {
+                        context.fillStyle = 'rgb(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() *
+                            255) + ',' + Math.floor(Math.random() * 255) + ')';
+                        context.fillRect(i, j, 1, 1);
+                    }
+                }
+            }
+
+            // text color
+            var r = Math.floor(Math.random() * 100);
+            var g = Math.floor(Math.random() * 100);
+            var b = Math.floor(Math.random() * 100);
+            var rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+            context.fillStyle = rgb;
+
+            // Apply a random distortion to the text
+            var x = Math.floor(Math.random() * 20) - 10;
+            var y = Math.floor(Math.random() * 20) - 10;
+            context.transform(1, x / 100, y / 100, 1, 0, 0);
+
+            // Add the text to the image
+            context.fillText(captchaText, Math.random() * 20 + 10, 40);
+
+            // Add some random lines and shapes to the image to obfuscate it
+            for (i = 0; i < Math.random() * 8; i++) {
+                context.beginPath();
+                context.moveTo(0, Math.random() * 50);
+                context.lineTo(220, Math.random() * 50);
+                context.stroke();
+            }
+
+            for (i = 0; i < Math.random() * 10; i++) {
+                context.beginPath();
+                context.arc(220 * Math.random(), 50 * Math.random(), 20, 0, 2 * Math.PI);
+                context.stroke();
+            }
+
+            function random_rgb() {
+                // always 25% opacity
+                var o = Math.round, r = Math.random, s = 255;
+                return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 0.25 + ')';
+            }
+
+            function random_rgba() {
+                var o = Math.round, r = Math.random, s = 255;
+                return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+            }
+
+            for (i = 0; i < Math.random() * 15; i++) {
+                context.fillStyle = random_rgb();
+                context.beginPath();
+                context.arc(Math.random() * canvas.width, Math.random() * canvas.height, 10, 0, 2 * Math.PI);
+                context.stroke();
+                context.fill();
+            }
+
+            for (i = 0; i < Math.random() * 10; i++) {
+                context.strokeStyle = random_rgba();
+                context.beginPath();
+                context.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                context.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                context.stroke();
+            }
+
+            // Get the data URL of the generated image
+            var dataUrl = canvas.toDataURL();
+
+            // Set the src attribute of an img element to the data URL
+            document.getElementById('captcha-image').src = dataUrl;
+
+            // Clear the input field
+            document.getElementById('captcha-solution').value = '';
+        }
+
+        // Refresh the CAPTCHA image when the page loads
+        window.onload = refreshCaptcha;
+
+        // Validate the solution when the form is submitted
+        $('form').submit(function (event) {
+            event.preventDefault();
+            var solution = $('#captcha-solution').val();
+            if (solution.toLowerCase() === captchaText.toLowerCase()) {
+                alert('Correct!');
+                var data = { foo: 'Success!' }
+                var event = new CustomEvent('myCustomEvent', { detail: data })
+                window.parent.document.dispatchEvent(event)
+            } else {
+                alert('Incorrect. Please try again.');
+            }
+        });
+    </script>
+</body>
+
+</html>

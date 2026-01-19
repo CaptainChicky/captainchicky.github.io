@@ -1,0 +1,14 @@
+# Block all bots by default
+User-agent: *
+Disallow: /
+
+# Allow selected bots that are tolerable ig
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: YandexBot
+User-agent: DuckDuckBot
+User-agent: Slurp
+User-agent: Baiduspider
+Disallow: /Archive/
+Disallow: /NFT/
+Allow: /

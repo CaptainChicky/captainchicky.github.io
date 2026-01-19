@@ -1,0 +1,1 @@
+const remove_iframe=setInterval(()=>{document.querySelectorAll('iframe[name^=dsq]').forEach(element=>{if(element.getAttribute('src')==null){element.remove();clearInterval(remove_iframe);}})},500);

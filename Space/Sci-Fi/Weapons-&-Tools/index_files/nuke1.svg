@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="550" height="600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<rect x="125.2" y="76.198" width="299.6" height="113.35" rx="56.761" ry="56.761" fill="#808080" stroke="#000" stroke-width="3.5"/>
+	<rect x="137.02" y="88.019" width="275.96" height="89.711" rx="44.855" ry="44.855" fill="#fede58" stroke="#000" stroke-width="3.5"/>
+	<rect x="194.35" y="88.019" width="218.63" height="89.711" rx="44.855" ry="44.855" fill="#fff"/>
+	<path d="m264.89 87.948h-0.20385c-24.85 0-44.855 20.005-44.855 44.855v0.14587c0 24.85 20.005 44.855 44.855 44.855h0.20385z" fill="#ccecf4"/>
+	<path d="m290.37 87.948h-0.20385c-24.85 0-44.855 20.005-44.855 44.855v0.14587c0 24.85 20.005 44.855 44.855 44.855h0.20385z" fill="#99d9e8"/>
+	<path d="m315.86 87.948h-0.20385c-24.85 0-44.855 20.005-44.855 44.855v0.14587c0 24.85 20.005 44.855 44.855 44.855h0.20385z" fill="#66c6dd"/>
+	<g id="b">
+		<path d="m177.97 100.1c-1.9381 13.814-10.593 18.217-19.861 6.8094 6.7677 11.062 0.69666 18.817-12.485 14.753 12.062 4.846 9.3929 13.467-3.4036 17.025 15.058-2.2603 18.612 7.4017 7.9432 18.729 8.6712-8.2148 19.299-8.527 18.161 6.2415 4.9522-10.804 8.0068-9.9043 14.187 1.1361-2.5834-11.746-1.9348-19.8 13.493-11.477-9.4649-12.56-5.1398-14.994-2.066-15.394h9.8803l-2.8905 9.9955 18.324-15.039-18.324-15.036 2.8905 9.9909h-9.4657c-8.3653-1.1418 0.79795-11.701 3.4792-14.68-14.166 11.437-19.587 3.952-19.863-13.053z" fill="#ff1a00"/>
+		<path d="m165.47 119.45c4.097 4.3451 8.7625 4.002 10.105-3.4642 0.4277 8.2719 1.611 10.893 10.105 6.6407-7.3429 7.2831-2.858 8.0066 5.1957 6.6396-7.2783 2.4974-10.615 5.2989-2.3087 8.6609-9.6631-0.64197-8.5555 3.9059-4.3309 9.2391-4.5044-3.5838-5.2512-3.9908-6.3512 1.7326-2.8564-5.7165-3.4059-5.4476-7.219-0.57819 0.57799-7.5133-4.827-7.3553-9.2391-3.1756 5.4292-5.7619 3.617-10.681-4.0414-9.5277 6.5109-1.8091 7.866-6.197 1.7306-8.6618 8.916 1.9082 7.1125-7.5596 6.3541-7.5054z" fill="#ffff3e"/>
+	</g>
+	<path d="m368 87.948h0.20386c24.85 0 44.855 20.005 44.855 44.855v0.14587c0 24.85-20.005 44.855-44.855 44.855h-0.20386z" fill="#00a0c6" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+	<path d="m342.51 87.948h-0.20385c-24.85 0-44.855 20.005-44.855 44.855v0.14587c0 24.85 20.005 44.855 44.855 44.855h0.20385z" fill="#00a0c6" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+	<path id="a" d="m262.02 96.087 2.5424 7.4623h-23.108v5.8635h23.108l-2.5424 7.4623 14.913-10.394z" fill="#19aacc"/>
+	<use transform="translate(0,52.782)" xlink:href="#a"/>
+	<use transform="translate(0 26.402)" xlink:href="#a"/>
+	<circle cx="274.99" cy="406.85" r="117.73" fill="#fede58" stroke="#000" stroke-width="3.5"/>
+	<g fill="#f90" stroke="#f90" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+		<path d="m274.99 524.57v-235.45"/>
+		<path d="m191.74 490.1 166.49-166.49"/>
+		<path d="m157.27 406.85h235.45"/>
+		<path d="m191.74 323.6 166.49 166.49"/>
+	</g>
+	<circle cx="274.99" cy="406.85" r="51.888" fill="#ccecf4"/>
+	<circle cx="274.99" cy="406.85" r="42.432" fill="#99d9e8"/>
+	<circle cx="274.99" cy="406.85" r="32.03" fill="#66c6dd"/>
+	<circle cx="275.64" cy="406.85" r="20.208" fill="#00a0c6" stroke="#000" stroke-width="2"/>
+	<g id="c">
+		<g id="d">
+			<g id="e">
+				<path d="m273.24 358.37v12.879l-8.2318-2.9226 9.9908 14.918 9.9794-14.918-8.2204 2.9157v-12.873z" fill="#19aacc"/>
+				<use transform="rotate(112.5 182.7 270.8)" xlink:href="#b"/>
+			</g>
+			<use transform="rotate(45 275.64 406.85)" xlink:href="#e"/>
+		</g>
+		<use transform="rotate(90 274.98 406.84)" xlink:href="#d"/>
+	</g>
+	<use transform="rotate(180 274.98 406.86)" xlink:href="#c"/>
+	<path d="m392.72 406.85a117.73 117.73 0 0 0-117.73-117.73 117.73 117.73 0 0 0-117.73 117.73 117.73 117.73 0 0 0 117.73 117.73 117.73 117.73 0 0 0 117.73-117.73zm15.949 0a133.68 133.68 0 0 1-133.68 133.68 133.68 133.68 0 0 1-133.68-133.68 133.68 133.68 0 0 1 133.68-133.68 133.68 133.68 0 0 1 133.68 133.68z" fill="#808080" stroke="#000" stroke-width="3.5"/>
+	<g fill="none" stroke="#00f" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".5" stroke-width="3">
+		<path d="m196.56 57.291-20.519 75.591"/>
+		<path d="m319.98 132.88 35.274-75.591 35.274 75.591"/>
+		<path d="m179.7 446.92-60.639 40.529 63.165-118.18"/>
+		<path d="m287.03 413.58 127.85 76.223"/>
+	</g>
+	<g font-family="DejaVu Sans" font-size="17">
+		<switch transform="translate(312,32)">
+			<text systemLanguage="en"><tspan>Sub-critical pieces of</tspan><tspan x="0" y="20">uranium-235 combined</tspan></text>
+			<text systemLanguage="de"><tspan>Zwei unterkritische</tspan><tspan x="0" y="20">Uran-235-Massen</tspan></text>
+			<text><tspan>Sub-critical pieces of</tspan><tspan x="0" y="36">uranium-235 combined</tspan></text>
+		</switch>
+		<switch transform="translate(389,505)">
+			<text systemLanguage="en"><tspan>Plutonium core</tspan><tspan x="0" y="20">compressed</tspan></text>
+			<text systemLanguage="de"><tspan>komprimierter</tspan><tspan x="0" y="20">Plutoniumkern</tspan></text>
+			<text><tspan>Plutonium core</tspan><tspan x="0" y="36">compressed</tspan></text>
+		</switch>
+		<switch transform="translate(160,505)" text-anchor="end">
+			<text systemLanguage="en"><tspan>High-explosive</tspan><tspan x="0" y="20">lenses</tspan></text>
+			<text systemLanguage="de"><tspan>hochexplosive</tspan><tspan x="0" y="20">Linsen</tspan></text>
+			<text><tspan>High-explosive</tspan><tspan x="0" y="36">lenses</tspan></text>
+		</switch>
+		<switch transform="translate(226,32)" text-anchor="end">
+			<text systemLanguage="en"><tspan>Conventional</tspan><tspan x="0" y="20">chemical explosive</tspan></text>
+			<text systemLanguage="de"><tspan>Konventioneller</tspan><tspan x="0" y="20">Sprengstoff</tspan></text>
+			<text><tspan>Conventional</tspan><tspan x="0" y="36">chemical explosive</tspan></text>
+		</switch>
+		<switch transform="translate(275,210)" font-weight="bold" text-anchor="middle">
+			<text systemLanguage="en">Gun-type assembly method</text>
+			<text systemLanguage="de"><tspan>Zusammenfügung durch eine</tspan><tspan x="0" y="20">einseitig angebrachte Sprengladung</tspan><tspan x="0" y="40">("Gun-Design")</tspan></text>
+			<text>Gun-type assembly method</text>
+		</switch>
+		<switch transform="translate(275,562)" font-weight="bold" text-anchor="middle">
+			<text systemLanguage="en">Implosion assembly method</text>
+			<text systemLanguage="de">Zusammenfügung durch Implosion</text>
+			<text>Implosion assembly method</text>
+		</switch>
+	</g>
+</svg>

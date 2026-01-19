@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <style>
+      body { background: #341 }
+div {
+   position: absolute;
+   top: 20px;
+   left: 20px;
+   color: white;
+}
+    </style>
+    <script>
+      function testate(amp, points) {
+    const p = [];
+    var i = points.length - 2, x1, y1, x2, y2;
+    p.push(x1 = points[i++]);
+    p.push(y1 = points[i]);
+    i = 0;
+    while (i < points.length) {
+        x2 = points[i++];
+        y2 = points[i++];
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const r = (Math.random() - 0.5) * 2 * amp;
+        p.push(x1 + dx / 2 - dy * r);
+        p.push(y1 + dy / 2 + dx * r);
+        p.push(x1 = x2);
+        p.push(y1 = y2);
+    }
+    return p;
+}
+
+function drawFlake(ctx, size, x, y, noise) {
+    const a = Math.random() * Math.PI;
+    var points = [];
+    const step = Math.PI * (2/3);
+    var i = 0;
+    while (i < 3) {
+        const r = (Math.random() * size + size) / 2;
+        points.push(Math.cos(a + i * step) * r);
+        points.push(Math.sin(a + i * step) * r);
+        i++;
+    }
+    while (size > 2) {
+        points =  testate(noise, points);
+        size >>= 1;
+    }
+    i = 0;
+    ctx.setTransform(1,0,0,1,x,y);
+    ctx.moveTo(points[i++], points[i++]);
+    while (i < points.length) {
+        ctx.lineTo(points[i++], points[i++]);
+    }
+}
+function drawRandomFlakes(ctx, count, col, min, max, noise) {
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    while (count-- > 0) {
+        const x = Math.random() * ctx.canvas.width;
+        const y = Math.random() * ctx.canvas.height;
+        const size = min + Math.random() * (max- min);
+        drawFlake(ctx, size, x, y, noise);
+    }
+    ctx.fill();
+}
+
+const ctx = canvas.getContext("2d");
+canvas.addEventListener("click",drawFlakes);
+drawFlakes();
+function drawFlakes(){ 
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.fillStyle = "#341";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    const noise = Math.random() * 0.3 + 0.3;
+    drawRandomFlakes(ctx, 500, "#572", 5, 10, noise)
+    drawRandomFlakes(ctx, 200, "#421", 10, 15, noise)
+    drawRandomFlakes(ctx, 25, "#257", 15, 30, noise)
+}
+
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" width = "600" height = "512"></canvas>
+    <div>Want a new NFT? Click here</div>
+  </body>
+</html>

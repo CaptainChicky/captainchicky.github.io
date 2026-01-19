@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script>$(document).ready(function() {
+    var unitSize = 16; // width (and height) of one square
+    var unitsWide = 40; // number of squares along x-axis
+    var unitsTall = 40; // number of squares along y-axis
+    var drawing = $('<div class="drawing"></div>').css({
+        overflow: 'hidden',
+        width: unitSize * unitsWide
+    });
+    for (var i = 0; i < unitsWide * unitsTall; i++) {
+        var randomColor;
+        randomColor = Math.random() * 0x1000000; // 0 < randomColor < 0x1000000
+        randomColor = Math.floor(randomColor); // 0 < randomColor <= 0xFFFFFF
+        randomColor = randomColor.toString(16); // hex representation randomColor
+        randomColor = ("000000" + randomColor).slice(-6); // leading zeros added
+        randomColor = "#" + randomColor; // # added
+        $('<span class="square"></span>').css({
+            display: 'block',
+            float: 'left',
+            width: unitSize,
+            height: unitSize,
+            'background-color': randomColor
+        }).appendTo(drawing);
+    }
+    drawing.appendTo($("body"));
+      });</script>
+  </head>
+  <body></body>
+</html>

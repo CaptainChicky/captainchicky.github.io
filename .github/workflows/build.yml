@@ -1,0 +1,103 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll site to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with: # FUCKING PRASIE FOR FOR THIS I FINALLY GET HOW TO USE THIS
+          sparse-checkout: |
+            index.html
+            robots.txt
+            _config.yml
+            404.html
+            Gemfile
+            Archive/FontTesting/
+            Archive/bin/
+            Archive/box.timmyl1.repl.co/
+            Archive/calcformulasheet.timmyl1.repl.co/
+            Archive/csp-project-1--mukundvenkatesh.repl.co/
+            Archive/www.jakiecola.com/
+            Archive/www.toweroffantasy-global.com/
+            Archive/webstatic-sea.mihoyo.com/
+            Archive/Cloud.png
+            Archive/PRINCIPLES OF UNDERWATER SOUND Chapter 8.html
+            Archive/Sonar Propagation.html
+            Archive/pow_worker.js
+            Archive/powworker.html
+            Archive/fairyDustCursor.js
+            Archive/game.js
+            captcha-test/
+            Clouds/
+            Idiot!/
+            !Idiot!/index_files/fp_32.0.0.371_archive/Source/*
+            NFT/
+            Space/
+            The-Aviary/
+            Zip-Bomb/
+            plant-generator/
+          sparse-checkout-cone-mode: false
+          # By setting cone mode to false, I can specify specific files to include during sparse checkout
+          # this means I will specify all root dir files (including the Gemfile and yaml file)
+          # then, I will specify whole dirs to check out
+          # the root dirs i dont specify get loaded, but only that, and nothing in them
+          # I'm not sure why the wordpress dir in /archive/ is loaded, but whatever, it's probably because 
+          # I've included a few archive files in here so github is including them in checkout(?)
+          
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
+        with:
+          ruby-version: '3.1' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+      - name: Build with Jekyll
+        # Outputs to the './_site' directory by default
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v4
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

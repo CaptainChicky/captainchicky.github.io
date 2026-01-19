@@ -1,0 +1,161 @@
+var area = new Array()
+area[0] = "/intro/"
+area[1] = "/teacher/"
+area[2] = "/history/"
+area[3] = "/resources/"
+area[4] = "/iq/"
+area[5] = "/articles/"
+area[6] = "/links/"
+
+var areaName = new Array()
+areaName[0] = "網頁簡介"
+areaName[1] = "教師專區"
+areaName[2] = "物理史話"
+areaName[3] = "教學資源"
+areaName[4] = "有趣問題"
+areaName[5] = "物理新知"
+areaName[6] = "有用連結"
+var areaName_e = new Array()
+areaName_e[0] = "Introduction"
+areaName_e[1] = "Teachers\' zone"
+areaName_e[2] = "Famous physicists"
+areaName_e[3] = "Teaching resources"
+areaName_e[4] = "Physics Q & A"
+areaName_e[5] = "Further physics"
+areaName_e[6] = "Useful links"
+
+var pageLoc, areaNo, lang, fileExt, anchorPoint, upLevel, sameDir, currPage, currPageNo = -1
+
+init()
+
+function init() {
+	pageLoc = document.location.toString()
+	lang = (pageLoc.indexOf("_e.html") == -1)? 0 : 1
+	fileExt = (lang)? "_e.html" : ".html"
+	for (var i = 0; i < 7; i++) {
+		if (pageLoc.indexOf(area[i]) != -1) {
+			areaNo = i
+			break
+		}
+	}
+	var bgI = pageLoc.indexOf(area[areaNo]) + area[areaNo].length + 1
+	var bgS = pageLoc.substring(bgI, pageLoc.length)
+	bgI = bgS.indexOf("/")
+	upLevel = ""
+	while (bgI != -1) {
+		bgS = bgS.substring(bgI + 1, bgS.length)
+		bgI = bgS.indexOf("/")
+		upLevel += "../"
+	}
+	anchorPoint = (pageLoc.indexOf("/intro/") == -1 && upLevel == "")? "#contents" : ""
+	if (top.Index && navigator.appName.indexOf("Netscape") == -1) {
+		var menuPage = (lang)? areaNo + 12 : areaNo + 2
+		top.Index.setMenu(menuPage)
+	}
+}
+
+function findCurrPageNo() {
+	var bi = pageLoc.lastIndexOf("/")
+	var ei = pageLoc.indexOf(fileExt)
+	currPage = pageLoc.substring(bi+1, ei)
+	sameDir = (pageLoc.indexOf("/" + currPage + "/") == -1)
+	for (var i = 0; i < pages.length; i++) {
+		if (currPage == pages[i]) break
+	}
+	return i
+}
+
+function goHome() {
+	var loc = "../" + upLevel +"main" + fileExt
+	if (pageLoc.indexOf("teacher/forum") == -1) {
+		document.location = loc
+	} else {
+		parent.document.location = loc
+	}
+}
+
+function goUpPage() {
+	var dir = (upLevel == "")? "../intro/" : upLevel
+	var loc = dir + "index" + fileExt + anchorPoint
+	if (pageLoc.indexOf("teacher/forum") == -1) {
+		document.location = loc
+	} else {
+		parent.document.location = loc
+	}
+}
+
+function goUp() {
+	document.location = upLevel + "index" + fileExt
+}
+
+function goPrevPage() {
+	var prevPageNo = currPageNo - 1
+	if (prevPageNo < 0) prevPageNo = pages.length - 1
+	var dir = (sameDir)? "" : "../" + pages[prevPageNo] + "/"
+	document.location =  dir + pages[prevPageNo] + fileExt
+}
+
+function goNextPage() {
+	var nextPageNo = currPageNo + 1
+	if (nextPageNo > pages.length - 1) nextPageNo = 0
+	var dir = (sameDir)? "" : "../" + pages[nextPageNo] + "/"
+	document.location = dir + pages[nextPageNo] + fileExt
+}
+
+function writeTree() {
+	var mainTitle, secTitle, subTitle
+	if (lang) {
+		mainTitle = 'Physics World'
+		secTitle = areaName_e[areaNo]
+	} else {
+		mainTitle = '物理園'
+		secTitle = areaName[areaNo]
+	}
+	if (currPageNo >= 0 && !sameDir) {
+		subTitle = '<A HREF="javascript:goUp()">' + secTitle + '</A>' + ' > '
+		subTitle += (anchorName)? '<A HREF="javascript:goUpPage()">' + subSecTitle[lang] + '</A>' : subSecTitle[lang]
+	} else {
+		subTitle = secTitle
+	}
+	document.writeln('<A HREF="javascript:goHome()">' + mainTitle + '</A>' + ' > ' + subTitle)
+}
+
+function writeNaviUpButton() {
+    	document.writeln('<MAP NAME="navi_up">')
+    	document.writeln('<AREA COORDS="19,21,41,43" HREF="javascript:goHome()">')
+        document.writeln('<AREA COORDS="19,2,41,20" HREF="javascript:goUpPage()">')
+        document.writeln('</MAP>')
+        writeButton('navi_up')
+}
+
+function writeNaviUpButtonAC(anchor) {
+	anchorPoint = "#" + anchor
+	writeNaviUpButton()
+}
+
+function writeNaviAllButton() {
+        currPageNo = findCurrPageNo()
+        if (anchorName) anchorPoint = "#" + anchorName
+    	document.writeln('<MAP NAME="navi_all">')
+    	document.writeln('<AREA COORDS="19,21,41,43" HREF="javascript:goHome()">')
+        document.writeln('<AREA COORDS="42,21,60,43" HREF="javascript:goNextPage()">')
+        document.writeln('<AREA COORDS="-1,21,17,43" HREF="javascript:goPrevPage()">')
+        document.writeln('<AREA COORDS="19,2,41,20" HREF="javascript:goUpPage()">')
+        document.writeln('</MAP>')
+        writeButton('navi_all')
+}
+
+function writeButton(button) {
+        document.writeln('<OBJECT CLASSID="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" CODEBASE="http://active.macromedia.com/flash2/cabs/swflash.cab#version=3,0,0,0" ID=' + button + ' WIDTH=60 HEIGHT=60>')
+        document.writeln('<PARAM NAME=movie VALUE="../' + upLevel + 'navigation/' + button + '.swf"><PARAM NAME=quality VALUE=high><PARAM NAME=bgcolor VALUE=#FFFFFF>')
+	if (navigator.mimeTypes && navigator.mimeTypes["application/x-shockwave-flash"] && navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin &&
+		 navigator.plugins && navigator.plugins["Shockwave Flash"]) {
+		document.write('<EMBED src="../' + upLevel + 'navigation/' + button + '.swf" quality=high bgcolor=#FFFFFF ');
+		document.write(' swLiveConnect=FALSE WIDTH=60 HEIGHT=60');
+		document.write(' TYPE="application/x-shockwave-flash" PLUGINSPAGE="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash">');
+	} else if (!(navigator.appName && navigator.appName.indexOf("Netscape")>=0 && navigator.appVersion.indexOf("2.")>=0)){
+		document.write('<IMG SRC="../' + upLevel + 'navigation/' + button + '.jpg" WIDTH=60 HEIGHT=60 BORDER=0>');
+	}
+	document.writeln('<NOEMBED><IMG SRC="../' + upLevel + 'navigation/' + button + '.jpg" WIDTH=60 HEIGHT=60 USEMAP="#' + button + '" BORDER=0></NOEMBED>')
+      	document.writeln('</OBJECT>')
+}

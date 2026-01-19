@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sample jQuery CAPTCHA</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+  <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+</head>
+
+<body>
+  <form>
+    <div id="captcha">
+      <p>Please solve the following CAPTCHA:</p>
+      <p id="output"></p>
+      <input type="text" id="solution" />
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+
+  <script>
+    function integrate(func, a, b, n) {
+      // Check the input parameters
+      if (typeof func !== 'function') {
+        throw new Error('The first parameter must be a function.');
+      }
+      if (typeof a !== 'number' || typeof b !== 'number' || typeof n !== 'number') {
+        throw new Error('The second, third, and fourth parameters must be numbers.');
+      }
+      if (n <= 0) {
+        throw new Error('The fourth parameter must be a positive integer.');
+      }
+
+      // Approximate the definite integral using the trapezoidal rule
+      var h = (b - a) / n;
+      var sum = (func(a) + func(b)) / 2;
+      for (var i = 1; i < n; i++) {
+        sum += func(a + i * h);
+      }
+      return sum * h;
+    }
+  </script>
+
+  <script>
+    // Generate a random CAPTCHA image
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    canvas.width = 2000;
+    canvas.height = 100;
+
+    // Generate a random quadratic function
+    var a = Math.round(Math.random() * 20 + 1);
+    var b = Math.round(Math.random() * 20);
+    var c = Math.round(Math.random() * 20);
+    var func = new Function('x', 'return ' + a + ' * x * x + ' + b + ' * x + ' + c + ';');
+
+    // Approximate the integral of the function and generate a CAPTCHA challenge
+    var result = Math.round(integrate(func, 0, 1, 100000));
+    var challenge = 'Evaluate the integral: ∫' + a + ' x^2 + ' + b + 'x + ' + c +
+      ' dx from 0 to 1';
+
+    // Add the text to the image
+    context.font = '20px Georgia';
+
+    context.fillStyle = 'rgb(0,0,0)';
+
+
+    window.onload = function(){
+    document.getElementById('output').innerHTML = 'Evaluate the integral $∫_0^1 ' + a + 'x^2 + ' + b + 'x + ' + c + 'dx$ <br> Round to the nearest integer.'
+};
+
+
+    // Validate the solution when the form is submitted
+    $('form').submit(function (event) {
+      event.preventDefault();
+      var solution = $('#solution').val();
+      if (Number(solution) === result) {
+        alert('Correct!');
+      } else {
+        alert('Incorrect. Please try again.');
+      }
+    });
+  </script>
+
+
+
+
+</body>
+
+</html>
