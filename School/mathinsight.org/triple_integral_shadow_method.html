@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>The shadow method for determining triple integral bounds - Math Insight</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="static/css/mistyle.css" rel="stylesheet" type="text/css"/>
+<script src="static/js/jquery-latest.js" type="text/javascript"></script>
+<script type="text/javascript" src="static/geogebra/scripts/deployggb.js"></script>
+<script src="static/js/round.js" type="text/javascript"></script>
+
+<meta name="description" content="Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration."/>
+<script src="static/js/jquery.cookie.js"></script>
+<script src="static/js/ajaxcsrf.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="./static/js/katex.min.css">
+<script src="./static/js/katex.min.js"></script>
+<script src="./static/js/auto-render.min.js"></script>
+
+<script type="text/javascript" src="./static/MathJax/latest.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="./static/MathJax/MathJax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+<link id="local" rel="stylesheet" type="text/css" href="./static/MathJax/katex/katex.min.css">
+<script src="./static/MathJax/katex/katex.min.js"></script>
+<script src="./static/MathJax/smrender.js"></script>
+<script src="./static/MathJax/timer.js"></script>
+<script src="./static/MathJax/copy-tex.min.js"></script>
+<link rel="stylesheet" href="./static/MathJax/copy-tex.min.css">
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
+</script>
+
+<script src="./static/MathJax/smrender.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28169224-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<body>
+<ul class="ym-skiplinks">
+	<li><a class="ym-skip" href="triple_integral_shadow_method.html#pagenav">Skip to navigation (Press Enter)</a></li>
+	<li><a class="ym-skip" href="triple_integral_shadow_method.html#main">Skip to main content (Press Enter)</a></li>
+</ul>
+
+<nav id="sitenav" role="navigation">
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      <div class="mnav">
+	<ul class="ym-grid ym-equalize linearize-level-2">
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/">Home</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/thread/list">Threads</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/index/general">Index</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/about/mathinsight">About</a></li>
+	  <li class="ym-g50 ym-gl"><div id="search_box"><form class="ym-searchform" action="https://mathinsight.org/search/#search" method="get">
+	  <input id="id_q_a" type="search" name="q" size="18" class="ym-searchfield" placeholder="Search Math Insight..."  />
+	  <input class="ym-searchbutton" type="submit" value="Search" />
+	</form>
+      </div></li>
+	</ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<header>
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      <h1>Math Insight</h1>
+    </div>
+  </div>
+</header>
+
+
+<nav id="pagenav">
+<div id="menu-icon">Page Navigation</div>
+  <div class="ym-wrapper">
+    <ul id="unav">
+ 	
+  <li><a href="triple_integral_shadow_method.html#sitenav">Top</a></li>
+  
+  <li><a href="triple_integral_shadow_method.html#overview">Overview</a>
+    
+  </li>
+  <li><a href="triple_integral_shadow_method.html#example1">Examples</a>
+    <ul>
+      
+      <li><a href="triple_integral_shadow_method.html#example1">Example 1</a></li>
+      
+      <li><a href="triple_integral_shadow_method.html#example2">Example 2</a></li>
+      </ul>
+  </li>
+  
+  <li><a href="triple_integral_shadow_method.html#threads">In threads</a><ul>
+  
+  <li><a href="triple_integral_shadow_method.html#thread_multivar">Multivariable calculus</a></li>
+  
+  <li><a href="triple_integral_shadow_method.html#thread_math2374">Math 2374</a></li>
+  </ul></li>
+  <li><a href="triple_integral_shadow_method.html#notation_systems">Notation</a></li>
+  
+  <li><a href="triple_integral_shadow_method.html#linksection">Links</a>
+    <ul>
+      <li><a href="triple_integral_shadow_method.html#similar_pages">Similar pages</a></li>
+<li><a href="triple_integral_shadow_method.html#related_generic">See also</a></li>
+      
+      </ul>
+  </li>
+  <li><a href="triple_integral_shadow_method.html#sendmessage">Contact us</a></li>
+
+      </ul>
+  </div>
+      <input type="button" value="x" class="unstick" onclick="unstick(document.getElementById('pagenav'))"/>
+</nav>
+
+
+<div id="breadcrumbs_login">
+  <div class="ym-wrapper">
+    <div class="ym-wbox" style="padding-top:0; padding-bottom: 0;">
+      <div class="ym-grid linearize-level-1">
+	<div class="ym-g66 ym-gl">
+	  <div class="ym-gbox-left">
+	    
+	    
+	    
+	  </div>
+	</div>
+	<div class="ym-g33 ym-gr"> 
+	  <div class="ym-gbox-left" style="text-align: right;">
+	    
+	    <a href="https://mathinsight.org/accounts/login?next=/triple_integral_shadow_method">log in</a>
+	    
+	  </div>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      
+      
+
+  <div class="ym-column linearize-level-1">
+    <div class="ym-col1">
+      <div class="ym-cbox">
+	<h3>The shadow method for determining triple integral bounds</h3>
+      </div>
+    </div>
+    
+    <div class="ym-col3">
+      <div class="ym-cbox">
+	
+	<aside class="box info suggestbackbox">
+	  <h4>Suggested background</h4>
+	  <ul class="linklist">
+	    
+	    <li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+	    
+	  </ul>
+	</aside>
+	
+	
+      </div>
+    </div>
+  </div>
+
+      <div class="ym-column linearize-level-1">
+	<div id="main_content" class="ym-col1">
+	  <div class="ym-cbox">
+	    
+<a id="overview" class="anchor"></a>
+<p>Although we <a href="https://mathinsight.org/triple_integral_introduction#tripleriemann" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">define triple integrals</a> using a Riemann sum, we usually evaluate triple integrals by turning them into <a href="https://mathinsight.org/triple_integral_introduction#tripleiterated" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">iterated integrals</a> involving three single integrals.  One tricky part of triple integrals is describing the three-dimensional regions of integration and the resulting bounds on the iterated integrals.  Forming <a href="https://mathinsight.org/double_integral_iterated" class="content" title="Double integrals as iterated integrals: A description of how to convert double integrals into two single integrals.">double iterated integrals</a> is easier because one can draw the domain and label all the edges and corners, which makes determining the bounds more tractable.  Three-dimensional regions are much more difficult to visualize or draw, which can make the prospect of determining integration bounds a formidable task.</p>
+
+<p>Fortunately, there are ways to reduce a triple integral into a double integral combined with a single integral.  One such method is one we call the &ldquo;shadow method,&rdquo; which we describe here.  A related method is one we call the &ldquo;cross section method&rdquo; which we describe on <a href="https://mathinsight.org/triple_integral_cross_section_method" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">another page</a>.</p>
+
+<p>In the shadow method, you imagine there is a light source, such as the sun, positioned far away along one of the coordinate axis (such as the positive $z$-axis).  We'll think of this sun as being straight up in the sky and think of the chosen coordinate axis as though it were vertical.</p>
+
+<p>As this sun is shining on the three-dimesional region $W$ of our integral, it is casting a shadow onto the flat ground below the region, i.e., on a plane perpendicular to the axis the sun is coming from.  This shadow is a two-dimensional region, and we turn the triple integral over $W$ into a double integral over the shadow.  Inside the double integral, we still need to include a single integral in the third &ldquo;vertical&rdquo; variable, where this variable ranges from the bottom of $W$ to its top.  If, for example, we had chosen $z$ to be the &ldquo;vertical&rdquo; variable where the sun is coming from, the shadow method for integrating a function $f$ over $W$ would be of the form
+$$\begin{gather*}
+  \iiint_{W}f(x,y,z)dV = \iint_{\text{shadow}} \left( \int_{\text{bottom}(x,y)}^{\text{top}(x,y)} f(x,y,z) dz\right) dx\,dy.
+\end{gather*}$$
+But, we don't need to have the sun coming from the $z$ direction.  It might be easier to let the sun be in the $x$ direction, giving an integral of the form
+$$\begin{gather*}
+  \iiint_{W}f(x,y,z) dV= \iint_{\text{shadow}} \left( \int_{\text{bottom}(y,z)}^{\text{top}(y,z)} f(x,y,z) dx\right) dy\,dz,
+\end{gather*}$$
+or let the sun being in the $y$ direction, giving an integral of the form
+$$\begin{gather*}
+  \iiint_{W}f(x,y,z)dV = \iint_{\text{shadow}} \left( \int_{\text{bottom}(x,z)}^{\text{top}(x,z)} f(x,y,z) dy\right) dx\,dz.
+\end{gather*}$$
+We can choose the axis we use for the &ldquo;vertical&rdquo; direction based on the shape of the region $W$.
+</p>
+
+<p>The use of the shadow method is best illustrated by examples.</p>
+
+<a id="example1" class="anchor"></a>
+<h4>Example 1</h4>
+
+<p>Let $W$ be the three-dimesional region bounded by the vertical planes $x=0$, $y=1$, and $x=y$ as well as the angled planes $z=2+x-y$ and $z=x-y$.  Let $f(x,y,z)=xy$ and compute the integral of $f$ over $W$.</p>
+
+<p><b>Solution</b>: Given that there are three planes parallel to the $z$-axis, we'll use the $z$ direction as the vertical direction.  We'll think of the sun as coming from that direction and casting a shadow below it.  As shown by the below figure, those three vertical planes cause $W$ to cast a triangular shadow.</p>
+
+<a id="applet:triple_integral_shadow_example_planes" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralShadowExamplePlanes01" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_shadow_example_planes.png" alt="Applet: Region bounded by planes demonstrating the shadow method" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Region bounded by planes demonstrating the shadow method.</i> The region $W$ is bounded by the vertical planes $x=0$, $y=1$, and $x=y$ and the angled planes $z=2+x-y$ and $z=x-y$.  If the sun is viewed to be in the direction of the positive $z$-axis, the resulting shadow on a plane perpendicular to the $z$-axis is a triangle, as illustrated by the blue triangle below the region.</p><p><a href="https://mathinsight.org/applet/triple_integral_shadow_example_planes" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
+
+<p>According to the shadow method, we need to integrate $x$ and $y$ over this shadow.  Then, for each point $(x,y)$ in the shadow, we need to integrate $z$ from the bottom to the top of $W$.  The bottom and top are formed by the angled planes, so the range of $z$ for each point in the shadow is
+  $$\begin{gather*}
+  x-y \lt z \lt 2+x-y.
+  \end{gather*}$$
+  The inner integral is therefore
+  $$\begin{gather*}
+  \int_{\text{bottom}(x,y)}^{\text{top}(x,y)} f(x,y,z) dz = \int_{x-y}^{2+x-y}f(x,y,z)dz.
+  \end{gather*}$$
+</p>
+
+<p>The outer double integral is an integral over the shadow. The shadow is the maximal extend of $W$ in the $x$ and $y$ directions.  For this example, the shadow is fairly simple, since the extent of $W$ is determined by the three vertical planes $x=0$, $y=1$ and $x=y$.  In any plane parallel to the $xy$-plane, these planes become lines given by the same equations (as the original equations don't contain a $z$).  The shadow is the triangle bounded by the lines $x=0$, $y=1$ and $x=y$.</p>
+	    
+<p class="centeredImage"><a id="image:triple_integral_triangle_shadow" class="anchor"></a><a href="https://mathinsight.org/image/triple_integral_triangle_shadow" title="Triangular region determined by the shadow method for computing triple integral limits of a three-dimensional region."><img class="displayed" src="media/image/image/triple_integral_triangle_shadow.png" alt="Triangular region determined by the shadow method" width ="349" height="311" /></a></p>
+
+<p>To find bounds for the double integral over the shadow, we'll let $x$ be the inner integral.  For any value of $y$, $x$ ranges from $x=0$ to $x=y$ so the range of $x$ is
+$$\begin{gather*}
+  0 \lt x \lt y.
+\end{gather*}$$
+The maximum range of $y$ is shadow is
+$$\begin{gather*}
+  0 \lt y \lt 1.
+\end{gather*}$$
+Therefore, the double integral over the shadow is of the form
+$$\begin{gather*}
+  \iint_{\text{shadow}} \cdots dx\,dy = \int_0^1 \int_0^y \cdots dx\,dy.
+\end{gather*}$$
+</p>
+
+<p>Putting all the limits of integration together and inserting the integrand $f(x,y,z)=xy$, we calculate the integral:
+$$\begin{align*}
+\iiint_{W}f(x,y,z)dV &amp;=\int_0^1 \int_0^y \int_{x-y}^{2+x-y} xy\, dz\,dx\,dy\\
+&amp;= \int_0^1 \int_0^y xyz \bigg|_{z=x-y}^{z=2+x-y} dx\,dy\\
+&amp;= \int_0^1 \int_0^y 2xy dx\,dy\\
+&amp;= \int_0^1 x^2y \bigg|_{x=0}^{x=y}dy\\
+&amp;= \int_0^1 y^3 dy = \frac{y^4}{4}\bigg|_0^1 = \frac{1}{4}.
+\end{align*}$$
+
+<a id="example2" class="anchor"></a>
+<h4>Example 2</h4>
+
+<p>Let $\rho(x,y,z)$ be the charge density at the point $(x,y,z)$ inside an object $W$ bounded by the <a href="https://mathinsight.org/elliptic_paraboloid" class="content" title="The elliptic paraboloid: Description of the elliptic paraboloid with interactive graphics that illustrate cross sections and the effect of changing parameters.">elliptic paraboloids</a> $y=5-4 x^2-z^2$ and $y=x^2+z^2/4$.  Set up the integral giving the total charge inside $W$.</p>
+
+<p><b>Solution:</b> The total charge is the integral of the charge density $\rho$ over the region $W$:
+$$\begin{gather*}
+  \text{total charge} = \iiint_{W} \rho(x,y,z) \, dV.
+\end{gather*}
+Our task is to calculate the limits of integration determined by $W$.</p>
+
+<p>For this region, the shadow method will work well if we choose the $y$-axis as the &ldquo;vertical&rdquo; direction, i.e., the direction where the sun comes from.  If the positive $y$ direction is upward, then one boundary, $y=5-4 x^2-z^2$, is a paraboloid opening downward that intersects the $y$-axis at $y=5$.  The other boundary, $y=x^2+z^2/4$ is a paraboloid that opens upward and intersects the $y$-axis at the origin.  Therefore, the bounded region $W$ between the surfaces will be the region below $y=5-4 x^2-z^2$ and above $y=x^2+z^2/4$, i.e., the region described by 
+$$x^2+\frac{z^2}{4} \le y \le 5-4 x^2-z^2,$$
+as illustrated below.  The two paraboloid surfaces are the top and bottom limits for the shadow method,
+  $$\begin{gather*}
+  \int_{\text{bottom}(x,z)}^{\text{top}(x,z)} \rho(x,y,z) dy = \int_{x^2+z^2/4}^{5-4 x^2-z^2}\rho(x,y,z)dy.
+  \end{gather*}$$$$
+</p>
+
+<a id="applet:triple_integral_shadow_example_paraboloids" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralShadowExampleParaboloids02" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_shadow_example_paraboloids.png" alt="Applet: Region bounded by paraboloids demonstrating the shadow method" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Region bounded by paraboloids demonstrating the shadow method.</i> The region $W$ is bounded by the elliptic paraboloids $y=5-4 x^2-z^2$ and $y=x^2+z^2/4$.  If the sun is viewed to be in the direction of the positive $y$-axis, the shadow of $W$ in a plane perpendicular to the $y$-axis is the region inside the ellipse $x^2+z^2/4=1$.</p><p><a href="https://mathinsight.org/applet/triple_integral_shadow_example_paraboloids" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
+
+<p>The remaining task is to determine the shadow of $W$, illustrated by the ellipse, above.  The widest part of $W$ is where the two paraboloids intersect, i.e., where
+$$x^2+\frac{z^2}{4} = 5-4 x^2-z^2,$$
+which can be written more simply as
+$$x^2+\frac{z^2}{4} = 1.$$
+This boundary of the shadow is an ellipse with a semi-major axis of 2 and a semi-minor axis of 1.  The shadow itself is the region
+$$x^2+\frac{z^2}{4} \le 1,$$
+which includes the interior of the ellipse, shown below.</p>
+
+<p class="centeredImage"><a id="image:triple_integral_ellipse_shadow" class="anchor"></a><a href="https://mathinsight.org/image/triple_integral_ellipse_shadow" title="Elliptical region determined by the shadow method for computing triple integral limits of a three-dimensional region."><img class="displayed" src="media/image/image/triple_integral_ellipse_shadow.png" alt="Triple integral ellipse shadow" width ="331" height="315" /></a></p>
+
+<p>Since inside the ellipse, $x^2 \le 1- z^2/4$, the range of $x$ for each value of $z$ is 
+$$ -\sqrt{1-z^2/4} \le x \le \sqrt{1-z^2/4}.$$
+The maximum range of $z$ is $-2 \le z \le 2$, so the integration limits for the shadow are
+$$\begin{gather*}
+  \iint_{\text{shadow}} \cdots dx\,dz = \int_{-2}^2 \int_{-\sqrt{1-z^2/4}}^{\sqrt{1-z^2/4}} \cdots dx\,dz.
+\end{gather*}$$
+</p>
+
+<p>Putting the top and bottom limits together with the shadow, we conclude that the total charge inside $W$ is the integral
+$$\begin{align*}
+  \text{total charge} &amp;= \iiint_{W} \rho(x,y,z) \, dV\\
+  &amp;=\int_{-2}^2 \int_{-\sqrt{1-z^2/4}}^{\sqrt{1-z^2/4}}\int_{x^2+z^2/4}^{5-4 x^2-z^2}\rho(x,y,z)dy\,dx\,dz.
+\end{align*}$$
+</p>
+
+	  </div>
+	</div>
+	<div class="ym-col3">
+	  <div class="ym-cbox">
+	   
+
+<a id="threads" class="anchor"></a>
+<section class="box threadbox">
+<h4><a href="https://mathinsight.org/thread/list" class="normaltext">Thread navigation</a></h4>
+
+<a id="thread_multivar" class="anchor"></a>
+<h5 class="pre_list"><a href="https://mathinsight.org/thread/multivar#s9" class="normaltext">Multivariable calculus</a></h5>
+<ul class="linklist">
+  
+  
+  <li> Previous: <a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+  
+  
+  
+  
+  <li> Next: <a href="https://mathinsight.org/triple_integral_cross_section_method" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The cross section method for determining triple integral bounds</a></li>
+  
+  
+</ul>
+
+<a id="thread_math2374" class="anchor"></a>
+<h5 class="pre_list"><a href="https://mathinsight.org/thread/math2374#s44" class="normaltext">Math 2374</a></h5>
+<ul class="linklist">
+  
+  
+  <li> Previous: <a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals*</a></li>
+  
+  
+  
+  
+  <li> Next: <a href="https://mathinsight.org/triple_integral_cross_section_method" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The cross section method for determining triple integral bounds</a></li>
+  
+  
+</ul>
+
+</section>
+
+
+<a id="notation_systems" class="anchor"></a>
+<section class="notation_systems">
+<h4><a href="https://mathinsight.org/about/notationsystems" class="normaltext">Notation systems</a></h4>
+<form action="triple_integral_shadow_method.html" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='Zh3GmHaN17bHIeQzV325ocV6OKp4qmZK' />
+<p><label for="id_notation_system">Select a notation system:</label> <br/>
+<select id="id_notation_system" name="notation_system">
+<option value="1" selected="selected">default</option>
+<option value="2">Marsden and Tromba</option>
+<option value="3">Stewart</option>
+</select>
+<input type="submit" value="Submit" /></p>
+</form>
+<p><a href="https://mathinsight.org/about/notationsystems">More information on notation systems</a></p>
+</section>
+
+
+<a id="similar_pages" class="anchor"></a>
+<section class="similar_pages">
+<h4 class="pre_list">Similar pages</h4>
+<ul class="linklist">
+
+<li><a href="https://mathinsight.org/triple_integral_cross_section_method" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The cross section method for determining triple integral bounds</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_story" class="content" title="Triple integral change of variables story: Story illustrating the process of changing variables in triple integrals.">Triple integral change of variables story</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_introduction" class="content" title="Introduction to changing variables in triple integrals: Introduction to the concepts behind a change of variables in triple integrals.">Introduction to changing variables in triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_volume_calculation" class="content" title="Volume calculation for changing variables in triple integrals: A derivation of how a mapping that changes variables in triple integrals transforms volume.">Volume calculation for changing variables in triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/double_integral_change_variables_area_calculation" class="content" title="Area calculation for changing variables in double integrals: A derivation of how a mapping that changes variables in double integrals transforms area.">Area calculation for changing variables in double integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variable_examples" class="content" title="Triple integral change of variable examples: Examples of changing variables in triple integrals.">Triple integral change of variable examples</a></li>
+
+<li><a href="https://mathinsight.org/integrals_multivariable_calculus_summary" class="content" title="The integrals of multivariable calculus: A summary of the integrals of multivariable calculus, including calculation methods and their relationship to the fundamental theorems of vector calculus.">The integrals of multivariable calculus</a></li>
+
+<li><a href="https://mathinsight.org/double_integral_change_variable_illustrated_example" class="content" title="Illustrated example of changing variables in double integrals: An example illustrating with interactive graphics how changing variables transforms regions in the plane.">Illustrated example of changing variables in double integrals</a></li>
+
+<li><a href="https://mathinsight.org/similar/triple_integral_shadow_method" class="normaltext">More similar pages</a></li>
+</ul>
+</section>
+
+
+ 	  </div>
+	</div>
+      </div>
+      
+      
+      <a id="linksection" class="anchor"></a>
+      <div class="ym-grid linearize-level-1">
+	<div class="ym-g66 ym-gl">
+	  <div class="ym-grid linearize-level-2">
+	    <div class="ym-g50 ym-gl">
+	      <div class="ym-gbox-left">
+		
+
+<a id="related_generic" class="anchor"></a>
+<section class="related_generic">
+<h4 class="pre_list">See also</h4>
+<ul class="linklist">
+
+<li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_cross_section_method" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The cross section method for determining triple integral bounds</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+
+</ul>
+</section>
+
+
+	      </div>
+	    </div>
+	    <div class="ym-g50 ym-gr">
+	      <div class="ym-gbox">
+		
+
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="ym-g33 ym-gr">
+	  <div class="ym-gbox-right secondary">
+	    
+
+
+	  </div>
+	</div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      
+
+
+<section class="citation"><h4>Cite this as</h4>
+
+<p><a href="https://mathinsight.org/contributor/dqnykamp" class="normaltext">Nykamp DQ</a>, &ldquo;The shadow method for determining triple integral bounds.&rdquo; From <i>Math Insight</i>. 
+  <a href="http://mathinsight.org/triple_integral_shadow_method" class="normaltext">http://mathinsight.org<wbr>/triple_integral_shadow_method</a></p>
+</section>
+
+<section class="keywords"><p>Keywords:
+integral, integration limits, triple integral
+</p></section>
+<a id="sendmessage" class="anchor"></a>
+<section id="messageform">
+<h4 class="commentheading">Send us a message about &ldquo;The shadow method for determining triple integral bounds&rdquo;</h4>
+
+
+
+
+<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='Zh3GmHaN17bHIeQzV325ocV6OKp4qmZK' />
+  
+  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="228" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659212772" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="d930e27aea1e3e506c603707862fa6f20d839862" /></div>
+  
+<div class="ym-fbox-text">
+<label for="id_name">Name:</label><input id="id_name" maxlength="50" name="name" type="text" /></div>
+<div class="ym-fbox-text">
+<label for="id_email">Email address:</label><input id="id_email" name="email" type="email" /></div>
+
+<div class="ym-fbox-text">
+<label for="id_comment">Comment:</label><textarea cols="40" id="id_comment" maxlength="3000" name="comment" rows="10">
+</textarea></div>
+<div class="ym-fbox-text" style="display:none;">
+<label for="id_honeypot">If you enter anything in this field your comment will be treated as spam:</label><input id="id_honeypot" name="honeypot" type="text" /></div>
+<div class="ym-fbox-button">
+ <input type="submit" name="post" class="ym-button" value="Send message" />
+</div>
+</form>
+
+</section>
+
+
+<section id="copyright">
+
+<div id="copyright_image"><h4><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="static/image/somerights20.png" /></a></h4></div>
+<p><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">The shadow method for determining triple integral bounds</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://mathinsight.org/triple_integral_shadow_method" property="cc:attributionName" rel="cc:attributionURL">Duane Q. Nykamp</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" class="external">Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License</a>.  For permissions beyond the scope of this license, please <a xmlns:cc="http://creativecommons.org/ns#" href="http://mathinsight.org/about/contact" rel="cc:morePermissions">contact us</a>.</p>
+
+</section>
+
+
+
+<section id="credits">
+<h4>Credits</h4>
+Thanks to RJ Hopkins for correcting errors.
+</section>
+
+
+
+
+    </div>
+  </div>
+</footer>
+
+<!-- full skip link functionality in webkit browsers -->
+<script src="static/js/yaml-focusfix.js"></script>
+<script type="text/javascript">
+  jQuery(document).ready(function($){
+    /* toggle nav */
+    $("#menu-icon").click(function(){
+	$("#unav").slideToggle();
+    });
+    $("#unav").click(function(){
+	$("#unav").slideToggle();
+    });
+});
+</script>
+<script src="static/js/jquery.sticky.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#pagenav").sticky({topSpacing:0});
+  });
+</script>
+<script type="text/javascript">
+  function unstick(obj)
+  {
+  obj.style.position="static";
+  }
+</script>
+<script type="text/javascript">
+ function showHide(shID) {
+	if (document.getElementById(shID)) {
+		if (document.getElementById(shID).style.display == 'none') {
+			document.getElementById(shID+'_show').style.display = 'none';
+			document.getElementById(shID+'_hide').style.display = 'inline';
+			document.getElementById(shID).style.display = 'block';
+		}
+		else {
+			document.getElementById(shID+'_show').style.display = 'inline';
+			document.getElementById(shID+'_hide').style.display = 'none';
+			document.getElementById(shID).style.display = 'none';
+		}
+	}
+  }
+  function inIframe () {
+    try { 
+	return window.self !== window.parent; 
+    } 
+    catch (e) { 
+	return true; 
+    }
+  }
+
+function isElementInViewport (el) {
+    // From http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport
+    // Modified so true is partially visible
+
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.bottom >= 0 &&
+        rect.right >= 0 &&
+        rect.top <= jQuery(window).height() &&
+        rect.left <= jQuery(window).width()
+    );
+}
+
+
+</script>
+
+
+<div id="geogebra_onit"><script type="text/javascript">
+function ggbOnInit(arg) {
+console.log(arg);
+
+if(inIframe()) { parent.ggbOnInit(arg);} 
+}
+</script></div><script src="static/js/three/three.js"></script><script src="static/js/three/controls/TrackballControls.js"></script><script src="static/js/three/Detector.js"></script><script src="static/js/three/MIAppletThree.js"></script><script src="static/js/three/MIThreeObjects.js"></script><script src="static/js/three/Axes.js"></script><script src="static/js/three/Arrow.js"></script><script src="static/js/three/VectorField.js"></script><script src="static/js/three/Slider.js"></script><script src="static/js/three/DragObjects.js"></script><script src="static/js/three/TextLabel.js"></script><script src="static/js/three/Geometries.js"></script>
+<script>
+if(Detector.webgl) {
+
+applet_three_applet_AppletTripleIntegralShadowExamplePlanes01=new MIAppletThree('container_three_applet_AppletTripleIntegralShadowExamplePlanes01', 400, 400, { static_url: '/static/', media_url: '/media/' });
+applet_three_applet_AppletTripleIntegralShadowExamplePlanes01.run = function() {
+var renderer=this.renderer, container=this.container, width=this.width, height=this.height, namedObjects=this.namedObjects, parameters=this.parameters;
+            var scene = new THREE.Scene();
+
+            renderer.setSize(width, height);
+
+            container.append(renderer.domElement);
+
+            var camera, controls;
+
+            var VIEW_ANGLE = 4.5, ASPECT = width / height, NEAR = 10.0, FAR = 2000;
+            camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+            scene.add(camera);
+
+            camera.position.set(25, 12, 45);
+            camera.up = new THREE.Vector3(0, 0, 1);
+            camera.lookAt(scene.position);
+
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+            controls.rotateSpeed = 4.0;
+            controls.panSpeed = 0.1;
+            controls.staticMoving = true;
+
+
+            var axesParams = {
+                size: new THREE.Vector3(1.1, 1.1, 2.1),
+                negSize: new THREE.Vector3(-0.1, -0.1, -1.1),
+                showBoxAxes: true,
+		showAxisTicks: true,
+		showAxisTickLabels: true,
+		axisTickIncrement: new THREE.Vector3(0.5,0.5,0.5),
+		axisTickLabelFontSize: 30,
+		labelFontSize: 40,
+		labelScale: 2.5,
+	    }
+
+
+	    var axes = new Axes(axesParams);
+
+	    scene.add(axes);
+            axes.position.set(-0.5,-0.5,-0.7);
+
+	    var geometry = new THREE.Geometry();
+	    geometry.vertices.push(
+		new THREE.Vector3(),
+		new THREE.Vector3(1,1,0),
+		new THREE.Vector3(0,1,-1),
+		new THREE.Vector3(0,0,2),
+		new THREE.Vector3(1,1,2),
+		new THREE.Vector3(0,1,1)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0,2,1),
+		new THREE.Face3(0,5,2),
+		new THREE.Face3(0,3,5),
+		new THREE.Face3(0,1,3),
+		new THREE.Face3(0,1,3),
+		new THREE.Face3(1,4,3),
+		new THREE.Face3(1,2,5),
+		new THREE.Face3(1,5,4),
+		new THREE.Face3(3,4,5)
+	    );
+	    
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+
+	    var material = new THREE.MeshLambertMaterial({color: 0x999999, ambient: 0x999999, shading: THREE.FlatShading});
+	    
+	    var tetrahedron = new THREE.Mesh(geometry, material);
+	    axes.add(tetrahedron);
+	    
+
+	    geometry = new THREE.Geometry();
+	    
+	    geometry.vertices.push(
+		new THREE.Vector3(0,0,-1.1),
+		new THREE.Vector3(1,1,-1.1),
+		new THREE.Vector3(0,1,-1.1)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0,1,2)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+
+	    material = new THREE.MeshBasicMaterial({color: 0x4444ff, opacity: 0.5, transparent: true, side: THREE.DoubleSide});
+
+	    var shadow = new THREE.Mesh(geometry, material);
+	    axes.add(shadow);
+
+
+	    // Colored lights
+	    var light = new THREE.DirectionalLight( 0xff0000 );
+	    light.position.set( 10, 10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x00ff00 );
+	    light.position.set( 10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x0000ff );
+	    light.position.set( -10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x555555 );
+	    light.position.set( 0, 0, -10 );
+	    scene.add( light );
+	    
+	    light = new THREE.AmbientLight( 0x222222 );
+	    scene.add( light );
+	    
+            animate();
+
+            function animate() {
+		setTimeout(function() {requestAnimationFrame( animate );}, 40);
+                render();
+                controls.update();
+            }
+
+            function render() {
+                renderer.render(scene, camera);
+            }
+
+}
+
+applet_three_applet_AppletTripleIntegralShadowExampleParaboloids02=new MIAppletThree('container_three_applet_AppletTripleIntegralShadowExampleParaboloids02', 400, 400, { static_url: '/static/', media_url: '/media/' });
+applet_three_applet_AppletTripleIntegralShadowExampleParaboloids02.run = function() {
+var renderer=this.renderer, container=this.container, width=this.width, height=this.height, namedObjects=this.namedObjects, parameters=this.parameters;
+            var scene = new THREE.Scene();
+
+            renderer.setSize(width, height);
+
+            container.append(renderer.domElement);
+
+            var camera, controls;
+
+            var VIEW_ANGLE = 4.5, ASPECT = width / height, NEAR = 10.0, FAR = 2000;
+            camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+            scene.add(camera);
+
+            camera.position.set(80, -60, 40);
+            camera.up = new THREE.Vector3(0, 0, 1);
+            camera.lookAt(scene.position);
+
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+            controls.rotateSpeed = 4.0;
+            controls.panSpeed = 0.1;
+            controls.staticMoving = true;
+
+
+            var axesParams = {
+                size: new THREE.Vector3(1.1, 5.1, 2.1),
+                negSize: new THREE.Vector3(-1.1, -1.1, -2.1),
+                showBoxAxes: true,
+		showAxisTicks: true,
+		showAxisTickLabels: true,
+		axisTickIncrement: new THREE.Vector3(0.5,1,1),
+		axisTickLabelFontSize: 30,
+		labelFontSize: 40,
+		labelScale: 2.5,
+	    }
+
+
+	    var axes = new Axes(axesParams);
+
+	    scene.add(axes);
+            axes.position.y = -2;
+	    
+	    function f_surface(u,v) {
+		
+		var x = u*Math.sin(2*Math.PI*v);
+		var z = 2*u*Math.cos(2*Math.PI*v);
+		var y = 5-4*x*x-z*z;
+		
+		return new THREE.Vector3(x, y, z);
+	    }
+	    
+	    
+	    var Nu=30, Nv=80;
+	    
+	    var surfaceGeometry = new THREE.ParametricGeometry(f_surface, Nu, Nv);
+	    
+	    var surfaceMaterial = new THREE.MeshLambertMaterial({color: 0x999999});
+	    
+	    var thesurface = new THREE.Mesh( surfaceGeometry, surfaceMaterial )
+	    axes.add(thesurface);
+
+
+	    function f_surface2(u,v) {
+		
+		var x = u*Math.cos(2*Math.PI*v);
+		var z = 2*u*Math.sin(2*Math.PI*v);
+		var y = x*x+z*z/4;
+		
+		return new THREE.Vector3(x, y, z);
+	    }
+	    
+	    
+
+	    surfaceGeometry = new THREE.ParametricGeometry(f_surface2, Nu, Nv);
+	    
+	    thesurface = new THREE.Mesh( surfaceGeometry, surfaceMaterial )
+	    axes.add(thesurface);
+	    
+	    
+	    
+	    surfaceGeometry = new THREE.CircleGeometry(1, Nu);
+	    surfaceMaterial = new THREE.MeshBasicMaterial({color: 0x003300, opacity: 0.7, transparent: true, side: THREE.DoubleSide });
+	    thesurface = new THREE.Mesh( surfaceGeometry, surfaceMaterial )
+	    thesurface.position.y=-1;
+	    thesurface.rotation.x=Math.PI/2;
+	    thesurface.scale.y=2;
+	    axes.add(thesurface);
+	    
+
+	    // Colored lights
+	    var light = new THREE.DirectionalLight( 0xff0000 );
+	    light.position.set( 10, 10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x00ff00 );
+	    light.position.set( 10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x0000ff );
+	    light.position.set( -10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x555555 );
+	    light.position.set( 0, 0, -10 );
+	    scene.add( light );
+	    
+	    light = new THREE.AmbientLight( 0x222222 );
+	    scene.add( light );
+	    
+            animate();
+
+            function animate() {
+		setTimeout(function() {requestAnimationFrame( animate );}, 40);
+                render();
+                controls.update();
+            }
+
+            function render() {
+                renderer.render(scene, camera);
+            }
+
+}
+
+MathJax.Hub.Register.StartupHook("End",function () {
+jQuery('#container_three_applet_AppletTripleIntegralShadowExamplePlanes01').empty();
+applet_three_applet_AppletTripleIntegralShadowExamplePlanes01.run();
+
+jQuery('#container_three_applet_AppletTripleIntegralShadowExampleParaboloids02').empty();
+applet_three_applet_AppletTripleIntegralShadowExampleParaboloids02.run();
+});
+}
+else {
+ jQuery( ".three_applet_loading_message").remove(); jQuery( ".three_load_error" ).append('The applet did not load, and the above is only a static image representing one view of the applet. <br/> ').append(Detector.getWebGLErrorMessage())
+}
+</script>
+
+<script>
+	renderMathInElement(
+		document.body,
+		{
+			delimiters: [
+				{left: "$$", right: "$$", display: true},
+				{left: "\\[", right: "\\]", display: true},
+				{left: "$", right: "$", display: false},
+				{left: "\\(", right: "\\)", display: false}
+			]
+		}
+	);
+  </script>
+
+</body>
+</html>

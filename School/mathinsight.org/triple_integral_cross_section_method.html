@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>The cross section method for determining triple integral bounds - Math Insight</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="static/css/mistyle.css" rel="stylesheet" type="text/css"/>
+<script src="static/js/jquery-latest.js" type="text/javascript"></script>
+<script type="text/javascript" src="static/geogebra/scripts/deployggb.js"></script>
+
+<meta name="description" content="Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration."/>
+<script src="static/js/jquery.cookie.js"></script>
+<script src="static/js/ajaxcsrf.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="./static/js/katex.min.css">
+<script src="./static/js/katex.min.js"></script>
+<script src="./static/js/auto-render.min.js"></script>
+
+<script type="text/javascript" src="./static/MathJax/latest.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="./static/MathJax/MathJax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+<link id="local" rel="stylesheet" type="text/css" href="./static/MathJax/katex/katex.min.css">
+<script src="./static/MathJax/katex/katex.min.js"></script>
+<script src="./static/MathJax/smrender.js"></script>
+<script src="./static/MathJax/timer.js"></script>
+<script src="./static/MathJax/copy-tex.min.js"></script>
+<link rel="stylesheet" href="./static/MathJax/copy-tex.min.css">
+
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
+</script>
+
+<script src="./static/MathJax/smrender.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-28169224-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<body>
+<ul class="ym-skiplinks">
+	<li><a class="ym-skip" href="triple_integral_cross_section_method.html#pagenav">Skip to navigation (Press Enter)</a></li>
+	<li><a class="ym-skip" href="triple_integral_cross_section_method.html#main">Skip to main content (Press Enter)</a></li>
+</ul>
+
+<nav id="sitenav" role="navigation">
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      <div class="mnav">
+	<ul class="ym-grid ym-equalize linearize-level-2">
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/">Home</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/thread/list">Threads</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/index/general">Index</a></li>
+	  <li class="ym-g10 ym-gl"><a href="https://mathinsight.org/about/mathinsight">About</a></li>
+	  <li class="ym-g50 ym-gl"><div id="search_box"><form class="ym-searchform" action="https://mathinsight.org/search/#search" method="get">
+	  <input id="id_q_a" type="search" name="q" size="18" class="ym-searchfield" placeholder="Search Math Insight..."  />
+	  <input class="ym-searchbutton" type="submit" value="Search" />
+	</form>
+      </div></li>
+	</ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<header>
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      <h1>Math Insight</h1>
+    </div>
+  </div>
+</header>
+
+
+<nav id="pagenav">
+<div id="menu-icon">Page Navigation</div>
+  <div class="ym-wrapper">
+    <ul id="unav">
+ 	
+  <li><a href="triple_integral_cross_section_method.html#sitenav">Top</a></li>
+  
+  <li><a href="triple_integral_cross_section_method.html#overview">Overview</a>
+    
+  </li>
+  <li><a href="triple_integral_cross_section_method.html#example">Example</a>
+    
+  </li>
+  
+  <li><a href="triple_integral_cross_section_method.html#threads">In threads</a><ul>
+  
+  <li><a href="triple_integral_cross_section_method.html#thread_multivar">Multivariable calculus</a></li>
+  
+  <li><a href="triple_integral_cross_section_method.html#thread_math2374">Math 2374</a></li>
+  </ul></li>
+  
+  
+  <li><a href="triple_integral_cross_section_method.html#linksection">Links</a>
+    <ul>
+      <li><a href="triple_integral_cross_section_method.html#similar_pages">Similar pages</a></li>
+<li><a href="triple_integral_cross_section_method.html#related_generic">See also</a></li>
+      
+      </ul>
+  </li>
+  <li><a href="triple_integral_cross_section_method.html#sendmessage">Contact us</a></li>
+
+      </ul>
+  </div>
+      <input type="button" value="x" class="unstick" onclick="unstick(document.getElementById('pagenav'))"/>
+</nav>
+
+
+<div id="breadcrumbs_login">
+  <div class="ym-wrapper">
+    <div class="ym-wbox" style="padding-top:0; padding-bottom: 0;">
+      <div class="ym-grid linearize-level-1">
+	<div class="ym-g66 ym-gl">
+	  <div class="ym-gbox-left">
+	    
+	    
+	    
+	  </div>
+	</div>
+	<div class="ym-g33 ym-gr"> 
+	  <div class="ym-gbox-left" style="text-align: right;">
+	    
+	    <a href="https://mathinsight.org/accounts/login?next=/triple_integral_cross_section_method">log in</a>
+	    
+	  </div>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      
+      
+
+  <div class="ym-column linearize-level-1">
+    <div class="ym-col1">
+      <div class="ym-cbox">
+	<h3>The cross section method for determining triple integral bounds</h3>
+      </div>
+    </div>
+    
+    <div class="ym-col3">
+      <div class="ym-cbox">
+	
+	<aside class="box info suggestbackbox">
+	  <h4>Suggested background</h4>
+	  <ul class="linklist">
+	    
+	    <li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+	    
+	  </ul>
+	</aside>
+	
+	
+      </div>
+    </div>
+  </div>
+
+      <div class="ym-column linearize-level-1">
+	<div id="main_content" class="ym-col1">
+	  <div class="ym-cbox">
+	    
+<a id="overview" class="anchor"></a>
+<p>One tricky part of calculating <a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">define triple integrals</a> is determining the bounds of integration.  To help you in this endeavor, we outline a couple methods for reducing the task of finding these bounds to the simpler task of finding bounds on a double integral combined with a single integral.  One such method is one we call the &ldquo;shadow method,&rdquo; which we describe <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">another page</a>.  Here we describe a method we call the &ldquo;cross section method.&rdquo;</p>
+
+<p>To begin, imagine taking a big meat cleaver and chopping the three-dimensional region $W$ into slices perpendicular to one of the coordinate axes (in a similar manner to the way in which we take <a href="https://mathinsight.org/surface_cross_sections" class="content" title="Cross sections of a surface: A sketch of how to determine the cross sections of surfaces and use them to understand the shape of a surface.">cross sections of a surface</a>).  If you view the axis perpendicular to the slices as being vertical, then you could view the region $W$ as being composed of a bunch of these cross sections stacked on top of each other.  For example, for the below <a href="https://mathinsight.org/ellipsoid" class="content" title="The ellipsoid: Description of the ellipsoid with interactive graphics that illustrate cross sections and the effect of changing parameters.">ellipsoidal</a> region, we would view the $x$-axis as being vertical.</p>
+
+<a id="applet:cross_section_stack" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletCrossSectionStack01" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/cross_section_stack.png" alt="Applet: Stack of cross sections" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Stack of cross sections.</i> Inside the transparent ellipsoidal region $x^2/16+y^2+z^2/4 \le 1$ are a stack of cross sections that are cut perpendicular to the $x$-axis.  If you view the $x$-axis as being vertical, then the cross sections are stacked on top of each other.  You can drag the cyan point on the slider to change the number of cross sections.</p><p><a href="https://mathinsight.org/applet/cross_section_stack" title="An ellipsiodal region visualized as a stack of cross sections." class="applet">More information about applet.</a> </p></section>
+
+<p>Unless $W$ happens to be a cylinder, the size and/or shape of the cross section will vary as a function of the location along the &ldquo;vertical&rdquo; coordinate axis (i.e., the coordinate axis perpendicular to the cross sections).  The integral over $W$ will correspond to the double integrals over all these cross sections, summed up from the bottom cross section up to the top cross section.  If the &ldquo;vertical&rdquo; axis is the $z$-axis, we can write the integral of $f(x,y,z)$ over $W$ as
+$$\iiint_{W} f(x,y,z)dV = \int_{\text{bottom}}^{\text{top}} \left(\iint_{\text{cross section}(z)} f(x,y,z) dx\,dy\right)dz.$$
+On the other hand, if the $y$-axis is the &ldquo;vertical&rdquo; axis, the integral is
+$$\iiint_{W} f(x,y,z)dV = \int_{\text{bottom}}^{\text{top}} \left(\iint_{\text{cross section}(y)} f(x,y,z) dx\,dz\right)dy.$$
+If the $x$-axis is the &ldquo;vertical&rdquo; axis, the integral is
+$$\iiint_{W} f(x,y,z)dV = \int_{\text{bottom}}^{\text{top}} \left(\iint_{\text{cross section}(x)} f(x,y,z) dy\,dz\right)dx.$$
+</p>
+
+<p>Note that the differences between the cross section method and the <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">shadow method</a>.  For the shadow method, the double integral is on the outside (with constant bounds) and the single integral is on the inside (with variable bounds).  In contrast, for the cross section method, the double integral is on the inside (with variable bounds) and the single integral is on the outside (with constant bounds).  This result is consistent with the idea that the cross sections change size or shape with height while the shadow is just a single shape.</p>
+
+<p>We illustrate the cross section method with an example.</p>
+
+<a id="example" class="anchor"></a>
+<h4>Example</h4>
+
+<p>Let $W$ be the pyramid bounded by the planes $z=0$, $z=4-2x$, $z=2-y$, $z=2x$, and $z=2+y$.  Let the density of the pyramid at point $(x,y,z)$ be $f(x,y,z)=xz$.  Find the mass of the pyramid.</p>
+
+<p><b>Solution:</b> The mass of the pyramid is the integral of its density:
+$$\text{mass of pyramid} = \iiint_{W} f(x,y,z) dV,$$
+where $W$ is the pyramid.  The first task is to determine the integration limits given by $W$.</p>
+
+<p>The shape of the pyramid $W$ is shown below.  Given that it points in the positive $z$-direction, we choose the $z$-axis as the &ldquo;vertical&rdquo; axis and make the cross sections perpendicular to the $z$-axis.  As illustrated in the below applet, the cross sections are rectangles.</p>
+
+<a id="applet:triple_integral_cross_section_example_pyramid" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_cross_section_example_pyramid.png" alt="Applet: Demonstrating the cross section method for computing triple integral limits" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Demonstrating the cross section method for computing triple integral limits.</i> The transparent region is a pyramid bounded by the planes $z=0$, $z=4-2x$, $z=2-y$, $z=2x$, and $z=2+y$.  The cross sections perpendicular to the $z$-axis are rectangles, as illustrated by the single green cross section shown.  By moving the rectangle up or down, you can change the value of $z$ at which the cross section is calculated.</p><p><a href="https://mathinsight.org/applet/triple_integral_cross_section_example_pyramid" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
+
+<p>For a given value of $z$, the boundaries of the rectangular cross sections are determined by the equations for the planes $z=4-2x$, $z=2-y$, $z=2x$, and $z=2+y$.  Rewriting those equations for $x$ and $y$ in terms of the given $z$, the boundaries are  $x=2-z/2$, $y=2-z$, $x=z/2$, and $y=z-2$.  Inside the rectangle, the ranges of $x$ and $y$ are 
+$$\begin{gather*}
+  \frac{z}{2} \le x \le 2-\frac{z}{2}\\
+  z-2 \le y \le 2-z
+\end{gather*}$$
+as illustrated below.  The integration limits for the cross section are
+$$\begin{gather*}
+  \iint_{\text{cross section}(z)} f(x,y,z) dy\,dx
+  = \int_{z/2}^{2-z/2} \int_{z-2}^{2-z} f(x,y,z) dy\,dx.
+\end{gather*}$$
+</p>
+
+<p class="centeredImage"><a id="image:triple_integral_rectangle_cross_section" class="anchor"></a><a href="https://mathinsight.org/image/triple_integral_rectangle_cross_section" title="Rectangular region determined from the cross-section method of computing triple integral limits."><img class="displayed" src="media/image/image/triple_integral_rectangle_cross_section.png" alt="Triple integral rectangular cross section" width ="277" height="279" /></a></p>
+
+<p>The bottom of the pyramid is $z=0$, as that plane is one of the given boundaries.  The top of the pyramid occurs where all four planes meet, which is when $z=2$.  Therefore, the top and bottom integration limits are
+$$\int_{\text{bottom}}^{\text{top}} \cdots dz = \int_0^2 \cdots dz.$$
+</p>
+
+<p>Putting the top and bottom integration limits together with the cross section integration limits, we can calculate that the mass of the pyramid is
+$$\begin{align*}
+\text{mass of pyramid} &amp;= \iiint_{W} f(x,y,z) dV\\
+&amp;=\int_{\text{bottom}}^{\text{top}} \left(\iint_{\text{cross section}(z)} f(x,y,z) dx\,dy\right)dz\\
+&amp;=\int_0^2  \int_{z/2}^{2-z/2} \int_{z-2}^{2-z}xz \,dy\,dx\,dz\\
+&amp;=\int_0^2  \int_{z/2}^{2-z/2} xyz \bigg|_{y=z-2}^{y=2-z} dx\,dz\\
+&amp;=\int_0^2  \int_{z/2}^{2-z/2} 2xz(2-z) dx\,dz\\
+&amp;=\int_0^2   x^2z(2-z) \bigg|_{x=z/2}^{x=2-z/2}dz\\
+&amp;=\int_0^2   2z(2-z)^2 dz\\
+&amp;=2\biggl(2z^2-\frac{4}{3}z^3+\frac{z^4}{4}\biggr) \bigg|_0^2 = 2\biggl(8-\frac{32}{3}+4\biggr)=\frac{8}{3}.
+\end{align*}$$
+</p>
+
+<p>It would be possible to calculate the triple integral using the <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">shadow method</a>.  The shadow would be the rectangle $0 \le x \le 2$, $-2 \le y \le 2$.  However, for this pyramid, the calculation would be more difficult as the function $\text{top}(x,y)$ for the shadow method would be four different triangular regions.  You'd have to break up the integral into four parts.  For this reason, the cross section method is easier for this example.
+</p>
+
+	  </div>
+	</div>
+	<div class="ym-col3">
+	  <div class="ym-cbox">
+	   
+
+<a id="threads" class="anchor"></a>
+<section class="box threadbox">
+<h4><a href="https://mathinsight.org/thread/list" class="normaltext">Thread navigation</a></h4>
+
+<a id="thread_multivar" class="anchor"></a>
+<h5 class="pre_list"><a href="https://mathinsight.org/thread/multivar#s9" class="normaltext">Multivariable calculus</a></h5>
+<ul class="linklist">
+  
+  
+  <li> Previous: <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The shadow method for determining triple integral bounds</a></li>
+  
+  
+  
+  
+  <li> Next: <a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+  
+  
+</ul>
+
+<a id="thread_math2374" class="anchor"></a>
+<h5 class="pre_list"><a href="https://mathinsight.org/thread/math2374#s44" class="normaltext">Math 2374</a></h5>
+<ul class="linklist">
+  
+  
+  <li> Previous: <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The shadow method for determining triple integral bounds</a></li>
+  
+  
+  
+  
+  <li> Next: <a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+  
+  
+</ul>
+
+</section>
+
+
+
+<a id="similar_pages" class="anchor"></a>
+<section class="similar_pages">
+<h4 class="pre_list">Similar pages</h4>
+<ul class="linklist">
+
+<li><a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The shadow method for determining triple integral bounds</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_story" class="content" title="Triple integral change of variables story: Story illustrating the process of changing variables in triple integrals.">Triple integral change of variables story</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_introduction" class="content" title="Introduction to changing variables in triple integrals: Introduction to the concepts behind a change of variables in triple integrals.">Introduction to changing variables in triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variables_volume_calculation" class="content" title="Volume calculation for changing variables in triple integrals: A derivation of how a mapping that changes variables in triple integrals transforms volume.">Volume calculation for changing variables in triple integrals</a></li>
+
+<li><a href="https://mathinsight.org/double_integral_change_variables_area_calculation" class="content" title="Area calculation for changing variables in double integrals: A derivation of how a mapping that changes variables in double integrals transforms area.">Area calculation for changing variables in double integrals</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_change_variable_examples" class="content" title="Triple integral change of variable examples: Examples of changing variables in triple integrals.">Triple integral change of variable examples</a></li>
+
+<li><a href="https://mathinsight.org/integrals_multivariable_calculus_summary" class="content" title="The integrals of multivariable calculus: A summary of the integrals of multivariable calculus, including calculation methods and their relationship to the fundamental theorems of vector calculus.">The integrals of multivariable calculus</a></li>
+
+<li><a href="https://mathinsight.org/double_integral_change_variable_illustrated_example" class="content" title="Illustrated example of changing variables in double integrals: An example illustrating with interactive graphics how changing variables transforms regions in the plane.">Illustrated example of changing variables in double integrals</a></li>
+
+<li><a href="https://mathinsight.org/similar/triple_integral_cross_section_method" class="normaltext">More similar pages</a></li>
+</ul>
+</section>
+
+
+ 	  </div>
+	</div>
+      </div>
+      
+      
+      <a id="linksection" class="anchor"></a>
+      <div class="ym-grid linearize-level-1">
+	<div class="ym-g66 ym-gl">
+	  <div class="ym-grid linearize-level-2">
+	    <div class="ym-g50 ym-gl">
+	      <div class="ym-gbox-left">
+		
+
+<a id="related_generic" class="anchor"></a>
+<section class="related_generic">
+<h4 class="pre_list">See also</h4>
+<ul class="linklist">
+
+<li><a href="https://mathinsight.org/triple_integral_introduction" class="content" title="Introduction to triple integrals: An introduction to the definition of triple integrals as well as their formulation as iterated integrals.">Introduction to triple integrals</a></li>
+
+<li><a href="triple_integral_cross_section_method.html" class="content" title="The cross section method for determining triple integral bounds: Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">The cross section method for determining triple integral bounds</a></li>
+
+<li><a href="https://mathinsight.org/triple_integral_examples" class="content" title="Triple integral examples: Examples showing how to calculate triple integrals, including setting up the region of integration and changing the order of integration.">Triple integral examples</a></li>
+
+</ul>
+</section>
+
+
+	      </div>
+	    </div>
+	    <div class="ym-g50 ym-gr">
+	      <div class="ym-gbox">
+		
+
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="ym-g33 ym-gr">
+	  <div class="ym-gbox-right secondary">
+	    
+
+
+	  </div>
+	</div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="ym-wrapper">
+    <div class="ym-wbox">
+      
+
+
+<section class="citation"><h4>Cite this as</h4>
+
+<p><a href="https://mathinsight.org/contributor/dqnykamp" class="normaltext">Nykamp DQ</a>, &ldquo;The cross section method for determining triple integral bounds.&rdquo; From <i>Math Insight</i>. 
+  <a href="http://mathinsight.org/triple_integral_cross_section_method" class="normaltext">http://mathinsight.org<wbr>/triple_integral_cross_section_method</a></p>
+</section>
+
+<section class="keywords"><p>Keywords:
+integral, integration limits, triple integral
+</p></section>
+<a id="sendmessage" class="anchor"></a>
+<section id="messageform">
+<h4 class="commentheading">Send us a message about &ldquo;The cross section method for determining triple integral bounds&rdquo;</h4>
+
+
+
+
+<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='HSTmpQtQQlriN30hbg43jZfMaJjGSCmV' />
+  
+  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="229" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659188749" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="b38a2f5fd7543fcbc34776e32268581b408834c5" /></div>
+  
+<div class="ym-fbox-text">
+<label for="id_name">Name:</label><input id="id_name" maxlength="50" name="name" type="text" /></div>
+<div class="ym-fbox-text">
+<label for="id_email">Email address:</label><input id="id_email" name="email" type="email" /></div>
+
+<div class="ym-fbox-text">
+<label for="id_comment">Comment:</label><textarea cols="40" id="id_comment" maxlength="3000" name="comment" rows="10">
+</textarea></div>
+<div class="ym-fbox-text" style="display:none;">
+<label for="id_honeypot">If you enter anything in this field your comment will be treated as spam:</label><input id="id_honeypot" name="honeypot" type="text" /></div>
+<div class="ym-fbox-button">
+ <input type="submit" name="post" class="ym-button" value="Send message" />
+</div>
+</form>
+
+</section>
+
+
+<section id="copyright">
+
+<div id="copyright_image"><h4><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="static/image/somerights20.png" /></a></h4></div>
+<p><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">The cross section method for determining triple integral bounds</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://mathinsight.org/triple_integral_cross_section_method" property="cc:attributionName" rel="cc:attributionURL">Duane Q. Nykamp</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" class="external">Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License</a>.  For permissions beyond the scope of this license, please <a xmlns:cc="http://creativecommons.org/ns#" href="http://mathinsight.org/about/contact" rel="cc:morePermissions">contact us</a>.</p>
+
+</section>
+
+
+
+<section id="credits">
+<h4>Credits</h4>
+Thanks to RJ Hopkins for correcting errors.
+</section>
+
+
+
+
+    </div>
+  </div>
+</footer>
+
+<!-- full skip link functionality in webkit browsers -->
+<script src="static/js/yaml-focusfix.js"></script>
+<script type="text/javascript">
+  jQuery(document).ready(function($){
+    /* toggle nav */
+    $("#menu-icon").click(function(){
+	$("#unav").slideToggle();
+    });
+    $("#unav").click(function(){
+	$("#unav").slideToggle();
+    });
+});
+</script>
+<script src="static/js/jquery.sticky.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#pagenav").sticky({topSpacing:0});
+  });
+</script>
+<script type="text/javascript">
+  function unstick(obj)
+  {
+  obj.style.position="static";
+  }
+</script>
+<script type="text/javascript">
+ function showHide(shID) {
+	if (document.getElementById(shID)) {
+		if (document.getElementById(shID).style.display == 'none') {
+			document.getElementById(shID+'_show').style.display = 'none';
+			document.getElementById(shID+'_hide').style.display = 'inline';
+			document.getElementById(shID).style.display = 'block';
+		}
+		else {
+			document.getElementById(shID+'_show').style.display = 'inline';
+			document.getElementById(shID+'_hide').style.display = 'none';
+			document.getElementById(shID).style.display = 'none';
+		}
+	}
+  }
+  function inIframe () {
+    try { 
+	return window.self !== window.parent; 
+    } 
+    catch (e) { 
+	return true; 
+    }
+  }
+
+function isElementInViewport (el) {
+    // From http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport
+    // Modified so true is partially visible
+
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.bottom >= 0 &&
+        rect.right >= 0 &&
+        rect.top <= jQuery(window).height() &&
+        rect.left <= jQuery(window).width()
+    );
+}
+
+
+</script>
+
+
+<div id="geogebra_onit"><script type="text/javascript">
+function ggbOnInit(arg) {
+console.log(arg);
+
+if(inIframe()) { parent.ggbOnInit(arg);} 
+}
+</script></div><script src="static/js/three/three.js"></script><script src="static/js/three/controls/TrackballControls.js"></script><script src="static/js/three/Detector.js"></script><script src="static/js/three/MIAppletThree.js"></script><script src="static/js/three/MIThreeObjects.js"></script><script src="static/js/three/Axes.js"></script><script src="static/js/three/Arrow.js"></script><script src="static/js/three/VectorField.js"></script><script src="static/js/three/Slider.js"></script><script src="static/js/three/DragObjects.js"></script><script src="static/js/three/TextLabel.js"></script><script src="static/js/three/Geometries.js"></script>
+<script>
+if(Detector.webgl) {
+
+applet_three_applet_AppletCrossSectionStack01=new MIAppletThree('container_three_applet_AppletCrossSectionStack01', 400, 400, { static_url: '/static/', media_url: '/media/' });
+applet_three_applet_AppletCrossSectionStack01.run = function() {
+var renderer=this.renderer, container=this.container, width=this.width, height=this.height, namedObjects=this.namedObjects, parameters=this.parameters;
+            var scene = new THREE.Scene();
+
+            var sceneOrtho = new THREE.Scene();
+
+            renderer.setSize(width, height);
+            renderer.autoClear = false; // To render sceneOrtho overlay on top of scene
+            container.append(renderer.domElement);
+
+            var camera, controls;
+
+            var VIEW_ANGLE = 4.5, ASPECT = width / height, NEAR = 10.0, FAR = 2000;
+            camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+            scene.add(camera);
+
+            camera.position.set(80, -110, 30);
+            camera.up = new THREE.Vector3(0, 0, 1);
+            camera.lookAt(scene.position);
+
+            var cameraOrtho = new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, 0.1, 20);
+            cameraOrtho.position.z = 10;
+            sceneOrtho.add(cameraOrtho);
+
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+            controls.rotateSpeed = 4.0;
+            controls.panSpeed = 0.1;
+            controls.staticMoving = true;
+
+            var drag = new DragObjects(renderer, camera, { controls: controls, camera2: cameraOrtho });
+            scene.add(drag);
+
+            var axesParams = {
+                size: new THREE.Vector3(4.1, 1.1, 2.1),
+                negSize: new THREE.Vector3(-4.1, -1.1, -2.1),
+                showBoxAxes: true,
+		showAxisTicks: true,
+		showAxisTickLabels: true,
+		axisTickIncrement: new THREE.Vector3(1,0.5,1),
+		axisTickLabelFontSize: 30,
+		labelFontSize: 40,
+		labelScale: 4,
+	    }
+
+
+	    var axes = new Axes(axesParams);
+
+	    scene.add(axes);
+
+	    var material = new THREE.MeshLambertMaterial({color: 0x999999, opacity: 0.7, transparent: true});
+	    var geometry = new THREE.SphereGeometry(1,48,36);
+
+	    var ellipsoid = new THREE.Mesh(geometry, material);
+	    ellipsoid.scale.set(4,1,2);
+	    axes.add(ellipsoid);
+	    
+	    var crossSectionGeometry = new THREE.CircleGeometry(1,16);
+	    var crossSectionMaterial = new THREE.MeshBasicMaterial({color: 'yellow', side: THREE.DoubleSide});
+	    
+	    var crossSection = new THREE.Mesh(crossSectionGeometry, crossSectionMaterial);
+	    crossSection.rotation.y=Math.PI/2;
+	    
+	    //axes.add(crossSection);
+	    
+	    var mint=0, maxt=2*Math.PI, nt=30, dt = (maxt-mint)/nt;
+	    var tubeRadius = 0.02;
+	    var edgepoints=[]
+	    for(var i=0; i<=nt; i+=1) {
+		var t=i*dt;
+		edgepoints.push(new THREE.Vector3(Math.cos(t), Math.sin(t),0));
+	    }
+	    var edgePath = new THREE.SplineCurve3(edgepoints);
+
+	    var edgeGeometry = new THREE.TubeGeometry(edgePath, nt, tubeRadius, 10, true);
+
+	    var edgeMaterial = new THREE.MeshBasicMaterial({color: 0x000000, ambient: 0x000000});
+
+	    var edge = new THREE.Mesh(edgeGeometry, edgeMaterial);
+	    
+	    crossSection.add(edge);
+
+	    var crossSections = new THREE.Object3D();
+	    axes.add(crossSections);
+
+	    var ncsMax = 50;
+	    
+	    var minx=-4, maxx=4, ncs=20, dx=(maxx-minx)/(ncs+1);
+
+	    for(var i=1; i<=ncsMax; i++) {
+		var x =minx+ i*dx;
+		var scale = Math.sqrt(1-x*x/16);
+		if(x >= maxx) {
+		    x = maxx;
+		    scale=0.00001;
+		}
+		var cs = crossSection.clone();
+		cs.position.x=x;
+		cs.scale.set(2*scale,scale,1);
+		crossSections.add(cs);
+	    }
+
+
+            var slider = new Slider({ dragobjects: drag.objects2, color: 'cyan', length: 20, minval: 1, maxval: ncsMax, pointSize: 0.8, pointName: "n", pointColor: 'cyan', pointRoundDigits: 0 });
+            sceneOrtho.add(slider);
+            slider.position.set(0, -height / 2 + 28, 1);
+            slider.scale.set(8, 8, 1);
+            slider.children[1].label.scale.set(100, 100, 1);
+            slider.children[1].label.position.y = -1.5;
+            slider.setValue(20);
+
+            slider.addDependent(crossSections);
+
+	    crossSections.addEventListener('refresh', function(event) {
+		
+		ncs = Math.round(slider.getValue());
+		dx=(maxx-minx)/(ncs+1);
+
+		for(var i=1; i<=ncsMax; i++) {
+		    var x =minx+ i*dx;
+		    var scale = Math.sqrt(1-x*x/16);
+		    if(x >= maxx) {
+			x = maxx;
+			scale=0.00001;
+		    }
+		    var cs = crossSections.children[i-1];
+		    cs.position.x=x;
+		    cs.scale.set(2*scale,scale,1);
+		}
+		
+	    });
+
+	    crossSections.dispatchEvent({type:'refresh'});
+	    
+
+	    // Colored lights
+	    var light = new THREE.DirectionalLight( 0xff0000 );
+	    light.position.set( 10, 10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x00ff00 );
+	    light.position.set( 10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x0000ff );
+	    light.position.set( -10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x555555 );
+	    light.position.set( 0, 0, -10 );
+	    scene.add( light );
+	    
+	    light = new THREE.AmbientLight( 0x222222 );
+	    scene.add( light );
+	    
+            animate();
+
+            function animate() {
+		setTimeout(function() {requestAnimationFrame( animate );}, 40);
+                render();
+                controls.update();
+            }
+
+            function render() {
+                renderer.clear();
+                renderer.render(scene, camera);
+                renderer.clearDepth();
+                renderer.render(sceneOrtho, cameraOrtho);
+            }
+
+}
+
+applet_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02=new MIAppletThree('container_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02', 400, 400, { static_url: '/static/', media_url: '/media/' });
+applet_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02.run = function() {
+var renderer=this.renderer, container=this.container, width=this.width, height=this.height, namedObjects=this.namedObjects, parameters=this.parameters;
+            var scene = new THREE.Scene();
+
+            renderer.setSize(width, height);
+
+            container.append(renderer.domElement);
+
+            var camera, controls;
+
+            var VIEW_ANGLE = 4.5, ASPECT = width / height, NEAR = 10.0, FAR = 2000;
+            camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+            scene.add(camera);
+
+            camera.position.set(70, -20, 30);
+            camera.up = new THREE.Vector3(0, 0, 1);
+            camera.lookAt(scene.position);
+
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+            controls.rotateSpeed = 4.0;
+            controls.panSpeed = 0.1;
+            controls.staticMoving = true;
+
+	    var drag = new DragObjects(renderer, camera, { controls: controls });
+	    scene.add( drag );
+
+            var axesParams = {
+                size: new THREE.Vector3(2.1, 2.1, 2.1),
+                negSize: new THREE.Vector3(-0.1, -2.1, -0.1),
+                showBoxAxes: true,
+		showAxisTicks: true,
+		showAxisTickLabels: true,
+		axisTickIncrement: new THREE.Vector3(0.5,1,1),
+		axisTickLabelFontSize: 30,
+		labelFontSize: 40,
+		labelScale: 2.5,
+	    }
+
+
+	    var axes = new Axes(axesParams);
+
+	    scene.add(axes);
+            axes.position.set(-1,0,-1);
+
+	    
+	    var material = new THREE.MeshLambertMaterial({color: 0x999999, ambient: 0x999999, shading: THREE.FlatShading, opacity: 0.5, transparent: true, side: THREE.DoubleSide});
+	    
+	    var geometry = new THREE.Geometry();
+
+	    geometry.vertices.push(
+		new THREE.Vector3(1,0,2),
+		new THREE.Vector3(0,-2,0),
+		new THREE.Vector3(2,-2,0)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0, 1,2)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+	    
+	    var surfaceYNeg = new THREE.Mesh(geometry, material);
+	    axes.add(surfaceYNeg);
+
+
+	    geometry = new THREE.Geometry();
+
+	    geometry.vertices.push(
+		new THREE.Vector3(1,0,2),
+		new THREE.Vector3(2,-2,0),
+		new THREE.Vector3(2,2,0)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0, 1,2)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+	    
+	    var surfaceXPos = new THREE.Mesh(geometry, material);
+	    axes.add(surfaceXPos);
+
+
+	    geometry = new THREE.Geometry();
+
+	    geometry.vertices.push(
+		new THREE.Vector3(1,0,2),
+		new THREE.Vector3(2,2,0),
+		new THREE.Vector3(0,2,0)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0, 1,2)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+	    
+	    var surfaceYPos = new THREE.Mesh(geometry, material);
+	    axes.add(surfaceYPos);
+
+
+	    geometry = new THREE.Geometry();
+
+	    geometry.vertices.push(
+		new THREE.Vector3(1,0,2),
+		new THREE.Vector3(0,-2,0),
+		new THREE.Vector3(0,2,0)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0, 2,1)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+	    
+	    var surfaceXNeg = new THREE.Mesh(geometry, material);
+	    axes.add(surfaceXNeg);
+
+
+	    geometry = new THREE.Geometry();
+
+	    geometry.vertices.push(
+		new THREE.Vector3(0,-2,0),
+		new THREE.Vector3(2,-2,0),
+		new THREE.Vector3(2,2,0),
+		new THREE.Vector3(0,2,0)
+	    );
+	    geometry.faces.push(
+		new THREE.Face3(0, 3,2),
+		new THREE.Face3(0, 2,1)
+	    );
+
+	    geometry.computeCentroids();
+	    geometry.computeFaceNormals();
+	    geometry.computeVertexNormals();
+	    
+	    var surfaceBot = new THREE.Mesh(geometry, material);
+	    axes.add(surfaceBot);
+
+
+	    var vertLineGeometry = new THREE.Geometry();
+	    vertLineGeometry.vertices.push(
+		new THREE.Vector3(0,0,0),
+		new THREE.Vector3(0,0,1.8)
+	    );
+	    var vertLine = new THREE.Line(vertLineGeometry, new THREE.LineBasicMaterial());
+	    vertLine.visible=false;
+	    vertLine.position.x=1;
+	    axes.add(vertLine);
+
+	    var planeGeometry = new THREE.PlaneGeometry(1,2,1,1);
+
+	    var planeMaterial = new THREE.MeshLambertMaterial({color: 'green', ambient: 'green', side: THREE.DoubleSide});
+	    var surfacePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+	    surfacePlane.draggable=true;
+	    surfacePlane.constrain_to_parent=true;
+	    drag.objects.push(surfacePlane);
+	    vertLine.add(surfacePlane);
+
+	    surfacePlane.addEventListener('moved', function(event) {
+		var scale = 2-surfacePlane.position.z;
+		surfacePlane.scale.set(scale,scale,1);
+	    });
+
+	    surfacePlane.position.z=0.5;
+	    surfacePlane.dispatchEvent({type: 'moved'});
+
+	    // Colored lights
+	    var light = new THREE.DirectionalLight( 0xff0000 );
+	    light.position.set( 10, 10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x00ff00 );
+	    light.position.set( 10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x0000ff );
+	    light.position.set( -10, -10, 10 );
+	    scene.add( light );
+	    light = new THREE.DirectionalLight( 0x555555 );
+	    light.position.set( 0, 0, -10 );
+	    scene.add( light );
+	    
+	    light = new THREE.AmbientLight( 0x222222 );
+	    scene.add( light );
+	    
+            animate();
+
+            function animate() {
+		setTimeout(function() {requestAnimationFrame( animate );}, 40);
+                render();
+                controls.update();
+		if(camera.position.z > 0) {
+		    surfaceBot.renderDepth=1;
+		}
+		else {
+		    surfaceBot.renderDepth=0;
+		}
+		if(camera.position.y > 0) {
+		    surfaceYNeg.renderDepth=0.9;
+		    surfaceYPos.renderDepth=0.1;
+		}
+		else {
+		    surfaceYNeg.renderDepth=0.1;
+		    surfaceYPos.renderDepth=0.9;
+		}
+		if(camera.position.x > 1) {
+		    surfaceXNeg.renderDepth=0.9;
+		    surfaceXPos.renderDepth=0.1;
+		}
+		else {
+		    surfaceXNeg.renderDepth=0.1;
+		    surfaceXPos.renderDepth=0.9;
+		}
+            }
+
+            function render() {
+                renderer.render(scene, camera);
+            }
+
+}
+
+MathJax.Hub.Register.StartupHook("End",function () {
+jQuery('#container_three_applet_AppletCrossSectionStack01').empty();
+applet_three_applet_AppletCrossSectionStack01.run();
+
+jQuery('#container_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02').empty();
+applet_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02.run();
+});
+}
+else {
+ jQuery( ".three_applet_loading_message").remove(); jQuery( ".three_load_error" ).append('The applet did not load, and the above is only a static image representing one view of the applet. <br/> ').append(Detector.getWebGLErrorMessage())
+}
+</script>
+
+<script>
+	renderMathInElement(
+		document.body,
+		{
+			delimiters: [
+				{left: "$$", right: "$$", display: true},
+				{left: "\\[", right: "\\]", display: true},
+				{left: "$", right: "$", display: false},
+				{left: "\\(", right: "\\)", display: false}
+			]
+		}
+	);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>The Internet Project</title>
+	<link rel="icon" href="./img/logo.png">
+	<style>
+		body {
+			background-color: #26262B
+		}
+
+		a:link {
+			color: #AAFF84;
+		}
+
+		a:visited {
+			color: #84FFEE;
+		}
+
+		a:focus {
+			border-bottom: 1px solid;
+			background: #BAE498;
+		}
+
+		a:hover {
+			border-bottom: 1px solid;
+			background: #AA48FF;
+		}
+
+		a:active {
+			background: #265301;
+			color: #AA48FF;
+
+		}
+
+		ol {
+			color: white;
+		}
+
+		h1 {
+			color: white;
+		}
+
+		h2 {
+			color: white;
+			padding-left: 2rem;
+		}
+
+		p {
+			color: white;
+			padding-left: 1rem;
+			padding-right: 5rem;
+		}
+
+		.navbar {
+			overflow: visible;
+			background-color: #05052B;
+			position: fixed;
+			width: 100%;
+			z-index: 1000;
+			-moz-transition: all 0.2s ease-in;
+			-o-transition: all 0.2s ease-in;
+			-webkit-transition: all 0.2s ease-in;
+			transition: all 0.2s ease-in;
+		}
+
+		.navbar a {
+			float: left;
+			font-size: 16px;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+			z-index: 99999999999999999999;
+		}
+
+		.navbar a:hover {
+			background-color: blue;
+			box-shadow: 0px 1px 5px 3px #45bbff;
+		}
+
+		.invert {
+			-webkit-filter: invert(1);
+			filter: invert(1);
+		}
+
+		img:hover {
+			box-shadow: 0 0 2px 1px blue;
+		}
+
+		.main {
+			margin-left: 5%;
+			margin-right: 5%;
+		}
+
+		.subnav {
+			float: left;
+			overflow: hidden;
+		}
+
+		.subnav .subnavbtn {
+			font-size: 16px;
+			border: none;
+			outline: none;
+			color: white;
+			padding: 14px 16px;
+			background-color: inherit;
+			font-family: inherit;
+			margin: 0;
+			display: inline-block;
+		}
+
+		.subnav:hover .subnav-content {
+			display: block;
+		}
+
+		.subnav:hover {
+			background-color: rgb(234, 0, 255);
+			box-shadow: 0px 1px 5px 3px #00eeff !important;
+		}
+
+		.subnav-content {
+			display: none;
+			position: absolute;
+			left: 0;
+			width: 100%;
+			background-color: rgb(44, 139, 0);
+		}
+
+		.subnav-content a {
+			float: left;
+		}
+	</style>
+</head>
+
+<body>
+	<!--background div-->
+	<div
+		style="background-image: url('./img/pixelcitybackground.jpg');background-repeat: no-repeat;background-attachment:fixed;  background-size:cover;  background-size: 100% 100%;">
+		<!--navigation bar-->
+		<div class="navbar">
+			<abbr title="The Greenhat Group"><img style="float:left;width:4rem;" src="./img/logo.png"></abbr>
+			<a href="#">Home</a>
+			<div class="subnav">
+				<button class="subnavbtn">Communication</button>
+				<div class="subnav-content">
+					<a href="#path">Path</a>
+					<a href="#datastream">Data Stream</a>
+					<a href="#packets">Packets</a>
+					<a href="#router">Routers/Servers</a>
+					<a href="#netredun">Network Redundancy</a>
+					<a href="#bandbit">Bandwidth/Bitrate</a>
+					<a href="#latency">Latency</a>
+					<a href="#compd">Computing Device/System/Network</a>
+				</div>
+			</div>
+			<div class="subnav">
+				<button class="subnavbtn">Protocols</button>
+				<div class="subnav-content">
+					<a href="#protocol">Protocol</a>
+					<a href="#ip">Internet Protocol</a>
+					<a href="#ipa">IP Addresses</a>
+					<a href="#udp">User Data Protocol</a>
+					<a href="#tcp">Transmission Control Protocol</a>
+					<a href="#http">Hypertext Transfer Protocol</a>
+					<a href="#tls">Transport Layer Security</a>
+				</div>
+			</div>
+			<div class="subnav">
+				<button class="subnavbtn">Networking</button>
+				<div class="subnav-content">
+					<a href="#faulttol">Fault Tolerance</a>
+					<a href="#netrel">Network Reliability</a>
+					<a href="#netscal">Network Scalability</a>
+					<a href="#dns">Domain Name System</a>
+				</div>
+			</div>
+		</div>
+		<br><br>
+		<!--main div-->
+		<div class="main" style="margin-top:3rem;background-color:rgba(0, 0, 0, 0.69);">
+			<!--hehehehehehehe 69 funnnyyyyyyyyy-->
+			<div id="intro" style="padding-top:1rem;">
+				<abbr title="An AP Computer Science Principles project">
+					<center>
+						<h1>The Internet</h1>
+					</center>
+				</abbr>
+				<center>
+					<p>
+						The Internet is a vast and complicated network of different computing devices that connects billions of devices together.
+						Without the Internet, the moden world as we know of would almost come to a complete stop. However, such a vital element of
+						every person's everyday life is not completely understood. This webpage will introduce basic concepts of the Internet for its
+						readers to get a general idea of what it is, and how it works.
+					</p>
+				</center>
+			</div>
+			<hr>
+			<div id="content1">
+				<br>
+				<!-- General info -->
+				<p>
+					<b style="font-size:20px;"><u>Consider the following:</u></b><br>
+					You want to tell someone some information, but you and that other person are seperated by a long distance.
+					How would you tell that person the information? Yes, you can take your time and go up to them to tell them, 
+					but <i>is that practical?</i>
+					<b><u>No.</u></b>
+					<br><br>
+					So how would you get information to the other person? For a long time, this had been a problem. How can you send information to a person far away
+					quickly without having yourself or someone physically go to them and deliver said information? As humanity developed, this problem was tackled by
+					numerous bright minds, and over the decades, different methods have been developed and enhanced until we are left with a magnificent, interwined
+					network of information sending systems and computing devices called <u>the internet</u>.
+					<br><br>
+					To understand the internet, we have to first take a look at how we can send information. To send information, we can utilize the electromagnetic force.
+					The electromagnetic force is one of the fundamental fields that permeates the world around us, giving us various different types of particles that we 
+					can use to send signals. For instance, take a photon of the visible light spectrum. We can send the photon through a glass tube, and it will arrive 
+					at the other side unhindered. Or, take an electron for example, and send it thorugh a tube of conductive metals and it will arrive at the other side 
+					unhindered as well.
+					<br><br>
+					Then, observe the simplest form of information we can send through such particles: If a particle is present, let's call this a 1. If a particle is not
+					present witin a given time frame, call this a 0. More generally, let's define the information we can send - the 0s and 1s, 
+					<b style="color:deepskyblue"><i>bits</i></b>. 
+					We can say that different combinations of bits represent different data. Let's say we want to send the English alphabet, numerals, and different signs, 
+					which we will denote as a whole to be called the <b style="color:deepskyblue"><i>ASCII</i></b> character group. Since there are 255 total symbols in 
+					the ASCII group, we can set a each character as a combination of 8 bits, since 2<sup>8</sup> = 256, enough to encode the entirety of ASCII with one left over.
+					More generally, since it takes 8 bits to encode each character, we can also call this <b style="color:deepskyblue"><i>UTF-8</i></b> encoding.
+					<br><br>
+					Now in order to send information encoded in UTF-8, we must send it through physical wires that connect two sides, called a path.
+				</p>
+				<p id="path" style="color:lightsalmon;">
+					<span style="color:white;font-size:15px"><b><u>Path</u></b></span> - A series of connections between a sender and ending with a receiver.
+				</p>
+				<p>
+					The information we send in a path is can be called a 
+					<b id="datastream" style="color:deepskyblue"><i>data stream</i></b>. 
+					To format and organize a message, it can be sent in seperate sections, which we can call 
+					<b id="packets" style="color:deepskyblue"><i>packets</i></b>. 
+					We can construct packets to contain metadata about the sender and reciever, along with its main message so that it is more organized. 
+					Now, speaking of organizability, do you notice another problem? How will the other side understand the information you sent? 
+					We can avoid this confusion by establishing a set of rules that we can call a protocol which will guide both the sender and the reciever 
+					in the encoding and decoding of sent/recieved information.
+				</p>
+				<p id="protocol" style="color:lightsalmon;">
+					<span style="color:white;font-size:15px"><b><u>Protocol</u></b></span>
+					- A system of rules that allows two or more entities to transmit information, defining the rules,
+					syntax, semantics and synchronization of communication and possible error recovery methods.
+				</p>
+				<p>
+					The connection between you and the person recieving the information can be said to be a 
+					<span style="color:deepskyblue" id="LAN"><b><i>Local Area Network</i></b></span> (LAN).
+					If there are more people in such a communication chain, it can be called a 
+					<span style="color:deepskyblue" id="MAN"><b><i>Metripolitan Area Network</i></b></span> (MAN).
+					Lastly, if the connection spans enourmous areas with numerous senders and recievers, it is called a
+					<span style="color:deepskyblue" id="WAN"><b><i>Wide Area Network</i></b></span> (WAN).
+					<br><br>
+					In these large communication networks, the devices you send the information are typically called
+					<span id="compd" style="color:deepskyblue"><b><i>computing devices</i></b></span>, and
+					the amount of data that can be sent along the of a network's wires via computing devices is capped
+					to a certin extent, and this maximum data sending rate is what we call
+					<span id="bandbit" style="color:deepskyblue"><b><i>bandwidth</i></b></span>. More specifically, the
+					bandwith defines the amount of bits we can send per a given unit of time, which we call 
+					<span style="color:deepskyblue"><b><i>bitrate</i></b></span>. Usually, the bitrate is limited by the 
+					physical capability of the wires themselves, but sometimes the bitrate in large communication networks 
+					can be limited to a smaller amount to allow everyone to get their fair share of communication with the wires. 
+					In these communication networks, the interconnected computing devices exchanging information can be referred to as a
+					<span style="color:deepskyblue"><b><i>computing system</i></b></span>, or a 
+					<span style="color:deepskyblue"><b><i>computing network</i></b></span>.
+					<br><br>
+					Furthermore, in large communication networks, individual communications between two computing device
+					entities typically get complicated and convoluted, so in many cases, a central
+					reference and redirection device where all entities can connect to and refer to other people is
+					called a <span id="router" style="color:deepskyblue"><b><i>router</i></b></span>,
+					or in some cases, a <span style="color:deepskyblue"><b><i>server</i></b></span>, depending on the
+					scenario and criteria in which it operates. The time it takes for
+					information to be directed to and from these servers/routers, or in between different computing
+					devices is called <span id="latency" style="color:deepskyblue"><b><i>latency</i></b></span>.
+					Lower latencies meaning faster communication times, while higher latencies mean vice versa and can
+					be caused by low bandwith/bitrate.
+					<br><br>
+					How well a communication network can work, usually when left unmoderated is measured as 
+					<span id="netrel" style="color:deepskyblue"><b><i>network reliability</i></b></span>,
+					where properties such as how well a network can cope and withstand with certain (usually large)
+					bandwiths and requests are calculated. The ability for such a network for operate
+					reliably on different scales not only in the present but in the future as well is called
+					<span id="netscal" style="color:deepskyblue"><b><i>network scalability</i></b></span>.
+				</p>
+				<p>
+					Now let's take a look back at our protocols. We have established a set of rules - a protocol, that
+					allows for information to be encoded and parsed at the sender and reciever, respectively. Let's call this the 
+					<b id="ip" style="color:deepskyblue"><i>Internet Protocol</i></b>, or IP for short.
+					<br><br>
+					But speaking of large communication networks, another thing to think about is how we can identify
+					our sender? Well, we can label each entity in a network with an address,
+					just like how our homes in the real world are labled with one. Let's call these 
+					<b id="ipa" style="color:deepskyblue"><i>Internet Protocol addresses</i></b> (IP address).
+				</p>
+				<p>
+					In a general sense, an IP address is the an ID that a computer connected to a network via the IP.
+					Now, how can we construct such an address?
+					<br><br>
+					Let's try this: define each IP address as a 32-bit number, such as "127.0.0.1", where each number
+					narrows down the closer and closer to the entity itself.
+					For example, 127 can refer to which WAN the entity is connected to. The first 0 refers to the MAN,
+					the second 0 to the LAN, and finally, the 1 to the entity itself.
+					This type of IP address, which we will refer to as 
+					<span style="color:deepskyblue" id="LAN"><b><i>Internet Protocol version 4 addresses</i></b></span> 
+					are constructed in such a way where there would be a total of 2<sup>32</sup> = 4,294,967,296 different IP addresses.
+					However, despite the large number, it will run out eventually.
+					<br><br>
+					As a result, we can construct a larger type of IP address. Define a 128-bit string of not neccesarily numbers,
+					such as "3010:cb9:0:1425:581:6:2" to be the new format of IP address, which we will refer to as
+					<span style="color:deepskyblue" id="LAN"><b><i>Internet Protocol version 6 addresses</i></b></span>.
+					In such a construction, there are a total of 2<sup>128</sup> = 340,282,366,920,938,463,463,374,607,431,768,211,456. 
+					Such a large number would be truly enough to sustain the entirety of the internet for a long, long time. 
+					More details on how these IP addresses are constructed are shown below:
+				</p>
+				<center>
+					<img class="invert" style="width:40%;" src="./img/ipv4-address-structure.png">
+					<img class="invert" style="width:30%;" src="./img/ipv6-address-structure.png">
+				</center><br>
+				<p>
+					The way the IP and its IP addresses are structured serves its purpose well, but sometimes it's not
+					enough. We can expand on this by adding a layer.
+					<br><br>
+					Let's say, we want a very fast transport of urgent information, not neccesarily detailed, but we
+					just want to get this information across. How can we do that?
+					First, we want the minimum amount of protocol mechanisms. We will send a message to a reciever
+					without establishing any prior preperation, a <i>connectionless communication</i>
+					if you will, and send in packets with minimum metadata and a primitive checksum in their headers.
+					This is fast, but there is no guarantee of delivery of the packets, the order of the packets
+					arriving correctly, or packets duplicating. We can call this type of fast but inaccrate protocol the 
+					<b id="udp" style="color:deepskyblue"><i>User Datagram Protocol</i></b> (UDP).
+				</p>
+				<center><img class="invert" style="width:60%" src="./img/udp.svg"></center>
+				<p>
+					Speaking of losing information, there may be times when a component of a system fails. The ability
+					for a system to continue working despite a component failure is measured by its
+					<span id="faulttol" style="color:deepskyblue"><b><i>fault tolerance</i></b></span>, and the method
+					in which fault tolerance is enacted, usually by the presence of replacement components,
+					is called <span id="netredun" style="color:deepskyblue"><b><i>network redundancy</i></b></span>.
+				</p>
+				<p>
+					On the other hand, what if we want to send very precise information that can be sent slowly, but
+					must be very accurate? Let's construct this type of protocol.
+					We can set up a connection between the sender and reciever first, before any of the main data is
+					sent. This ensures that a stable pathway is availible.
+					We then set up a longer packet metadata header, which includes a checksum, ports in which the data
+					is coming and recieving from, and packet ordering numbers.
+					Then, once the information is sent, the reciever must send back a message that either says, all
+					information was sent, or some information is missing. In the latter case,
+					the reciever will also include the identification of which packets are missing, and the sender can
+					resend them, and repeat until all data is sent and recieved.
+					This type of accurate but slow protocol can be called the 
+					<b id="tcp" style="color:deepskyblue"><i>Transmission Control Protocol</i></b> (TCP).
+				</p>
+				<center><img class="invert" style="width:60%" src="./img/tcp.svg"></center>
+				<p>On the whole, the three different protocols descibed here can be thought of as shown below:</p>
+				<ol>
+					<li><b>UDP</b>: Inaccurate but fast transmission.</li>
+					<li><b>IP</b>: Medium accuracy and average transmission speed.</li>
+					<li><b>TCP</b>: Extreme accurace but slow transmission.</li>
+				</ol>
+				<p>
+					We can also use combinations of all three types of protocols to send information, depending on the
+					scenario. The combinations TCP/IP and UDP/IP are the most used.
+				</p>
+				<p>
+					However, all three of these protocols are complicated. Is there a way to generalize them in another
+					layer of abstraction so that we have to only deal with one more "whole" protocol?
+					We can construct a new type of general protocol that encompasses all three previous protocols. This
+					protocol will automatically apply UDP, IP or TCP based on the situation, and on the whole
+					attempt to make things easier by hiding the previous protocols under a layer of abstraction. To get
+					information, this new protocol will send two things - a
+					request which specifies what the sender is sending or wants to recieve - a 
+					<i><b>get request</b></i>, and the IP address which the sender wants to send or recieve the
+					infroamtion from. We can call this type of abstract and generalized protocol the 
+					<b id="http" style="color:deepskyblue"><i>Hypertext Transfer Protocol</i></b> (HTTP).
+					<br><br>
+					An example of the protocol in action is shown below:
+				</p>
+				<center><img style="width:50%;"
+						src="./img/http-request-telnet-ubuntu.png">
+				</center>
+				<p>
+					Now that we have a very efficient, generalized protocol that encompasses all the previous protocols,
+					we have to look at something else. Security. Although we may not want to believe it, there will always 
+					be that select few who attempt to do malicious things in a society, so our protocols must have a layer of security
+					to protect the integrity of our data. We can encrypt our data with a method called the 
+					<b style="color:deepskyblue"><i>Secure Socket layer</i></b> (SSL). This encrypts
+					our data with a cryptographic key for authentication and encryption, MD5 has integrity verification,
+					and security on both the sending and recieving end, which means that as long as someone does not have 
+					this key, they can not access this data.
+					<br><br>
+					So we're safe. Right? <b><u>No.</u></b> The SSL method for encryption has major flaws. If we use the
+					same cryptographic keys for authentication and and encryption, this would mean
+					that as long as an attacker inserted itself into either channels, with authentication being easier,
+					it can decrypt the info. Furthermore, since the SSL only secures two ends of the
+					connection, attackers can insert themselves in the middle of a communication and intercept the data.
+					<br><br>
+					Yikes. Let's try something else. First, let's secure the connection at set intervals in time to
+					prevent man-in-the-middle attacks. At each section, we would have a different
+					key for encryption and authentication. We use a stronger hash, the RSA-256, and both the sender and
+					reciever would have sessions for the keys. This would drastically improve upon
+					the SSL, and such a new improved method we can call the 
+					<b id="tls" style="color:deepskyblue"><i>Transport Layer Security</i></b> (TLS).
+				</p>
+				<p>
+					This creates a very structered, secure, and layered protocol data transport system that can be used
+					efficiently by large groups of people to exchange information.
+					Overall, this system consists of the following parts:
+				<ol>
+					<li><b>Physical</b> - The physical wires that connect one another in LAN, MAN, and WAN.</li>
+					<li><b>Base Protocols</b> - IP is a base protocol, and the UDP and TCP develop upon it. All three
+						protocols are usually used in combination with one another.</li>
+					<li><b>General Protocol</b> - HTTP is the protocol that encompasses the base protocols, with TLS
+						encryption for security.</li>
+				</ol>
+				</p>
+				<center><img class="invert" src="./img/layers.png"></center>
+				<br>
+				<p>
+					Now that our communication is secured, do you notice something that feels uncomfortable? Every time
+					we want to refer to an entity in the network, we have to refer to
+					its long and redundant IP address. This is very inconvenient. Is there a way we can typically
+					shorten this IP address down to something feasible, easily memorizable,
+					or catchy, but still go to the same IP address?
+					<br><br>
+					Let us construct this. First, take the IP 127.0.0.1. This is certainly a mouthful to say. Let's
+					shorten this and call it any arbitrary name, let's say... "localhost".
+					Ok, that's fair. How do we tell everyone that localhost is the IP 127.0.0.1, and how can the network
+					know to refer to 127.0.0.1 when an entity requests to go to "localhost"?
+					We can construct a system of decentralized servers that maps the IP address to the name localhost,
+					and store them. To add more variability, let us attach something
+					to the end of our name, a ".me" per say. And, if our information is split into different sections,
+					we can also attach something in front of our name, in this case,
+					a "subd". So in the end, our IP address 127.0.0.1 is mapped onto the name "localhost.me", and a
+					specific section of information is mapped onto "subd.localhost.me".
+					<br><br>
+					We can call the "localhost" name the <span style="color:deepskyblue"><b><i>domain name</i></b></span>, the ".me"
+					<span style="color:deepskyblue"><b><i>top level domain</i></b></span> (TLD), and the "subd" the
+					<span style="color:deepskyblue"><b><i>subdomain</i></b></span>,
+					splitting the three parts of our name into a nice layered <span style="color:deepskyblue"><b><i>hiearchy</i></b></span>. 
+					The decentralized servers that stores the mapping of these names to their respective IP addresses is called the 
+					<span id="dns" style="color:deepskyblue"><b><i>Domain Name System</i></b></span> (DNS).
+				</p><br>
+			</div>
+		</div>
+</body>
+
+</html>
