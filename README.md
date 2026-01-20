@@ -14,12 +14,11 @@ Currently, I have a slew of unfinished projects I need to complete. Below's an o
 
 The projects are folders from the root directory.
 
-- `/Idiots!/` - A comprehensive overview and 3 implementations of Trojan.JS.YouAreAnIdiot.
-- `/Plant-generator/` - This has a js animation template I found from a robux generator scam site. I've basically implemented this animation, and included the "OnlyPlants" joke logo. Then there's a captcha implementation and redirection based on choices. Since the plant archives at the end were too big and the GitHub runner to compile the site with Jekyll kept dying, this project helped me learn how to use a custum workflow yaml.
+- `/plant-generator/` - This has a js animation template I found from a robux generator scam site. I've basically implemented this animation, and included the "OnlyPlants" joke logo. Then there's a captcha implementation and redirection based on choices.
+- `/The-Aviary/` - This is a webdev practice recreation of my first website made in wix.
 
 ## Maybe Done?
-
-- `/The-Aviary/` - This is a webdev practice recreation of my first website made in wix. It's maybe done, but there's a future js implementaiton of the front image that I could maybe do. I'll see what comes of it later. _I also plan to put this on a subdomain, but this will take some effort._
+- `/Idiots!/` - A comprehensive overview and 3 implementations of Trojan.JS.YouAreAnIdiot. polish
 
 ## Unfinished Projects
 
@@ -31,7 +30,6 @@ The projects are folders from the root directory.
 
 # To-Do & Things to Note
 
-1. Fix the put the-aviary on a subdomain, and add the robots.txt on the subdomain. 
 2. "sakura.myacgcat.top" dir in Archive somehow messes the build up if it include it in sparse-checkout. This is maybe due to the chinese chars?
    Figure out what causes this and fix it before I attempt to build and host the page's mirror.
 3. The front page is actually bad lmao. Perhaps fix it and like unironically.
@@ -45,8 +43,8 @@ The projects are folders from the root directory.
    <!--- Here are specific dirs/files within projects -->
    Idiot!/index_files/fp_32.0.0.371_archive/Source/*<br>
    </details>
-5. Make the LaTeX papers I've written availible in a dir here.
-6. I may need to archive this repo and restart with a new one if the commit history here gets too big and cluttery lol, but this won't happen anytime soon.
+5. Make the LaTeX papers I've written availible in a dir here. Latex to html?
+5. Copy over my aops blog lol
 7. Restructure .svg files and remove local .dtd's, such as the one in `/Space/`.
 
 # How the Custum Workflow Works

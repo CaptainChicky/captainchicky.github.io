@@ -3,17 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <title>The shadow method for determining triple integral bounds - Math Insight</title>
-	<!-- JavaScript Detection -->
-	<script>document.documentElement.className += " js";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="static/css/mistyle.css" rel="stylesheet" type="text/css"/>
-<!--[if lte IE 7]>
-<link href="/static/css/iehacks.min.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-
-<!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
 <script src="static/js/jquery-latest.js" type="text/javascript"></script>
 <script type="text/javascript" src="static/geogebra/scripts/deployggb.js"></script>
 <script src="static/js/round.js" type="text/javascript"></script>
@@ -22,15 +13,29 @@
 <script src="static/js/jquery.cookie.js"></script>
 <script src="static/js/ajaxcsrf.js" type="text/javascript"></script>
 
+<link rel="stylesheet" href="./static/js/katex.min.css">
+<script src="./static/js/katex.min.js"></script>
+<script src="./static/js/auto-render.min.js"></script>
+
+<script type="text/javascript" src="./static/MathJax/latest.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="./static/MathJax/MathJax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+<link id="local" rel="stylesheet" type="text/css" href="./static/MathJax/katex/katex.min.css">
+<script src="./static/MathJax/katex/katex.min.js"></script>
+<script src="./static/MathJax/smrender.js"></script>
+<script src="./static/MathJax/timer.js"></script>
+<script src="./static/MathJax/copy-tex.min.js"></script>
+<link rel="stylesheet" href="./static/MathJax/copy-tex.min.css">
 
 <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
+	MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
 </script>
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
-</script>
+
+<script src="./static/MathJax/smrender.js" type="text/javascript"></script>
+
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -186,17 +191,17 @@ MathJax.Hub.Config({
 <p>In the shadow method, you imagine there is a light source, such as the sun, positioned far away along one of the coordinate axis (such as the positive $z$-axis).  We'll think of this sun as being straight up in the sky and think of the chosen coordinate axis as though it were vertical.</p>
 
 <p>As this sun is shining on the three-dimesional region $W$ of our integral, it is casting a shadow onto the flat ground below the region, i.e., on a plane perpendicular to the axis the sun is coming from.  This shadow is a two-dimensional region, and we turn the triple integral over $W$ into a double integral over the shadow.  Inside the double integral, we still need to include a single integral in the third &ldquo;vertical&rdquo; variable, where this variable ranges from the bottom of $W$ to its top.  If, for example, we had chosen $z$ to be the &ldquo;vertical&rdquo; variable where the sun is coming from, the shadow method for integrating a function $f$ over $W$ would be of the form
-\begin{gather*}
+$$\begin{gather*}
   \iiint_{W}f(x,y,z)dV = \iint_{\text{shadow}} \left( \int_{\text{bottom}(x,y)}^{\text{top}(x,y)} f(x,y,z) dz\right) dx\,dy.
-\end{gather*}
+\end{gather*}$$
 But, we don't need to have the sun coming from the $z$ direction.  It might be easier to let the sun be in the $x$ direction, giving an integral of the form
-\begin{gather*}
+$$\begin{gather*}
   \iiint_{W}f(x,y,z) dV= \iint_{\text{shadow}} \left( \int_{\text{bottom}(y,z)}^{\text{top}(y,z)} f(x,y,z) dx\right) dy\,dz,
-\end{gather*}
+\end{gather*}$$
 or let the sun being in the $y$ direction, giving an integral of the form
-\begin{gather*}
+$$\begin{gather*}
   \iiint_{W}f(x,y,z)dV = \iint_{\text{shadow}} \left( \int_{\text{bottom}(x,z)}^{\text{top}(x,z)} f(x,y,z) dy\right) dx\,dz.
-\end{gather*}
+\end{gather*}$$
 We can choose the axis we use for the &ldquo;vertical&rdquo; direction based on the shape of the region $W$.
 </p>
 
@@ -212,13 +217,13 @@ We can choose the axis we use for the &ldquo;vertical&rdquo; direction based on 
 <a id="applet:triple_integral_shadow_example_planes" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralShadowExamplePlanes01" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_shadow_example_planes.png" alt="Applet: Region bounded by planes demonstrating the shadow method" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Region bounded by planes demonstrating the shadow method.</i> The region $W$ is bounded by the vertical planes $x=0$, $y=1$, and $x=y$ and the angled planes $z=2+x-y$ and $z=x-y$.  If the sun is viewed to be in the direction of the positive $z$-axis, the resulting shadow on a plane perpendicular to the $z$-axis is a triangle, as illustrated by the blue triangle below the region.</p><p><a href="https://mathinsight.org/applet/triple_integral_shadow_example_planes" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
 
 <p>According to the shadow method, we need to integrate $x$ and $y$ over this shadow.  Then, for each point $(x,y)$ in the shadow, we need to integrate $z$ from the bottom to the top of $W$.  The bottom and top are formed by the angled planes, so the range of $z$ for each point in the shadow is
-  \begin{gather*}
+  $$\begin{gather*}
   x-y \lt z \lt 2+x-y.
-  \end{gather*}
+  \end{gather*}$$
   The inner integral is therefore
-  \begin{gather*}
+  $$\begin{gather*}
   \int_{\text{bottom}(x,y)}^{\text{top}(x,y)} f(x,y,z) dz = \int_{x-y}^{2+x-y}f(x,y,z)dz.
-  \end{gather*}
+  \end{gather*}$$
 </p>
 
 <p>The outer double integral is an integral over the shadow. The shadow is the maximal extend of $W$ in the $x$ and $y$ directions.  For this example, the shadow is fairly simple, since the extent of $W$ is determined by the three vertical planes $x=0$, $y=1$ and $x=y$.  In any plane parallel to the $xy$-plane, these planes become lines given by the same equations (as the original equations don't contain a $z$).  The shadow is the triangle bounded by the lines $x=0$, $y=1$ and $x=y$.</p>
@@ -226,27 +231,27 @@ We can choose the axis we use for the &ldquo;vertical&rdquo; direction based on 
 <p class="centeredImage"><a id="image:triple_integral_triangle_shadow" class="anchor"></a><a href="https://mathinsight.org/image/triple_integral_triangle_shadow" title="Triangular region determined by the shadow method for computing triple integral limits of a three-dimensional region."><img class="displayed" src="media/image/image/triple_integral_triangle_shadow.png" alt="Triangular region determined by the shadow method" width ="349" height="311" /></a></p>
 
 <p>To find bounds for the double integral over the shadow, we'll let $x$ be the inner integral.  For any value of $y$, $x$ ranges from $x=0$ to $x=y$ so the range of $x$ is
-\begin{gather*}
+$$\begin{gather*}
   0 \lt x \lt y.
-\end{gather*}
+\end{gather*}$$
 The maximum range of $y$ is shadow is
-\begin{gather*}
+$$\begin{gather*}
   0 \lt y \lt 1.
-\end{gather*}
+\end{gather*}$$
 Therefore, the double integral over the shadow is of the form
-\begin{gather*}
+$$\begin{gather*}
   \iint_{\text{shadow}} \cdots dx\,dy = \int_0^1 \int_0^y \cdots dx\,dy.
-\end{gather*}
+\end{gather*}$$
 </p>
 
 <p>Putting all the limits of integration together and inserting the integrand $f(x,y,z)=xy$, we calculate the integral:
-\begin{align*}
+$$\begin{align*}
 \iiint_{W}f(x,y,z)dV &amp;=\int_0^1 \int_0^y \int_{x-y}^{2+x-y} xy\, dz\,dx\,dy\\
 &amp;= \int_0^1 \int_0^y xyz \bigg|_{z=x-y}^{z=2+x-y} dx\,dy\\
 &amp;= \int_0^1 \int_0^y 2xy dx\,dy\\
 &amp;= \int_0^1 x^2y \bigg|_{x=0}^{x=y}dy\\
 &amp;= \int_0^1 y^3 dy = \frac{y^4}{4}\bigg|_0^1 = \frac{1}{4}.
-\end{align*}
+\end{align*}$$
 
 <a id="example2" class="anchor"></a>
 <h4>Example 2</h4>
@@ -254,7 +259,7 @@ Therefore, the double integral over the shadow is of the form
 <p>Let $\rho(x,y,z)$ be the charge density at the point $(x,y,z)$ inside an object $W$ bounded by the <a href="https://mathinsight.org/elliptic_paraboloid" class="content" title="The elliptic paraboloid: Description of the elliptic paraboloid with interactive graphics that illustrate cross sections and the effect of changing parameters.">elliptic paraboloids</a> $y=5-4 x^2-z^2$ and $y=x^2+z^2/4$.  Set up the integral giving the total charge inside $W$.</p>
 
 <p><b>Solution:</b> The total charge is the integral of the charge density $\rho$ over the region $W$:
-\begin{gather*}
+$$\begin{gather*}
   \text{total charge} = \iiint_{W} \rho(x,y,z) \, dV.
 \end{gather*}
 Our task is to calculate the limits of integration determined by $W$.</p>
@@ -262,9 +267,9 @@ Our task is to calculate the limits of integration determined by $W$.</p>
 <p>For this region, the shadow method will work well if we choose the $y$-axis as the &ldquo;vertical&rdquo; direction, i.e., the direction where the sun comes from.  If the positive $y$ direction is upward, then one boundary, $y=5-4 x^2-z^2$, is a paraboloid opening downward that intersects the $y$-axis at $y=5$.  The other boundary, $y=x^2+z^2/4$ is a paraboloid that opens upward and intersects the $y$-axis at the origin.  Therefore, the bounded region $W$ between the surfaces will be the region below $y=5-4 x^2-z^2$ and above $y=x^2+z^2/4$, i.e., the region described by 
 $$x^2+\frac{z^2}{4} \le y \le 5-4 x^2-z^2,$$
 as illustrated below.  The two paraboloid surfaces are the top and bottom limits for the shadow method,
-  \begin{gather*}
+  $$\begin{gather*}
   \int_{\text{bottom}(x,z)}^{\text{top}(x,z)} \rho(x,y,z) dy = \int_{x^2+z^2/4}^{5-4 x^2-z^2}\rho(x,y,z)dy.
-  \end{gather*}
+  \end{gather*}$$$$
 </p>
 
 <a id="applet:triple_integral_shadow_example_paraboloids" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralShadowExampleParaboloids02" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_shadow_example_paraboloids.png" alt="Applet: Region bounded by paraboloids demonstrating the shadow method" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Region bounded by paraboloids demonstrating the shadow method.</i> The region $W$ is bounded by the elliptic paraboloids $y=5-4 x^2-z^2$ and $y=x^2+z^2/4$.  If the sun is viewed to be in the direction of the positive $y$-axis, the shadow of $W$ in a plane perpendicular to the $y$-axis is the region inside the ellipse $x^2+z^2/4=1$.</p><p><a href="https://mathinsight.org/applet/triple_integral_shadow_example_paraboloids" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
@@ -282,16 +287,16 @@ which includes the interior of the ellipse, shown below.</p>
 <p>Since inside the ellipse, $x^2 \le 1- z^2/4$, the range of $x$ for each value of $z$ is 
 $$ -\sqrt{1-z^2/4} \le x \le \sqrt{1-z^2/4}.$$
 The maximum range of $z$ is $-2 \le z \le 2$, so the integration limits for the shadow are
-\begin{gather*}
+$$\begin{gather*}
   \iint_{\text{shadow}} \cdots dx\,dz = \int_{-2}^2 \int_{-\sqrt{1-z^2/4}}^{\sqrt{1-z^2/4}} \cdots dx\,dz.
-\end{gather*}
+\end{gather*}$$
 </p>
 
 <p>Putting the top and bottom limits together with the shadow, we conclude that the total charge inside $W$ is the integral
-\begin{align*}
+$$\begin{align*}
   \text{total charge} &amp;= \iiint_{W} \rho(x,y,z) \, dV\\
   &amp;=\int_{-2}^2 \int_{-\sqrt{1-z^2/4}}^{\sqrt{1-z^2/4}}\int_{x^2+z^2/4}^{5-4 x^2-z^2}\rho(x,y,z)dy\,dx\,dz.
-\end{align*}
+\end{align*}$$
 </p>
 
 	  </div>
@@ -340,7 +345,7 @@ The maximum range of $z$ is $-2 \le z \le 2$, so the integration limits for the 
 <a id="notation_systems" class="anchor"></a>
 <section class="notation_systems">
 <h4><a href="https://mathinsight.org/about/notationsystems" class="normaltext">Notation systems</a></h4>
-<form action="triple_integral_shadow_method.html" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='jeS9vjfg8g6Px6XTtO3vYeAavMAFTKrW' />
+<form action="triple_integral_shadow_method.html" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='Zh3GmHaN17bHIeQzV325ocV6OKp4qmZK' />
 <p><label for="id_notation_system">Select a notation system:</label> <br/>
 <select id="id_notation_system" name="notation_system">
 <option value="1" selected="selected">default</option>
@@ -456,9 +461,9 @@ integral, integration limits, triple integral
 
 
 
-<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='jeS9vjfg8g6Px6XTtO3vYeAavMAFTKrW' />
+<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='Zh3GmHaN17bHIeQzV325ocV6OKp4qmZK' />
   
-  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="228" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659164348" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="b09a0f56b567ae7cc349f8db5dff452344b558f6" /></div>
+  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="228" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659212772" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="d930e27aea1e3e506c603707862fa6f20d839862" /></div>
   
 <div class="ym-fbox-text">
 <label for="id_name">Name:</label><input id="id_name" maxlength="50" name="name" type="text" /></div>
@@ -843,7 +848,19 @@ else {
 }
 </script>
 
-
+<script>
+	renderMathInElement(
+		document.body,
+		{
+			delimiters: [
+				{left: "$$", right: "$$", display: true},
+				{left: "\\[", right: "\\]", display: true},
+				{left: "$", right: "$", display: false},
+				{left: "\\(", right: "\\)", display: false}
+			]
+		}
+	);
+  </script>
 
 </body>
 </html>

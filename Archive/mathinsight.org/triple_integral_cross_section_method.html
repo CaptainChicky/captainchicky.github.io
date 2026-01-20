@@ -3,34 +3,38 @@
 <head>
 <meta charset="utf-8"/>
 <title>The cross section method for determining triple integral bounds - Math Insight</title>
-	<!-- JavaScript Detection -->
-	<script>document.documentElement.className += " js";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="static/css/mistyle.css" rel="stylesheet" type="text/css"/>
-<!--[if lte IE 7]>
-<link href="/static/css/iehacks.min.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-
-<!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
 <script src="static/js/jquery-latest.js" type="text/javascript"></script>
 <script type="text/javascript" src="static/geogebra/scripts/deployggb.js"></script>
-<script src="static/js/round.js" type="text/javascript"></script>
 
 <meta name="description" content="Explanation of the cross section method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration."/>
 <script src="static/js/jquery.cookie.js"></script>
 <script src="static/js/ajaxcsrf.js" type="text/javascript"></script>
 
+<link rel="stylesheet" href="./static/js/katex.min.css">
+<script src="./static/js/katex.min.js"></script>
+<script src="./static/js/auto-render.min.js"></script>
+
+<script type="text/javascript" src="./static/MathJax/latest.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/javascript" src="./static/MathJax/MathJax.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+<link id="local" rel="stylesheet" type="text/css" href="./static/MathJax/katex/katex.min.css">
+<script src="./static/MathJax/katex/katex.min.js"></script>
+<script src="./static/MathJax/smrender.js"></script>
+<script src="./static/MathJax/timer.js"></script>
+<script src="./static/MathJax/copy-tex.min.js"></script>
+<link rel="stylesheet" href="./static/MathJax/copy-tex.min.css">
 
 <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
+	MathJax.Hub.Config({
+	  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
 </script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
+
+<script src="./static/MathJax/smrender.js" type="text/javascript"></script>
+
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -206,15 +210,15 @@ where $W$ is the pyramid.  The first task is to determine the integration limits
 <a id="applet:triple_integral_cross_section_example_pyramid" class="anchor"></a><section class="appletbox" ><div class="javascriptapplet"><div class="threeapplet" id="container_three_applet_AppletTripleIntegralCrossSectionExamplePyramid02" ><div class="appletimagecontainer" style="width:400px; max-width:100%" ><img src="media/applet/image/large/triple_integral_cross_section_example_pyramid.png" alt="Applet: Demonstrating the cross section method for computing triple integral limits" width ="400" height="400" style="display: block; width: 100%; height: auto;" /><h4 style="position: absolute; top: 200.0px; width: 100%;" class="three_applet_loading_message">Applet loading</h4></div></div><div class="appleterror three_load_error"></div></div><p><i>Demonstrating the cross section method for computing triple integral limits.</i> The transparent region is a pyramid bounded by the planes $z=0$, $z=4-2x$, $z=2-y$, $z=2x$, and $z=2+y$.  The cross sections perpendicular to the $z$-axis are rectangles, as illustrated by the single green cross section shown.  By moving the rectangle up or down, you can change the value of $z$ at which the cross section is calculated.</p><p><a href="https://mathinsight.org/applet/triple_integral_cross_section_example_pyramid" title="A three-dimensional region that demonstrates the shadow method for computing triple integral limits." class="applet">More information about applet.</a> </p></section>
 
 <p>For a given value of $z$, the boundaries of the rectangular cross sections are determined by the equations for the planes $z=4-2x$, $z=2-y$, $z=2x$, and $z=2+y$.  Rewriting those equations for $x$ and $y$ in terms of the given $z$, the boundaries are  $x=2-z/2$, $y=2-z$, $x=z/2$, and $y=z-2$.  Inside the rectangle, the ranges of $x$ and $y$ are 
-\begin{gather*}
+$$\begin{gather*}
   \frac{z}{2} \le x \le 2-\frac{z}{2}\\
   z-2 \le y \le 2-z
-\end{gather*}
+\end{gather*}$$
 as illustrated below.  The integration limits for the cross section are
-\begin{gather*}
+$$\begin{gather*}
   \iint_{\text{cross section}(z)} f(x,y,z) dy\,dx
   = \int_{z/2}^{2-z/2} \int_{z-2}^{2-z} f(x,y,z) dy\,dx.
-\end{gather*}
+\end{gather*}$$
 </p>
 
 <p class="centeredImage"><a id="image:triple_integral_rectangle_cross_section" class="anchor"></a><a href="https://mathinsight.org/image/triple_integral_rectangle_cross_section" title="Rectangular region determined from the cross-section method of computing triple integral limits."><img class="displayed" src="media/image/image/triple_integral_rectangle_cross_section.png" alt="Triple integral rectangular cross section" width ="277" height="279" /></a></p>
@@ -224,7 +228,7 @@ $$\int_{\text{bottom}}^{\text{top}} \cdots dz = \int_0^2 \cdots dz.$$
 </p>
 
 <p>Putting the top and bottom integration limits together with the cross section integration limits, we can calculate that the mass of the pyramid is
-\begin{align*}
+$$\begin{align*}
 \text{mass of pyramid} &amp;= \iiint_{W} f(x,y,z) dV\\
 &amp;=\int_{\text{bottom}}^{\text{top}} \left(\iint_{\text{cross section}(z)} f(x,y,z) dx\,dy\right)dz\\
 &amp;=\int_0^2  \int_{z/2}^{2-z/2} \int_{z-2}^{2-z}xz \,dy\,dx\,dz\\
@@ -233,7 +237,7 @@ $$\int_{\text{bottom}}^{\text{top}} \cdots dz = \int_0^2 \cdots dz.$$
 &amp;=\int_0^2   x^2z(2-z) \bigg|_{x=z/2}^{x=2-z/2}dz\\
 &amp;=\int_0^2   2z(2-z)^2 dz\\
 &amp;=2\biggl(2z^2-\frac{4}{3}z^3+\frac{z^4}{4}\biggr) \bigg|_0^2 = 2\biggl(8-\frac{32}{3}+4\biggr)=\frac{8}{3}.
-\end{align*}
+\end{align*}$$
 </p>
 
 <p>It would be possible to calculate the triple integral using the <a href="https://mathinsight.org/triple_integral_shadow_method" class="content" title="The shadow method for determining triple integral bounds: Explanation of the shadow method for turning a triple integral into a double integral combined with a single integral in order to compute the limits of integration.">shadow method</a>.  The shadow would be the rectangle $0 \le x \le 2$, $-2 \le y \le 2$.  However, for this pyramid, the calculation would be more difficult as the function $\text{top}(x,y)$ for the shadow method would be four different triangular regions.  You'd have to break up the integral into four parts.  For this reason, the cross section method is easier for this example.
@@ -386,9 +390,9 @@ integral, integration limits, triple integral
 
 
 
-<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='AxwuuJnctVaTZpYwQrKhDu4SOxgWXgd9' />
+<form class="ym-form linearize-form" action="https://mathinsight.org/comments/post/" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='HSTmpQtQQlriN30hbg43jZfMaJjGSCmV' />
   
-  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="229" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659164517" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="6347fcf9c428cc3fca9ed91d9816c3a1ff522ba1" /></div>
+  <div><input id="id_content_type" name="content_type" type="hidden" value="midocs.page" /></div><div><input id="id_object_pk" name="object_pk" type="hidden" value="229" /></div><div><input id="id_timestamp" name="timestamp" type="hidden" value="1659188749" /></div><div><input id="id_security_hash" maxlength="40" name="security_hash" type="hidden" value="b38a2f5fd7543fcbc34776e32268581b408834c5" /></div>
   
 <div class="ym-fbox-text">
 <label for="id_name">Name:</label><input id="id_name" maxlength="50" name="name" type="text" /></div>
@@ -920,7 +924,19 @@ else {
 }
 </script>
 
-
+<script>
+	renderMathInElement(
+		document.body,
+		{
+			delimiters: [
+				{left: "$$", right: "$$", display: true},
+				{left: "\\[", right: "\\]", display: true},
+				{left: "$", right: "$", display: false},
+				{left: "\\(", right: "\\)", display: false}
+			]
+		}
+	);
+  </script>
 
 </body>
 </html>
