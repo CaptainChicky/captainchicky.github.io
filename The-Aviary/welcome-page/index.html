@@ -599,62 +599,41 @@
         </section>
     </div>
 
-    <!-- this script must be right after the fade content to work -->
     <script>
-        var urlParams = new URLSearchParams(window.location.search);
-        var event = urlParams.get("event");
-
-        // first one is the main trigger. the second one is just to prevent it fron overlaping with the next script
-        if (event === "fade" && !(event.persisted || (window.performance && String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward"))) {
-            // Fade out the current page content
-            var content = document.getElementById("fadeContent");
-            content.style.opacity = "0.2";
-
-            // wait for next frame to render before transitioning back into full opacity
-            requestAnimationFrame(function () {
-                content.style.transition = "opacity 0.8s";
-                content.style.opacity = "1";
-            });
-        }
-
-        // remove the parameter
-        // Get the current URL
-        var url = window.location.href;
-
-        // Remove the "event" query parameter from the URL
-        var updatedUrl = url.replace("?event=fade", "");
-
-        // Replace the current URL with the updated URL without the query parameter
-        history.replaceState(null, null, updatedUrl);
-    </script>
-
-    <!-- Makes the fadeContent not invisible when using forwards or back arrows lol, and sometimes plays the animation -->
-    <!-- It's supposed to be always play the animation, but something is bugged and I can't be fucked to bother to fix it -->
-    <script>
-        window.addEventListener('pageshow', function (event) {
-            // eh this is a feature fuck this lol: 
-            // 1. strl+shift+t playing animation
-            // 2. sometimes the animation doesn't play and just displays the page for no fucking reason???????
-            // I'm wayy too lazy to try to fix this anymore. I've been webdevving for a solid 3 days on this dumb project idec anymore lmao.
-
-            // window.performance.navigation.type === 2 would be used, but nav.type is depreciated so below is alternative
-            if (event.persisted || (window.performance && String(window.performance.getEntriesByType("navigation")[0].type) === "back_forward")) {
-                // event.persisted checks if loading from cache 
-                // window.performance checks if the window.performance object exists
-                // then checks if the navigation type is 2, which is back or forwards key
-                // somehow this still doesn't work sometimes but I can't be fucked to fix it anymore
-                // at least the page shows itself when using the back or forwards key lmfaoooo
-                console.log("Sometimes the animation doesn't play, and I'm completely fucking clueless as to why. Idfk anymore whatever.");
-
-                // Fade out the current page content
+        window.addEventListener('pageshow', function(e) {
+            var urlParams = new URLSearchParams(window.location.search);
+            var shouldFade = urlParams.get("event") === "fade";
+            var isBFCache = e.persisted || 
+                (window.performance && 
+                window.performance.getEntriesByType("navigation")[0]?.type === "back_forward");
+            
+            // Fade animation should run if:
+            // 1. URL has ?event=fade AND it's not a back/forward navigation, OR
+            // 2. It IS a back/forward navigation (to handle bfcache)
+            if ((shouldFade && !isBFCache) || isBFCache) {
+                var reason = shouldFade && !isBFCache ? "URL parameter" : "Back/Forward navigation";
+                //alert("Fade triggered by: " + reason);
+                
                 var content = document.getElementById("fadeContent");
                 content.style.opacity = "0.2";
-
-                // wait for next frame to render before transitioning back into full opacity
-                requestAnimationFrame(function () {
+                
+                requestAnimationFrame(function() {
                     content.style.transition = "opacity 0.8s";
                     content.style.opacity = "1";
                 });
+            } else {
+                //alert("Fade NOT triggered - shouldFade: " + shouldFade + ", isBFCache: " + isBFCache);
+            }
+            
+            // Clean up URL parameter if present
+            if (shouldFade) {
+                urlParams.delete("event");
+                var newUrl = window.location.pathname;
+                if (urlParams.toString()) {
+                    newUrl += '?' + urlParams.toString();
+                }
+                newUrl += window.location.hash;
+                history.replaceState(null, null, newUrl);
             }
         });
     </script>
