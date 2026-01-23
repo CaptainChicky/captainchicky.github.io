@@ -1,0 +1,210 @@
+/* ==========================================================================
+   FONT DECLARATIONS
+   ========================================================================== */
+
+@font-face {
+    font-family: Proxima-N-W01-Reg;
+    src: url(./fonts/Proxima-N-W01-Reg/Proxima-N-W01-Reg.otf) format('opentype');
+}
+
+/* NOTE: The following fonts are NOT used in main index.html */
+@font-face { 
+    font-family: 'Libre Baskerville';
+    src: url('./fonts/Libre-Baskerville/libre-baskerville.regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Futura-LT-W01-Book';
+    src: url('./fonts/Futura-LT-W01-Book/Futura-LT-W01-Book.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: Avenir-LT-Std-85-Heavy;
+    src: url(./fonts/Avenir-LT-Std-85/Avenir-LT-Std-85-Heavy.otf) format('opentype');
+}
+/* --------------------------------------------------------- */
+
+
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ==========================================================================
+   BACKGROUND
+   ========================================================================== */
+
+#background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("./images/sparrow-bg.png");
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: calc(-65%) calc(-25%);
+    z-index: -1;
+}
+
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
+#header {
+    background-color: #e3e3e3;
+    width: 940px;
+    height: 90px;
+    margin: 0 auto;
+    padding: 25px;
+    font-family: 'Signika', sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: transform 0.5s ease;
+}
+
+#header.hidden {
+    transform: translateY(-100%);
+}
+
+#Title {
+    font-size: 30px;
+    line-height: 1.1em;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+}
+
+#selectionNav {
+    display: flex;
+    text-align: center;
+    font-size: 15px;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+#selectionNav a:not(:first-child) {
+    border-left: 1px solid rgb(141, 173, 45);
+}
+
+#selectionNav a:hover {
+    color: rgb(0, 138, 252);
+}
+
+
+/* ==========================================================================
+   MAIN CONTENT
+   ========================================================================== */
+
+#body {
+    background-color: #e3e3e3;
+    width: 940px;
+    margin: 0 auto;
+    padding-top: 0;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-left: 10px;
+}
+
+#content p {
+    color: black;
+    font-family: "Georgia", "Palatino", "Book Antiqua", "Palatino Linotype", serif;
+}
+
+/* NOTE: #sectionLogo is NOT present in main index.html, so this is ignored there */
+#sectionLogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* ------------------------------------------------------------------------------ */
+
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+#EndButtons {
+    display: flex;
+    justify-content: left;
+}
+
+#back2TopBtn {
+    display: inline-block;
+    padding: 11px 30px;
+    border: 2px solid black;
+    border-radius: 20px;
+    text-decoration: none;
+    color: black;
+    background-color: transparent;
+    font-family: Avenir-LT-Std-85-Heavy, sans-serif;
+    font-size: 13px;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+#back2TopBtn:hover {
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+
+/* NOTE: #ExtNavBtns is NOT used in main index.html, conserved in other pages */
+#ExtNavBtns {
+    display: flex;
+    justify-content: left;
+}
+
+#ExtNavBtns a {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 8px 5.76px;
+    border: 2px solid rgb(29, 44, 243);
+    text-decoration: none;
+    color: rgb(29, 44, 243);
+    background-color: transparent;
+    font-family: Futura-LT-W01-Book, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+#ExtNavBtns a:hover {
+    background-color: rgb(29, 44, 243);
+    color: white;
+    cursor: pointer;
+}
+/* -------------------------------------------------------------------------- */
+
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+#footer {
+    background-color: rgb(255, 200, 2);
+    width: 940px;
+    height: 54px;
+    margin: 60px auto 6px;
+    padding: 0 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#footerContent {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+#iconLinks img {
+    margin-top: 3.75px;
+}
