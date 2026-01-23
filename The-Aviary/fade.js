@@ -21,6 +21,9 @@ function loadPage(event) {
                 var newContent = doc.getElementById("fadeContent");
                 if (newContent) {
                     content.innerHTML = newContent.innerHTML;
+
+                    // Fix all relative paths based on the fetched page location
+                    fixRelativePaths(content, targetUrl);
                 }
 
                 // Update title
@@ -34,16 +37,7 @@ function loadPage(event) {
                 var currentHeader = document.getElementById("header");
                 if (newHeader && currentHeader) {
                     currentHeader.innerHTML = newHeader.innerHTML;
-                }
-
-                // Update the URL (remove .html extension)
-                var cleanUrl = targetUrl.replace(/\.html$/, '');
-
-                // Special case: if it's index, use root path
-                if (cleanUrl.endsWith('/index')) {
-                    cleanUrl = cleanUrl.replace(/\/index$/, '/');
-                } else if (cleanUrl === 'index') {
-                    cleanUrl = './';
+                    fixRelativePaths(currentHeader, targetUrl);
                 }
 
                 history.pushState(null, '', targetUrl);
@@ -63,7 +57,28 @@ function loadPage(event) {
     }, 300);
 }
 
-// Handle back/forward buttons for the fading thing
+// Function to fix relative paths
+function fixRelativePaths(element, baseUrl) {
+    var base = new URL(baseUrl, window.location.href);
+    
+    // Fix images
+    element.querySelectorAll('img[src]').forEach(img => {
+        var src = img.getAttribute('src');
+        if (src.startsWith('./') || src.startsWith('../') || !src.startsWith('http')) {
+            img.src = new URL(src, base).href;
+        }
+    });
+    
+    // Fix links (if any in content)
+    element.querySelectorAll('a[href]').forEach(link => {
+        var href = link.getAttribute('href');
+        if (href.startsWith('./') || href.startsWith('../')) {
+            link.href = new URL(href, base).href;
+        }
+    });
+}
+
+// Handle back/forward buttons
 window.addEventListener('popstate', function (event) {
     var content = document.getElementById("fadeContent");
     content.style.opacity = "0";
@@ -90,6 +105,7 @@ window.addEventListener('popstate', function (event) {
                 var newContent = doc.getElementById("fadeContent");
                 if (newContent) {
                     content.innerHTML = newContent.innerHTML;
+                    fixRelativePaths(content, fetchUrl);
                 }
 
                 // Update title
@@ -103,6 +119,7 @@ window.addEventListener('popstate', function (event) {
                 var currentHeader = document.getElementById("header");
                 if (newHeader && currentHeader) {
                     currentHeader.innerHTML = newHeader.innerHTML;
+                    fixRelativePaths(currentHeader, fetchUrl);
                 }
 
                 // Fade in
