@@ -69,12 +69,22 @@ function fixRelativePaths(element, baseUrl) {
         }
     });
     
-    // Fix links (if any in content)
+    // Fix links (if any in content) - but skip anchor links
     element.querySelectorAll('a[href]').forEach(link => {
         var href = link.getAttribute('href');
-        if (href.startsWith('./') || href.startsWith('../')) {
+        if (!href.startsWith('#') && (href.startsWith('./') || href.startsWith('../'))) {
             link.href = new URL(href, base).href;
         }
+    });
+    
+    // Fix CSS url() paths in style tags
+    element.querySelectorAll('style').forEach(style => {
+        var css = style.textContent;
+        // Match url('../path') or url("../path") or url(../path)
+        style.textContent = css.replace(/url\(['"]?\.\.\/([^'")\s]+)['"]?\)/g, function(match, path) {
+            var fullUrl = new URL('../' + path, base).href;
+            return 'url("' + fullUrl + '")';
+        });
     });
 }
 
