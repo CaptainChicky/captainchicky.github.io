@@ -73,17 +73,6 @@
     <link rel="icon" href="./images/logo/logo.png" sizes="any">
     <link rel="icon" href="./images/logo/logo.svg" type="image/svg+xml">
 
-    <!-- 
-        This shit basically is used for making hrefs for photos and welcome page index files work without needing to get out of the path
-        so no stuff like ../path bullshit, just ./path like normal. This however comes at the cost of having this being manually hard coded to the subdir
-        I'm doing this because with AJAX, trying to navigate relative links is a genuine nightmare, so i gotta hard code this base link to make stuff work lol
-        So im deploying it to mysite/The-Aviary/, hence I would have to make it such that its "<base href="/The-Aviary/">"
-        However, for local testing for example where this project is your root, you would instead do "<base href="/">"
-
-        Basically, change this link to whatever depending on your global context of where you are hosting the page lol
-    -->
-    <base href="/The-Aviary/">
-
     <!-- CSS -->
     <!-- import a font -->
     <link href="./fonts/Signika-Light300/Signika-Light300.css" rel="stylesheet">
@@ -223,7 +212,8 @@
         <!-- main content -->
         <section id="body">
             <div id="imageSectionBody">
-                <img style="width: 594px; height: auto;" src="./images/The last Great Auk.png" alt="The Last Great Auk">
+                <!-- the image needs an absolute path because its in fade content and its context changes, so it will break if using relative -->
+                <img style="width: 594px; height: auto;" src="/images/The last Great Auk.png" alt="The Last Great Auk">
                 <div id="desc">
                     <br>
                     <h1 style="font-family: signika, sans-serif; font-size: 24px; text-align: center;">
