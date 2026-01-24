@@ -271,10 +271,13 @@
             celestialStars = [];
             galaxies = [];
             floatingTexts = [];
+            pulsars = [];
             goose = null;
             rocket = null;
             earthPlanet = null;
             quasar = null;
+            comet = null;
+            lastCometTime = Date.now();
             milkyWayStars = [];
             globularClusters = [];
             milkyWayDustPatches = [];
@@ -925,26 +928,41 @@
                 this.text = text;
                 // Middle 80% horizontally (10% margin on each side)
                 this.x = canvas.width * (0.1 + Math.random() * 0.8);
-                // Upper 70% vertically
-                this.y = canvas.height * (Math.random() * 0.7);
+                // Vertical range: 5% to 70% (avoid top 5% and bottom 30%)
+                this.y = canvas.height * (0.05 + Math.random() * 0.65);
+
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 0.03; // Same as star speed
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
-                this.opacity = 0;
-                this.fadeInSpeed = 0.01;
+                
+                // Pulsing opacity setup
+                this.opacity = Math.random(); // start at random opacity
+                this.pulseSpeed = 0.002 + Math.random() * 0.003; // slower pulse speed
+                this.pulseDirection = Math.random() < 0.5 ? 1 : -1; // initial pulse direction
             }
             
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
                 
+                // Wrap around canvas edges
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
                 
-                if (this.opacity < 1) this.opacity += this.fadeInSpeed;
+
+                // Pulsing opacity (clamped)
+                this.opacity += this.pulseSpeed * this.pulseDirection;
+                if (this.opacity > 1) {
+                    this.opacity = 1;
+                    this.pulseDirection = -1;
+                }
+                if (this.opacity < 0.4) {
+                    this.opacity = 0.4;
+                    this.pulseDirection = 1;
+                }
             }
             
             draw() {
@@ -956,6 +974,250 @@
                 ctx.shadowBlur = 10;
                 ctx.fillText(this.text, this.x, this.y);
                 ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1; // reset for other drawings
+            }
+        }
+        
+        // Pulsar
+        class Pulsar {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+
+                const maxSize = 3;
+                const minSize = maxSize / 5;
+                this.size = minSize + Math.random() * (maxSize - minSize);
+                
+                this.phase = 0;
+                this.pulseInterval = 0.05 + Math.random() * 0.20; // Random interval between 0.05–0.25 seconds
+                this.pulseDuration = this.pulseInterval;
+                this.rotation = Math.random() * Math.PI * 2;
+            }
+            
+            update() {
+                this.phase += 0.016; // ~60fps
+                if (this.phase >= this.pulseDuration) {
+                    this.phase = 0;
+                }
+            }
+            
+            draw() {
+                const isWhite = this.phase < this.pulseDuration / 2;
+                
+                if (isWhite) {
+                    // White phase with halo and diffraction spikes
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    
+                    // Halo
+                    const haloGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 4);
+                    haloGradient.addColorStop(0, '#ffffffaa');
+                    haloGradient.addColorStop(0.5, '#ffffff44');
+                    haloGradient.addColorStop(1, 'transparent');
+                    
+                    ctx.globalAlpha = 0.8;
+                    ctx.fillStyle = haloGradient;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size * 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Diffraction spikes (4 rays)
+                    ctx.globalAlpha = 0.6;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 0.5;
+                    for (let i = 0; i < 4; i++) {
+                        const angle = (i * Math.PI / 2);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(Math.cos(angle) * this.size * 6, Math.sin(angle) * this.size * 6);
+                        ctx.stroke();
+                    }
+                    
+                    // Core
+                    ctx.globalAlpha = 1;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.restore();
+                } else {
+                    // Black phase (almost invisible)
+                    ctx.globalAlpha = 0.1;
+                    ctx.fillStyle = '#000000';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+        
+        // Comet
+        class Comet {
+            constructor(sunX, sunY, GM = 5000) {
+                this.sunX = sunX;
+                this.sunY = sunY;
+                this.GM = GM; // Gravitational parameter, tweak for effect
+                
+                // Start at random edge
+                const edge = Math.floor(Math.random() * 4);
+                if (edge === 0) { // Top
+                    this.x = Math.random() * canvas.width;
+                    this.y = 0;
+                } else if (edge === 1) { // Right
+                    this.x = canvas.width;
+                    this.y = Math.random() * canvas.height;
+                } else if (edge === 2) { // Bottom
+                    this.x = Math.random() * canvas.width;
+                    this.y = canvas.height;
+                } else { // Left
+                    this.x = 0;
+                    this.y = Math.random() * canvas.height;
+                }
+                
+                // Direction roughly toward sun (+/- 25 degrees)
+                const angleToSun = Math.atan2(sunY - this.y, sunX - this.x);
+                const buffer = (Math.random() - 0.5) * (50 * Math.PI / 180); // ±25°
+                const angle = angleToSun + buffer;
+                
+                // Distance to sun
+                const r = Math.hypot(this.x - sunX, this.y - sunY);
+                // Escape velocity with margin
+                const vEsc = Math.sqrt(2 * GM / r);
+                const speed = vEsc * (1.05 + Math.random() * (2 - 1.05)); // 1.05x - 2x
+                
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                
+                // Array of possible comet dust colors
+                const cometColors = [
+                    '#ffffff', // white
+                    '#b8ffb8', // green
+                    '#a0c4ff', // blue
+                    '#ffd580', // yellow-orange
+                    '#ffb8f0', // pink
+                    '#c080ff', // purple
+                ];
+
+                // Pick a random color from the array
+                this.dustColor = cometColors[Math.floor(Math.random() * cometColors.length)];
+                this.hasIonTail = Math.random() < 0.333; // ~1/3 of comets
+
+                // Core gradient (blob)
+                const coreColors = [
+                    ['#ffffff', '#ffffaa'], // normal white-yellow core
+                    ['#ffffff', '#a8ffb8'], // white-green halo
+                    ['#ffffff', '#ffb8f0'], // white-pink halo
+                ];
+
+                this.selectedCore = coreColors[Math.floor(Math.random() * coreColors.length)];
+            }
+
+            update(dt = 1, sunRadius = 50) {
+                // Vector from comet to sun
+                const dx = this.sunX - this.x;
+                const dy = this.sunY - this.y;
+                const r = Math.hypot(dx, dy);
+                this.distanceToSun = r; // store it so draw() can use it
+                
+                // Softening factor
+                const epsilon = 30; // tweak this to control curvature vs speed
+                
+                // Acceleration toward Sun with softening
+                const a = this.GM / (r * r + epsilon * epsilon);
+                const ax = a * (dx / r);
+                const ay = a * (dy / r);
+                
+                // Update velocity
+                this.vx += ax * dt;
+                this.vy += ay * dt;
+                
+                // Update position
+                this.x += this.vx * dt;
+                this.y += this.vy * dt;
+            }
+            
+            isOffscreen() {
+                return this.x < -1000 || this.x > canvas.width + 1000 || 
+                       this.y < -1000 || this.y > canvas.height + 1000;
+            }
+
+            isInsideSun(sunRadius = 50) {
+                const dx = this.x - this.sunX;
+                const dy = this.y - this.sunY;
+                const r = Math.hypot(dx, dy);
+                return r < sunRadius;
+            }
+            
+            draw() {
+                const dx = this.x - this.sunX;
+                const dy = this.y - this.sunY;
+                const angleFromSun = Math.atan2(dy, dx);
+                
+                // Tail length increases as it approaches sun
+                const maxTailLength = 200;
+                // Tail grows faster as it gets closer
+                const tailLength = maxTailLength * (1 - Math.exp(-1000 / this.distanceToSun));  
+                
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                // Main tail (dust tail) - points away from sun
+                ctx.filter = 'blur(8px)';
+                const dustGradient = ctx.createLinearGradient(0, 0, 
+                    Math.cos(angleFromSun) * tailLength, 
+                    Math.sin(angleFromSun) * tailLength
+                );
+                dustGradient.addColorStop(0, this.dustColor + 'aa');
+                dustGradient.addColorStop(0.5, this.dustColor + '44');
+                dustGradient.addColorStop(1, 'transparent');
+                
+                ctx.globalAlpha = 0.7;
+                ctx.strokeStyle = dustGradient;
+                ctx.lineWidth = 18;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(Math.cos(angleFromSun) * tailLength, Math.sin(angleFromSun) * tailLength);
+                ctx.stroke();
+                
+                // Ion tail (blue, smaller, slightly offset)
+                if (this.hasIonTail) {
+                    const ionOffset = Math.PI * 0.15; // 27 degrees offset
+                    const ionLength = tailLength * 0.7;
+                    const ionGradient = ctx.createLinearGradient(0, 0,
+                        Math.cos(angleFromSun + ionOffset) * ionLength,
+                        Math.sin(angleFromSun + ionOffset) * ionLength
+                    );
+                    ionGradient.addColorStop(0, 'rgba(180, 255, 255, 1)');  // almost white neon blue at base
+                    ionGradient.addColorStop(0.5, 'rgba(100, 220, 255, 0.7)'); // softer, still bright blue
+                    ionGradient.addColorStop(1, 'transparent');             // fade out
+                    
+                    ctx.globalAlpha = 0.7;
+                    ctx.strokeStyle = ionGradient;
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(Math.cos(angleFromSun + ionOffset) * ionLength, 
+                               Math.sin(angleFromSun + ionOffset) * ionLength);
+                    ctx.stroke();
+                }
+                
+                ctx.filter = 'blur(5px)';
+
+                const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 8);
+                coreGradient.addColorStop(0, this.selectedCore[0]);
+                coreGradient.addColorStop(0.5, this.selectedCore[1]);
+                coreGradient.addColorStop(1, 'transparent');
+                
+                ctx.globalAlpha = 1;
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.filter = 'none';
+                ctx.restore();
             }
         }
         
@@ -965,11 +1227,11 @@
                 this.x = canvas.width * 0.3;
                 this.y = canvas.height * 0.3;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.02 + 0.01;
+                const speed = (Math.random() * 0.02 + 0.01) * 1.5; // 1.5x of 0.01-0.03
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
                 this.rotation = 0;
-                this.rotationSpeed = 0.015; // 1.5x of 0.01
+                this.rotationSpeed = 0.01;
                 this.size = 40;
                 this.img = new Image();
                 this.img.src = './index_files/dgoose_knife.svg';
@@ -1096,10 +1358,13 @@
         let celestialStars = [];
         let galaxies = [];
         let floatingTexts = [];
+        let pulsars = [];
         let goose = null;
         let rocket = null;
         let earthPlanet = null;
         let quasar = null;
+        let comet = null;
+        let lastCometTime = Date.now();
         let milkyWayAngle = Math.random() * Math.PI * 2; // Set once at start
         // Avoid too vertical - re-roll if angle is too close to 90° or 270° (π/2 or 3π/2)
         while ((milkyWayAngle > Math.PI * 0.35 && milkyWayAngle < Math.PI * 0.65) || 
@@ -1211,11 +1476,21 @@
             
             // Floating texts - spread across full canvas
             floatingTexts = [
-                new FloatingText('✦ Where am I?'),
+                new FloatingText('Where am I?'),
                 new FloatingText('Where am high?'),
-                new FloatingText('Why am I high? 🌍'),
-                new FloatingText('Space is cool imo')
+                new FloatingText('Why am I high?'),
+                new FloatingText('Fleeting as stardust...')
             ];
+            
+            // Pulsars - 4-5 random positions
+            pulsars = [];
+            const pulsarCount = 4 + Math.floor(Math.random() * 2); // 4 or 5
+            for (let i = 0; i < pulsarCount; i++) {
+                pulsars.push(new Pulsar(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
             
             // Goose
             goose = new Goose();
@@ -1432,6 +1707,12 @@
                 star.draw();
             });
             
+            // Update and draw pulsars
+            pulsars.forEach(pulsar => {
+                pulsar.update();
+                pulsar.draw();
+            });
+            
             // Update and draw celestial stars
             celestialStars.forEach(star => {
                 star.update();
@@ -1455,6 +1736,26 @@
             if (rocket) {
                 rocket.update();
                 rocket.draw();
+            }
+            
+            // Spawn comet every 30 seconds
+            const now = Date.now();
+            if (!comet && now - lastCometTime > 30000 && celestialStars.length > 0) {
+                const sun = celestialStars.find(s => s.type === 'sun');
+                if (sun) {
+                    comet = new Comet(sun.x, sun.y);
+                    lastCometTime = now;
+                }
+            }
+            
+            // Update and draw comet
+            if (comet) {
+                comet.update();
+                comet.draw();
+                
+                if (comet.isOffscreen() || comet.isInsideSun()) {
+                    comet = null;
+                }
             }
             
             // Update and draw floating texts
