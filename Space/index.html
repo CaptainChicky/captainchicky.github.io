@@ -2,21 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Space</title>
+
+    <!-- og embeds -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Space" />
+    <meta property="og:description" content="An interstellar journey into an endless, empty, yet fufilling, expanse. Or maybe you're just high 😉. GOOS inside!" />
+    <meta property="og:image" content="http://theaviary.me/Space/media/comet.png">
+    <meta property="og:image:secure_url" content="https://theaviary.me/Space/media/comet.png">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
+    <meta property="og:image:alt" content="Endless Space, Endless Expanse">
+
+    <!-- meta tags -->
     <meta name="author" content="Captain Chicky">
-    <meta name="description" content="A dynamically generated interstellar space experience. GOOS inside!">
+    <meta name="description" content="An interstellar journey into an endless, empty, yet fufilling, expanse. Or maybe you're just high 😉. GOOS inside!">
     <meta name="keywords" content="space, captain chicky, sun, earth, planet, goose, goos, planets, suns, comet, comets">
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
-        
+    <!-- import a font -->
+    <link href="./media/fonts/css2.css" rel="stylesheet">
+
+    <!-- main css styles -->
+    <style>    
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+    
         :root {
             --space-black: #000000;
             --space-purple: #1a0b2e;
@@ -27,7 +44,7 @@
             --star-red: #ffb8b0;
             --cosmic-glow: rgba(138, 43, 226, 0.3);
         }
-        
+    
         body {
             background: radial-gradient(ellipse at bottom, var(--space-purple) 0%, var(--space-black) 100%);
             color: var(--star-white);
@@ -36,24 +53,24 @@
             min-height: 100vh;
             position: relative;
         }
-        
+    
         #space-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 400vh;
+            height: 600vh; /* 8x viewport height */
             z-index: 1;
             pointer-events: none;
         }
-        
+    
         .content {
             position: relative;
             z-index: 10;
-            min-height: 400vh;
+            min-height: 600vh; /* 8x viewport height */
             width: 100%;
         }
-        
+    
         .arrival {
             position: absolute;
             bottom: 0;
@@ -62,20 +79,21 @@
             text-align: center;
             animation: slideUp 1s ease-out;
             padding: 2rem;
-            z-index: 100; /* Above canvas so text is readable */
+            z-index: 100;
         }
-        
+    
         @keyframes slideUp {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateY(50px);
             }
-            to { 
+    
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+    
         h1 {
             font-family: 'Orbitron', sans-serif;
             font-size: clamp(2rem, 5vw, 4rem);
@@ -88,12 +106,19 @@
             animation: shimmer 3s ease-in-out infinite;
             margin-bottom: 2rem;
         }
-        
+    
         @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+    
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+    
+            50% {
+                background-position: 100% 50%;
+            }
         }
-        
+    
         .index-section {
             background: rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(138, 43, 226, 0.3);
@@ -104,71 +129,98 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             animation: pulseGlow 3s ease-in-out infinite;
+            text-align: left;
         }
-        
+    
         @keyframes pulseGlow {
-            0%, 100% { 
+    
+            0%,
+            100% {
                 box-shadow: 0 0 20px rgba(138, 43, 226, 0.3),
-                            inset 0 0 20px rgba(138, 43, 226, 0.1);
+                    inset 0 0 20px rgba(138, 43, 226, 0.1);
                 border-color: rgba(138, 43, 226, 0.3);
             }
-            50% { 
+    
+            50% {
                 box-shadow: 0 0 40px rgba(138, 43, 226, 0.6),
-                            inset 0 0 30px rgba(138, 43, 226, 0.2);
+                    inset 0 0 30px rgba(138, 43, 226, 0.2);
                 border-color: rgba(138, 43, 226, 0.6);
             }
         }
-        
+    
         .index-section u {
             font-size: 1.2rem;
             color: #b8d8ff;
+            display: block;
+            text-align: center;
         }
-        
+    
         ul {
             list-style: none;
             margin-top: 1.5rem;
         }
-        
+    
+        /* Top-level list items (section headers) */
         li {
             margin: 0.8rem 0;
             padding-left: 1.5rem;
             position: relative;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #b8d8ff;
         }
-        
+    
         li:before {
-            content: "✦";
+            content: "★";
             position: absolute;
             left: 0;
             color: #b8d8ff;
             animation: twinkle 2s ease-in-out infinite;
         }
-        
+    
         @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+    
+            0%,
+            100% {
+                opacity: 1;
+            }
+    
+            50% {
+                opacity: 0.3;
+            }
         }
-        
+    
+        /* Nested list items (articles) */
         ul ul {
             margin-left: 2rem;
+            margin-top: 0.5rem;
         }
-        
+    
+        ul ul li {
+            font-weight: 400;
+            font-size: 1rem;
+            color: var(--star-white);
+            margin: 0.5rem 0;
+        }
+    
         ul ul li:before {
             content: "→";
             color: rgba(255, 255, 255, 0.5);
+            animation: none;
         }
-        
+    
         a {
             color: #00ffff;
             text-decoration: none;
             position: relative;
             transition: all 0.3s ease;
         }
-        
+    
         a:hover {
             color: #fff;
             text-shadow: 0 0 10px #00ffff;
         }
-        
+    
         a:after {
             content: '';
             position: absolute;
@@ -179,11 +231,11 @@
             background: linear-gradient(90deg, #00ffff, transparent);
             transition: width 0.3s ease;
         }
-        
+    
         a:hover:after {
             width: 100%;
         }
-        
+    
         /* Shooting stars */
         .shooting-star {
             position: fixed;
@@ -195,24 +247,25 @@
             animation: shoot 3s linear;
             z-index: 5;
         }
-        
+    
         @keyframes shoot {
             0% {
                 transform: translate(0, 0);
                 opacity: 1;
             }
+    
             100% {
                 transform: translate(-300px, 300px);
                 opacity: 0;
             }
         }
-        
+    
         /* Responsive */
         @media (max-width: 768px) {
             .content {
                 padding: 1rem;
             }
-            
+    
             .index-section {
                 padding: 1.5rem;
             }
@@ -244,6 +297,18 @@
                             <li><a href="./Articles/Particle-Physics/Neutrinos/neutrino_e.html">A neutrino can easily penetrate the earth. (joke)</a></li>
                         </ul>
                     </li>
+                    <br>
+                    <li>Weapons and Tools:
+                        <ul>
+                            <li><a href="./Sci-Fi/Weapons-&-Tools/index.html">Weapons Catalogue</a></li>
+                        </ul>
+                    </li>
+                    <br>
+                    <li>Stories:
+                        <ul>
+                            <li><a href="./Sci-Fi/Stories/The-Object.html">The Object (me when i &lt;3 3bp so much i copy)</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -259,7 +324,7 @@
         
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * 4; // 4x viewport height
+            canvas.height = window.innerHeight * 6; // 6x viewport height
         }
         
         resizeCanvas();
@@ -706,39 +771,69 @@
                 this.type = type;
                 this.size = Math.random() * 40 + 20;
                 this.rotation = Math.random() * Math.PI * 2;
-                this.opacity = Math.random() * 0.3 + 0.2;
+                this.opacity = Math.random() * 0.4 + 0.2;
                 
                 // For nebulae (repurposed irregular galaxies)
                 if (this.type === 'irregular') {
-                    // Choose a random nebula color palette
-                    const palettes = [
-                        { center: '#ff6b9d', edge: '#4a90e2', name: 'pink-blue' },      // Pink to blue
-                        { center: '#ff4444', edge: '#ff9944', name: 'red-orange' },     // Red to orange (emission nebula)
-                        { center: '#4a90e2', edge: '#9d4edd', name: 'blue-purple' },    // Blue to purple
-                        { center: '#00ff88', edge: '#00ccff', name: 'cyan-green' },     // Cyan to green
-                        { center: '#ffd700', edge: '#ff6347', name: 'gold-red' },       // Gold to red
-                        { center: '#ff1744', edge: '#651fff', name: 'magenta-violet' }  // Magenta to violet
+                    // Choose a random nebula color palette combination
+                    const palettePairs = [
+                        { 
+                            primary: { center: '#ff6b9d', edge: '#4a90e2' },   // Pink to blue
+                            secondary: { center: '#9d4edd', edge: '#00d4ff' }  // Purple to cyan
+                        },
+                        { 
+                            primary: { center: '#ff4444', edge: '#ff9944' },   // Red to orange
+                            secondary: { center: '#ffaa00', edge: '#ff6b4a' }  // Orange to red-orange
+                        },
+                        { 
+                            primary: { center: '#4a90e2', edge: '#9d4edd' },   // Blue to purple
+                            secondary: { center: '#00ccff', edge: '#ff4493' }  // Cyan to pink
+                        },
+                        { 
+                            primary: { center: '#00ff88', edge: '#00ccff' },   // Cyan to green
+                            secondary: { center: '#4a90e2', edge: '#9d4edd' }  // Blue to purple
+                        },
+                        { 
+                            primary: { center: '#ffd700', edge: '#ff6347' },   // Gold to red
+                            secondary: { center: '#ff9944', edge: '#ff4444' }  // Orange to red
+                        },
+                        { 
+                            primary: { center: '#ff1744', edge: '#651fff' },   // Magenta to violet
+                            secondary: { center: '#9d4edd', edge: '#00d4ff' }  // Purple to cyan
+                        }
                     ];
                     
-                    this.palette = palettes[Math.floor(Math.random() * palettes.length)];
-                    this.size = Math.random() * 40 + 30; // Larger than galaxies
+                    this.palettePair = palettePairs[Math.floor(Math.random() * palettePairs.length)];
+                    this.size = Math.random() * 30 + 30;
                     
-                    // Generate wispy cloud formations
-                    this.blobs = [];
-                    const numBlobs = 7 + Math.floor(Math.random() * 5); // 7-11 blobs for more detail
-                    for (let i = 0; i < numBlobs; i++) {
-                        this.blobs.push({
+                    // Generate two layers of blobs
+                    this.primaryBlobs = [];
+                    this.secondaryBlobs = [];
+                    
+                    const numPrimaryBlobs = 5 + Math.floor(Math.random() * 4); // 5-8 blobs
+                    const numSecondaryBlobs = 4 + Math.floor(Math.random() * 3); // 4-6 blobs
+                    
+                    for (let i = 0; i < numPrimaryBlobs; i++) {
+                        this.primaryBlobs.push({
                             offsetX: (Math.random() - 0.5) * this.size * 1.2,
                             offsetY: (Math.random() - 0.5) * this.size * 0.8,
                             blobSize: this.size * (0.3 + Math.random() * 0.4),
-                            // Each blob has its own color mix between center and edge
-                            colorMix: Math.random() 
+                            colorMix: Math.random()
+                        });
+                    }
+                    
+                    for (let i = 0; i < numSecondaryBlobs; i++) {
+                        this.secondaryBlobs.push({
+                            offsetX: (Math.random() - 0.5) * this.size * 1.0,
+                            offsetY: (Math.random() - 0.5) * this.size * 0.7,
+                            blobSize: this.size * (0.25 + Math.random() * 0.35),
+                            colorMix: Math.random()
                         });
                     }
                     
                     // Add some bright star seeds within the nebula
                     this.stars = [];
-                    const numStars = 3 + Math.floor(Math.random() * 4); // 3-6 stars
+                    const numStars = 2 + Math.floor(Math.random() * 4); // 2-5 stars
                     for (let i = 0; i < numStars; i++) {
                         this.stars.push({
                             offsetX: (Math.random() - 0.5) * this.size * 0.6,
@@ -826,44 +921,52 @@
                     ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
                     ctx.fill();
                 } else if (this.type === 'irregular') {
-                    // Nebula rendering with color gradient
-                    ctx.filter = 'blur(8px)'; // More blur for gas clouds
+                    // Nebula rendering with dual color palettes
+                    ctx.filter = 'blur(8px)';
                     
-                    // Draw each blob with gradient from center color to edge color
-                    this.blobs.forEach(blob => {
-                        const gradient = ctx.createRadialGradient(
-                            blob.offsetX, blob.offsetY, 0,
-                            blob.offsetX, blob.offsetY, blob.blobSize
-                        );
-                        
-                        // Mix center and edge colors based on blob's colorMix value
-                        const r1 = parseInt(this.palette.center.slice(1, 3), 16);
-                        const g1 = parseInt(this.palette.center.slice(3, 5), 16);
-                        const b1 = parseInt(this.palette.center.slice(5, 7), 16);
-                        
-                        const r2 = parseInt(this.palette.edge.slice(1, 3), 16);
-                        const g2 = parseInt(this.palette.edge.slice(3, 5), 16);
-                        const b2 = parseInt(this.palette.edge.slice(5, 7), 16);
-                        
-                        const mix = blob.colorMix;
-                        const centerR = Math.round(r1 * (1 - mix) + r2 * mix);
-                        const centerG = Math.round(g1 * (1 - mix) + g2 * mix);
-                        const centerB = Math.round(b1 * (1 - mix) + b2 * mix);
-                        
-                        // Use rgba() format for alpha support
-                        gradient.addColorStop(0, `rgba(${centerR}, ${centerG}, ${centerB}, 0.67)`);
-                        gradient.addColorStop(0.4, `rgba(${centerR}, ${centerG}, ${centerB}, 0.4)`);
-                        gradient.addColorStop(0.7, this.palette.edge + '44');
-                        gradient.addColorStop(1, 'transparent');
-                        
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
-                        ctx.fill();
-                    });
+                    // Helper function to create gradient for a blob
+                    const drawBlobLayer = (blobs, palette) => {
+                        blobs.forEach(blob => {
+                            const gradient = ctx.createRadialGradient(
+                                blob.offsetX, blob.offsetY, 0,
+                                blob.offsetX, blob.offsetY, blob.blobSize
+                            );
+                            
+                            // Extract RGB values
+                            const r1 = parseInt(palette.center.slice(1, 3), 16);
+                            const g1 = parseInt(palette.center.slice(3, 5), 16);
+                            const b1 = parseInt(palette.center.slice(5, 7), 16);
+                            
+                            const r2 = parseInt(palette.edge.slice(1, 3), 16);
+                            const g2 = parseInt(palette.edge.slice(3, 5), 16);
+                            const b2 = parseInt(palette.edge.slice(5, 7), 16);
+                            
+                            const mix = blob.colorMix;
+                            const centerR = Math.round(r1 * (1 - mix) + r2 * mix);
+                            const centerG = Math.round(g1 * (1 - mix) + g2 * mix);
+                            const centerB = Math.round(b1 * (1 - mix) + b2 * mix);
+                            
+                            gradient.addColorStop(0, `rgba(${centerR}, ${centerG}, ${centerB}, 0.67)`);
+                            gradient.addColorStop(0.4, `rgba(${centerR}, ${centerG}, ${centerB}, 0.4)`);
+                            gradient.addColorStop(0.7, palette.edge + '44');
+                            gradient.addColorStop(1, 'transparent');
+                            
+                            ctx.fillStyle = gradient;
+                            ctx.beginPath();
+                            ctx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
+                            ctx.fill();
+                        });
+                    };
                     
-                    // Draw bright stars within nebula (less blur)
-                    ctx.filter = 'blur(1px)';
+                    // Draw primary layer (base nebula color)
+                    drawBlobLayer(this.primaryBlobs, this.palettePair.primary);
+                    
+                    // Draw secondary layer (overlapping accent color)
+                    ctx.filter = 'blur(10px)'; // Slightly more blur for depth
+                    drawBlobLayer(this.secondaryBlobs, this.palettePair.secondary);
+                    
+                    // Draw bright stars within nebula
+                    ctx.filter = 'blur(1px)'; // blur only slightly
                     this.stars.forEach(star => {
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
@@ -1060,7 +1163,7 @@
                 this.size = minSize + Math.random() * (maxSize - minSize);
                 
                 this.phase = 0;
-                this.pulseInterval = 0.05 + Math.random() * 0.20; // Random interval between 0.05–0.25 seconds
+                this.pulseInterval = 0.02 + Math.sqrt(Math.random()) * 0.08; // Random interval between 0.02–0.1 seconds, biased to smaller
                 this.pulseDuration = this.pulseInterval;
                 this.rotation = Math.random() * Math.PI * 2;
             }
@@ -1305,7 +1408,7 @@
                 this.rotationSpeed = 0.01;
                 this.size = 40;
                 this.img = new Image();
-                this.img.src = './index_files/dgoose_knife.svg';
+                this.img.src = './media/dgoose_knife.svg';
             }
             
             update() {
@@ -1339,7 +1442,7 @@
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
                 ctx.shadowBlur = 10;
-                ctx.fillText('Goose man was An Impostor.', 0, this.size + 10);
+                ctx.fillText('Goos was An Impostor.', 0, this.size + 10);
                 ctx.shadowBlur = 0;
                 
                 ctx.restore();
@@ -1369,7 +1472,7 @@
             
             loadImage() {
                 this.img = new Image();
-                this.img.src = './index_files/rocket.svg';
+                this.img.src = './media/rocket.svg';
             }
             
             update() {
@@ -1436,12 +1539,15 @@
         let quasar = null;
         let comet = null;
         let lastCometTime = Date.now();
-        let milkyWayAngle = Math.random() * Math.PI * 2; // Set once at start
-        // Avoid too vertical - re-roll if angle is too close to 90° or 270° (π/2 or 3π/2)
-        while ((milkyWayAngle > Math.PI * 0.35 && milkyWayAngle < Math.PI * 0.65) || 
-               (milkyWayAngle > Math.PI * 1.35 && milkyWayAngle < Math.PI * 1.65)) {
-            milkyWayAngle = Math.random() * Math.PI * 2;
-        }
+        // this is to deal with the milky way angle
+        const maxAngle = Math.PI / 4; // 45°
+
+        let t = Math.random();       // 0 → 1
+        t = Math.pow(t, 3);          // increase power = stronger bias toward 0
+
+        let sign = Math.random() < 0.5 ? -1 : 1;
+        let milkyWayAngle = sign * t * maxAngle;
+        // finish the milky way angle calculation
         let milkyWayStars = []; // Static stars for Milky Way
         let globularClusters = []; // Globular clusters for Milky Way
         let milkyWayDustPatches = []; // Patchy dust band for Milky Way
@@ -1463,18 +1569,26 @@
             // Red dwarf - random position in top half
             const redDwarfX = Math.random() * canvas.width;
             const redDwarfY = canvas.height * (Math.random() * 0.3); // Top 30% of canvas
-            celestialStars.push(new CelestialStar(redDwarfX, redDwarfY, 8, '#ff6b4a', 'red-dwarf'));
+            celestialStars.push(new CelestialStar(redDwarfX, redDwarfY, 3, '#ff6b4a', 'red-dwarf'));
             
             // Additional stars of different classes - random positions
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 10, '#FFA500', 'orange-star'));
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 12, '#FFF4A3', 'yellow-star'));
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 9, '#FFFFFF', 'white-star'));
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 11, '#E0F2FF', 'blue-white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#FF6B4A', 'red-dwarf'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 2, '#FF6B4A', 'red-dwarf'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 5, '#FFA500', 'orange-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 8, '#FFF4A3', 'yellow-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 3, '#FFF4A3', 'yellow-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 6, '#FFFFFF', 'white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 2, '#FFFFFF', 'white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 3, '#FFFFFF', 'white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#FFFFFF', 'white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 7, '#E0F2FF', 'blue-white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 3, '#E0F2FF', 'blue-white-star'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#E0F2FF', 'blue-white-star'));
             
             // Extra stars in bottom 100vh
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 8, '#ff6b4a', 'red-dwarf')); // Red dwarf
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 9, '#FFFFFF', 'white-star')); // White star
-            
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 4, '#ff6b4a', 'red-dwarf')); // Red dwarf
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 6, '#FFFFFF', 'white-star')); // White star
+
             // Planets orbiting the sun - 3x orbit distances
             planets = [
                 new Planet(sunX, sunY, 240, 8, 'rocky', {
@@ -1536,16 +1650,9 @@
                 const y = Math.random() * canvas.height;
                 galaxies.push(new Galaxy(x, y, type));
             });
-
-            // Add 3 additional irregular galaxies
-            for (let i = 0; i < 3; i++) {
-                const x = Math.random() * canvas.width;
-                const y = Math.random() * canvas.height;
-                galaxies.push(new Galaxy(x, y, 'irregular'));
-            }
             
-            // Then add 22 more random ones to reach 30 total
-            for (let i = 0; i < 11; i++) {
+            // Then add 25 more random ones to reach 30 total
+            for (let i = 0; i < 25; i++) {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 const type = galaxyTypes[Math.floor(Math.random() * galaxyTypes.length)];
@@ -1639,8 +1746,8 @@
         
         // Render Milky Way to offscreen canvas once
         function createMilkyWayCanvas() {
+            const size = Math.min(Math.SQRT2 * canvas.width, 16384);
             milkyWayCanvas = document.createElement('canvas');
-            const size = Math.max(canvas.width, canvas.height) * 3;
             milkyWayCanvas.width = size;
             milkyWayCanvas.height = size;
             const offCtx = milkyWayCanvas.getContext('2d');
@@ -1816,9 +1923,9 @@
                 rocket.draw();
             }
             
-            // Spawn comet every 30 seconds
+            // Spawn comet every 60 seconds
             const now = Date.now();
-            if (!comet && now - lastCometTime > 30000 && celestialStars.length > 0) {
+            if (!comet && now - lastCometTime > 60000 && celestialStars.length > 0) {
                 const sun = celestialStars.find(s => s.type === 'sun');
                 if (sun) {
                     comet = new Comet(sun.x, sun.y);
