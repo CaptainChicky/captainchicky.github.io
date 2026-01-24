@@ -59,7 +59,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 600vh; /* 8x viewport height */
+            height: 600vh; /* 6x viewport height */
             z-index: 1;
             pointer-events: none;
         }
@@ -67,7 +67,7 @@
         .content {
             position: relative;
             z-index: 10;
-            min-height: 600vh; /* 8x viewport height */
+            min-height: 600vh; /* 6x viewport height */
             width: 100%;
         }
     
@@ -280,7 +280,7 @@
             <h1>Oh hey, you made it!</h1>
             
             <div class="index-section">
-                <u>😋 Here's my astronomy, physics, &c articles index if that's what you were looking for :D</u>
+                <u>Here's my astronomy, physics, &c. articles index if that's what you were looking for :D</u>
                 
                 <ul>
                     <li>Compact Objects:
@@ -318,47 +318,43 @@
         // Canvas setup
         const canvas = document.getElementById('space-canvas');
         const ctx = canvas.getContext('2d');
-        
-        let mouseX = 0;
-        let mouseY = 0;
-        
+
+        // Debounced resize to prevent rapid re-initialization
+        let resizeTimeout;
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight * 6; // 6x viewport height
         }
-        
+
         resizeCanvas();
         window.addEventListener('resize', () => {
-            resizeCanvas();
-            // Clear everything and reinitialize
-            stars = [];
-            planets = [];
-            celestialStars = [];
-            galaxies = [];
-            floatingTexts = [];
-            pulsars = [];
-            goose = null;
-            rocket = null;
-            earthPlanet = null;
-            quasar = null;
-            comet = null;
-            lastCometTime = Date.now();
-            milkyWayStars = [];
-            globularClusters = [];
-            milkyWayDustPatches = [];
-            milkyWayCanvas = null; // Clear cached Milky Way canvas
-            
-            // Reinitialize everything with same angles
-            initStars();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+                // Clear everything and reinitialize
+                stars = [];
+                planets = [];
+                celestialStars = [];
+                galaxies = [];
+                floatingTexts = [];
+                pulsars = [];
+                goose = null;
+                rocket = null;
+                earthPlanet = null;
+                quasar = null;
+                comet = null;
+                lastCometTime = Date.now();
+                milkyWayStars = [];
+                globularClusters = [];
+                milkyWayDustPatches = [];
+                milkyWayCanvas = null;
+                staticElementsCanvas = null; // Clear cached static elements
+                
+                initStars();
+            }, 250); // Wait 250ms after resize stops
         });
-        
-        // Mouse parallax
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) * 0.01;
-            mouseY = (e.clientY - window.innerHeight / 2) * 0.01;
-        });
-        
-        // Star system
+
+        // Background stars (NOT cached, needs twinkling animation)
         class Star {
             constructor() {
                 this.reset();
@@ -369,13 +365,11 @@
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2;
                 
-                // Random drift in any direction, slower speeds
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.03; // Max speed 0.03
+                const speed = Math.random() * 0.03;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
                 
-                // Color variation
                 const colorRand = Math.random();
                 if (colorRand < 0.7) {
                     this.color = '#ffffff';
@@ -396,7 +390,6 @@
                 this.x += this.speedX;
                 this.y += this.speedY;
                 
-                // Wrap around screen edges
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
@@ -413,7 +406,6 @@
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Glow effect for larger stars
                 if (this.size > 1) {
                     ctx.globalAlpha = (this.opacity * twinkle) * 0.3;
                     ctx.beginPath();
@@ -422,8 +414,8 @@
                 }
             }
         }
-        
-        // Celestial Stars (actual suns)
+
+        // Celestial Stars (NOT cached, needs pulsing animation)
         class CelestialStar {
             constructor(x, y, size, color, type) {
                 this.x = x;
@@ -437,7 +429,6 @@
             
             update() {
                 this.pulsePhase += 0.02;
-                // Pulse range: 0.95 to 1.10
                 const pulse = Math.sin(this.pulsePhase) * 0.075 + 1.025;
                 this.size = this.baseSize * pulse;
             }
@@ -486,8 +477,8 @@
                 }
             }
         }
-        
-        // Planets
+
+        // Planets (cached planet bodies, but drawn dynamically for orbit)
         class Planet {
             constructor(sunX, sunY, orbitRadius, size, type, details) {
                 this.sunX = sunX;
@@ -511,7 +502,6 @@
                         });
                     }
                     
-                    // Generate random features once
                     this.features = [];
                     const numFeatures = Math.floor(Math.random() * 3) + 2;
                     for (let i = 0; i < numFeatures; i++) {
@@ -524,6 +514,262 @@
                         });
                     }
                 }
+                
+                // Cache planet body gradient
+                this.cachedBody = this.createBodyCache();
+            }
+            
+            createBodyCache() {
+                const cacheSize = this.size * 6; // 6x is around enough to fit Saturn's rings
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = cacheSize;
+                tempCanvas.height = cacheSize;
+                const tempCtx = tempCanvas.getContext('2d', { alpha: true });
+                
+                const centerX = cacheSize / 2;
+                const centerY = cacheSize / 2;
+                
+                // Clear canvas and reset ALL alpha contexts
+                tempCtx.clearRect(0, 0, cacheSize, cacheSize);
+                tempCtx.globalAlpha = 1.0;
+                tempCtx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = 1.0; // Main canvas alpha
+                
+                // Glow
+                const gradient = tempCtx.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, this.size * 1.5
+                );
+                gradient.addColorStop(0, this.details.color);
+                gradient.addColorStop(0.7, this.details.color + '44');
+                gradient.addColorStop(1, 'transparent');
+                
+                tempCtx.globalAlpha = 0.3;
+                tempCtx.fillStyle = gradient;
+                tempCtx.beginPath();
+                tempCtx.arc(centerX, centerY, this.size * 1.5, 0, Math.PI * 2);
+                tempCtx.fill();
+                
+                // Planet body (reset all alphas to 1)
+                tempCtx.globalAlpha = 1.0;
+                ctx.globalAlpha = 1.0;
+                const planetGradient = tempCtx.createRadialGradient(
+                    centerX - this.size * 0.3, centerY - this.size * 0.3, 0,
+                    centerX, centerY, this.size
+                );
+                planetGradient.addColorStop(0, this.details.color);
+                planetGradient.addColorStop(0.7, this.details.color2);
+                planetGradient.addColorStop(1, this.details.color3);
+                
+                tempCtx.fillStyle = planetGradient;
+                tempCtx.beginPath();
+                tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
+                tempCtx.fill();
+                
+                // Draw full rings before planet body for ringed planets (Saturn)
+                if (this.type === 'ringed') {
+                    tempCtx.globalAlpha = 0.6;
+                    
+                    tempCtx.strokeStyle = this.details.ringColor;
+                    tempCtx.lineWidth = this.size * 0.4;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.strokeStyle = this.details.ringColor2;
+                    tempCtx.lineWidth = this.size * 0.2;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.globalAlpha = 1.0;
+                    ctx.globalAlpha = 1.0;
+                }
+                
+                // Draw Uranus full ring before planet body (uranus is an ice giant and also ringed so this code is janky)
+                if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
+                    tempCtx.globalAlpha = 0.5;
+                    tempCtx.strokeStyle = '#888888';
+                    tempCtx.lineWidth = this.size * 0.3;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.strokeStyle = '#aaaaaa';
+                    tempCtx.lineWidth = this.size * 0.15;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.globalAlpha = 1.0;
+                    ctx.globalAlpha = 1.0;
+                }
+                
+                // Redraw planet body on top of back rings
+                tempCtx.globalAlpha = 1.0;
+                tempCtx.fillStyle = planetGradient;
+                tempCtx.beginPath();
+                tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
+                tempCtx.fill();
+                
+                tempCtx.globalAlpha = 1.0;
+                ctx.globalAlpha = 1.0;
+                
+                // Surface details (drawn on separate pass with proper alpha)
+                if (this.type === 'gas-giant' || this.type === 'ringed') {
+                    tempCtx.globalAlpha = 0.4;
+                    for (let i = 1; i < 5; i++) {
+                        const bandY = centerY - this.size + (this.size * 2 * (i / 5));
+                        const distFromEquator = Math.abs((i / 5) - 0.5) * 2;
+                        const radiusX = this.size * 0.9 * (1 - distFromEquator * 0.3);
+                        
+                        tempCtx.strokeStyle = this.details.bandColor;
+                        tempCtx.lineWidth = this.size * 0.12;
+                        tempCtx.beginPath();
+                        tempCtx.ellipse(centerX, bandY, radiusX, this.size * 0.08, 0, 0, Math.PI * 2);
+                        tempCtx.stroke();
+                    }
+                    
+                    if (this.type === 'gas-giant' && this.details.color === '#d4a574') {
+                        tempCtx.globalAlpha = 0.7;
+                        tempCtx.fillStyle = '#c1440e';
+                        tempCtx.beginPath();
+                        tempCtx.ellipse(centerX + this.size * 0.3, centerY + this.size * 0.2, this.size * 0.25, this.size * 0.15, 0, 0, Math.PI * 2);
+                        tempCtx.fill();
+                    }
+                    
+                    tempCtx.globalAlpha = 1.0; // Reset
+                    ctx.globalAlpha = 1.0; // Reset main canvas alpha too
+                } else if (this.type === 'rocky') {
+                    tempCtx.globalAlpha = 0.6;
+                    tempCtx.fillStyle = this.details.landColor;
+                    
+                    tempCtx.save();
+                    tempCtx.beginPath();
+                    tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
+                    tempCtx.clip();
+                    
+                    this.landmasses.forEach(land => {
+                        tempCtx.beginPath();
+                        tempCtx.arc(centerX + land.offsetX, centerY + land.offsetY, land.landSize, 0, Math.PI * 2);
+                        tempCtx.fill();
+                    });
+                    
+                    tempCtx.globalAlpha = 0.3;
+                    tempCtx.strokeStyle = this.details.landColor;
+                    tempCtx.lineWidth = this.size * 0.05;
+                    
+                    this.features.forEach(feature => {
+                        tempCtx.beginPath();
+                        if (feature.isOval) {
+                            tempCtx.ellipse(
+                                centerX + feature.offsetX, 
+                                centerY + feature.offsetY, 
+                                feature.featureSize * 1.5, 
+                                feature.featureSize * 0.8, 
+                                feature.rotation, 
+                                0, 
+                                Math.PI * 2
+                            );
+                        } else {
+                            tempCtx.arc(centerX + feature.offsetX, centerY + feature.offsetY, feature.featureSize, 0, Math.PI * 2);
+                        }
+                        tempCtx.stroke();
+                    });
+                    
+                    tempCtx.restore();
+                    tempCtx.globalAlpha = 1.0; // Reset
+                    ctx.globalAlpha = 1.0; // Reset main canvas alpha too
+                } else if (this.type === 'ice-giant') {
+                    if (this.details.color === '#4169e1') {
+                        // Neptune - atmospheric features
+                        tempCtx.globalAlpha = 0.3;
+                        for (let i = 1; i < 6; i++) {
+                            const bandY = centerY - this.size + (this.size * 2 * (i / 6));
+                            tempCtx.strokeStyle = this.details.featureColor;
+                            tempCtx.lineWidth = this.size * 0.06;
+                            tempCtx.beginPath();
+                            tempCtx.ellipse(centerX, bandY, this.size * 0.8, this.size * 0.1, 0, 0, Math.PI * 2);
+                            tempCtx.stroke();
+                        }
+                        
+                        tempCtx.globalAlpha = 0.6;
+                        tempCtx.fillStyle = '#0a1f4a';
+                        tempCtx.beginPath();
+                        tempCtx.ellipse(centerX - this.size * 0.2, centerY, this.size * 0.3, this.size * 0.2, 0, 0, Math.PI * 2);
+                        tempCtx.fill();
+                        
+                        tempCtx.globalAlpha = 0.5;
+                        tempCtx.fillStyle = '#ffffff';
+                        tempCtx.beginPath();
+                        tempCtx.arc(centerX + this.size * 0.4, centerY - this.size * 0.3, this.size * 0.1, 0, Math.PI * 2);
+                        tempCtx.fill();
+                    }
+                    // Uranus has no additional features beyond the base gradient
+                    
+                    tempCtx.globalAlpha = 1.0; // Reset
+                    ctx.globalAlpha = 1.0; // Reset main canvas alpha too
+                }
+                
+                // Draw bottom half of rings after planet body and surface details for ringed planets
+                if (this.type === 'ringed') {
+                    tempCtx.globalAlpha = 0.6;
+                    tempCtx.save();
+                    
+                    // Clip to bottom half only
+                    tempCtx.beginPath();
+                    tempCtx.rect(0, centerY, cacheSize, cacheSize);
+                    tempCtx.clip();
+                    
+                    tempCtx.strokeStyle = this.details.ringColor;
+                    tempCtx.lineWidth = this.size * 0.4;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.strokeStyle = this.details.ringColor2;
+                    tempCtx.lineWidth = this.size * 0.2;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.restore();
+                    tempCtx.globalAlpha = 1.0;
+                    ctx.globalAlpha = 1.0;
+                }
+                
+                // Draw left half of Uranus ring AFTER planet body
+                if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
+                    tempCtx.globalAlpha = 0.5;
+                    tempCtx.save();
+                    
+                    // Clip to left half only
+                    tempCtx.beginPath();
+                    tempCtx.rect(0, 0, centerX, cacheSize);
+                    tempCtx.clip();
+                    
+                    tempCtx.strokeStyle = '#888888';
+                    tempCtx.lineWidth = this.size * 0.3;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.strokeStyle = '#aaaaaa';
+                    tempCtx.lineWidth = this.size * 0.15;
+                    tempCtx.beginPath();
+                    tempCtx.ellipse(centerX, centerY, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    
+                    tempCtx.restore();
+                    tempCtx.globalAlpha = 1.0;
+                    ctx.globalAlpha = 1.0;
+                }
+                
+                // Final reset before returning
+                tempCtx.globalAlpha = 1.0;
+                ctx.globalAlpha = 1.0;
+                
+                return tempCanvas;
             }
             
             update() {
@@ -534,236 +780,19 @@
                 const currentX = this.sunX + Math.cos(this.angle) * this.orbitRadius;
                 const currentY = this.sunY + Math.sin(this.angle) * this.orbitRadius * 0.3;
                 
-                // Draw rings (full ring first) if ringed
-                if (this.type === 'ringed') {
-                    this.drawFullRing(currentX, currentY);
-                }
-                
-                // Draw Uranus full ring before planet if Uranus
-                if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
-                    ctx.globalAlpha = 0.5;
-                    ctx.strokeStyle = '#888888';
-                    ctx.lineWidth = this.size * 0.3;
-                    ctx.beginPath();
-                    ctx.ellipse(currentX, currentY, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    ctx.strokeStyle = '#aaaaaa';
-                    ctx.lineWidth = this.size * 0.15;
-                    ctx.beginPath();
-                    ctx.ellipse(currentX, currentY, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-                
-                // Planet glow
-                const gradient = ctx.createRadialGradient(
-                    currentX, currentY, 0,
-                    currentX, currentY, this.size * 1.5
+                // Draw cached planet body (which now includes rings)
+                const cacheSize = this.cachedBody.width;
+                ctx.globalAlpha = 1.0; // Ensure full opacity when drawing cached body
+                ctx.drawImage(
+                    this.cachedBody,
+                    currentX - cacheSize / 2,
+                    currentY - cacheSize / 2
                 );
-                gradient.addColorStop(0, this.details.color);
-                gradient.addColorStop(0.7, this.details.color + '44');
-                gradient.addColorStop(1, 'transparent');
-                
-                ctx.globalAlpha = 0.3;
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(currentX, currentY, this.size * 1.5, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Planet body with gradient
-                ctx.globalAlpha = 1;
-                const planetGradient = ctx.createRadialGradient(
-                    currentX - this.size * 0.3, currentY - this.size * 0.3, 0,
-                    currentX, currentY, this.size
-                );
-                planetGradient.addColorStop(0, this.details.color);
-                planetGradient.addColorStop(0.7, this.details.color2);
-                planetGradient.addColorStop(1, this.details.color3);
-                
-                ctx.fillStyle = planetGradient;
-                ctx.beginPath();
-                ctx.arc(currentX, currentY, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Surface details
-                if (this.type === 'gas-giant' || this.type === 'ringed') {
-                    // Bands (elliptical, smaller at poles) - skip top band
-                    ctx.globalAlpha = 0.4;
-                    for (let i = 1; i < 5; i++) { // Start from 1 to skip top band
-                        const bandY = currentY - this.size + (this.size * 2 * (i / 5));
-                        const distFromEquator = Math.abs((i / 5) - 0.5) * 2;
-                        const radiusX = this.size * 0.9 * (1 - distFromEquator * 0.3);
-                        
-                        ctx.strokeStyle = this.details.bandColor;
-                        ctx.lineWidth = this.size * 0.12;
-                        ctx.beginPath();
-                        ctx.ellipse(currentX, bandY, radiusX, this.size * 0.08, 0, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                    
-                    // Red spot for Jupiter (first gas giant)
-                    if (this.type === 'gas-giant' && this.details.color === '#d4a574') {
-                        ctx.globalAlpha = 0.7;
-                        ctx.fillStyle = '#c1440e';
-                        ctx.beginPath();
-                        ctx.ellipse(currentX + this.size * 0.3, currentY + this.size * 0.2, this.size * 0.25, this.size * 0.15, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                } else if (this.type === 'rocky') {
-                    // Draw landmass from pre-generated data
-                    ctx.globalAlpha = 0.6;
-                    ctx.fillStyle = this.details.landColor;
-                    
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(currentX, currentY, this.size, 0, Math.PI * 2);
-                    ctx.clip();
-                    
-                    // Use pre-generated landmasses
-                    this.landmasses.forEach(land => {
-                        ctx.beginPath();
-                        ctx.arc(currentX + land.offsetX, currentY + land.offsetY, land.landSize, 0, Math.PI * 2);
-                        ctx.fill();
-                    });
-                    
-                    // Use pre-generated features
-                    ctx.globalAlpha = 0.3;
-                    ctx.strokeStyle = this.details.landColor;
-                    ctx.lineWidth = this.size * 0.05;
-                    
-                    this.features.forEach(feature => {
-                        ctx.beginPath();
-                        if (feature.isOval) {
-                            ctx.ellipse(
-                                currentX + feature.offsetX, 
-                                currentY + feature.offsetY, 
-                                feature.featureSize * 1.5, 
-                                feature.featureSize * 0.8, 
-                                feature.rotation, 
-                                0, 
-                                Math.PI * 2
-                            );
-                        } else {
-                            ctx.arc(currentX + feature.offsetX, currentY + feature.offsetY, feature.featureSize, 0, Math.PI * 2);
-                        }
-                        ctx.stroke();
-                    });
-                    
-                    ctx.restore();
-                } else if (this.type === 'ice-giant') {
-                    // Neptune has more atmospheric features and spots
-                    if (this.details.color === '#4169e1') {
-                        // Multiple atmospheric bands (skip top one)
-                        ctx.globalAlpha = 0.3;
-                        for (let i = 1; i < 6; i++) {
-                            const bandY = currentY - this.size + (this.size * 2 * (i / 6));
-                            ctx.strokeStyle = this.details.featureColor;
-                            ctx.lineWidth = this.size * 0.06;
-                            ctx.beginPath();
-                            ctx.ellipse(currentX, bandY, this.size * 0.8, this.size * 0.1, 0, 0, Math.PI * 2);
-                            ctx.stroke();
-                        }
-                        
-                        // Dark spot
-                        ctx.globalAlpha = 0.6;
-                        ctx.fillStyle = '#0a1f4a';
-                        ctx.beginPath();
-                        ctx.ellipse(currentX - this.size * 0.2, currentY, this.size * 0.3, this.size * 0.2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Small white spot
-                        ctx.globalAlpha = 0.5;
-                        ctx.fillStyle = '#ffffff';
-                        ctx.beginPath();
-                        ctx.arc(currentX + this.size * 0.4, currentY - this.size * 0.3, this.size * 0.1, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    // Uranus gets full ring before planet, then left half after
-                }
-                
-                // Draw Uranus ring (left half) if Uranus
-                if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
-                    this.drawUranusRingHalf(currentX, currentY);
-                }
-                
-                // Draw rings (bottom half only) if ringed
-                if (this.type === 'ringed') {
-                    this.drawBottomRing(currentX, currentY);
-                }
-            }
-            
-            drawFullRing(x, y) {
-                ctx.globalAlpha = 0.6;
-                ctx.save();
-                
-                // Draw full rings
-                ctx.strokeStyle = this.details.ringColor;
-                ctx.lineWidth = this.size * 0.4;
-                ctx.beginPath();
-                ctx.ellipse(x, y, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.strokeStyle = this.details.ringColor2;
-                ctx.lineWidth = this.size * 0.2;
-                ctx.beginPath();
-                ctx.ellipse(x, y, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.restore();
-            }
-            
-            drawBottomRing(x, y) {
-                ctx.globalAlpha = 0.6;
-                ctx.save();
-                ctx.translate(x, y);
-                
-                // Clip to bottom half only
-                ctx.beginPath();
-                ctx.rect(-this.size * 3, 0, this.size * 6, this.size * 3);
-                ctx.clip();
-                
-                ctx.strokeStyle = this.details.ringColor;
-                ctx.lineWidth = this.size * 0.4;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.strokeStyle = this.details.ringColor2;
-                ctx.lineWidth = this.size * 0.2;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.restore();
-            }
-            
-            drawUranusRingHalf(x, y) {
-                ctx.globalAlpha = 0.5;
-                ctx.save();
-                ctx.translate(x, y);
-                
-                // Clip to left half only
-                ctx.beginPath();
-                ctx.rect(-this.size * 3, -this.size * 3, this.size * 3, this.size * 6);
-                ctx.clip();
-                
-                ctx.strokeStyle = '#888888';
-                ctx.lineWidth = this.size * 0.3;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.strokeStyle = '#aaaaaa';
-                ctx.lineWidth = this.size * 0.15;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.restore();
+                ctx.globalAlpha = 1.0; // Reset after drawing
             }
         }
-        
-        // Galaxy class (with nebula support)
+
+        // Galaxy class - WILL BE CACHED to static elements canvas
         class Galaxy {
             constructor(x, y, type) {
                 this.x = x;
@@ -775,7 +804,6 @@
                 
                 // For nebulae (repurposed irregular galaxies)
                 if (this.type === 'irregular') {
-                    // Choose a random nebula color palette combination
                     const palettePairs = [
                         { 
                             primary: { center: '#ff6b9d', edge: '#4a90e2' },   // Pink to blue
@@ -831,7 +859,6 @@
                         });
                     }
                     
-                    // Add some bright star seeds within the nebula
                     this.stars = [];
                     const numStars = 2 + Math.floor(Math.random() * 4); // 2-5 stars
                     for (let i = 0; i < numStars; i++) {
@@ -844,95 +871,86 @@
                 }
             }
             
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                ctx.globalAlpha = this.opacity;
+            draw(targetCtx) {
+                targetCtx.save();
+                targetCtx.translate(this.x, this.y);
+                targetCtx.rotate(this.rotation);
+                targetCtx.globalAlpha = this.opacity;
                 
-                // Add blur for all galaxies
-                ctx.filter = 'blur(3px)';
+                targetCtx.filter = 'blur(3px)';
                 
                 if (this.type === 'spiral' || this.type === 'barred') {
-                    // Blurry halo background
-                    const haloGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
+                    const haloGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
                     haloGradient.addColorStop(0, '#b8d8ff22');
                     haloGradient.addColorStop(0.5, '#b8d8ff11');
                     haloGradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = haloGradient;
-                    ctx.fillRect(-this.size * 1.5, -this.size * 1.5, this.size * 3, this.size * 3);
+                    targetCtx.fillStyle = haloGradient;
+                    targetCtx.fillRect(-this.size * 1.5, -this.size * 1.5, this.size * 3, this.size * 3);
                     
-                    // Core
-                    const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                    const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
                     coreGradient.addColorStop(0, '#fff9b0');
                     coreGradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = coreGradient;
-                    ctx.fillRect(-this.size * 0.3, -this.size * 0.3, this.size * 0.6, this.size * 0.6);
+                    targetCtx.fillStyle = coreGradient;
+                    targetCtx.fillRect(-this.size * 0.3, -this.size * 0.3, this.size * 0.6, this.size * 0.6);
                     
-                    // Bar for barred spirals
                     if (this.type === 'barred') {
-                        ctx.fillStyle = '#fff9b044';
-                        ctx.fillRect(-this.size * 0.5, -this.size * 0.05, this.size, this.size * 0.1);
+                        targetCtx.fillStyle = '#fff9b044';
+                        targetCtx.fillRect(-this.size * 0.5, -this.size * 0.05, this.size, this.size * 0.1);
                     }
                     
                     // Spiral arms
                     for (let arm = 0; arm < 2; arm++) {
-                        ctx.strokeStyle = '#b8d8ff44';
-                        ctx.lineWidth = this.size * 0.15;
-                        ctx.beginPath();
+                        targetCtx.strokeStyle = '#b8d8ff44';
+                        targetCtx.lineWidth = this.size * 0.15;
+                        targetCtx.beginPath();
                         for (let i = 0; i < 50; i++) {
                             const angle = (i / 50) * Math.PI * 2 + arm * Math.PI;
                             const radius = (i / 50) * this.size;
                             const x = Math.cos(angle) * radius;
                             const y = Math.sin(angle) * radius * 0.5;
-                            if (i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
+                            if (i === 0) targetCtx.moveTo(x, y);
+                            else targetCtx.lineTo(x, y);
                         }
-                        ctx.stroke();
+                        targetCtx.stroke();
                     }
                 } else if (this.type === 'elliptical') {
-                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                    const gradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size);
                     gradient.addColorStop(0, '#fff9b0');
                     gradient.addColorStop(0.5, '#b8d8ff33');
                     gradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
-                    ctx.fill();
+                    targetCtx.fillStyle = gradient;
+                    targetCtx.beginPath();
+                    targetCtx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                    targetCtx.fill();
                 } else if (this.type === 'lenticular') {
-                    // Lenticular galaxy - disk-like with bright core
-                    const diskGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                    const diskGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size);
                     diskGradient.addColorStop(0, '#fff9b088');
                     diskGradient.addColorStop(0.3, '#b8d8ff44');
                     diskGradient.addColorStop(0.7, '#b8d8ff22');
                     diskGradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = diskGradient;
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, this.size * 1.2, this.size * 0.25, 0, 0, Math.PI * 2);
-                    ctx.fill();
+                    targetCtx.fillStyle = diskGradient;
+                    targetCtx.beginPath();
+                    targetCtx.ellipse(0, 0, this.size * 1.2, this.size * 0.25, 0, 0, Math.PI * 2);
+                    targetCtx.fill();
                     
-                    // Bright core
-                    const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                    const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
                     coreGradient.addColorStop(0, '#ffffff');
                     coreGradient.addColorStop(0.5, '#fff9b0');
                     coreGradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = coreGradient;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
-                    ctx.fill();
+                    targetCtx.fillStyle = coreGradient;
+                    targetCtx.beginPath();
+                    targetCtx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+                    targetCtx.fill();
                 } else if (this.type === 'irregular') {
-                    // Nebula rendering with dual color palettes
-                    ctx.filter = 'blur(8px)';
+                    targetCtx.filter = 'blur(8px)';
                     
-                    // Helper function to create gradient for a blob
                     const drawBlobLayer = (blobs, palette) => {
                         blobs.forEach(blob => {
-                            const gradient = ctx.createRadialGradient(
+                            const gradient = targetCtx.createRadialGradient(
                                 blob.offsetX, blob.offsetY, 0,
                                 blob.offsetX, blob.offsetY, blob.blobSize
                             );
                             
-                            // Extract RGB values
                             const r1 = parseInt(palette.center.slice(1, 3), 16);
                             const g1 = parseInt(palette.center.slice(3, 5), 16);
                             const b1 = parseInt(palette.center.slice(5, 7), 16);
@@ -951,49 +969,45 @@
                             gradient.addColorStop(0.7, palette.edge + '44');
                             gradient.addColorStop(1, 'transparent');
                             
-                            ctx.fillStyle = gradient;
-                            ctx.beginPath();
-                            ctx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
-                            ctx.fill();
+                            targetCtx.fillStyle = gradient;
+                            targetCtx.beginPath();
+                            targetCtx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
+                            targetCtx.fill();
                         });
                     };
                     
                     // Draw primary layer (base nebula color)
                     drawBlobLayer(this.primaryBlobs, this.palettePair.primary);
-                    
                     // Draw secondary layer (overlapping accent color)
-                    ctx.filter = 'blur(10px)'; // Slightly more blur for depth
+                    targetCtx.filter = 'blur(10px)';
                     drawBlobLayer(this.secondaryBlobs, this.palettePair.secondary);
-                    
                     // Draw bright stars within nebula
-                    ctx.filter = 'none';
+                    targetCtx.filter = 'blur(1px)';
                     this.stars.forEach(star => {
-                        ctx.fillStyle = '#ffffff';
-                        ctx.beginPath();
-                        ctx.arc(star.offsetX, star.offsetY, star.size, 0, Math.PI * 2);
-                        ctx.fill();
+                        targetCtx.fillStyle = '#ffffff';
+                        targetCtx.beginPath();
+                        targetCtx.arc(star.offsetX, star.offsetY, star.size, 0, Math.PI * 2);
+                        targetCtx.fill();
                         
-                        // Star glow
-                        ctx.fillStyle = '#ffffff44';
-                        ctx.beginPath();
-                        ctx.arc(star.offsetX, star.offsetY, star.size * 3, 0, Math.PI * 2);
-                        ctx.fill();
+                        targetCtx.fillStyle = '#ffffff44';
+                        targetCtx.beginPath();
+                        targetCtx.arc(star.offsetX, star.offsetY, star.size * 3, 0, Math.PI * 2);
+                        targetCtx.fill();
                     });
                 }
                 
-                ctx.filter = 'none';
-                ctx.restore();
+                targetCtx.filter = 'none';
+                targetCtx.restore();
             }
         }
-        
-        // Quasar
+
+        // Quasar (will be cached to static elements canvas with galaxies)
         class Quasar {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
                 this.size = 30;
-                this.pulsePhase = 0;
-                this.rotation = Math.random() * Math.PI * 2; // Random 0-360 degrees
+                this.rotation = Math.random() * Math.PI * 2;
                 
                 // Generate dust patches once
                 this.dustPatches = [];
@@ -1005,98 +1019,91 @@
                 }
             }
             
-            update() {
-                this.pulsePhase += 0.01;
-            }
-            
-            draw() {
-                const pulse = Math.sin(this.pulsePhase) * 0.1 + 1;
-                
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation); // Apply random rotation
+            draw(targetCtx) {
+                targetCtx.save();
+                targetCtx.translate(this.x, this.y);
+                targetCtx.rotate(this.rotation);
                 
                 // Main blue-white core
-                ctx.filter = 'blur(12px)';
-                const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * pulse * 1.2);
+                targetCtx.filter = 'blur(12px)';
+                const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.2);
                 coreGradient.addColorStop(0, '#ffffff');
                 coreGradient.addColorStop(0.2, '#b8d8ffcc');
                 coreGradient.addColorStop(0.5, '#4169e188');
                 coreGradient.addColorStop(1, 'transparent');
                 
-                ctx.globalAlpha = 0.9;
-                ctx.fillStyle = coreGradient;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * pulse * 0.9, this.size * 0.35 * pulse, 0, 0, Math.PI * 2);
-                ctx.fill();
+                targetCtx.globalAlpha = 0.9;
+                targetCtx.fillStyle = coreGradient;
+                targetCtx.beginPath();
+                targetCtx.ellipse(0, 0, this.size * 0.9, this.size * 0.35, 0, 0, Math.PI * 2);
+                targetCtx.fill();
                 
-                // Narrow red tinge around the blue-white core
-                ctx.filter = 'blur(8px)';
-                const redGradient = ctx.createRadialGradient(0, 0, this.size * pulse * 0.7, 0, 0, this.size * pulse * 1.1);
+                // Narrow red tinge
+                targetCtx.filter = 'blur(8px)';
+                const redGradient = targetCtx.createRadialGradient(0, 0, this.size * 0.7, 0, 0, this.size * 1.1);
                 redGradient.addColorStop(0, 'transparent');
                 redGradient.addColorStop(0.5, '#ff444466');
                 redGradient.addColorStop(1, 'transparent');
                 
-                ctx.globalAlpha = 0.6;
-                ctx.fillStyle = redGradient;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * pulse * 1.0, this.size * 0.4 * pulse, 0, 0, Math.PI * 2);
-                ctx.fill();
+                targetCtx.globalAlpha = 0.6;
+                targetCtx.fillStyle = redGradient;
+                targetCtx.beginPath();
+                targetCtx.ellipse(0, 0, this.size * 1.0, this.size * 0.4, 0, 0, Math.PI * 2);
+                targetCtx.fill();
                 
-                // Patchy dark dust band (less blur - 70% of original)
-                ctx.filter = 'blur(4px)'; // Was 6px, now 4px
-                ctx.globalAlpha = 0.6;
-                ctx.fillStyle = '#00000088';
+                // Patchy dark dust band
+                targetCtx.filter = 'blur(4px)';
+                targetCtx.globalAlpha = 0.6;
+                targetCtx.fillStyle = '#00000088';
                 
-                // Use pre-generated patches
                 this.dustPatches.forEach(patch => {
-                    ctx.fillRect(patch.offsetX - patch.patchWidth / 2, -this.size * 0.15, patch.patchWidth, this.size * 0.3);
+                    targetCtx.fillRect(patch.offsetX - patch.patchWidth / 2, -this.size * 0.15, patch.patchWidth, this.size * 0.3);
                 });
                 
-                // Jets (expanding cones - less blur)
+                // Jets
                 const jetLength = this.size * 4;
                 const jetBaseWidth = this.size * 0.1;
                 const jetEndWidth = this.size * 0.8;
                 
-                ctx.filter = 'blur(5px)'; // Was 8px
+                targetCtx.filter = 'blur(5px)';
                 
                 // Top jet
-                const jetGradientTop = ctx.createLinearGradient(0, -jetLength, 0, 0);
+                const jetGradientTop = targetCtx.createLinearGradient(0, -jetLength, 0, 0);
                 jetGradientTop.addColorStop(0, 'transparent');
                 jetGradientTop.addColorStop(0.3, '#b8d8ff22');
                 jetGradientTop.addColorStop(0.7, '#b8d8ff55');
                 jetGradientTop.addColorStop(1, '#b8d8ff88');
                 
-                ctx.globalAlpha = 0.6;
-                ctx.fillStyle = jetGradientTop;
-                ctx.beginPath();
-                ctx.moveTo(-jetBaseWidth, 0);
-                ctx.lineTo(-jetEndWidth, -jetLength);
-                ctx.lineTo(jetEndWidth, -jetLength);
-                ctx.lineTo(jetBaseWidth, 0);
-                ctx.fill();
+                targetCtx.globalAlpha = 0.6;
+                targetCtx.fillStyle = jetGradientTop;
+                targetCtx.beginPath();
+                targetCtx.moveTo(-jetBaseWidth, 0);
+                targetCtx.lineTo(-jetEndWidth, -jetLength);
+                targetCtx.lineTo(jetEndWidth, -jetLength);
+                targetCtx.lineTo(jetBaseWidth, 0);
+                targetCtx.fill();
                 
                 // Bottom jet
-                const jetGradientBottom = ctx.createLinearGradient(0, 0, 0, jetLength);
+                const jetGradientBottom = targetCtx.createLinearGradient(0, 0, 0, jetLength);
                 jetGradientBottom.addColorStop(0, '#b8d8ff88');
                 jetGradientBottom.addColorStop(0.3, '#b8d8ff55');
                 jetGradientBottom.addColorStop(0.7, '#b8d8ff22');
                 jetGradientBottom.addColorStop(1, 'transparent');
                 
-                ctx.fillStyle = jetGradientBottom;
-                ctx.beginPath();
-                ctx.moveTo(-jetBaseWidth, 0);
-                ctx.lineTo(-jetEndWidth, jetLength);
-                ctx.lineTo(jetEndWidth, jetLength);
-                ctx.lineTo(jetBaseWidth, 0);
-                ctx.fill();
+                targetCtx.fillStyle = jetGradientBottom;
+                targetCtx.beginPath();
+                targetCtx.moveTo(-jetBaseWidth, 0);
+                targetCtx.lineTo(-jetEndWidth, jetLength);
+                targetCtx.lineTo(jetEndWidth, jetLength);
+                targetCtx.lineTo(jetBaseWidth, 0);
+                targetCtx.fill();
                 
-                ctx.filter = 'none';
-                ctx.restore();
+                targetCtx.filter = 'none';
+                targetCtx.restore();
             }
         }
-        
-        // Floating text
+
+        // Floating text, NOT cached (pulsing opacity)
         class FloatingText {
             constructor(text) {
                 this.text = text;
@@ -1106,14 +1113,13 @@
                 this.y = canvas.height * (0.05 + Math.random() * 0.65);
 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 0.03; // Same as star speed
+                const speed = Math.random() * 0.03;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
                 
-                // Pulsing opacity setup
-                this.opacity = Math.random(); // start at random opacity
-                this.pulseSpeed = 0.002 + Math.random() * 0.003; // slower pulse speed
-                this.pulseDirection = Math.random() < 0.5 ? 1 : -1; // initial pulse direction
+                this.opacity = Math.random();
+                this.pulseSpeed = 0.002 + Math.random() * 0.003;
+                this.pulseDirection = Math.random() < 0.5 ? 1 : -1;
             }
             
             update() {
@@ -1125,9 +1131,7 @@
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-                
 
-                // Pulsing opacity (clamped)
                 this.opacity += this.pulseSpeed * this.pulseDirection;
                 if (this.opacity > 1) {
                     this.opacity = 1;
@@ -1148,11 +1152,11 @@
                 ctx.shadowBlur = 10;
                 ctx.fillText(this.text, this.x, this.y);
                 ctx.shadowBlur = 0;
-                ctx.globalAlpha = 1; // reset for other drawings
+                ctx.globalAlpha = 1;
             }
         }
-        
-        // Pulsar
+
+        // Pulsar, NOT cached (flashing animation)
         class Pulsar {
             constructor(x, y) {
                 this.x = x;
@@ -1163,7 +1167,7 @@
                 this.size = minSize + Math.random() * (maxSize - minSize);
                 
                 this.phase = 0;
-                this.pulseInterval = 0.02 + Math.sqrt(Math.random()) * 0.08; // Random interval between 0.02–0.1 seconds, biased to smaller
+                this.pulseInterval = 0.02 + Math.pow(Math.random(), 3) * 0.28; // 0.02 to 0.3, biased towards shorter intervals
                 this.pulseDuration = this.pulseInterval;
                 this.rotation = Math.random() * Math.PI * 2;
             }
@@ -1217,7 +1221,6 @@
                     
                     ctx.restore();
                 } else {
-                    // Black phase (almost invisible)
                     ctx.globalAlpha = 0.1;
                     ctx.fillStyle = '#000000';
                     ctx.beginPath();
@@ -1226,26 +1229,26 @@
                 }
             }
         }
-        
-        // Comet
+
+        // Comet, NOT cached (dynamic motion)
         class Comet {
             constructor(sunX, sunY, GM = 5000) {
                 this.sunX = sunX;
                 this.sunY = sunY;
-                this.GM = GM; // Gravitational parameter, tweak for effect
+                this.GM = GM; // bigger GM = stronger gravity
                 
                 // Start at random edge
                 const edge = Math.floor(Math.random() * 4);
-                if (edge === 0) { // Top
+                if (edge === 0) {
                     this.x = Math.random() * canvas.width;
                     this.y = 0;
-                } else if (edge === 1) { // Right
+                } else if (edge === 1) {
                     this.x = canvas.width;
                     this.y = Math.random() * canvas.height;
-                } else if (edge === 2) { // Bottom
+                } else if (edge === 2) {
                     this.x = Math.random() * canvas.width;
                     this.y = canvas.height;
-                } else { // Left
+                } else {
                     this.x = 0;
                     this.y = Math.random() * canvas.height;
                 }
@@ -1288,7 +1291,7 @@
                 this.selectedCore = coreColors[Math.floor(Math.random() * coreColors.length)];
             }
 
-            update(dt = 1, sunRadius = 50) {
+            update(dt = 1, sunRadius = 50) { 
                 // Vector from comet to sun
                 const dx = this.sunX - this.x;
                 const dy = this.sunY - this.y;
@@ -1303,11 +1306,9 @@
                 const ax = a * (dx / r);
                 const ay = a * (dy / r);
                 
-                // Update velocity
                 this.vx += ax * dt;
                 this.vy += ay * dt;
                 
-                // Update position
                 this.x += this.vx * dt;
                 this.y += this.vy * dt;
             }
@@ -1331,13 +1332,13 @@
                 
                 // Tail length increases as it approaches sun
                 const maxTailLength = 200;
-                // Tail grows faster as it gets closer
+                // Tail grows faster as it gets closer exponentially
                 const tailLength = maxTailLength * (1 - Math.exp(-1000 / this.distanceToSun));  
                 
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 
-                // Main tail (dust tail) - points away from sun
+                // Main tail (dust tail)
                 ctx.filter = 'blur(8px)';
                 const dustGradient = ctx.createLinearGradient(0, 0, 
                     Math.cos(angleFromSun) * tailLength, 
@@ -1363,9 +1364,9 @@
                         Math.cos(angleFromSun + ionOffset) * ionLength,
                         Math.sin(angleFromSun + ionOffset) * ionLength
                     );
-                    ionGradient.addColorStop(0, 'rgba(180, 255, 255, 1)');  // almost white neon blue at base
+                    ionGradient.addColorStop(0, 'rgba(180, 255, 255, 1)');     // almost white neon blue at base
                     ionGradient.addColorStop(0.5, 'rgba(100, 220, 255, 0.7)'); // softer, still bright blue
-                    ionGradient.addColorStop(1, 'transparent');             // fade out
+                    ionGradient.addColorStop(1, 'transparent');                // fade out
                     
                     ctx.globalAlpha = 0.7;
                     ctx.strokeStyle = ionGradient;
@@ -1401,7 +1402,7 @@
                 this.x = canvas.width * 0.3;
                 this.y = canvas.height * 0.3;
                 const angle = Math.random() * Math.PI * 2;
-                const speed = (Math.random() * 0.02 + 0.01) * 1.5; // 1.5x of 0.01-0.03
+                const speed = Math.random() * 0.04 + 0.04;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
                 this.rotation = 0;
@@ -1442,7 +1443,7 @@
                 ctx.textAlign = 'center';
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
                 ctx.shadowBlur = 10;
-                ctx.fillText('Goos was An Impostor.', 0, this.size + 10);
+                ctx.fillText('Goos was an Impostor.', 0, this.size + 10);
                 ctx.shadowBlur = 0;
                 
                 ctx.restore();
@@ -1458,7 +1459,7 @@
                 this.y = earthY;
                 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 0.2; // 2x of 0.1
+                const speed = 0.2;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
                 
@@ -1476,17 +1477,14 @@
             }
             
             update() {
-                // Move
                 this.x += this.speedX;
                 this.y += this.speedY;
                 
-                // Wrap around
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
                 
-                // Update angle smoothly
                 const now = Date.now();
                 if (now > this.nextAngleChangeTime) {
                     this.targetAngle = Math.random() * Math.PI * 2;
@@ -1505,8 +1503,7 @@
                     this.angle = this.targetAngle;
                 }
                 
-                // Update velocity based on angle
-                this.speedX = Math.cos(this.angle) * 0.2; // 2x of 0.1
+                this.speedX = Math.cos(this.angle) * 0.2;
                 this.speedY = Math.sin(this.angle) * 0.2;
             }
             
@@ -1526,7 +1523,7 @@
                 ctx.restore();
             }
         }
-        
+
         let stars = [];
         let planets = [];
         let celestialStars = [];
@@ -1541,10 +1538,8 @@
         let lastCometTime = Date.now();
         // this is to deal with the milky way angle
         const maxAngle = Math.PI / 4; // 45°
-
-        let t = Math.random();       // 0 → 1
-        t = Math.pow(t, 3);          // increase power = stronger bias toward 0
-
+        let t = Math.random();        // 0 → 1
+        t = Math.pow(t, 3);           // increase power = stronger bias toward 0
         let sign = Math.random() < 0.5 ? -1 : 1;
         let milkyWayAngle = sign * t * maxAngle;
         // finish the milky way angle calculation
@@ -1554,14 +1549,13 @@
         let milkyWayCanvas = null; // Offscreen canvas for Milky Way (performance)
         
         function initStars() {
-            // Calculate star count - reduced by 70% for performance
             const starCount = Math.floor((canvas.width * canvas.height) / 3500);
             stars = [];
             for (let i = 0; i < starCount; i++) {
                 stars.push(new Star());
             }
             
-            // Sun-like star - 2x bigger, static position at 65% down
+            // Sun-like star
             const sunX = canvas.width * 0.5;
             const sunY = canvas.height * 0.65; // 65% down the canvas
             celestialStars.push(new CelestialStar(sunX, sunY, 50, '#FDB813', 'sun'));
@@ -1571,7 +1565,7 @@
             const redDwarfY = canvas.height * (Math.random() * 0.3); // Top 30% of canvas
             celestialStars.push(new CelestialStar(redDwarfX, redDwarfY, 3, '#ff6b4a', 'red-dwarf'));
             
-            // Additional stars of different classes - random positions
+            // Additional stars
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#FF6B4A', 'red-dwarf'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 2, '#FF6B4A', 'red-dwarf'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 5, '#FFA500', 'orange-star'));
@@ -1586,10 +1580,10 @@
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#E0F2FF', 'blue-white-star'));
             
             // Extra stars in bottom 100vh
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 4, '#ff6b4a', 'red-dwarf')); // Red dwarf
-            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 6, '#FFFFFF', 'white-star')); // White star
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 4, '#ff6b4a', 'red-dwarf'));
+            celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 6, '#FFFFFF', 'white-star'));
 
-            // Planets orbiting the sun - 3x orbit distances
+            // Planets orbiting the sun
             planets = [
                 new Planet(sunX, sunY, 240, 8, 'rocky', {
                     color: '#8c7853',
@@ -1637,10 +1631,10 @@
                 })
             ];
             
-            // Store earth planet reference
+            // Store earth planet reference for rocket
             earthPlanet = planets[1];
             
-            // Generate galaxies - ensure at least one of each type
+            // Generate galaxies
             galaxies = [];
             const galaxyTypes = ['spiral', 'barred', 'irregular', 'elliptical', 'lenticular'];
             
@@ -1659,7 +1653,7 @@
                 galaxies.push(new Galaxy(x, y, type));
             }
             
-            // Floating texts - spread across full canvas
+            // Floating texts
             floatingTexts = [
                 new FloatingText('Where am I?'),
                 new FloatingText('Where am high?'),
@@ -1667,9 +1661,9 @@
                 new FloatingText('Fleeting as stardust...')
             ];
             
-            // Pulsars - 4-5 random positions
+            // Pulsars, 4-5, random positions
             pulsars = [];
-            const pulsarCount = 4 + Math.floor(Math.random() * 2); // 4 or 5
+            const pulsarCount = 4 + Math.floor(Math.random() * 2);
             for (let i = 0; i < pulsarCount; i++) {
                 pulsars.push(new Pulsar(
                     Math.random() * canvas.width,
@@ -1677,22 +1671,19 @@
                 ));
             }
             
-            // Goose
             goose = new Goose();
             
-            // Quasar in random position
             quasar = new Quasar(Math.random() * canvas.width, Math.random() * canvas.height);
             
-            // Generate static Milky Way stars once - 10x more, heavily tapered distribution
+            // Generate static Milky Way stars
             const bandLength = Math.max(canvas.width, canvas.height) * 2.5;
             const bandWidth = 200;
             milkyWayStars = [];
             for (let i = 0; i < 2300; i++) {
-                // Generate position with heavy preference towards center
                 const xRandom = Math.random() - 0.5;
                 const yRandom = Math.random() - 0.5;
-                const normalizedX = xRandom * 2; // -1 to 1
-                const normalizedY = yRandom * 2; // -1 to 1
+                const normalizedX = xRandom * 2;
+                const normalizedY = yRandom * 2;
                 const distanceFromCenterX = Math.abs(normalizedX);
                 const distanceFromCenterY = Math.abs(normalizedY);
                 
@@ -1727,7 +1718,7 @@
                 });
             }
             
-            // Generate patchy dust band positions once
+            // Generate patchy dust band
             milkyWayDustPatches = [];
             for (let i = 0; i < 25; i++) {
                 const x = (Math.random() - 0.5) * bandLength;
@@ -1738,12 +1729,11 @@
                 });
             }
             
-            // Rocket (will be created after first frame when earth position is known)
-            
-            // Create offscreen canvas for Milky Way (render once for performance)
+            // Create offscreen canvases
             createMilkyWayCanvas();
+            createStaticElementsCanvas();
         }
-        
+
         // Render Milky Way to offscreen canvas once
         function createMilkyWayCanvas() {
             const size = Math.min(Math.SQRT2 * canvas.width, 16384);
@@ -1854,8 +1844,24 @@
             
             offCtx.restore();
         }
-        
-        // Milky Way - optimized to draw from cached canvas
+
+        // Render static elements (galaxies, nebulae, quasar) to offscreen canvas once
+        function createStaticElementsCanvas() {
+            staticElementsCanvas = document.createElement('canvas');
+            staticElementsCanvas.width = canvas.width;
+            staticElementsCanvas.height = canvas.height;
+            const offCtx = staticElementsCanvas.getContext('2d');
+            
+            // Draw all galaxies to the static canvas
+            galaxies.forEach(galaxy => galaxy.draw(offCtx));
+            
+            // Draw quasar to the static canvas
+            if (quasar) {
+                quasar.draw(offCtx);
+            }
+        }
+
+        // Draw Milky Way from cached canvas
         function drawMilkyWay() {
             if (!milkyWayCanvas) return;
             
@@ -1863,27 +1869,26 @@
             const centerY = canvas.height / 2;
             const size = milkyWayCanvas.width;
             
-            // Draw the pre-rendered Milky Way canvas
             ctx.drawImage(milkyWayCanvas, centerX - size / 2, centerY - size / 2);
         }
-        
+
+        // Draw static elements from cached canvas
+        function drawStaticElements() {
+            if (!staticElementsCanvas) return;
+            ctx.drawImage(staticElementsCanvas, 0, 0);
+        }
+
         initStars();
-        
+
         let frameCount = 0;
-        
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw distant galaxies (furthest)
-            galaxies.forEach(galaxy => galaxy.draw());
+            // Draw cached static elements (galaxies, nebulae, quasar)
+            drawStaticElements();
             
-            // Update and draw quasar (behind Milky Way)
-            if (quasar) {
-                quasar.update();
-                quasar.draw();
-            }
-            
-            // Draw Milky Way (in front of quasar and galaxies)
+            // Draw Milky Way (cached)
             drawMilkyWay();
             
             // Update and draw background stars
@@ -1955,18 +1960,13 @@
                 goose.draw();
             }
             
-            // Apply parallax offset
-            ctx.save();
-            ctx.translate(mouseX, mouseY);
-            ctx.restore();
-            
             ctx.globalAlpha = 1;
             frameCount++;
             requestAnimationFrame(animate);
         }
-        
+
         animate();
-        
+
         // Shooting stars
         function createShootingStar() {
             const shootingStar = document.createElement('div');
@@ -1977,9 +1977,9 @@
             
             setTimeout(() => shootingStar.remove(), 3000);
         }
-        
+
         setInterval(() => {
-            if (Math.random() < 0.45) { // 1.5x of 0.3 = 0.45
+            if (Math.random() < 0.45) {
                 createShootingStar();
             }
         }, 2000);
