@@ -966,7 +966,7 @@
                     drawBlobLayer(this.secondaryBlobs, this.palettePair.secondary);
                     
                     // Draw bright stars within nebula
-                    ctx.filter = 'blur(1px)'; // blur only slightly
+                    ctx.filter = 'none';
                     this.stars.forEach(star => {
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
