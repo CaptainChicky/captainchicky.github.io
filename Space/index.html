@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -25,18 +26,18 @@
 
     <!-- favicon -->
     <link rel="icon" type="image/png" href="./media/comet.png">
-    
+
     <!-- import a font -->
     <link href="./media/fonts/css2.css" rel="stylesheet">
 
     <!-- main css styles -->
-    <style>    
+    <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-    
+
         :root {
             --space-black: #000000;
             --space-purple: #1a0b2e;
@@ -47,7 +48,7 @@
             --star-red: #ffb8b0;
             --cosmic-glow: rgba(138, 43, 226, 0.3);
         }
-    
+
         body {
             background: radial-gradient(ellipse at bottom, var(--space-purple) 0%, var(--space-black) 100%);
             color: var(--star-white);
@@ -56,24 +57,26 @@
             min-height: 100vh;
             position: relative;
         }
-    
+
         #space-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 600vh; /* 6x viewport height */
+            height: 600vh;
+            /* 6x viewport height */
             z-index: 1;
             pointer-events: none;
         }
-    
+
         .content {
             position: relative;
             z-index: 10;
-            min-height: 600vh; /* 6x viewport height */
+            min-height: 600vh;
+            /* 6x viewport height */
             width: 100%;
         }
-    
+
         .arrival {
             position: absolute;
             bottom: 0;
@@ -84,19 +87,19 @@
             padding: 2rem;
             z-index: 100;
         }
-    
+
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(50px);
             }
-    
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-    
+
         h1 {
             font-family: 'Orbitron', sans-serif;
             font-size: clamp(2rem, 5vw, 4rem);
@@ -109,19 +112,19 @@
             animation: shimmer 3s ease-in-out infinite;
             margin-bottom: 2rem;
         }
-    
+
         @keyframes shimmer {
-    
+
             0%,
             100% {
                 background-position: 0% 50%;
             }
-    
+
             50% {
                 background-position: 100% 50%;
             }
         }
-    
+
         .index-section {
             background: rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(138, 43, 226, 0.3);
@@ -134,35 +137,35 @@
             animation: pulseGlow 3s ease-in-out infinite;
             text-align: left;
         }
-    
+
         @keyframes pulseGlow {
-    
+
             0%,
             100% {
                 box-shadow: 0 0 20px rgba(138, 43, 226, 0.3),
                     inset 0 0 20px rgba(138, 43, 226, 0.1);
                 border-color: rgba(138, 43, 226, 0.3);
             }
-    
+
             50% {
                 box-shadow: 0 0 40px rgba(138, 43, 226, 0.6),
                     inset 0 0 30px rgba(138, 43, 226, 0.2);
                 border-color: rgba(138, 43, 226, 0.6);
             }
         }
-    
+
         .index-section u {
             font-size: 1.2rem;
             color: #b8d8ff;
             display: block;
             text-align: center;
         }
-    
+
         ul {
             list-style: none;
             margin-top: 1.5rem;
         }
-    
+
         /* Top-level list items (section headers) */
         li {
             margin: 0.8rem 0;
@@ -172,7 +175,7 @@
             font-size: 1.1rem;
             color: #b8d8ff;
         }
-    
+
         li:before {
             content: "★";
             position: absolute;
@@ -180,50 +183,50 @@
             color: #b8d8ff;
             animation: twinkle 2s ease-in-out infinite;
         }
-    
+
         @keyframes twinkle {
-    
+
             0%,
             100% {
                 opacity: 1;
             }
-    
+
             50% {
                 opacity: 0.3;
             }
         }
-    
+
         /* Nested list items (articles) */
         ul ul {
             margin-left: 2rem;
             margin-top: 0.5rem;
         }
-    
+
         ul ul li {
             font-weight: 400;
             font-size: 1rem;
             color: var(--star-white);
             margin: 0.5rem 0;
         }
-    
+
         ul ul li:before {
             content: "→";
             color: rgba(255, 255, 255, 0.5);
             animation: none;
         }
-    
+
         a {
             color: #00ffff;
             text-decoration: none;
             position: relative;
             transition: all 0.3s ease;
         }
-    
+
         a:hover {
             color: #fff;
             text-shadow: 0 0 10px #00ffff;
         }
-    
+
         a:after {
             content: '';
             position: absolute;
@@ -234,11 +237,11 @@
             background: linear-gradient(90deg, #00ffff, transparent);
             transition: width 0.3s ease;
         }
-    
+
         a:hover:after {
             width: 100%;
         }
-    
+
         /* Shooting stars */
         .shooting-star {
             position: fixed;
@@ -250,41 +253,42 @@
             animation: shoot 3s linear;
             z-index: 5;
         }
-    
+
         @keyframes shoot {
             0% {
                 transform: translate(0, 0);
                 opacity: 1;
             }
-    
+
             100% {
                 transform: translate(-300px, 300px);
                 opacity: 0;
             }
         }
-    
+
         /* Responsive */
         @media (max-width: 768px) {
             .content {
                 padding: 1rem;
             }
-    
+
             .index-section {
                 padding: 1.5rem;
             }
         }
     </style>
 </head>
+
 <body>
     <canvas id="space-canvas"></canvas>
-    
+
     <div class="content">
         <div class="arrival">
             <h1>Oh hey, you made it!</h1>
-            
+
             <div class="index-section">
                 <u>Here's my astronomy, physics, &c. articles index if that's what you were looking for :D</u>
-                
+
                 <ul>
                     <li>Compact Objects:
                         <ul>
@@ -358,7 +362,7 @@
                 milkyWayDustPatches = [];
                 milkyWayCanvas = null;
                 staticElementsCanvas = null; // Clear cached static elements
-                
+
                 initStars();
             }, 250); // Wait 250ms after resize stops
         });
@@ -368,17 +372,17 @@
             constructor() {
                 this.reset();
             }
-            
+
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2;
-                
+
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 0.03;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
-                
+
                 const colorRand = Math.random();
                 if (colorRand < 0.7) {
                     this.color = '#ffffff';
@@ -389,24 +393,24 @@
                 } else {
                     this.color = '#ffb8b0';
                 }
-                
+
                 this.opacity = Math.random() * 0.5 + 0.5;
                 this.twinkleSpeed = Math.random() * 0.02 + 0.01;
                 this.twinklePhase = Math.random() * Math.PI * 2;
             }
-            
+
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                
+
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-                
+
                 this.twinklePhase += this.twinkleSpeed;
             }
-            
+
             draw() {
                 const twinkle = Math.sin(this.twinklePhase) * 0.3 + 0.7;
                 ctx.globalAlpha = this.opacity * twinkle;
@@ -414,7 +418,7 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 if (this.size > 1) {
                     ctx.globalAlpha = (this.opacity * twinkle) * 0.3;
                     ctx.beginPath();
@@ -435,16 +439,16 @@
                 this.type = type;
                 this.pulsePhase = 0;
             }
-            
+
             update() {
                 this.pulsePhase += 0.02;
                 const pulse = Math.sin(this.pulsePhase) * 0.075 + 1.025;
                 this.size = this.baseSize * pulse;
             }
-            
+
             draw() {
                 const pulse = this.size / this.baseSize;
-                
+
                 // Outer glow
                 const glowGradient = ctx.createRadialGradient(
                     this.x, this.y, 0,
@@ -454,13 +458,13 @@
                 glowGradient.addColorStop(0.2, this.color + 'aa');
                 glowGradient.addColorStop(0.5, this.color + '33');
                 glowGradient.addColorStop(1, 'transparent');
-                
+
                 ctx.globalAlpha = 0.6;
                 ctx.fillStyle = glowGradient;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size * 4 * pulse, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Core glow
                 const coreGradient = ctx.createRadialGradient(
                     this.x, this.y, 0,
@@ -469,13 +473,13 @@
                 coreGradient.addColorStop(0, '#ffffff');
                 coreGradient.addColorStop(0.6, this.color);
                 coreGradient.addColorStop(1, this.color + 'cc');
-                
+
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = coreGradient;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size * pulse, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Haze for red dwarf
                 if (this.type === 'red-dwarf') {
                     ctx.globalAlpha = 0.3;
@@ -498,7 +502,7 @@
                 this.details = details;
                 this.orbitSpeed = 0.0003 / (orbitRadius / 100);
                 this.angle = Math.random() * Math.PI * 2;
-                
+
                 // Generate landmasses once
                 if (this.type === 'rocky') {
                     this.landmasses = [];
@@ -510,7 +514,7 @@
                             landSize: this.size * (Math.random() * 0.4 + 0.3)
                         });
                     }
-                    
+
                     this.features = [];
                     const numFeatures = Math.floor(Math.random() * 3) + 2;
                     for (let i = 0; i < numFeatures; i++) {
@@ -523,27 +527,27 @@
                         });
                     }
                 }
-                
+
                 // Cache planet body gradient
                 this.cachedBody = this.createBodyCache();
             }
-            
+
             createBodyCache() {
                 const cacheSize = this.size * 6; // 6x is around enough to fit Saturn's rings
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = cacheSize;
                 tempCanvas.height = cacheSize;
                 const tempCtx = tempCanvas.getContext('2d', { alpha: true });
-                
+
                 const centerX = cacheSize / 2;
                 const centerY = cacheSize / 2;
-                
+
                 // Clear canvas and reset ALL alpha contexts
                 tempCtx.clearRect(0, 0, cacheSize, cacheSize);
                 tempCtx.globalAlpha = 1.0;
                 tempCtx.globalCompositeOperation = 'source-over';
                 ctx.globalAlpha = 1.0; // Main canvas alpha
-                
+
                 // Glow
                 const gradient = tempCtx.createRadialGradient(
                     centerX, centerY, 0,
@@ -552,13 +556,13 @@
                 gradient.addColorStop(0, this.details.color);
                 gradient.addColorStop(0.7, this.details.color + '44');
                 gradient.addColorStop(1, 'transparent');
-                
+
                 tempCtx.globalAlpha = 0.3;
                 tempCtx.fillStyle = gradient;
                 tempCtx.beginPath();
                 tempCtx.arc(centerX, centerY, this.size * 1.5, 0, Math.PI * 2);
                 tempCtx.fill();
-                
+
                 // Planet body (reset all alphas to 1)
                 tempCtx.globalAlpha = 1.0;
                 ctx.globalAlpha = 1.0;
@@ -569,32 +573,32 @@
                 planetGradient.addColorStop(0, this.details.color);
                 planetGradient.addColorStop(0.7, this.details.color2);
                 planetGradient.addColorStop(1, this.details.color3);
-                
+
                 tempCtx.fillStyle = planetGradient;
                 tempCtx.beginPath();
                 tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
                 tempCtx.fill();
-                
+
                 // Draw full rings before planet body for ringed planets (Saturn)
                 if (this.type === 'ringed') {
                     tempCtx.globalAlpha = 0.6;
-                    
+
                     tempCtx.strokeStyle = this.details.ringColor;
                     tempCtx.lineWidth = this.size * 0.4;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.strokeStyle = this.details.ringColor2;
                     tempCtx.lineWidth = this.size * 0.2;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.globalAlpha = 1.0;
                     ctx.globalAlpha = 1.0;
                 }
-                
+
                 // Draw Uranus full ring before planet body (uranus is an ice giant and also ringed so this code is janky)
                 if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
                     tempCtx.globalAlpha = 0.5;
@@ -603,27 +607,27 @@
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.strokeStyle = '#aaaaaa';
                     tempCtx.lineWidth = this.size * 0.15;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.globalAlpha = 1.0;
                     ctx.globalAlpha = 1.0;
                 }
-                
+
                 // Redraw planet body on top of back rings
                 tempCtx.globalAlpha = 1.0;
                 tempCtx.fillStyle = planetGradient;
                 tempCtx.beginPath();
                 tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
                 tempCtx.fill();
-                
+
                 tempCtx.globalAlpha = 1.0;
                 ctx.globalAlpha = 1.0;
-                
+
                 // Surface details (drawn on separate pass with proper alpha)
                 if (this.type === 'gas-giant' || this.type === 'ringed') {
                     tempCtx.globalAlpha = 0.4;
@@ -631,14 +635,14 @@
                         const bandY = centerY - this.size + (this.size * 2 * (i / 5));
                         const distFromEquator = Math.abs((i / 5) - 0.5) * 2;
                         const radiusX = this.size * 0.9 * (1 - distFromEquator * 0.3);
-                        
+
                         tempCtx.strokeStyle = this.details.bandColor;
                         tempCtx.lineWidth = this.size * 0.12;
                         tempCtx.beginPath();
                         tempCtx.ellipse(centerX, bandY, radiusX, this.size * 0.08, 0, 0, Math.PI * 2);
                         tempCtx.stroke();
                     }
-                    
+
                     if (this.type === 'gas-giant' && this.details.color === '#d4a574') {
                         tempCtx.globalAlpha = 0.7;
                         tempCtx.fillStyle = '#c1440e';
@@ -646,38 +650,38 @@
                         tempCtx.ellipse(centerX + this.size * 0.3, centerY + this.size * 0.2, this.size * 0.25, this.size * 0.15, 0, 0, Math.PI * 2);
                         tempCtx.fill();
                     }
-                    
+
                     tempCtx.globalAlpha = 1.0; // Reset
                     ctx.globalAlpha = 1.0; // Reset main canvas alpha too
                 } else if (this.type === 'rocky') {
                     tempCtx.globalAlpha = 0.6;
                     tempCtx.fillStyle = this.details.landColor;
-                    
+
                     tempCtx.save();
                     tempCtx.beginPath();
                     tempCtx.arc(centerX, centerY, this.size, 0, Math.PI * 2);
                     tempCtx.clip();
-                    
+
                     this.landmasses.forEach(land => {
                         tempCtx.beginPath();
                         tempCtx.arc(centerX + land.offsetX, centerY + land.offsetY, land.landSize, 0, Math.PI * 2);
                         tempCtx.fill();
                     });
-                    
+
                     tempCtx.globalAlpha = 0.3;
                     tempCtx.strokeStyle = this.details.landColor;
                     tempCtx.lineWidth = this.size * 0.05;
-                    
+
                     this.features.forEach(feature => {
                         tempCtx.beginPath();
                         if (feature.isOval) {
                             tempCtx.ellipse(
-                                centerX + feature.offsetX, 
-                                centerY + feature.offsetY, 
-                                feature.featureSize * 1.5, 
-                                feature.featureSize * 0.8, 
-                                feature.rotation, 
-                                0, 
+                                centerX + feature.offsetX,
+                                centerY + feature.offsetY,
+                                feature.featureSize * 1.5,
+                                feature.featureSize * 0.8,
+                                feature.rotation,
+                                0,
                                 Math.PI * 2
                             );
                         } else {
@@ -685,7 +689,7 @@
                         }
                         tempCtx.stroke();
                     });
-                    
+
                     tempCtx.restore();
                     tempCtx.globalAlpha = 1.0; // Reset
                     ctx.globalAlpha = 1.0; // Reset main canvas alpha too
@@ -701,13 +705,13 @@
                             tempCtx.ellipse(centerX, bandY, this.size * 0.8, this.size * 0.1, 0, 0, Math.PI * 2);
                             tempCtx.stroke();
                         }
-                        
+
                         tempCtx.globalAlpha = 0.6;
                         tempCtx.fillStyle = '#0a1f4a';
                         tempCtx.beginPath();
                         tempCtx.ellipse(centerX - this.size * 0.2, centerY, this.size * 0.3, this.size * 0.2, 0, 0, Math.PI * 2);
                         tempCtx.fill();
-                        
+
                         tempCtx.globalAlpha = 0.5;
                         tempCtx.fillStyle = '#ffffff';
                         tempCtx.beginPath();
@@ -715,80 +719,80 @@
                         tempCtx.fill();
                     }
                     // Uranus has no additional features beyond the base gradient
-                    
+
                     tempCtx.globalAlpha = 1.0; // Reset
                     ctx.globalAlpha = 1.0; // Reset main canvas alpha too
                 }
-                
+
                 // Draw bottom half of rings after planet body and surface details for ringed planets
                 if (this.type === 'ringed') {
                     tempCtx.globalAlpha = 0.6;
                     tempCtx.save();
-                    
+
                     // Clip to bottom half only
                     tempCtx.beginPath();
                     tempCtx.rect(0, centerY, cacheSize, cacheSize);
                     tempCtx.clip();
-                    
+
                     tempCtx.strokeStyle = this.details.ringColor;
                     tempCtx.lineWidth = this.size * 0.4;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 1.8, this.size * 0.25, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.strokeStyle = this.details.ringColor2;
                     tempCtx.lineWidth = this.size * 0.2;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 2.2, this.size * 0.3, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.restore();
                     tempCtx.globalAlpha = 1.0;
                     ctx.globalAlpha = 1.0;
                 }
-                
+
                 // Draw left half of Uranus ring AFTER planet body
                 if (this.type === 'ice-giant' && this.details.color === '#4fd0e7') {
                     tempCtx.globalAlpha = 0.5;
                     tempCtx.save();
-                    
+
                     // Clip to left half only
                     tempCtx.beginPath();
                     tempCtx.rect(0, 0, centerX, cacheSize);
                     tempCtx.clip();
-                    
+
                     tempCtx.strokeStyle = '#888888';
                     tempCtx.lineWidth = this.size * 0.3;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 0.2, this.size * 1.5, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.strokeStyle = '#aaaaaa';
                     tempCtx.lineWidth = this.size * 0.15;
                     tempCtx.beginPath();
                     tempCtx.ellipse(centerX, centerY, this.size * 0.25, this.size * 1.7, 0, 0, Math.PI * 2);
                     tempCtx.stroke();
-                    
+
                     tempCtx.restore();
                     tempCtx.globalAlpha = 1.0;
                     ctx.globalAlpha = 1.0;
                 }
-                
+
                 // Final reset before returning
                 tempCtx.globalAlpha = 1.0;
                 ctx.globalAlpha = 1.0;
-                
+
                 return tempCanvas;
             }
-            
+
             update() {
                 this.angle += this.orbitSpeed;
             }
-            
+
             draw() {
                 const currentX = this.sunX + Math.cos(this.angle) * this.orbitRadius;
                 const currentY = this.sunY + Math.sin(this.angle) * this.orbitRadius * 0.3;
-                
+
                 // Draw cached planet body (which now includes rings)
                 const cacheSize = this.cachedBody.width;
                 ctx.globalAlpha = 1.0; // Ensure full opacity when drawing cached body
@@ -810,46 +814,46 @@
                 this.size = Math.random() * 40 + 20;
                 this.rotation = Math.random() * Math.PI * 2;
                 this.opacity = Math.random() * 0.4 + 0.2;
-                
+
                 // For nebulae (repurposed irregular galaxies)
                 if (this.type === 'irregular') {
                     const palettePairs = [
-                        { 
+                        {
                             primary: { center: '#ff6b9d', edge: '#4a90e2' },   // Pink to blue
                             secondary: { center: '#9d4edd', edge: '#00d4ff' }  // Purple to cyan
                         },
-                        { 
+                        {
                             primary: { center: '#ff4444', edge: '#ff9944' },   // Red to orange
                             secondary: { center: '#ffaa00', edge: '#ff6b4a' }  // Orange to red-orange
                         },
-                        { 
+                        {
                             primary: { center: '#4a90e2', edge: '#9d4edd' },   // Blue to purple
                             secondary: { center: '#00ccff', edge: '#ff4493' }  // Cyan to pink
                         },
-                        { 
+                        {
                             primary: { center: '#00ff88', edge: '#00ccff' },   // Cyan to green
                             secondary: { center: '#4a90e2', edge: '#9d4edd' }  // Blue to purple
                         },
-                        { 
+                        {
                             primary: { center: '#ffd700', edge: '#ff6347' },   // Gold to red
                             secondary: { center: '#ff9944', edge: '#ff4444' }  // Orange to red
                         },
-                        { 
+                        {
                             primary: { center: '#ff1744', edge: '#651fff' },   // Magenta to violet
                             secondary: { center: '#9d4edd', edge: '#00d4ff' }  // Purple to cyan
                         }
                     ];
-                    
+
                     this.palettePair = palettePairs[Math.floor(Math.random() * palettePairs.length)];
                     this.size = Math.random() * 30 + 30;
-                    
+
                     // Generate two layers of blobs
                     this.primaryBlobs = [];
                     this.secondaryBlobs = [];
-                    
+
                     const numPrimaryBlobs = 5 + Math.floor(Math.random() * 4); // 5-8 blobs
                     const numSecondaryBlobs = 4 + Math.floor(Math.random() * 3); // 4-6 blobs
-                    
+
                     for (let i = 0; i < numPrimaryBlobs; i++) {
                         this.primaryBlobs.push({
                             offsetX: (Math.random() - 0.5) * this.size * 1.2,
@@ -858,7 +862,7 @@
                             colorMix: Math.random()
                         });
                     }
-                    
+
                     for (let i = 0; i < numSecondaryBlobs; i++) {
                         this.secondaryBlobs.push({
                             offsetX: (Math.random() - 0.5) * this.size * 1.0,
@@ -867,7 +871,7 @@
                             colorMix: Math.random()
                         });
                     }
-                    
+
                     this.stars = [];
                     const numStars = 2 + Math.floor(Math.random() * 4); // 2-5 stars
                     for (let i = 0; i < numStars; i++) {
@@ -879,15 +883,15 @@
                     }
                 }
             }
-            
+
             draw(targetCtx) {
                 targetCtx.save();
                 targetCtx.translate(this.x, this.y);
                 targetCtx.rotate(this.rotation);
                 targetCtx.globalAlpha = this.opacity;
-                
+
                 targetCtx.filter = 'blur(3px)';
-                
+
                 if (this.type === 'spiral' || this.type === 'barred') {
                     const haloGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
                     haloGradient.addColorStop(0, '#b8d8ff22');
@@ -895,18 +899,18 @@
                     haloGradient.addColorStop(1, 'transparent');
                     targetCtx.fillStyle = haloGradient;
                     targetCtx.fillRect(-this.size * 1.5, -this.size * 1.5, this.size * 3, this.size * 3);
-                    
+
                     const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
                     coreGradient.addColorStop(0, '#fff9b0');
                     coreGradient.addColorStop(1, 'transparent');
                     targetCtx.fillStyle = coreGradient;
                     targetCtx.fillRect(-this.size * 0.3, -this.size * 0.3, this.size * 0.6, this.size * 0.6);
-                    
+
                     if (this.type === 'barred') {
                         targetCtx.fillStyle = '#fff9b044';
                         targetCtx.fillRect(-this.size * 0.5, -this.size * 0.05, this.size, this.size * 0.1);
                     }
-                    
+
                     // Spiral arms
                     for (let arm = 0; arm < 2; arm++) {
                         targetCtx.strokeStyle = '#b8d8ff44';
@@ -941,7 +945,7 @@
                     targetCtx.beginPath();
                     targetCtx.ellipse(0, 0, this.size * 1.2, this.size * 0.25, 0, 0, Math.PI * 2);
                     targetCtx.fill();
-                    
+
                     const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
                     coreGradient.addColorStop(0, '#ffffff');
                     coreGradient.addColorStop(0.5, '#fff9b0');
@@ -952,39 +956,39 @@
                     targetCtx.fill();
                 } else if (this.type === 'irregular') {
                     targetCtx.filter = 'blur(8px)';
-                    
+
                     const drawBlobLayer = (blobs, palette) => {
                         blobs.forEach(blob => {
                             const gradient = targetCtx.createRadialGradient(
                                 blob.offsetX, blob.offsetY, 0,
                                 blob.offsetX, blob.offsetY, blob.blobSize
                             );
-                            
+
                             const r1 = parseInt(palette.center.slice(1, 3), 16);
                             const g1 = parseInt(palette.center.slice(3, 5), 16);
                             const b1 = parseInt(palette.center.slice(5, 7), 16);
-                            
+
                             const r2 = parseInt(palette.edge.slice(1, 3), 16);
                             const g2 = parseInt(palette.edge.slice(3, 5), 16);
                             const b2 = parseInt(palette.edge.slice(5, 7), 16);
-                            
+
                             const mix = blob.colorMix;
                             const centerR = Math.round(r1 * (1 - mix) + r2 * mix);
                             const centerG = Math.round(g1 * (1 - mix) + g2 * mix);
                             const centerB = Math.round(b1 * (1 - mix) + b2 * mix);
-                            
+
                             gradient.addColorStop(0, `rgba(${centerR}, ${centerG}, ${centerB}, 0.67)`);
                             gradient.addColorStop(0.4, `rgba(${centerR}, ${centerG}, ${centerB}, 0.4)`);
                             gradient.addColorStop(0.7, palette.edge + '44');
                             gradient.addColorStop(1, 'transparent');
-                            
+
                             targetCtx.fillStyle = gradient;
                             targetCtx.beginPath();
                             targetCtx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
                             targetCtx.fill();
                         });
                     };
-                    
+
                     // Draw primary layer (base nebula color)
                     drawBlobLayer(this.primaryBlobs, this.palettePair.primary);
                     // Draw secondary layer (overlapping accent color)
@@ -997,14 +1001,14 @@
                         targetCtx.beginPath();
                         targetCtx.arc(star.offsetX, star.offsetY, star.size, 0, Math.PI * 2);
                         targetCtx.fill();
-                        
+
                         targetCtx.fillStyle = '#ffffff44';
                         targetCtx.beginPath();
                         targetCtx.arc(star.offsetX, star.offsetY, star.size * 3, 0, Math.PI * 2);
                         targetCtx.fill();
                     });
                 }
-                
+
                 targetCtx.filter = 'none';
                 targetCtx.restore();
             }
@@ -1017,7 +1021,7 @@
                 this.y = y;
                 this.size = 30;
                 this.rotation = Math.random() * Math.PI * 2;
-                
+
                 // Generate dust patches once
                 this.dustPatches = [];
                 for (let i = 0; i < 5; i++) {
@@ -1027,12 +1031,12 @@
                     });
                 }
             }
-            
+
             draw(targetCtx) {
                 targetCtx.save();
                 targetCtx.translate(this.x, this.y);
                 targetCtx.rotate(this.rotation);
-                
+
                 // Main blue-white core
                 targetCtx.filter = 'blur(12px)';
                 const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.2);
@@ -1040,49 +1044,49 @@
                 coreGradient.addColorStop(0.2, '#b8d8ffcc');
                 coreGradient.addColorStop(0.5, '#4169e188');
                 coreGradient.addColorStop(1, 'transparent');
-                
+
                 targetCtx.globalAlpha = 0.9;
                 targetCtx.fillStyle = coreGradient;
                 targetCtx.beginPath();
                 targetCtx.ellipse(0, 0, this.size * 0.9, this.size * 0.35, 0, 0, Math.PI * 2);
                 targetCtx.fill();
-                
+
                 // Narrow red tinge
                 targetCtx.filter = 'blur(8px)';
                 const redGradient = targetCtx.createRadialGradient(0, 0, this.size * 0.7, 0, 0, this.size * 1.1);
                 redGradient.addColorStop(0, 'transparent');
                 redGradient.addColorStop(0.5, '#ff444466');
                 redGradient.addColorStop(1, 'transparent');
-                
+
                 targetCtx.globalAlpha = 0.6;
                 targetCtx.fillStyle = redGradient;
                 targetCtx.beginPath();
                 targetCtx.ellipse(0, 0, this.size * 1.0, this.size * 0.4, 0, 0, Math.PI * 2);
                 targetCtx.fill();
-                
+
                 // Patchy dark dust band
                 targetCtx.filter = 'blur(4px)';
                 targetCtx.globalAlpha = 0.6;
                 targetCtx.fillStyle = '#00000088';
-                
+
                 this.dustPatches.forEach(patch => {
                     targetCtx.fillRect(patch.offsetX - patch.patchWidth / 2, -this.size * 0.15, patch.patchWidth, this.size * 0.3);
                 });
-                
+
                 // Jets
                 const jetLength = this.size * 4;
                 const jetBaseWidth = this.size * 0.1;
                 const jetEndWidth = this.size * 0.8;
-                
+
                 targetCtx.filter = 'blur(5px)';
-                
+
                 // Top jet
                 const jetGradientTop = targetCtx.createLinearGradient(0, -jetLength, 0, 0);
                 jetGradientTop.addColorStop(0, 'transparent');
                 jetGradientTop.addColorStop(0.3, '#b8d8ff22');
                 jetGradientTop.addColorStop(0.7, '#b8d8ff55');
                 jetGradientTop.addColorStop(1, '#b8d8ff88');
-                
+
                 targetCtx.globalAlpha = 0.6;
                 targetCtx.fillStyle = jetGradientTop;
                 targetCtx.beginPath();
@@ -1091,14 +1095,14 @@
                 targetCtx.lineTo(jetEndWidth, -jetLength);
                 targetCtx.lineTo(jetBaseWidth, 0);
                 targetCtx.fill();
-                
+
                 // Bottom jet
                 const jetGradientBottom = targetCtx.createLinearGradient(0, 0, 0, jetLength);
                 jetGradientBottom.addColorStop(0, '#b8d8ff88');
                 jetGradientBottom.addColorStop(0.3, '#b8d8ff55');
                 jetGradientBottom.addColorStop(0.7, '#b8d8ff22');
                 jetGradientBottom.addColorStop(1, 'transparent');
-                
+
                 targetCtx.fillStyle = jetGradientBottom;
                 targetCtx.beginPath();
                 targetCtx.moveTo(-jetBaseWidth, 0);
@@ -1106,7 +1110,7 @@
                 targetCtx.lineTo(jetEndWidth, jetLength);
                 targetCtx.lineTo(jetBaseWidth, 0);
                 targetCtx.fill();
-                
+
                 targetCtx.filter = 'none';
                 targetCtx.restore();
             }
@@ -1125,16 +1129,16 @@
                 const speed = Math.random() * 0.03;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
-                
+
                 this.opacity = Math.random();
                 this.pulseSpeed = 0.002 + Math.random() * 0.003;
                 this.pulseDirection = Math.random() < 0.5 ? 1 : -1;
             }
-            
+
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                
+
                 // Wrap around canvas edges
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
@@ -1151,7 +1155,7 @@
                     this.pulseDirection = 1;
                 }
             }
-            
+
             draw() {
                 ctx.globalAlpha = this.opacity;
                 ctx.fillStyle = '#ffffff';
@@ -1174,41 +1178,41 @@
                 const maxSize = 3;
                 const minSize = maxSize / 5;
                 this.size = minSize + Math.random() * (maxSize - minSize);
-                
+
                 this.phase = 0;
                 this.pulseInterval = 0.02 + Math.pow(Math.random(), 3) * 0.28; // 0.02 to 0.3, biased towards shorter intervals
                 this.pulseDuration = this.pulseInterval;
                 this.rotation = Math.random() * Math.PI * 2;
             }
-            
+
             update() {
                 this.phase += 0.016; // ~60fps
                 if (this.phase >= this.pulseDuration) {
                     this.phase = 0;
                 }
             }
-            
+
             draw() {
                 const isWhite = this.phase < this.pulseDuration / 2;
-                
+
                 if (isWhite) {
                     // White phase with halo and diffraction spikes
                     ctx.save();
                     ctx.translate(this.x, this.y);
                     ctx.rotate(this.rotation);
-                    
+
                     // Halo
                     const haloGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 4);
                     haloGradient.addColorStop(0, '#ffffffaa');
                     haloGradient.addColorStop(0.5, '#ffffff44');
                     haloGradient.addColorStop(1, 'transparent');
-                    
+
                     ctx.globalAlpha = 0.8;
                     ctx.fillStyle = haloGradient;
                     ctx.beginPath();
                     ctx.arc(0, 0, this.size * 4, 0, Math.PI * 2);
                     ctx.fill();
-                    
+
                     // Diffraction spikes (4 rays)
                     ctx.globalAlpha = 0.6;
                     ctx.strokeStyle = '#ffffff';
@@ -1220,14 +1224,14 @@
                         ctx.lineTo(Math.cos(angle) * this.size * 6, Math.sin(angle) * this.size * 6);
                         ctx.stroke();
                     }
-                    
+
                     // Core
                     ctx.globalAlpha = 1;
                     ctx.fillStyle = '#ffffff';
                     ctx.beginPath();
                     ctx.arc(0, 0, this.size, 0, Math.PI * 2);
                     ctx.fill();
-                    
+
                     ctx.restore();
                 } else {
                     ctx.globalAlpha = 0.1;
@@ -1245,7 +1249,7 @@
                 this.sunX = sunX;
                 this.sunY = sunY;
                 this.GM = GM; // bigger GM = stronger gravity
-                
+
                 // Start at random edge
                 const edge = Math.floor(Math.random() * 4);
                 if (edge === 0) {
@@ -1261,21 +1265,21 @@
                     this.x = 0;
                     this.y = Math.random() * canvas.height;
                 }
-                
+
                 // Direction roughly toward sun (+/- 25 degrees)
                 const angleToSun = Math.atan2(sunY - this.y, sunX - this.x);
                 const buffer = (Math.random() - 0.5) * (50 * Math.PI / 180); // ±25°
                 const angle = angleToSun + buffer;
-                
+
                 // Distance to sun
                 const r = Math.hypot(this.x - sunX, this.y - sunY);
                 // Escape velocity with margin
                 const vEsc = Math.sqrt(2 * GM / r);
                 const speed = vEsc * (1.05 + Math.random() * (2 - 1.05)); // 1.05x - 2x
-                
+
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-                
+
                 // Array of possible comet dust colors
                 const cometColors = [
                     '#ffffff', // white
@@ -1300,31 +1304,31 @@
                 this.selectedCore = coreColors[Math.floor(Math.random() * coreColors.length)];
             }
 
-            update(dt = 1, sunRadius = 50) { 
+            update(dt = 1, sunRadius = 50) {
                 // Vector from comet to sun
                 const dx = this.sunX - this.x;
                 const dy = this.sunY - this.y;
                 const r = Math.hypot(dx, dy);
                 this.distanceToSun = r; // store it so draw() can use it
-                
+
                 // Softening factor
                 const epsilon = 30; // tweak this to control curvature vs speed
-                
+
                 // Acceleration toward Sun with softening
                 const a = this.GM / (r * r + epsilon * epsilon);
                 const ax = a * (dx / r);
                 const ay = a * (dy / r);
-                
+
                 this.vx += ax * dt;
                 this.vy += ay * dt;
-                
+
                 this.x += this.vx * dt;
                 this.y += this.vy * dt;
             }
-            
+
             isOffscreen() {
-                return this.x < -1000 || this.x > canvas.width + 1000 || 
-                       this.y < -1000 || this.y > canvas.height + 1000;
+                return this.x < -1000 || this.x > canvas.width + 1000 ||
+                    this.y < -1000 || this.y > canvas.height + 1000;
             }
 
             isInsideSun(sunRadius = 50) {
@@ -1333,30 +1337,30 @@
                 const r = Math.hypot(dx, dy);
                 return r < sunRadius;
             }
-            
+
             draw() {
                 const dx = this.x - this.sunX;
                 const dy = this.y - this.sunY;
                 const angleFromSun = Math.atan2(dy, dx);
-                
+
                 // Tail length increases as it approaches sun
                 const maxTailLength = 200;
                 // Tail grows faster as it gets closer exponentially
-                const tailLength = maxTailLength * (1 - Math.exp(-1000 / this.distanceToSun));  
-                
+                const tailLength = maxTailLength * (1 - Math.exp(-1000 / this.distanceToSun));
+
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                
+
                 // Main tail (dust tail)
                 ctx.filter = 'blur(8px)';
-                const dustGradient = ctx.createLinearGradient(0, 0, 
-                    Math.cos(angleFromSun) * tailLength, 
+                const dustGradient = ctx.createLinearGradient(0, 0,
+                    Math.cos(angleFromSun) * tailLength,
                     Math.sin(angleFromSun) * tailLength
                 );
                 dustGradient.addColorStop(0, this.dustColor + 'aa');
                 dustGradient.addColorStop(0.5, this.dustColor + '44');
                 dustGradient.addColorStop(1, 'transparent');
-                
+
                 ctx.globalAlpha = 0.7;
                 ctx.strokeStyle = dustGradient;
                 ctx.lineWidth = 18;
@@ -1364,7 +1368,7 @@
                 ctx.moveTo(0, 0);
                 ctx.lineTo(Math.cos(angleFromSun) * tailLength, Math.sin(angleFromSun) * tailLength);
                 ctx.stroke();
-                
+
                 // Ion tail (blue, smaller, slightly offset)
                 if (this.hasIonTail) {
                     const ionOffset = Math.PI * 0.15; // 27 degrees offset
@@ -1376,35 +1380,35 @@
                     ionGradient.addColorStop(0, 'rgba(180, 255, 255, 1)');     // almost white neon blue at base
                     ionGradient.addColorStop(0.5, 'rgba(100, 220, 255, 0.7)'); // softer, still bright blue
                     ionGradient.addColorStop(1, 'transparent');                // fade out
-                    
+
                     ctx.globalAlpha = 0.7;
                     ctx.strokeStyle = ionGradient;
                     ctx.lineWidth = 4;
                     ctx.beginPath();
                     ctx.moveTo(0, 0);
-                    ctx.lineTo(Math.cos(angleFromSun + ionOffset) * ionLength, 
-                               Math.sin(angleFromSun + ionOffset) * ionLength);
+                    ctx.lineTo(Math.cos(angleFromSun + ionOffset) * ionLength,
+                        Math.sin(angleFromSun + ionOffset) * ionLength);
                     ctx.stroke();
                 }
-                
+
                 ctx.filter = 'blur(5px)';
 
                 const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 8);
                 coreGradient.addColorStop(0, this.selectedCore[0]);
                 coreGradient.addColorStop(0.5, this.selectedCore[1]);
                 coreGradient.addColorStop(1, 'transparent');
-                
+
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = coreGradient;
                 ctx.beginPath();
                 ctx.arc(0, 0, 8, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 ctx.filter = 'none';
                 ctx.restore();
             }
         }
-        
+
         // Goose
         class Goose {
             constructor() {
@@ -1420,32 +1424,32 @@
                 this.img = new Image();
                 this.img.src = './media/dgoose_knife.svg';
             }
-            
+
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                
+
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-                
+
                 this.rotation += this.rotationSpeed;
             }
-            
+
             draw() {
                 if (!this.img.complete || !this.img.naturalWidth) return;
-                
+
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
-                
+
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
                 ctx.shadowBlur = 10;
-                
+
                 ctx.globalAlpha = 1;
                 ctx.drawImage(this.img, -this.size / 2, -this.size / 2, this.size, this.size);
-                
+
                 // Text that rotates with goose
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '16px "Space Mono", monospace';
@@ -1454,11 +1458,11 @@
                 ctx.shadowBlur = 10;
                 ctx.fillText('Goos was an Impostor.', 0, this.size + 10);
                 ctx.shadowBlur = 0;
-                
+
                 ctx.restore();
             }
         }
-        
+
         // Rocket
         class Rocket {
             constructor(earthX, earthY, earthSize) {
@@ -1466,69 +1470,69 @@
                 // Start near earth
                 this.x = earthX + earthSize + 20;
                 this.y = earthY;
-                
+
                 const angle = Math.random() * Math.PI * 2;
                 const speed = 0.2;
                 this.speedX = Math.cos(angle) * speed;
                 this.speedY = Math.sin(angle) * speed;
-                
+
                 this.angle = angle;
                 this.targetAngle = angle;
                 this.angleChangeSpeed = 0.02;
                 this.nextAngleChangeTime = Date.now() + Math.random() * 3000 + 2000;
-                
+
                 this.loadImage();
             }
-            
+
             loadImage() {
                 this.img = new Image();
                 this.img.src = './media/rocket.svg';
             }
-            
+
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                
+
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-                
+
                 const now = Date.now();
                 if (now > this.nextAngleChangeTime) {
                     this.targetAngle = Math.random() * Math.PI * 2;
                     this.nextAngleChangeTime = now + Math.random() * 3000 + 2000;
                 }
-                
+
                 // Smoothly rotate to target
                 let angleDiff = this.targetAngle - this.angle;
                 // Normalize to -PI to PI
                 while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
                 while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-                
+
                 if (Math.abs(angleDiff) > this.angleChangeSpeed) {
                     this.angle += Math.sign(angleDiff) * this.angleChangeSpeed;
                 } else {
                     this.angle = this.targetAngle;
                 }
-                
+
                 this.speedX = Math.cos(this.angle) * 0.2;
                 this.speedY = Math.sin(this.angle) * 0.2;
             }
-            
+
             draw() {
                 if (!this.img.complete || !this.img.naturalWidth) return;
-                
+
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle);
-                
+
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
                 ctx.shadowBlur = 15;
-                
+
                 ctx.globalAlpha = 1;
                 ctx.drawImage(this.img, -this.size / 2, -this.size / 2, this.size, this.size);
-                
+
                 ctx.restore();
             }
         }
@@ -1556,24 +1560,24 @@
         let globularClusters = []; // Globular clusters for Milky Way
         let milkyWayDustPatches = []; // Patchy dust band for Milky Way
         let milkyWayCanvas = null; // Offscreen canvas for Milky Way (performance)
-        
+
         function initStars() {
             const starCount = Math.floor((canvas.width * canvas.height) / 3500);
             stars = [];
             for (let i = 0; i < starCount; i++) {
                 stars.push(new Star());
             }
-            
+
             // Sun-like star
             const sunX = canvas.width * 0.5;
             const sunY = canvas.height * 0.65; // 65% down the canvas
             celestialStars.push(new CelestialStar(sunX, sunY, 50, '#FDB813', 'sun'));
-            
+
             // Red dwarf - random position in top half
             const redDwarfX = Math.random() * canvas.width;
             const redDwarfY = canvas.height * (Math.random() * 0.3); // Top 30% of canvas
             celestialStars.push(new CelestialStar(redDwarfX, redDwarfY, 3, '#ff6b4a', 'red-dwarf'));
-            
+
             // Additional stars
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#FF6B4A', 'red-dwarf'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 2, '#FF6B4A', 'red-dwarf'));
@@ -1587,7 +1591,7 @@
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 7, '#E0F2FF', 'blue-white-star'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 3, '#E0F2FF', 'blue-white-star'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, Math.random() * canvas.height, 4, '#E0F2FF', 'blue-white-star'));
-            
+
             // Extra stars in bottom 100vh
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 4, '#ff6b4a', 'red-dwarf'));
             celestialStars.push(new CelestialStar(Math.random() * canvas.width, canvas.height * (0.75 + Math.random() * 0.25), 6, '#FFFFFF', 'white-star'));
@@ -1639,21 +1643,21 @@
                     featureColor: '#1a3a8f'
                 })
             ];
-            
+
             // Store earth planet reference for rocket
             earthPlanet = planets[1];
-            
+
             // Generate galaxies
             galaxies = [];
             const galaxyTypes = ['spiral', 'barred', 'irregular', 'elliptical', 'lenticular'];
-            
+
             // First, add one of each type
             galaxyTypes.forEach((type, index) => {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 galaxies.push(new Galaxy(x, y, type));
             });
-            
+
             // Then add 25 more random ones to reach 30 total
             for (let i = 0; i < 25; i++) {
                 const x = Math.random() * canvas.width;
@@ -1661,7 +1665,7 @@
                 const type = galaxyTypes[Math.floor(Math.random() * galaxyTypes.length)];
                 galaxies.push(new Galaxy(x, y, type));
             }
-            
+
             // Floating texts
             floatingTexts = [
                 new FloatingText('Where am I?'),
@@ -1669,7 +1673,7 @@
                 new FloatingText('Why am I high?'),
                 new FloatingText('Fleeting as stardust...')
             ];
-            
+
             // Pulsars, 4-5, random positions
             pulsars = [];
             const pulsarCount = 4 + Math.floor(Math.random() * 2);
@@ -1679,11 +1683,11 @@
                     Math.random() * canvas.height
                 ));
             }
-            
+
             goose = new Goose();
-            
+
             quasar = new Quasar(Math.random() * canvas.width, Math.random() * canvas.height);
-            
+
             // Generate static Milky Way stars
             const bandLength = Math.max(canvas.width, canvas.height) * 2.5;
             const bandWidth = 200;
@@ -1695,17 +1699,17 @@
                 const normalizedY = yRandom * 2;
                 const distanceFromCenterX = Math.abs(normalizedX);
                 const distanceFromCenterY = Math.abs(normalizedY);
-                
+
                 // Quartic falloff along band for very dramatic taper
                 const probabilityX = Math.pow(1 - distanceFromCenterX, 4); // Quartic falloff
                 const probabilityY = Math.pow(1 - distanceFromCenterY, 2); // Quadratic falloff vertically
                 const totalProbability = probabilityX * probabilityY;
-                
+
                 if (Math.random() > totalProbability) {
                     i--; // Retry this iteration
                     continue;
                 }
-                
+
                 milkyWayStars.push({
                     x: xRandom * bandLength,
                     y: yRandom * bandWidth,
@@ -1713,7 +1717,7 @@
                     opacity: Math.random() * 0.6 + 0.3
                 });
             }
-            
+
             // Generate globular cluster positions
             globularClusters = [];
             const bulgeSize = 300; // Size of central bulge
@@ -1726,7 +1730,7 @@
                     size: 8 + Math.random() * 8
                 });
             }
-            
+
             // Generate patchy dust band
             milkyWayDustPatches = [];
             for (let i = 0; i < 25; i++) {
@@ -1737,7 +1741,7 @@
                     width: patchWidth
                 });
             }
-            
+
             // Create offscreen canvases
             createMilkyWayCanvas();
             createStaticElementsCanvas();
@@ -1750,15 +1754,15 @@
             milkyWayCanvas.width = size;
             milkyWayCanvas.height = size;
             const offCtx = milkyWayCanvas.getContext('2d');
-            
+
             const bandWidth = 200;
             const bandLength = Math.max(canvas.width, canvas.height) * 2.5;
             const bulgeSize = 300;
-            
+
             offCtx.save();
             offCtx.translate(size / 2, size / 2);
             offCtx.rotate(milkyWayAngle);
-            
+
             // Central bulge
             offCtx.filter = 'blur(25px)';
             const bulgeGradient = offCtx.createRadialGradient(0, 0, 0, 0, 0, bulgeSize);
@@ -1766,13 +1770,13 @@
             bulgeGradient.addColorStop(0.3, '#ffcc6688');
             bulgeGradient.addColorStop(0.6, '#ff993344');
             bulgeGradient.addColorStop(1, 'transparent');
-            
+
             offCtx.globalAlpha = 0.3;
             offCtx.fillStyle = bulgeGradient;
             offCtx.beginPath();
             offCtx.ellipse(0, 0, bulgeSize, bulgeSize * 0.6, 0, 0, Math.PI * 2);
             offCtx.fill();
-            
+
             // Globular clusters
             offCtx.filter = 'blur(6px)';
             globularClusters.forEach(cluster => {
@@ -1783,14 +1787,14 @@
                 clusterGradient.addColorStop(0, '#fff9b0cc');
                 clusterGradient.addColorStop(0.5, '#ffcc6666');
                 clusterGradient.addColorStop(1, 'transparent');
-                
+
                 offCtx.globalAlpha = 0.6;
                 offCtx.fillStyle = clusterGradient;
                 offCtx.beginPath();
                 offCtx.arc(cluster.x, cluster.y, cluster.size, 0, Math.PI * 2);
                 offCtx.fill();
             });
-            
+
             // Light band
             offCtx.filter = 'blur(35px)';
             const gradient = offCtx.createLinearGradient(-bandLength / 2, 0, bandLength / 2, 0);
@@ -1801,13 +1805,13 @@
             gradient.addColorStop(0.65, '#b8d8ff12');
             gradient.addColorStop(0.8, '#b8d8ff05');
             gradient.addColorStop(1, 'transparent');
-            
+
             offCtx.globalAlpha = 1;
             offCtx.fillStyle = gradient;
             offCtx.fillRect(-bandLength / 2, -bandWidth / 2, bandLength, bandWidth);
-            
+
             offCtx.filter = 'none';
-            
+
             // Stars
             milkyWayStars.forEach(star => {
                 offCtx.globalAlpha = star.opacity;
@@ -1816,7 +1820,7 @@
                 offCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 offCtx.fill();
             });
-            
+
             // Dark band
             offCtx.filter = 'blur(25px)';
             const darkGradient = offCtx.createLinearGradient(0, -bandWidth / 2, 0, bandWidth / 2);
@@ -1825,18 +1829,18 @@
             darkGradient.addColorStop(0.5, '#000000a8');
             darkGradient.addColorStop(0.7, 'transparent');
             darkGradient.addColorStop(1, 'transparent');
-            
+
             offCtx.fillStyle = darkGradient;
             offCtx.fillRect(-bandLength / 2, -bandWidth / 2, bandLength, bandWidth);
-            
+
             offCtx.globalAlpha = 0.6;
             offCtx.fillStyle = '#000000';
             milkyWayDustPatches.forEach(patch => {
                 offCtx.fillRect(patch.x - patch.width / 2, -bandWidth * 0.15, patch.width, bandWidth * 0.3);
             });
-            
+
             offCtx.filter = 'none';
-            
+
             // Sparse stars over dark band
             offCtx.globalAlpha = 1;
             for (let i = 0; i < 50; i++) {
@@ -1850,7 +1854,7 @@
                     offCtx.fill();
                 }
             }
-            
+
             offCtx.restore();
         }
 
@@ -1860,10 +1864,10 @@
             staticElementsCanvas.width = canvas.width;
             staticElementsCanvas.height = canvas.height;
             const offCtx = staticElementsCanvas.getContext('2d');
-            
+
             // Draw all galaxies to the static canvas
             galaxies.forEach(galaxy => galaxy.draw(offCtx));
-            
+
             // Draw quasar to the static canvas
             if (quasar) {
                 quasar.draw(offCtx);
@@ -1873,11 +1877,11 @@
         // Draw Milky Way from cached canvas
         function drawMilkyWay() {
             if (!milkyWayCanvas) return;
-            
+
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const size = milkyWayCanvas.width;
-            
+
             ctx.drawImage(milkyWayCanvas, centerX - size / 2, centerY - size / 2);
         }
 
@@ -1893,50 +1897,50 @@
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Draw cached static elements (galaxies, nebulae, quasar)
             drawStaticElements();
-            
+
             // Draw Milky Way (cached)
             drawMilkyWay();
-            
+
             // Update and draw background stars
             stars.forEach(star => {
                 star.update();
                 star.draw();
             });
-            
+
             // Update and draw pulsars
             pulsars.forEach(pulsar => {
                 pulsar.update();
                 pulsar.draw();
             });
-            
+
             // Update and draw celestial stars
             celestialStars.forEach(star => {
                 star.update();
                 star.draw();
             });
-            
+
             // Update and draw planets
             planets.forEach(planet => {
                 planet.update();
                 planet.draw();
             });
-            
+
             // Create rocket after first frame
             if (!rocket && frameCount > 1 && earthPlanet) {
                 const earthX = earthPlanet.sunX + Math.cos(earthPlanet.angle) * earthPlanet.orbitRadius;
                 const earthY = earthPlanet.sunY + Math.sin(earthPlanet.angle) * earthPlanet.orbitRadius * 0.3;
                 rocket = new Rocket(earthX, earthY, earthPlanet.size);
             }
-            
+
             // Update and draw rocket
             if (rocket) {
                 rocket.update();
                 rocket.draw();
             }
-            
+
             // Spawn comet every 60 seconds
             const now = Date.now();
             if (!comet && now - lastCometTime > 60000 && celestialStars.length > 0) {
@@ -1946,29 +1950,29 @@
                     lastCometTime = now;
                 }
             }
-            
+
             // Update and draw comet
             if (comet) {
                 comet.update();
                 comet.draw();
-                
+
                 if (comet.isOffscreen() || comet.isInsideSun()) {
                     comet = null;
                 }
             }
-            
+
             // Update and draw floating texts
             floatingTexts.forEach(text => {
                 text.update();
                 text.draw();
             });
-            
+
             // Update and draw goose
             if (goose) {
                 goose.update();
                 goose.draw();
             }
-            
+
             ctx.globalAlpha = 1;
             frameCount++;
             requestAnimationFrame(animate);
@@ -1983,7 +1987,7 @@
             shootingStar.style.top = Math.random() * 100 + '%';
             shootingStar.style.left = Math.random() * 100 + '%';
             document.body.appendChild(shootingStar);
-            
+
             setTimeout(() => shootingStar.remove(), 3000);
         }
 
@@ -1994,4 +1998,5 @@
         }, 2000);
     </script>
 </body>
+
 </html>
