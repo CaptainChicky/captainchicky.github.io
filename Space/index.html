@@ -8,9 +8,9 @@
     <!-- og embeds -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Space" />
-    <meta property="og:description" content="An interstellar journey into an endless, empty, yet fufilling, expanse. Or maybe you're just high 😉. GOOS inside!" />
-    <meta property="og:image" content="http://theaviary.me/Space/media/comet.png">
-    <meta property="og:image:secure_url" content="https://theaviary.me/Space/media/comet.png">
+    <meta property="og:description" content="An interstellar journey into an endless, empty, yet fufilling, expanse. Or maybe you're just high." />
+    <meta property="og:image" content="http://captainchicky.github.io/Space/media/comet.png">
+    <meta property="og:image:secure_url" content="https://captainchicky.github.io/Space/media/comet.png">
     <meta property="og:image:width" content="256">
     <meta property="og:image:height" content="256">
     <meta property="og:image:alt" content="Endless Space, Endless Expanse">
@@ -22,6 +22,9 @@
     <meta name="referrer" content="no-referrer">
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="./media/comet.png">
     
     <!-- import a font -->
     <link href="./media/fonts/css2.css" rel="stylesheet">
@@ -295,6 +298,7 @@
                     <li>Particle Physics:
                         <ul>
                             <li><a href="./Articles/Particle-Physics/Neutrinos/neutrino_e.html">A neutrino can easily penetrate the earth. (joke)</a></li>
+                            <li>Strange Matter</li>
                         </ul>
                     </li>
                     <br>
@@ -315,6 +319,11 @@
     </div>
 
     <script>
+        // Space simulation/visualization, with stars, planets, galaxies, comets, and more!
+        // Created by CC 2026, all rights reserved :) but i mean you can steal if you want to its not like i can enforce it
+        // it looks pretty cool ngl i must say and i had to spend a bunch of time doing cache optimiation so it should run decently
+        // on most computer browsers. i initially had the milky way render all 2.3k stars and it was so awful lmfao
+
         // Canvas setup
         const canvas = document.getElementById('space-canvas');
         const ctx = canvas.getContext('2d');
