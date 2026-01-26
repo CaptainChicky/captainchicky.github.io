@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000000;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+        #controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            z-index: 1000;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button.active {
+            background: #4a90e2;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <div>Galaxy Type:</div>
+        <button class="type-btn active" data-type="spiral">Spiral</button>
+        <button class="type-btn" data-type="barred">Barred</button>
+        <button class="type-btn" data-type="elliptical">Elliptical</button>
+        <button class="type-btn" data-type="lenticular">Lenticular</button>
+        <button class="type-btn" data-type="irregular">Irregular</button>
+        <div style="margin-top: 10px;">
+            <button id="redraw">Redraw (500)</button>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let currentType = 'spiral';
+
+        class Galaxy {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.size = Math.random() * 20 + 15;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.opacity = 0.5 + Math.random() * 0.3;
+
+                // For nebulae (repurposed irregular galaxies)
+                if (this.type === 'irregular') {
+                    const palettePairs = [
+                        {
+                            primary: { center: '#ff6b9d', edge: '#4a90e2' },
+                            secondary: { center: '#9d4edd', edge: '#00d4ff' }
+                        },
+                        {
+                            primary: { center: '#ff4444', edge: '#ff9944' },
+                            secondary: { center: '#ffaa00', edge: '#ff6b4a' }
+                        },
+                        {
+                            primary: { center: '#4a90e2', edge: '#9d4edd' },
+                            secondary: { center: '#00ccff', edge: '#ff4493' }
+                        },
+                        {
+                            primary: { center: '#00ff88', edge: '#00ccff' },
+                            secondary: { center: '#4a90e2', edge: '#9d4edd' }
+                        },
+                        {
+                            primary: { center: '#ffd700', edge: '#ff6347' },
+                            secondary: { center: '#ff9944', edge: '#ff4444' }
+                        },
+                        {
+                            primary: { center: '#ff1744', edge: '#651fff' },
+                            secondary: { center: '#9d4edd', edge: '#00d4ff' }
+                        }
+                    ];
+
+                    this.palettePair = palettePairs[Math.floor(Math.random() * palettePairs.length)];
+
+                    this.primaryBlobs = [];
+                    this.secondaryBlobs = [];
+
+                    const numPrimaryBlobs = 5 + Math.floor(Math.random() * 4);
+                    const numSecondaryBlobs = 4 + Math.floor(Math.random() * 3);
+
+                    for (let i = 0; i < numPrimaryBlobs; i++) {
+                        this.primaryBlobs.push({
+                            offsetX: (Math.random() - 0.5) * this.size * 1.2,
+                            offsetY: (Math.random() - 0.5) * this.size * 0.8,
+                            blobSize: this.size * (0.3 + Math.random() * 0.4),
+                            colorMix: Math.random()
+                        });
+                    }
+
+                    for (let i = 0; i < numSecondaryBlobs; i++) {
+                        this.secondaryBlobs.push({
+                            offsetX: (Math.random() - 0.5) * this.size * 1.0,
+                            offsetY: (Math.random() - 0.5) * this.size * 0.7,
+                            blobSize: this.size * (0.25 + Math.random() * 0.35),
+                            colorMix: Math.random()
+                        });
+                    }
+
+                    this.stars = [];
+                    const numStars = 2 + Math.floor(Math.random() * 4);
+                    for (let i = 0; i < numStars; i++) {
+                        this.stars.push({
+                            offsetX: (Math.random() - 0.5) * this.size * 0.6,
+                            offsetY: (Math.random() - 0.5) * this.size * 0.4,
+                            size: 1 + Math.random() * 2
+                        });
+                    }
+                }
+            }
+
+            draw(targetCtx) {
+                targetCtx.save();
+                targetCtx.translate(this.x, this.y);
+                targetCtx.rotate(this.rotation);
+                targetCtx.globalAlpha = this.opacity;
+                targetCtx.filter = 'blur(3px)';
+
+                if (this.type === 'spiral' || this.type === 'barred') {
+                    const haloGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
+                    haloGradient.addColorStop(0, '#b8d8ff22');
+                    haloGradient.addColorStop(0.5, '#b8d8ff11');
+                    haloGradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = haloGradient;
+                    targetCtx.fillRect(-this.size * 1.5, -this.size * 1.5, this.size * 3, this.size * 3);
+
+                    const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                    coreGradient.addColorStop(0, '#fff9b0');
+                    coreGradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = coreGradient;
+                    targetCtx.fillRect(-this.size * 0.3, -this.size * 0.3, this.size * 0.6, this.size * 0.6);
+
+                    if (this.type === 'barred') {
+                        targetCtx.fillStyle = '#fff9b044';
+                        targetCtx.fillRect(-this.size * 0.5, -this.size * 0.08, this.size * 1, this.size * 0.16);
+                    }
+
+                    // Create temporary canvas for arms (draw without blur)
+                    const tempCanvas = document.createElement('canvas');
+                    const tempSize = this.size * 3;
+                    tempCanvas.width = tempSize;
+                    tempCanvas.height = tempSize;
+                    const tempCtx = tempCanvas.getContext('2d');
+
+                    const barredArmLenConst = Math.random() + 0.7;
+                    const spiralArmLenConst = Math.random() + 2;
+                    const girthConst = Math.random() * 0.3 + 0.45;
+                    const armGirthConst = Math.random() * 0.1 + 0.15;
+
+                    // Spiral arms, shits gay and bugs out if i dont do this workaround
+                    // doesn't draw arms at all if there is a filter for some reason?????
+                    // Draw arms to temp canvas WITHOUT blur
+                    tempCtx.translate(tempSize / 2, tempSize / 2);
+                    tempCtx.strokeStyle = '#b8d8ff55';
+                    tempCtx.lineWidth = this.size * armGirthConst;
+                    tempCtx.beginPath();
+
+                    for (let arm = 0; arm < 2; arm++) {
+                        const startRadius = this.type === 'barred' ? this.size * 0.5 : 0;
+
+                        if (this.type === 'barred') {
+                            for (let i = 0; i < 30; i++) {
+                                const t = i / 30;
+                                const angle = t * Math.PI * barredArmLenConst + arm * Math.PI;
+                                const radius = startRadius + t * this.size * 0.6;
+                                const x = Math.cos(angle) * radius;
+                                const y = Math.sin(angle) * radius * girthConst;
+
+                                if (i === 0) tempCtx.moveTo(x, y);
+                                else tempCtx.lineTo(x, y);
+                            }
+                            if (arm === 0) tempCtx.moveTo(0, 0);
+                        } else {
+                            for (let i = 0; i < 100; i++) {
+                                const t = i / 100;
+                                const angle = t * Math.PI * spiralArmLenConst + arm * Math.PI;
+                                const radius = t * this.size * 1.2;
+                                const x = Math.cos(angle) * radius;
+                                const y = Math.sin(angle) * radius * girthConst;
+
+                                if (i === 0) tempCtx.moveTo(x, y);
+                                else tempCtx.lineTo(x, y);
+                            }
+                            if (arm === 0) tempCtx.moveTo(0, 0);
+                        }
+                    }
+                    tempCtx.stroke();
+                    // Draw temp canvas to main canvas WITH blur (3px)
+                    targetCtx.drawImage(tempCanvas, -tempSize / 2, -tempSize / 2);
+                } else if (this.type === 'elliptical') {
+                    const gradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                    gradient.addColorStop(0, '#fff9b099');
+                    gradient.addColorStop(0.5, '#b8d8ff33');
+                    gradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = gradient;
+                    targetCtx.beginPath();
+                    targetCtx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                    targetCtx.fill();
+                } else if (this.type === 'lenticular') {
+                    const diskGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
+                    diskGradient.addColorStop(0, '#fff9b0aa');
+                    diskGradient.addColorStop(0.3, '#b8d8ff77');
+                    diskGradient.addColorStop(0.7, '#b8d8ff44');
+                    diskGradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = diskGradient;
+                    targetCtx.beginPath();
+                    targetCtx.ellipse(0, 0, this.size * 1.5, this.size * 0.1, 0, 0, Math.PI * 2);
+                    targetCtx.fill();
+
+                    const bulgeGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                    bulgeGradient.addColorStop(0, '#ffffffaa');
+                    bulgeGradient.addColorStop(0.5, '#fff9b088');
+                    bulgeGradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = bulgeGradient;
+                    targetCtx.beginPath();
+                    targetCtx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+                    targetCtx.fill();
+                } else if (this.type === 'irregular') {
+                    targetCtx.filter = 'blur(8px)';
+
+                    const drawBlobLayer = (blobs, palette) => {
+                        blobs.forEach(blob => {
+                            const gradient = targetCtx.createRadialGradient(
+                                blob.offsetX, blob.offsetY, 0,
+                                blob.offsetX, blob.offsetY, blob.blobSize
+                            );
+
+                            const r1 = parseInt(palette.center.slice(1, 3), 16);
+                            const g1 = parseInt(palette.center.slice(3, 5), 16);
+                            const b1 = parseInt(palette.center.slice(5, 7), 16);
+
+                            const r2 = parseInt(palette.edge.slice(1, 3), 16);
+                            const g2 = parseInt(palette.edge.slice(3, 5), 16);
+                            const b2 = parseInt(palette.edge.slice(5, 7), 16);
+
+                            const mix = blob.colorMix;
+                            const centerR = Math.round(r1 * (1 - mix) + r2 * mix);
+                            const centerG = Math.round(g1 * (1 - mix) + g2 * mix);
+                            const centerB = Math.round(b1 * (1 - mix) + b2 * mix);
+
+                            gradient.addColorStop(0, `rgba(${centerR}, ${centerG}, ${centerB}, 0.67)`);
+                            gradient.addColorStop(0.4, `rgba(${centerR}, ${centerG}, ${centerB}, 0.4)`);
+                            gradient.addColorStop(0.7, palette.edge + '44');
+                            gradient.addColorStop(1, 'transparent');
+
+                            targetCtx.fillStyle = gradient;
+                            targetCtx.beginPath();
+                            targetCtx.arc(blob.offsetX, blob.offsetY, blob.blobSize, 0, Math.PI * 2);
+                            targetCtx.fill();
+                        });
+                    };
+
+                    drawBlobLayer(this.primaryBlobs, this.palettePair.primary);
+                    targetCtx.filter = 'blur(10px)';
+                    drawBlobLayer(this.secondaryBlobs, this.palettePair.secondary);
+                    targetCtx.filter = 'blur(1px)';
+                    this.stars.forEach(star => {
+                        targetCtx.fillStyle = '#ffffff';
+                        targetCtx.beginPath();
+                        targetCtx.arc(star.offsetX, star.offsetY, star.size, 0, Math.PI * 2);
+                        targetCtx.fill();
+
+                        targetCtx.fillStyle = '#ffffff44';
+                        targetCtx.beginPath();
+                        targetCtx.arc(star.offsetX, star.offsetY, star.size * 3, 0, Math.PI * 2);
+                        targetCtx.fill();
+                    });
+                }
+
+                targetCtx.filter = 'none';
+                targetCtx.restore();
+            }
+        }
+
+        function drawGalaxies(type) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const galaxies = [];
+            const cols = 25; // 25 columns
+            const rows = 20; // 20 rows = 500 total
+            const spacing = 100;
+            const offsetX = (canvas.width - cols * spacing) / 2 + 50;
+            const offsetY = (canvas.height - rows * spacing) / 2 + 50;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = offsetX + col * spacing;
+                    const y = offsetY + row * spacing;
+                    galaxies.push(new Galaxy(x, y, type));
+                }
+            }
+
+            galaxies.forEach(galaxy => galaxy.draw(ctx));
+            
+            console.log(`Drew ${galaxies.length} ${type} galaxies`);
+        }
+
+        // Initial draw
+        drawGalaxies(currentType);
+
+        // Button handlers
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentType = this.dataset.type;
+                drawGalaxies(currentType);
+            });
+        });
+
+        document.getElementById('redraw').addEventListener('click', function() {
+            drawGalaxies(currentType);
+        });
+
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawGalaxies(currentType);
+        });
+    </script>
+</body>
+</html>

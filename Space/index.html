@@ -298,23 +298,25 @@
                             <li><a href="./Articles/Compact Objects/Black-Holes/index.html">Black Holes</a></li>
                         </ul>
                     </li>
-                    <br>
                     <li>Particle Physics:
                         <ul>
                             <li><a href="./Articles/Particle-Physics/Neutrinos/neutrino_e.html">A neutrino can easily penetrate the earth. (joke)</a></li>
                             <li>Strange Matter</li>
                         </ul>
                     </li>
-                    <br>
                     <li>Weapons and Tools:
                         <ul>
                             <li><a href="./Sci-Fi/Weapons-&-Tools/index.html">Weapons Catalogue</a></li>
                         </ul>
                     </li>
-                    <br>
                     <li>Stories:
                         <ul>
                             <li><a href="./Sci-Fi/Stories/The-Object.html">The Object (me when i &lt;3 3bp so much i copy)</a></li>
+                        </ul>
+                    </li>
+                    <li>Misc:
+                        <ul>
+                            <li><a href="./media/tester.html">Galaxy Generation tester</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -811,9 +813,9 @@
                 this.x = x;
                 this.y = y;
                 this.type = type;
-                this.size = Math.random() * 40 + 20;
+                this.size = Math.random() * 15 + 15;
                 this.rotation = Math.random() * Math.PI * 2;
-                this.opacity = Math.random() * 0.4 + 0.2;
+                this.opacity = 0.3 + Math.random() * 0.3;
 
                 // For nebulae (repurposed irregular galaxies)
                 if (this.type === 'irregular') {
@@ -845,7 +847,6 @@
                     ];
 
                     this.palettePair = palettePairs[Math.floor(Math.random() * palettePairs.length)];
-                    this.size = Math.random() * 30 + 30;
 
                     // Generate two layers of blobs
                     this.primaryBlobs = [];
@@ -889,7 +890,6 @@
                 targetCtx.translate(this.x, this.y);
                 targetCtx.rotate(this.rotation);
                 targetCtx.globalAlpha = this.opacity;
-
                 targetCtx.filter = 'blur(3px)';
 
                 if (this.type === 'spiral' || this.type === 'barred') {
@@ -908,27 +908,64 @@
 
                     if (this.type === 'barred') {
                         targetCtx.fillStyle = '#fff9b044';
-                        targetCtx.fillRect(-this.size * 0.5, -this.size * 0.05, this.size, this.size * 0.1);
+                        targetCtx.fillRect(-this.size * 0.5, -this.size * 0.08, this.size * 1, this.size * 0.16);
                     }
 
-                    // Spiral arms
+                    // Create temporary canvas for arms (draw without blur)
+                    const tempCanvas = document.createElement('canvas');
+                    const tempSize = this.size * 3;
+                    tempCanvas.width = tempSize;
+                    tempCanvas.height = tempSize;
+                    const tempCtx = tempCanvas.getContext('2d');
+
+                    const barredArmLenConst = Math.random() + 0.7;
+                    const spiralArmLenConst = Math.random() + 2;
+                    const girthConst = Math.random() * 0.3 + 0.45;
+                    const armGirthConst = Math.random() * 0.1 + 0.15;
+
+                    // Spiral arms, shits gay and bugs out if i dont do this workaround
+                    // doesn't draw arms at all if there is a filter for some reason?????
+                    // Draw arms to temp canvas WITHOUT blur
+                    tempCtx.translate(tempSize / 2, tempSize / 2);
+                    tempCtx.strokeStyle = '#b8d8ff55';
+                    tempCtx.lineWidth = this.size * armGirthConst;
+                    tempCtx.beginPath();
+
                     for (let arm = 0; arm < 2; arm++) {
-                        targetCtx.strokeStyle = '#b8d8ff44';
-                        targetCtx.lineWidth = this.size * 0.15;
-                        targetCtx.beginPath();
-                        for (let i = 0; i < 50; i++) {
-                            const angle = (i / 50) * Math.PI * 2 + arm * Math.PI;
-                            const radius = (i / 50) * this.size;
-                            const x = Math.cos(angle) * radius;
-                            const y = Math.sin(angle) * radius * 0.5;
-                            if (i === 0) targetCtx.moveTo(x, y);
-                            else targetCtx.lineTo(x, y);
+                        const startRadius = this.type === 'barred' ? this.size * 0.5 : 0;
+
+                        if (this.type === 'barred') {
+                            for (let i = 0; i < 30; i++) {
+                                const t = i / 30;
+                                const angle = t * Math.PI * barredArmLenConst + arm * Math.PI;
+                                const radius = startRadius + t * this.size * 0.6;
+                                const x = Math.cos(angle) * radius;
+                                const y = Math.sin(angle) * radius * girthConst;
+
+                                if (i === 0) tempCtx.moveTo(x, y);
+                                else tempCtx.lineTo(x, y);
+                            }
+                            if (arm === 0) tempCtx.moveTo(0, 0);
+                        } else {
+                            for (let i = 0; i < 100; i++) {
+                                const t = i / 100;
+                                const angle = t * Math.PI * spiralArmLenConst + arm * Math.PI;
+                                const radius = t * this.size * 1.2;
+                                const x = Math.cos(angle) * radius;
+                                const y = Math.sin(angle) * radius * girthConst;
+
+                                if (i === 0) tempCtx.moveTo(x, y);
+                                else tempCtx.lineTo(x, y);
+                            }
+                            if (arm === 0) tempCtx.moveTo(0, 0);
                         }
-                        targetCtx.stroke();
                     }
+                    tempCtx.stroke();
+                    // Draw temp canvas to main canvas WITH blur (3px)
+                    targetCtx.drawImage(tempCanvas, -tempSize / 2, -tempSize / 2);
                 } else if (this.type === 'elliptical') {
                     const gradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size);
-                    gradient.addColorStop(0, '#fff9b0');
+                    gradient.addColorStop(0, '#fff9b099');
                     gradient.addColorStop(0.5, '#b8d8ff33');
                     gradient.addColorStop(1, 'transparent');
                     targetCtx.fillStyle = gradient;
@@ -936,21 +973,21 @@
                     targetCtx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
                     targetCtx.fill();
                 } else if (this.type === 'lenticular') {
-                    const diskGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size);
-                    diskGradient.addColorStop(0, '#fff9b088');
-                    diskGradient.addColorStop(0.3, '#b8d8ff44');
-                    diskGradient.addColorStop(0.7, '#b8d8ff22');
+                    const diskGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 1.5);
+                    diskGradient.addColorStop(0, '#fff9b0aa');
+                    diskGradient.addColorStop(0.3, '#b8d8ff77');
+                    diskGradient.addColorStop(0.7, '#b8d8ff44');
                     diskGradient.addColorStop(1, 'transparent');
                     targetCtx.fillStyle = diskGradient;
                     targetCtx.beginPath();
-                    targetCtx.ellipse(0, 0, this.size * 1.2, this.size * 0.25, 0, 0, Math.PI * 2);
+                    targetCtx.ellipse(0, 0, this.size * 1.5, this.size * 0.1, 0, 0, Math.PI * 2);
                     targetCtx.fill();
 
-                    const coreGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
-                    coreGradient.addColorStop(0, '#ffffff');
-                    coreGradient.addColorStop(0.5, '#fff9b0');
-                    coreGradient.addColorStop(1, 'transparent');
-                    targetCtx.fillStyle = coreGradient;
+                    const bulgeGradient = targetCtx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                    bulgeGradient.addColorStop(0, '#ffffffaa');
+                    bulgeGradient.addColorStop(0.5, '#fff9b088');
+                    bulgeGradient.addColorStop(1, 'transparent');
+                    targetCtx.fillStyle = bulgeGradient;
                     targetCtx.beginPath();
                     targetCtx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
                     targetCtx.fill();
@@ -1245,7 +1282,7 @@
 
         // Comet, NOT cached (dynamic motion)
         class Comet {
-            constructor(sunX, sunY, GM = 5000) {
+            constructor(sunX, sunY, GM = 8000) {
                 this.sunX = sunX;
                 this.sunY = sunY;
                 this.GM = GM; // bigger GM = stronger gravity
@@ -1311,8 +1348,8 @@
                 const r = Math.hypot(dx, dy);
                 this.distanceToSun = r; // store it so draw() can use it
 
-                // Softening factor
-                const epsilon = 30; // tweak this to control curvature vs speed
+                // Softening factor, higher factor = less curvature in path
+                const epsilon = 10; // tweak this to control curvature vs speed
 
                 // Acceleration toward Sun with softening
                 const a = this.GM / (r * r + epsilon * epsilon);
@@ -1651,15 +1688,18 @@
             galaxies = [];
             const galaxyTypes = ['spiral', 'barred', 'irregular', 'elliptical', 'lenticular'];
 
-            // First, add one of each type
+            // First, add two of each type
             galaxyTypes.forEach((type, index) => {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 galaxies.push(new Galaxy(x, y, type));
+                const x2 = Math.random() * canvas.width;
+                const y2 = Math.random() * canvas.height;
+                galaxies.push(new Galaxy(x2, y2, type));
             });
 
-            // Then add 25 more random ones to reach 30 total
-            for (let i = 0; i < 25; i++) {
+            // Then add 30 more random ones to reach 40 total
+            for (let i = 0; i < 30; i++) {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 const type = galaxyTypes[Math.floor(Math.random() * galaxyTypes.length)];
