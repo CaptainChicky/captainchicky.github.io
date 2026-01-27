@@ -10,14 +10,12 @@
 	<link rel="icon" href="./Clouds/peacock sprite.png">
 
 	<meta name="author" content="Captain Chicky">
-	<meta name="keywords"
-		content="space, captain chicky, captain, chicky, sun, earth, planet, goose, goos, planets, suns, comet, comets">
-	<meta name="description" content="Captain Chicky's personal website - featuring stories, projects, and cool stuff">
+	<meta name="keywords" content="captain chicky, captain, chicky">
+	<meta name="description" content="Captain Chicky's website! I have some cool stuff here :) go check it out!">
 
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="Captain Chicky's Website">
-	<meta property="og:description"
-		content="Captain Chicky's personal website - featuring stories, projects, and cool stuff">
+	<meta property="og:description" content="Captain Chicky's website! I have some cool stuff here :) go check it out!">
 	<meta property="og:url" content="https://captainchicky.github.io">
 	<meta property="og:image" content="https://captainchicky.github.io/Space/index_files/comet.png">
 	<meta property="og:image:width" content="256">
@@ -58,10 +56,19 @@
 			margin-bottom: 30px;
 			font-size: 2em;
 			color: #cccccc;
+			animation-duration: 0.04s;
+			animation-iteration-count: infinite;
 		}
 
 		h1:hover {
 			color: #00ff00;
+			animation-name: hahafunny;
+		}
+
+		@keyframes hahafunny {
+			0% { font-size: 2em; }
+			50% { font-size: 2.6087em; }
+			100% { font-size: 2em; }
 		}
 
 		p {
@@ -136,15 +143,12 @@
 			box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1);
 			display: flex;
 			flex-direction: column;
+			align-items: center;
 			width: fit-content;
 			cursor: default !important;
 		}
 
 		/* Wrapper to center the game box */
-		.content-wrapper {
-			max-width: 1200px;
-		}
-
 		#mainCanvas {
 			display: block;
 			border: 3px solid #700074;
@@ -362,10 +366,10 @@
 </head>
 
 <body>
-	<!-- CRITICAL: Container must be a span and placed at the beginning of body -->
+	<!-- Container must be a span and placed at the beginning of body for the fairy dust -->
 	<span class="container"></span>
 
-	<!-- Fairy Dust Position Fixer - Must load BEFORE fairyDustCursor.js -->
+	<!-- Fairy Dust Position Fixer, Must load BEFORE fairyDustCursor.js -->
 	<script type="text/javascript">
 		(function () {
 			// Wait for the container to exist
@@ -386,14 +390,12 @@
 			}, 10);
 		})();
 	</script>
-
 	<script src="./Archive/FairyDustCursor.js"></script>
 
 	<div class="content-wrapper">
 		<h1>Here's a very unupdated index of my website</h1>
 
 		<div class="links-section">
-			<a href="./Space/Sci-Fi/Stories/The-Object.html">A sci-fi story i wrote on 4/9-4/10/2021 pls read</a>
 			<a href="./The-Aviary/">The Aviary</a>
 			<a href="./Idiot!/">Trojan.JS.YouAreAnIdiot (will revamp)</a>
 			<a href="./Archive/powworker.html">diep.io powworker(waiting to be fixed)</a>
@@ -403,9 +405,8 @@
 			<a href="./Clouds/Clouds.html">Notable special clouds(not finished lol)</a>
 		</div>
 
-		<p>also yea some js is broken but ill fix</p>
-
-		<p>This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified
+		<p>
+			This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified
 			otherwise) on a 1920x1080 sized screen. Site may not display properly on smaller screens, expecially phones.
 		</p>
 
