@@ -1,106 +1,292 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Captain Chicky's Website</title>
+
     <link rel="icon" href="./Clouds/peacock sprite.png">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="Author" content="Captain Chicky">
-    <meta name="Keywords" content="space, captain chicky, captain, chicky, sun, earth, planet, goose, goos, planets, suns, comet, comets">
-    <meta name="Description" content="will do later.">
+
+    <meta name="author" content="Captain Chicky">
+    <meta name="keywords" content="space, captain chicky, captain, chicky, sun, earth, planet, goose, goos, planets, suns, comet, comets">
+    <meta name="description" content="Captain Chicky's personal website - featuring stories, projects, and cool stuff">
+
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Space">
-    <meta property="og:description" content="will do later. Not space but too lazy to fix rn">
+    <meta property="og:title" content="Captain Chicky's Website">
+    <meta property="og:description" content="Captain Chicky's personal website - featuring stories, projects, and cool stuff">
     <meta property="og:url" content="https://captainchicky.github.io"> 
-    <meta property="og:image" content="http://captainchicky.github.io/Space/index_files/comet.png">
-    <meta property="og:image:secure_url" content="https://captainchicky.github.io/Space/index_files/comet.png"> 
+    <meta property="og:image" content="https://captainchicky.github.io/Space/index_files/comet.png">
     <meta property="og:image:width" content="256">
     <meta property="og:image:height" content="256">
-    <meta property="og:image:alt" content="Space">
+
     <style>
-      html, body {
-        padding-left: 1%;
-        background-color: #000000; color: #ffffff;
-        cursor: none; 
-      }
-      .bam {
-        height: 100%;
-        background-color: pink;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-left: 30%;
-        margin-right: 30%;
-        cursor: default !important;
-        padding-top: 20px;
-        padding-bottom: 20px;
-      }
-      a { text-decoration: none; }
-      a.right { float: right; }
-      a.left { float: left; }
-      :link { color: #00ffff; border: none; }
-      :visited { color: #00cccc; border: none; }
-      :hover { color: #00ff00; border: none; }
-      .bored { cursor: default; }
-      .css1{
-        position:absolute;top:0px;left:0px;
-        width:16px;height:16px;
-        font-family:Arial;
-        font-size:16px;
-        text-align:center;
-        font-weight:bold;
-      }
-      .css2{
-        position:absolute;top:0px;left:0px;
-        width:10px;height:10px;
-        font-family:Arial;
-        font-size:10px;
-        text-align:center;
-      }
-      .info {
-  font-family: monospace;
-  position: absolute;
-  line-height: 20px;
-  font-size: 14px;
-  left: 20px;
-  top: 20px;
-  cursor: none !important; 
-}
-span {
-  cursor: none !important; 
-}
-      </style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+        }
+
+        body {
+            padding: 20px;
+            padding-left: 2%;
+            cursor: none;
+        }
+
+        /* CRITICAL: Container must not affect layout */
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        /* Make fairy dust particles use fixed positioning */
+        .container > span {
+            position: fixed !important;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .links-section {
+            margin-bottom: 40px;
+        }
+
+        .links-section a {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            transition: all 0.2s ease;
+            padding: 8px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #00ffff;
+            cursor: pointer;
+        }
+
+        a:visited {
+            color: #00cccc;
+        }
+
+        a:hover {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            padding-left: 10px;
+        }
+
+        .note {
+            color: #ff69b4;
+            font-style: italic;
+            margin: 20px 0;
+            padding: 10px;
+            border-left: 3px solid #ff69b4;
+        }
+
+        .info-box {
+            background-color: #111;
+            border: 2px solid #00ff00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .canvas-container {
+            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ffc0cb 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
+        }
+
+        .canvas-container canvas {
+            border: 3px solid #700074;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background: #000000;
+        }
+
+        .canvas-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 512px;
+            cursor: default;
+        }
+
+        .canvas-controls input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .canvas-controls label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #000;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        .canvas-controls input[type="checkbox"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Clock styles - FIXED positioning */
+        .css1, .css2 {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .css2 {
+            font-size: 10px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .css1 {
+            font-size: 16px;
+            text-align: center;
+            width: 16px;
+            height: 16px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .canvas-container {
+                padding: 20px;
+            }
+
+            .canvas-container canvas {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 400px;
+            }
+
+            .info-box {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+
     <script src="./Archive/AgentGame.js" defer></script>
-    <script src="./Archive/FairyDustCursor.js"></script>    
-  </head>
-  <body>
-    <div class="info">
-    </div>
+</head>
+<body>
+    <!-- CRITICAL: Container must be a span and placed at the beginning of body -->
     <span class="container"></span>
-    <h1>
-      Here's a very unupdated index of my website
-    </h1>
-    <a href="./Space/Sci-Fi/Stories/The-Object.html">A sci-fi story i wrote on 4/9-4/10/2021 pls read</a><br>
-    <a href="./The-Aviary/">The Aviary</a><br>
-    <a href="./Idiot!/">Trojan.JS.YouAreAnIdiot (will revamp)</a><br>
-    <a href="./Archive/powworker.html">diep.io powworker(waiting to be fixed)</a><br>
-    <a href="./Space">Space(not realy done but idk)</a><br>
-    <a href="./Zip-Bomb/">Zip bombs(incomplete)</a><br>
-    <a href="./Captcha-test/">Captcha test(will fix soon)</a><br>
-    <a href="./Clouds/Clouds.html">Notable special clouds(not finished lol)</a><br>
-    <p>also yea some js is broken but ill fix</p>
-    <br><br>
-    <p>This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified otherwise) on a 1920x1080 sized screen.
-      <br>
-      Site may not display properly on smaller screens, expecially phones.
-    </p>
-<div class="bam">  
-<canvas width="512" height="512"></canvas>
-<input id="zoom" type="range" min="0.00001" max="2" step="0.0001" value="0.67">
-<input id="rel" type="checkbox">
-</div><br><br><br>
-<div class="bored">
-  <script type="text/javascript">
+    
+    <!-- Fairy Dust Position Fixer - Must load BEFORE fairyDustCursor.js -->
+    <script type="text/javascript">
+        (function() {
+            // Wait for the container to exist
+            var checkContainer = setInterval(function() {
+                var container = document.querySelector('.container');
+                if (container) {
+                    clearInterval(checkContainer);
+                    
+                    // Override appendChild to fix positioning
+                    var originalAppendChild = container.appendChild;
+                    container.appendChild = function(child) {
+                        if (child.tagName === 'SPAN' && child.style.position === 'absolute') {
+                            child.style.position = 'fixed';
+                        }
+                        return originalAppendChild.call(this, child);
+                    };
+                }
+            }, 10);
+        })();
+    </script>
+    
+    <script src="./Archive/FairyDustCursor.js"></script>    
+    
+    <div class="content-wrapper">
+        <h1>Here's a very unupdated index of my website</h1>
+        
+        <div class="links-section">
+            <a href="./Space/Sci-Fi/Stories/The-Object.html">A sci-fi story i wrote on 4/9-4/10/2021 pls read</a>
+            <a href="./The-Aviary/">The Aviary</a>
+            <a href="./Idiot!/">Trojan.JS.YouAreAnIdiot (will revamp)</a>
+            <a href="./Archive/powworker.html">diep.io powworker(waiting to be fixed)</a>
+            <a href="./Space">Space(not realy done but idk)</a>
+            <a href="./Zip-Bomb/">Zip bombs(incomplete)</a>
+            <a href="./Captcha-test/">Captcha test(will fix soon)</a>
+            <a href="./Clouds/Clouds.html">Notable special clouds(not finished lol)</a>
+        </div>
+
+        <p class="note">also yea some js is broken but ill fix</p>
+
+        <div class="info-box">
+            <p><strong>erm</strong></p>
+            <p>This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified otherwise) on a 1920x1080 sized screen.
+            Site may not display properly on smaller screens, expecially phones.</p>
+        </div>
+
+        <div class="canvas-container" style="cursor: default;">
+            <canvas id="mainCanvas" width="512" height="512"></canvas>
+            <div class="canvas-controls">
+                <label>
+                    Zoom: <input id="zoom" type="range" min="0.00001" max="2" step="0.0001" value="0.67">
+                </label>
+                <label>
+                    <input id="rel" type="checkbox"> Relative mode
+                </label>
+                <button id="reset">Reset simulation</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>erm</p>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
     // Silly Clock 3 (updated) by http://www.btinternet.com/~kurt.grigg/javascript
     //modified by ender:
     // - now works in Firebird 0.7
@@ -349,7 +535,5 @@ span {
     }
     //-->
     </script>
-</div>
 </body>
 </html>
-

@@ -1,8 +1,11 @@
+// Modified by CC 2026 to be able to reset, and change agent color to white
+// source unknown
 "use strict";
 
 const CTX = document.getElementsByTagName("canvas")[0].getContext("2d", {alpha: true});
 const ZOOM = document.getElementById("zoom");
 const REL = document.getElementById("rel");
+const RESET = document.getElementById("reset");
 
 class ECS {
     constructor() {
@@ -37,6 +40,11 @@ class ECS {
             entities = new Set([...entities].filter(entity => this.components_map.get(component).has(entity)));
         }
         return [...entities].sort();
+    }
+
+    clear() {
+        this.entity_counter = 0;
+        this.components_map.clear();
     }
 }
 
@@ -124,11 +132,16 @@ class Occupancy {
         }
         return result;
     }
+
+    clear() {
+        this.x.clear();
+        this.y.clear();
+    }
 }
 
 const ecs = new ECS();
 
-const OCCUPANCY = new Occupancy(10.0);
+let OCCUPANCY = new Occupancy(10.0);
 
 const DAMPING = 0.6;
 
@@ -289,32 +302,45 @@ function draw() {
     CTX.restore();
 }
 
-let entities = [];
-for (let i = 0; i < 50; i++) {
-    let phys;
-    do {
-        phys = {
-            pos: [Math.random() * 50 - 25, Math.random() * 50 - 25],
-            vel: [0, 0],
-            force: [0, 0],
-            radius: Math.sqrt(Math.random() * 3.0 + 1.0),
-            color: "black",
-        };
-    } while (any_collisions(phys));
-    let entity = ecs.create_entity({phys});
-    entities.push(entity);
-    OCCUPANCY.add(entity, ...bounding_box(phys));
+function initialize_simulation() {
+    ecs.clear();
+    OCCUPANCY.clear();
+
+    let entities = [];
+    for (let i = 0; i < 50; i++) {
+        let phys;
+        do {
+            phys = {
+                pos: [Math.random() * 50 - 25, Math.random() * 50 - 25],
+                vel: [0, 0],
+                force: [0, 0],
+                radius: Math.sqrt(Math.random() * 3.0 + 1.0),
+                color: "white",
+            };
+        } while (any_collisions(phys));
+        let entity = ecs.create_entity({phys});
+        entities.push(entity);
+        OCCUPANCY.add(entity, ...bounding_box(phys));
+    }
+    for (let entity of entities) {
+        let enemy, protector;
+        do {
+            enemy = entities[Math.floor(Math.random() * entities.length)];
+        } while (enemy === entity);
+        do {
+            protector = entities[Math.floor(Math.random() * entities.length)];
+        } while (protector === entity || protector === enemy);
+        ecs.set_component(entity, "enemy", enemy);
+        ecs.set_component(entity, "protector", protector);
+    }
 }
-for (let entity of entities) {
-    let enemy, protector;
-    do {
-        enemy = entities[Math.floor(Math.random() * entities.length)];
-    } while (enemy === entity);
-    do {
-        protector = entities[Math.floor(Math.random() * entities.length)];
-    } while (protector === entity || protector === enemy);
-    ecs.set_component(entity, "enemy", enemy);
-    ecs.set_component(entity, "protector", protector);
+
+// Initialize simulation on load
+initialize_simulation();
+
+// Add reset button handler
+if (RESET) {
+    RESET.addEventListener('click', initialize_simulation);
 }
 
 /*

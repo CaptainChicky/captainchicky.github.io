@@ -12,8 +12,14 @@
   var height = window.innerHeight;
   var cursor = {x: width/2, y: width/2};
   var particles = [];
+  var container; // Declare here
   
   function init() {
+    container = document.querySelector('.container'); // Query here after DOM is ready
+    if (!container) {
+      console.error('Container element not found');
+      return;
+    }
     bindEvents();
     loop();
   }
@@ -108,7 +114,7 @@
       applyProperties(this.element, this.initialStyles);
       this.update();
       
-      document.querySelector('.container').appendChild(this.element);
+      container.appendChild(this.element);
     };
     
     this.update = function() {
