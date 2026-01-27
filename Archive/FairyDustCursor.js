@@ -5,6 +5,7 @@
  * -- https://codepen.io/tholman/full/jWmZxZ/
  */
 
+// modified by CC 2026 to query the container after DOM is ready
 (function fairyDustCursor() {
   
   var possibleColors = ["#D61C59", "#E7D84B", "#1B8798"]
