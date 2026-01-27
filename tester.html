@@ -21,199 +21,344 @@
     <meta property="og:image:height" content="256">
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            background-color: #000000;
-            color: #ffffff;
-            font-family: 'Courier New', monospace;
-            overflow-x: hidden;
-        }
+      html, body {
+        background-color: #000000;
+        color: #ffffff;
+        cursor: none;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+      }
 
+      body {
+        padding: 20px;
+      }
+
+      /* Fairy dust container */
+      .container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      h1 {
+        margin-bottom: 30px;
+        font-size: 2em;
+        color: #cccccc;
+      }
+
+      h1:hover {
+        color: #00ff00;
+      }
+
+      p {
+        color: #cccccc;
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+
+      p:hover {
+        color: #00ff00;
+      }
+
+      /* Links section */
+      .links-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .links-section a {
+        display: block;
+        font-size: 1.1em;
+      }
+
+      a {
+        text-decoration: none;
+        cursor: none;
+      }
+
+      a:link {
+        color: #00ffff;
+      }
+
+      a:visited {
+        color: #00cccc;
+      }
+
+      a:hover {
+        color: #00ff00;
+      }
+
+      a.right {
+        float: right;
+      }
+
+      a.left {
+        float: left;
+      }
+
+      /* Pink BAM section (if needed) */
+      .bam {
+        background-color: pink;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 40%;
+        cursor: default !important;
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      /* Game container with pink gradient */
+      .game-box {
+        background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ffc0cb 100%);
+        border: 3px solid #ff1493;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1);
+        display: inline-block;
+      }
+
+      /* Wrapper to center the game box */      
+      .game-box-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      /* Canvas container */
+      .canvas-container {
+        margin-bottom: 0;
+        cursor: default !important;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #mainCanvas {
+        display: block;
+        border: 3px solid #700074;
+        background-color: #000;
+        margin: 0 auto 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .canvas-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 512px;
+      }
+
+      .canvas-controls .zoom-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+      }
+
+      .canvas-controls .zoom-control label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        color: #000;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+      }
+
+      .canvas-controls .bottom-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 36px;
+      }
+
+      .canvas-controls label {
+        cursor: default;
+        color: #000;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+      }
+
+      .canvas-controls .bottom-row label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 100%;
+      }
+
+      /* Styled range slider */
+      .canvas-controls input[type="range"] {
+        flex: 1;
+        height: 8px;
+        cursor: pointer;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(to right, #700074 0%, #ff1493 100%);
+        border-radius: 5px;
+        outline: none;
+      }
+
+      .canvas-controls input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        border: 3px solid #700074;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .canvas-controls input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        border: 3px solid #700074;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Styled checkbox */
+      .canvas-controls input[type="checkbox"] {
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: #fff;
+        border: 3px solid #700074;
+        border-radius: 4px;
+        position: relative;
+        transition: all 0.2s;
+      }
+
+      .canvas-controls input[type="checkbox"]:checked {
+        background: #700074;
+      }
+
+      .canvas-controls input[type="checkbox"]:checked::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .canvas-controls button {
+        padding: 0 25px;
+        height: 36px;
+        background-color: #700074;
+        color: #fff;
+        border: 2px solid #4a004d;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .canvas-controls button:hover {
+        background-color: #4a004d;
+        box-shadow: 0 4px 12px rgba(112, 0, 116, 0.5);
+        transform: translateY(-2px);
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #00ffff;
+        text-align: center;
+      }
+
+      /* Clock CSS */
+      .css1 {
+        position: fixed;
+        width: 16px;
+        height: 16px;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        text-align: center;
+        font-weight: bold;
+        pointer-events: none;
+      }
+
+      .css2 {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      /* Info overlay */
+      .info {
+        font-family: monospace;
+        position: fixed;
+        line-height: 20px;
+        font-size: 14px;
+        left: 20px;
+        top: 20px;
+        cursor: none !important;
+        pointer-events: none;
+        z-index: 10000;
+      }
+
+      span {
+        cursor: none !important;
+      }
+
+      .bored {
+        cursor: default;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
         body {
-            padding: 20px;
-            padding-left: 2%;
-            cursor: none;
-        }
-
-        /* CRITICAL: Container must not affect layout */
-        .container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-        }
-
-        /* Make fairy dust particles use fixed positioning */
-        .container > span {
-            position: fixed !important;
+          padding: 10px;
         }
 
         .content-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
+          padding: 10px;
         }
 
         h1 {
-            font-size: 2em;
-            margin-bottom: 30px;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
+          font-size: 1.5em;
         }
 
-        .links-section {
-            margin-bottom: 40px;
-        }
-
-        .links-section a {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 1.1em;
-            transition: all 0.2s ease;
-            padding: 8px 0;
-        }
-
-        a {
-            text-decoration: none;
-            color: #00ffff;
-            cursor: pointer;
-        }
-
-        a:visited {
-            color: #00cccc;
-        }
-
-        a:hover {
-            color: #00ff00;
-            text-shadow: 0 0 5px #00ff00;
-            padding-left: 10px;
-        }
-
-        .note {
-            color: #ff69b4;
-            font-style: italic;
-            margin: 20px 0;
-            padding: 10px;
-            border-left: 3px solid #ff69b4;
-        }
-
-        .info-box {
-            background-color: #111;
-            border: 2px solid #00ff00;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .canvas-container {
-            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ffc0cb 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            margin: 40px auto;
-            max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
-        }
-
-        .canvas-container canvas {
-            border: 3px solid #700074;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            background: #000000;
+        .bam {
+          max-width: 80%;
         }
 
         .canvas-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-width: 512px;
-            cursor: default;
+          font-size: 0.9em;
         }
-
-        .canvas-controls input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .canvas-controls label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000;
-            font-weight: bold;
-            cursor: default;
-        }
-
-        .canvas-controls input[type="checkbox"] {
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Clock styles - FIXED positioning */
-        .css1, .css2 {
-            position: fixed;
-            z-index: 9999;
-            pointer-events: none;
-        }
-
-        .css2 {
-            font-size: 10px;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-        }
-
-        .css1 {
-            font-size: 16px;
-            text-align: center;
-            width: 16px;
-            height: 16px;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-        }
-
-        footer {
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #888;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .canvas-container {
-                padding: 20px;
-            }
-
-            .canvas-container canvas {
-                width: 100% !important;
-                height: auto !important;
-                max-width: 400px;
-            }
-
-            .info-box {
-                font-size: 0.9em;
-            }
-        }
+      }
     </style>
 
     <script src="./Archive/AgentGame.js" defer></script>
@@ -260,30 +405,30 @@
             <a href="./Clouds/Clouds.html">Notable special clouds(not finished lol)</a>
         </div>
 
-        <p class="note">also yea some js is broken but ill fix</p>
+        <p>also yea some js is broken but ill fix</p>
 
-        <div class="info-box">
-            <p><strong>erm</strong></p>
-            <p>This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified otherwise) on a 1920x1080 sized screen.
-            Site may not display properly on smaller screens, expecially phones.</p>
-        </div>
+        <p>This site was made on computer for computer. More specifically, Google Chrome Browser v86(unless specified otherwise) on a 1920x1080 sized screen. Site may not display properly on smaller screens, expecially phones.</p>
 
-        <div class="canvas-container" style="cursor: default;">
-            <canvas id="mainCanvas" width="512" height="512"></canvas>
-            <div class="canvas-controls">
-                <label>
-                    Zoom: <input id="zoom" type="range" min="0.00001" max="2" step="0.0001" value="0.67">
-                </label>
-                <label>
-                    <input id="rel" type="checkbox"> Relative mode
-                </label>
-                <button id="reset">Reset simulation</button>
+        <div class="game-box-wrapper">
+            <div class="game-box">
+                <div class="canvas-container">
+                    <canvas id="mainCanvas" width="512" height="512"></canvas>
+                    <div class="canvas-controls">
+                        <div class="zoom-control">
+                            <label>
+                                Zoom: <input id="zoom" type="range" min="0.00001" max="2" step="0.0001" value="0.67">
+                            </label>
+                        </div>
+                        <div class="bottom-row">
+                            <label>
+                                <input id="rel" type="checkbox"> Relative mode
+                            </label>
+                            <button id="reset">Reset simulation</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <footer>
-            <p>erm</p>
-        </footer>
     </div>
 
     <script type="text/javascript">
