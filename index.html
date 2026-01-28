@@ -5,21 +5,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Captain Chicky's Website</title>
+	<title>Who even reads this? Do you???</title>
 
-	<link rel="icon" href="./Clouds/peacock sprite.png">
+	<link rel="icon" href="./Archive/PeacockIcon.png" type="image/png">
 
 	<meta name="author" content="Captain Chicky">
 	<meta name="keywords" content="captain chicky, captain, chicky">
-	<meta name="description" content="Captain Chicky's website! I have some cool stuff here :) go check it out!">
-
-	<meta property="og:type" content="website">
-	<meta property="og:title" content="Captain Chicky's Website">
-	<meta property="og:description" content="Captain Chicky's website! I have some cool stuff here :) go check it out!">
-	<meta property="og:url" content="https://captainchicky.github.io">
-	<meta property="og:image" content="https://captainchicky.github.io/Clouds/peacock sprite.png">
-	<meta property="og:image:width" content="256">
-	<meta property="og:image:height" content="256">
+	<meta name="description" content="This is CC's website, welcome i suppose lol">
 
 	<style>
 		* {
@@ -109,28 +101,6 @@
 
 		a:hover {
 			color: #00ff00;
-		}
-
-		a.right {
-			float: right;
-		}
-
-		a.left {
-			float: left;
-		}
-
-		/* Pink BAM section (if needed) */
-		.bam {
-			background-color: pink;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			margin: 0 auto;
-			max-width: 40%;
-			cursor: default !important;
-			padding: 20px;
-			border-radius: 10px;
 		}
 
 		/* Game container with pink gradient */
@@ -316,50 +286,6 @@
 			text-align: center;
 			pointer-events: none;
 		}
-
-		/* Info overlay */
-		.info {
-			font-family: monospace;
-			position: fixed;
-			line-height: 20px;
-			font-size: 14px;
-			left: 20px;
-			top: 20px;
-			cursor: none !important;
-			pointer-events: none;
-			z-index: 10000;
-		}
-
-		span {
-			cursor: none !important;
-		}
-
-		.bored {
-			cursor: default;
-		}
-
-		/* Responsive design */
-		@media (max-width: 768px) {
-			body {
-				padding: 10px;
-			}
-
-			.content-wrapper {
-				padding: 10px;
-			}
-
-			h1 {
-				font-size: 1.5em;
-			}
-
-			.bam {
-				max-width: 80%;
-			}
-
-			.canvas-controls {
-				font-size: 0.9em;
-			}
-		}
 	</style>
 
 	<script src="./Archive/AgentGame.js" defer></script>
@@ -392,39 +318,42 @@
 	</script>
 	<script src="./Archive/FairyDustCursor.js"></script>
 
-	<div class="content-wrapper">
-		<h1>Welcome! :)</h1>
-		
-		<p>
-			I'm not sure how you stumbled here, but if you were looking for things to check out, perhaps see below!
-		</p>
+	<h1>hi there :)</h1>
 
-		<div class="links-section">
-			<a href="./Idiot!/">Trojan.JS.YouAreAnIdiot</a>
-			<a href="./Space">Space</a>
-			<a href="./Zip-Bomb/">Zip Bombs</a>
-			<a href="./Captcha-test/">captcha test</a>
-			<a href="./The-Aviary/">The Aviary</a>
-			<a href="./Clouds/Clouds.html">notable cloud types</a>
-		</div>
+	<p>
+		im not sure how you stumbled here, but if youre looking for things to check out, see below!<br>
+		be advised all the webdev is noobishly written and do not finish my projects 🐔
+	</p>
 
-		<p><small>
-			This site was made on computer for computer. More specifically, Firefox Browser on a 1920x1080 sized screen. 
-			Site may not properly display on mobile devices like phones or tablets. It is not recommended to use safari...
-		</small></p>
+	<div class="links-section">
+		<a href="./Idiot!/">Trojan.JS.YouAreAnIdiot</a>
+		<a href="./Space">Space</a>
+		<a href="./Zip-Bomb/">Zip Bombs</a>
+		<a href="./Captcha-test/">captcha test</a>
+		<a href="./The-Aviary/">The Aviary</a>
+		<a href="./Clouds/Clouds.html">notable cloud types</a>
+	</div>
 
-		<div class="game-box">
-			<canvas id="mainCanvas" width="512" height="512"></canvas>
-			<div class="canvas-controls">
-				<div class="zoom-control"><label>Zoom: <input id="zoom" type="range" min="0.00001" max="2" step="0.0001" value="0.67"></label></div>
-				<div class="bottom-row">
-					<label><input id="rel" type="checkbox"> Relative mode</label>
-					<button id="reset">Reset simulation</button>
-				</div>
+	<div class="game-box">
+		<canvas id="mainCanvas" width="512" height="512"></canvas>
+		<div class="canvas-controls">
+			<div class="zoom-control"><label>Zoom: <input id="zoom" type="range" min="0.00001" max="2" step="0.0001"
+						value="0.67"></label></div>
+			<div class="bottom-row">
+				<label><input id="rel" type="checkbox"> Relative mode</label>
+				<button id="reset">Reset simulation</button>
 			</div>
 		</div>
-
 	</div>
+
+	<footer>
+		<p><small>
+				This site was made on computer for computer. More specifically, Firefox Browser on a 1920x1080 sized
+				screen.
+				Site may not properly display on mobile devices like phones or tablets. It is not recommended to use
+				safari...
+			</small></p>
+	</footer>
 
 	<script type="text/javascript">
 		// Silly Clock 3 (updated) by http://www.btinternet.com/~kurt.grigg/javascript
