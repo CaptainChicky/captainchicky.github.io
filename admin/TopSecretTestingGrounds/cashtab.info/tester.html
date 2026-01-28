@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        #countdown-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 60px 80px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .date-time-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .date-time-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .date-time-value {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .countdown-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .countdown-label {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .countdown-display {
+            font-size: 72px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 5px;
+            text-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            font-family: 'Courier New', monospace;
+        }
+
+        .release-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
+        }
+
+        .release-label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .release-value {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .gift-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        #surprise-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        #surprise-container.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #surprise-image {
+            max-width: 70%;
+            max-height: 60%;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: scaleIn 1s ease-out;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0.3) rotate(-5deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05) rotate(2deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        #surprise-text {
+            color: white;
+            font-size: 64px;
+            font-weight: 800;
+            margin-top: 40px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 1s ease-out 0.5s both;
+            letter-spacing: 3px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #refresh-hint {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            margin-top: 30px;
+            animation: fadeInUp 1s ease-out 1.5s both;
+            font-style: italic;
+        }
+
+        .fire-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            will-change: transform, opacity;
+        }
+
+        /* Subtle background pattern */
+        #countdown-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            border-radius: 30px;
+            z-index: -1;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Countdown container (visible initially) -->
+    <div id="countdown-container">
+        <div class="header">
+            <div class="gift-icon">🎁</div>
+            <h1>Mystery Surprise Awaits</h1>
+        </div>
+
+        <div class="date-time-card">
+            <div class="date-time-label">Current Time</div>
+            <div class="date-time-value" id="current-datetime">Loading...</div>
+        </div>
+
+        <div class="countdown-section">
+            <div class="countdown-label">Your surprise arrives in:</div>
+            <div class="countdown-display" id="countdownDisplay">--:--:--</div>
+        </div>
+
+        <div class="release-card">
+            <div class="release-label">🎯 Surprise Reveal Time</div>
+            <div class="release-value" id="release-datetime">Calculating...</div>
+        </div>
+    </div>
+
+    <!-- Surprise container (hidden initially) -->
+    <div id="surprise-container">
+        <img id="surprise-image" src="" alt="Surprise!">
+        <div id="surprise-text">🎉 SURPRISE! 🎉</div>
+        <div id="refresh-hint">Enjoy your surprise!</div>
+    </div>
+
+    <!-- Confetti library -->
+    <script src="./confetti.js"></script>
+
+    <script>
+        // ============================================
+        // Configuration
+        // ============================================
+        
+        // List of available surprise images (add more as needed)
+        const SURPRISE_IMAGES = [
+            './media/img/1.jpg',
+            './media/img/2.jpg',
+            './media/img/3.jpg',
+            './media/img/4.jpg'
+        ];
+
+        // Countdown range in seconds (15 to 30 minutes)
+        const MIN_COUNTDOWN = 10;  // 15 minutes/900
+        const MAX_COUNTDOWN = 20; // 30 minutes/1800
+
+        // ============================================
+        // Date/Time Functions
+        // ============================================
+
+        function getFormattedDateTime(includeSeconds = false) {
+            const now = new Date();
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const dayName = dayNames[now.getDay()];
+            const monthName = monthNames[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            let timeStr = `${hours}:${minutes} ${ampm}`;
+            
+            if (includeSeconds) {
+                let seconds = now.getSeconds();
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                timeStr = `${hours}:${minutes}:${seconds} ${ampm}`;
+            }
+            
+            return `${dayName}, ${monthName} ${date}, ${year} at ${timeStr}`;
+        }
+
+        // ============================================
+        // Countdown Logic
+        // ============================================
+
+        let remainingSeconds;
+        let releaseTimestamp;
+        let countdownInterval;
+
+        function initializeCountdown() {
+            // Check if countdown already exists in localStorage
+            const storedRemaining = localStorage.getItem("countdown_remaining");
+            const storedRelease = localStorage.getItem("countdown_release");
+            
+            if (storedRemaining && storedRelease && parseInt(storedRemaining) > 0) {
+                // Resume existing countdown
+                remainingSeconds = parseInt(storedRemaining);
+                releaseTimestamp = parseInt(storedRelease);
+            } else {
+                // Generate new random countdown (either first time or after countdown reached 0)
+                const randomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
+                remainingSeconds = randomSeconds;
+                releaseTimestamp = Date.now() + (randomSeconds * 1000);
+                
+                localStorage.setItem("countdown_remaining", remainingSeconds);
+                localStorage.setItem("countdown_release", releaseTimestamp);
+            }
+            
+            updateCountdownDisplay();
+            updateReleaseDateTime();
+        }
+
+        function updateCountdownDisplay() {
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+            
+            const hoursStr = hours < 10 ? '0' + hours : hours;
+            const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+            const secondsStr = seconds < 10 ? '0' + seconds : seconds;
+            
+            document.getElementById('countdownDisplay').textContent = `${hoursStr}:${minutesStr}:${secondsStr}`;
+        }
+
+        function updateReleaseDateTime() {
+            const releaseDate = new Date(releaseTimestamp);
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const dayName = dayNames[releaseDate.getDay()];
+            const monthName = monthNames[releaseDate.getMonth()];
+            const date = releaseDate.getDate();
+            const year = releaseDate.getFullYear();
+            
+            let hours = releaseDate.getHours();
+            let minutes = releaseDate.getMinutes();
+            let seconds = releaseDate.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            document.getElementById('release-datetime').textContent = 
+                `${dayName}, ${monthName} ${date}, ${year} at ${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+
+        function countdown() {
+            if (remainingSeconds === 0) {
+                // Countdown reached zero!
+                clearInterval(countdownInterval);
+                
+                // Generate and save NEW random countdown value for next refresh
+                const newRandomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
+                const newReleaseTimestamp = Date.now() + (newRandomSeconds * 1000);
+                localStorage.setItem("countdown_remaining", newRandomSeconds);
+                localStorage.setItem("countdown_release", newReleaseTimestamp);
+                
+                // Show the surprise
+                showSurprise();
+            } else {
+                // Decrement and save
+                remainingSeconds--;
+                localStorage.setItem("countdown_remaining", remainingSeconds);
+                updateCountdownDisplay();
+            }
+        }
+
+        // ============================================
+        // Surprise Reveal
+        // ============================================
+
+        function showSurprise() {
+            // Select random image from the catalog
+            const randomImage = SURPRISE_IMAGES[Math.floor(Math.random() * SURPRISE_IMAGES.length)];
+            
+            // Hide countdown, show surprise
+            document.getElementById('countdown-container').style.display = 'none';
+            const surpriseContainer = document.getElementById('surprise-container');
+            surpriseContainer.classList.add('active');
+            
+            // Set the surprise image
+            document.getElementById('surprise-image').src = randomImage;
+            
+            // Trigger both confetti effects
+            triggerOriginalConfetti();
+            triggerSideConfetti();
+            
+            // Trigger fire effect
+            setTimeout(() => triggerFireEffect(), 500);
+        }
+
+        function triggerOriginalConfetti() {
+            const duration = 7000; // 6 seconds of confetti
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 100 * (timeLeft / duration);
+                
+                // Confetti from multiple positions
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+        }
+
+        function triggerSideConfetti() {
+            // Set the confetti duration in seconds
+            const confettiDurationSeconds = 3;
+
+            // Calculate the end time for the confetti effect
+            const confettiEndTime = Date.now() + confettiDurationSeconds * 1000;
+
+            // Function to create confetti particles
+            function createConfetti() {
+                // Create two bursts of confetti particles, one from the left and one from the right
+                confetti({
+                    particleCount: 7,         // Number of confetti particles in the burst
+                    angle: 60,                // Angle of projection (60 degrees, towards the top-right)
+                    spread: 55,               // Spread of particles (how wide the burst is)
+                    origin: { x: 0 },         // Starting point for the burst (0 = left side)
+                    zIndex: 9999
+                });
+
+                confetti({
+                    particleCount: 7,         // Number of confetti particles in the burst
+                    angle: 120,               // Angle of projection (120 degrees, towards the top-left)
+                    spread: 55,               // Spread of particles (how wide the burst is)
+                    origin: { x: 1 },         // Starting point for the burst (1 = right side)
+                    zIndex: 9999
+                });
+
+                // Check if the current time is before the confettiEndTime
+                if (Date.now() < confettiEndTime) {
+                    // Continue creating confetti by requesting the next animation frame
+                    requestAnimationFrame(createConfetti);
+                }
+            }
+
+            // Start the confetti effect
+            createConfetti();
+        }
+
+        function triggerFireEffect() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const particleCount = 400;
+            
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => createFireParticle(centerX, centerY), i * 8);
+            }
+        }
+
+        function createFireParticle(centerX, centerY) {
+            const particle = document.createElement('div');
+            particle.className = 'fire-particle';
+            
+            // Random angle for circular spread
+            const angle = Math.random() * Math.PI * 2;
+            
+            // Starting position: 100-150 pixel radius circle around center
+            const startRadius = 100 + Math.random() * 50;
+            const startX = centerX + Math.cos(angle) * startRadius;
+            const startY = centerY + Math.sin(angle) * startRadius;
+            
+            // End position: much further out in the same direction
+            const distance = 200 + Math.random() * 600;
+            const endX = centerX + Math.cos(angle) * distance;
+            const endY = centerY + Math.sin(angle) * distance;
+            
+            // Random size
+            const size = 8 + Math.random() * 35;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.borderRadius = '50%';
+            
+            // Fire colors (red, orange, yellow)
+            const colors = ['#ff0000', '#ff4500', '#ff6347', '#ff8c00', '#ffa500', '#ffd700', '#ffff00'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.background = `radial-gradient(circle, ${color}, ${color}80)`;
+            particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
+            particle.style.opacity = '1';
+            
+            // Set starting position
+            particle.style.left = startX + 'px';
+            particle.style.top = startY + 'px';
+            
+            document.body.appendChild(particle);
+            
+            // Animate using CSS transitions for better visibility
+            const duration = 1200 + Math.random() * 1500;
+            
+            // Force a reflow to ensure the starting position is applied
+            particle.offsetHeight;
+            
+            // Apply transition
+            particle.style.transition = `all ${duration}ms ease-out`;
+            particle.style.transform = `translate(${endX - startX}px, ${endY - startY}px) scale(0)`;
+            particle.style.opacity = '0';
+            
+            // Remove after animation
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, duration + 100);
+        }
+
+        // ============================================
+        // Update Current Date/Time
+        // ============================================
+
+        function updateCurrentDateTime() {
+            document.getElementById('current-datetime').textContent = getFormattedDateTime(true);
+        }
+
+        // ============================================
+        // Add Sparkle Effects
+        // ============================================
+
+        function createSparkles() {
+            const container = document.getElementById('countdown-container');
+            for (let i = 0; i < 5; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(sparkle);
+            }
+        }
+
+        // ============================================
+        // Initialize
+        // ============================================
+
+        // Normal countdown mode - always start countdown when page loads
+        initializeCountdown();
+        updateCurrentDateTime();
+        createSparkles();
+        
+        // Update current time every second
+        setInterval(updateCurrentDateTime, 1000);
+        
+        // Start countdown
+        countdownInterval = setInterval(countdown, 1000);
+    </script>
+</body>
+
+</html>
