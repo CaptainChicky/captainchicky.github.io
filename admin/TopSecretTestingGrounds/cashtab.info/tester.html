@@ -271,6 +271,55 @@
             height: 100%;
             background: #FF0000;
             clip-path: url(#eyeShape);
+            animation: scleraGlitch 3s infinite;
+        }
+
+        @keyframes scleraGlitch {
+            0% {
+                transform: translate(0, 0);
+            }
+            2%, 8% {
+                transform: translate(-3px, 1px);
+            }
+            6% {
+                transform: translate(3px, -1px);
+            }
+            9% {
+                transform: translate(0, 0);
+            }
+            10% {
+                transform: translate(2px, 2px);
+            }
+            13% {
+                transform: translate(0, 0);
+            }
+            14%, 21% {
+                transform: translate(-2px, -1px);
+            }
+            25% {
+                transform: translate(4px, 0);
+            }
+            30% {
+                transform: translate(-4px, 0);
+            }
+            35%, 45% {
+                transform: translate(-3px, 2px);
+            }
+            40% {
+                transform: translate(3px, -2px);
+            }
+            50% {
+                transform: translate(0, 0);
+            }
+            55% {
+                transform: translate(2px, -1px);
+            }
+            60% {
+                transform: translate(0, 0);
+            }
+            31%, 61%, 100% {
+                transform: translate(0, 0);
+            }
         }
 
         /* Dark red overlay on top with heavily blurred edge */
@@ -579,6 +628,8 @@
         .eye-blinking .eyelid-bottom {
             animation: blinkBottom 0.4s cubic-bezier(0.65, 0.05, 0.35, 1) forwards;
         }
+
+        /* Glitch overlay effect - REMOVED, now applied directly to sclera */
 
         .fire-particle {
             position: fixed;
@@ -1109,7 +1160,7 @@
 
         function triggerFireEffect() {
             const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
+            const centerY = window.innerHeight / 2 - 100;
             const particleCount = 400;
             
             for (let i = 0; i < particleCount; i++) {
