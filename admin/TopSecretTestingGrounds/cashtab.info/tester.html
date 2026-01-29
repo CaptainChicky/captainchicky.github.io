@@ -217,6 +217,15 @@
             font-style: italic;
         }
 
+        /* Special black screen surprise styles */
+        #surprise-container.special-surprise {
+            background: #000000;
+        }
+
+        #surprise-container.special-surprise #surprise-image {
+            display: none;
+        }
+
         .fire-particle {
             position: fixed;
             pointer-events: none;
@@ -280,7 +289,7 @@
         </div>
 
         <div class="release-card">
-            <div class="release-label">🎯 Surprise Reveal Time</div>
+            <div class="release-label">Surprise Reveal Time</div>
             <div class="release-value" id="release-datetime">Calculating...</div>
         </div>
     </div>
@@ -311,6 +320,32 @@
         // Countdown range in seconds (15 to 30 minutes)
         const MIN_COUNTDOWN = 10;  // 15 minutes/900
         const MAX_COUNTDOWN = 20; // 30 minutes/1800
+
+        // ============================================
+        // Surprise Counter Management
+        // ============================================
+
+        function getSurpriseCounter() {
+            const counter = localStorage.getItem("surprise_counter");
+            return counter ? parseInt(counter) : 0;
+        }
+
+        function incrementSurpriseCounter() {
+            let counter = getSurpriseCounter();
+            counter = counter + 1;
+            
+            // Reset to 0 if counter exceeds 3
+            if (counter > 3) {
+                counter = 0;
+            }
+            
+            localStorage.setItem("surprise_counter", counter);
+            return counter;
+        }
+
+        function isSpecialSurprise() {
+            return getSurpriseCounter() === 3;
+        }
 
         // ============================================
         // Date/Time Functions
@@ -355,12 +390,12 @@
         function initializeCountdown() {
             // Check if countdown already exists in localStorage
             const storedRemaining = localStorage.getItem("countdown_remaining");
-            const storedRelease = localStorage.getItem("countdown_release");
             
-            if (storedRemaining && storedRelease && parseInt(storedRemaining) > 0) {
+            if (storedRemaining && parseInt(storedRemaining) > 0) {
                 // Resume existing countdown
                 remainingSeconds = parseInt(storedRemaining);
-                releaseTimestamp = parseInt(storedRelease);
+                // Recalculate release timestamp based on current time + remaining seconds
+                releaseTimestamp = Date.now() + (remainingSeconds * 1000);
             } else {
                 // Generate new random countdown (either first time or after countdown reached 0)
                 const randomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
@@ -368,7 +403,6 @@
                 releaseTimestamp = Date.now() + (randomSeconds * 1000);
                 
                 localStorage.setItem("countdown_remaining", remainingSeconds);
-                localStorage.setItem("countdown_release", releaseTimestamp);
             }
             
             updateCountdownDisplay();
@@ -417,9 +451,7 @@
                 
                 // Generate and save NEW random countdown value for next refresh
                 const newRandomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
-                const newReleaseTimestamp = Date.now() + (newRandomSeconds * 1000);
                 localStorage.setItem("countdown_remaining", newRandomSeconds);
-                localStorage.setItem("countdown_release", newReleaseTimestamp);
                 
                 // Show the surprise
                 showSurprise();
@@ -428,6 +460,9 @@
                 remainingSeconds--;
                 localStorage.setItem("countdown_remaining", remainingSeconds);
                 updateCountdownDisplay();
+                // Update release time on each tick so it stays accurate
+                releaseTimestamp = Date.now() + (remainingSeconds * 1000);
+                updateReleaseDateTime();
             }
         }
 
@@ -436,27 +471,36 @@
         // ============================================
 
         function showSurprise() {
-            // Select random image from the catalog
-            const randomImage = SURPRISE_IMAGES[Math.floor(Math.random() * SURPRISE_IMAGES.length)];
+            // Increment the surprise counter BEFORE checking
+            incrementSurpriseCounter();
             
             // Hide countdown, show surprise
             document.getElementById('countdown-container').style.display = 'none';
             const surpriseContainer = document.getElementById('surprise-container');
             surpriseContainer.classList.add('active');
             
-            // Set the surprise image
-            document.getElementById('surprise-image').src = randomImage;
-            
-            // Trigger both confetti effects
-            triggerOriginalConfetti();
-            triggerSideConfetti();
-            
-            // Trigger fire effect
-            setTimeout(() => triggerFireEffect(), 500);
+            // Check if this should be a special surprise
+            if (isSpecialSurprise()) {
+                // Special surprise: black screen
+                surpriseContainer.classList.add('special-surprise');
+                // You can customize the text for special surprise if desired
+                // document.getElementById('surprise-text').textContent = '✨ SPECIAL SURPRISE! ✨';
+            } else {
+                // Normal surprise: show random image
+                const randomImage = SURPRISE_IMAGES[Math.floor(Math.random() * SURPRISE_IMAGES.length)];
+                document.getElementById('surprise-image').src = randomImage;
+                
+                // Trigger both confetti effects
+                triggerOriginalConfetti();
+                triggerSideConfetti();
+                
+                // Trigger fire effect
+                setTimeout(() => triggerFireEffect(), 500);
+            }
         }
 
         function triggerOriginalConfetti() {
-            const duration = 7000; // 6 seconds of confetti
+            const duration = 7000; // 7 seconds of confetti
             const animationEnd = Date.now() + duration;
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
@@ -539,8 +583,8 @@
             // Random angle for circular spread
             const angle = Math.random() * Math.PI * 2;
             
-            // Starting position: 100-150 pixel radius circle around center
-            const startRadius = 100 + Math.random() * 50;
+            // Starting position: 150-200 pixel radius circle around center
+            const startRadius = 150 + Math.random() * 50;
             const startX = centerX + Math.cos(angle) * startRadius;
             const startY = centerY + Math.sin(angle) * startRadius;
             
