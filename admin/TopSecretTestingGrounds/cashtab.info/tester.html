@@ -261,7 +261,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: #000000;
-            overflow: visible;
+            overflow: hidden;
         }
 
         /* Sclera with red gradient - positioned from eye outline top */
@@ -499,35 +499,30 @@
             box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
         }
 
-        /* Eyelids for blinking - just black, no outline */
+        /* Eyelids - flat black rectangles */
         .eyelid {
             position: absolute;
             width: 100%;
             background: #000000;
-            transition: none;
             z-index: 10;
+            left: 0;
         }
 
         .eyelid-top {
             top: 0;
-            left: 0;
             height: 0%;
-            transform-origin: bottom;
-            clip-path: url(#eyeShape);
         }
 
         .eyelid-bottom {
             bottom: 0;
-            left: 0;
             height: 0%;
-            transform-origin: top;
-            clip-path: url(#eyeShape);
         }
 
-        /* Opening animation */
+        /* Opening animation - top slides down to 73%, bottom slides up to 27% then both retract */
         @keyframes openEyeTop {
             0% {
-                height: 85%;
+                height: 73%;
+                animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
             100% {
                 height: 0%;
@@ -536,7 +531,8 @@
 
         @keyframes openEyeBottom {
             0% {
-                height: 15%;
+                height: 27%;
+                animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
             100% {
                 height: 0%;
@@ -544,20 +540,20 @@
         }
 
         .eye-opening .eyelid-top {
-            animation: openEyeTop 1.5s ease-out forwards;
+            animation: openEyeTop 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
         .eye-opening .eyelid-bottom {
-            animation: openEyeBottom 1.5s ease-out forwards;
+            animation: openEyeBottom 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        /* Blinking animation */
+        /* Blinking animation - 0.4s timing with polynomial easing like a real blink */
         @keyframes blinkTop {
             0% {
                 height: 0%;
             }
             50% {
-                height: 85%;
+                height: 73%;
             }
             100% {
                 height: 0%;
@@ -569,7 +565,7 @@
                 height: 0%;
             }
             50% {
-                height: 15%;
+                height: 27%;
             }
             100% {
                 height: 0%;
@@ -577,11 +573,11 @@
         }
 
         .eye-blinking .eyelid-top {
-            animation: blinkTop 0.5s ease-in-out;
+            animation: blinkTop 0.4s cubic-bezier(0.65, 0.05, 0.35, 1) forwards;
         }
 
         .eye-blinking .eyelid-bottom {
-            animation: blinkBottom 0.5s ease-in-out;
+            animation: blinkBottom 0.4s cubic-bezier(0.65, 0.05, 0.35, 1) forwards;
         }
 
         .fire-particle {
@@ -719,7 +715,7 @@
                         </div>
                     </div>
                     
-                    <!-- Eyelids -->
+                    <!-- Eyelids - FLAT RECTANGLES -->
                     <div class="eyelid eyelid-top"></div>
                     <div class="eyelid eyelid-bottom"></div>
                 </div>
@@ -793,13 +789,17 @@
             // Start with eye closed, then open it
             eyeOutline.classList.add('eye-opening');
             
-            // After 1.5 seconds (opening duration), start all animations
+            // Start animations DURING eye opening - at 0.1s while opening animation is still running (finishes at 1.2s)
             setTimeout(() => {
-                eyeOutline.classList.remove('eye-opening');
                 scheduleNextBlink();
                 startJittering();
                 startOscillation();
-            }, 500);
+            }, 100);
+            
+            // Remove the opening class after the animation completes
+            setTimeout(() => {
+                eyeOutline.classList.remove('eye-opening');
+            }, 1200);
         }
 
         function randomizeRingAngles() {
@@ -852,7 +852,7 @@
             
             setTimeout(() => {
                 eyeOutline.classList.remove('eye-blinking');
-            }, 500);
+            }, 400);
         }
 
         function startJittering() {
