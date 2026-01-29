@@ -226,6 +226,379 @@
             display: none;
         }
 
+        #surprise-container.special-surprise #surprise-text {
+            display: none;
+        }
+
+        #surprise-container.special-surprise #refresh-hint {
+            display: none;
+        }
+
+        /* Eye Animation Styles */
+        .eye-container {
+            display: none;
+            position: relative;
+            width: 600px;
+            height: 300px;
+        }
+
+        #surprise-container.special-surprise .eye-container {
+            display: block;
+        }
+
+        .eye {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Eye shape - concave using SVG for smooth bezier curves */
+        .eye-outline {
+            position: absolute;
+            width: 600px;
+            height: 250px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #000000;
+            overflow: visible;
+        }
+
+        /* Sclera with red gradient - positioned from eye outline top */
+        .sclera {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #FF0000;
+            clip-path: url(#eyeShape);
+        }
+
+        /* Dark red overlay on top with heavily blurred edge */
+        .sclera::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(
+                to bottom,
+                #8B0000 0%,
+                #8B0000 70%,
+                transparent 100%
+            );
+            filter: blur(20px);
+        }
+
+        /* Blood vessels - SVG paths for organic bezier curves */
+        .blood-vessels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        /* Iris container - will jitter */
+        .iris-container {
+            position: absolute;
+            top: 56%;
+            left: 52%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Iris (dark with oscillation) */
+        .iris {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at center, #0d0000 0%, #000000 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+        }
+
+        /* Random red blobs inside iris */
+        .red-blob {
+            position: absolute;
+            background: rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        .blob-1 {
+            width: 30px;
+            height: 25px;
+            top: 20%;
+            left: 30%;
+            transform: rotate(-20deg);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+
+        .blob-2 {
+            width: 25px;
+            height: 35px;
+            top: 60%;
+            left: 20%;
+            transform: rotate(45deg);
+            border-radius: 30% 70% 70% 30% / 40% 40% 60% 60%;
+        }
+
+        .blob-3 {
+            width: 35px;
+            height: 30px;
+            top: 40%;
+            right: 15%;
+            transform: rotate(-60deg);
+            border-radius: 70% 30% 50% 50% / 60% 40% 60% 40%;
+        }
+
+        .blob-4 {
+            width: 20px;
+            height: 28px;
+            top: 25%;
+            right: 35%;
+            transform: rotate(15deg);
+            border-radius: 40% 60% 60% 40% / 70% 30% 70% 30%;
+        }
+
+        .blob-5 {
+            width: 28px;
+            height: 22px;
+            bottom: 20%;
+            left: 40%;
+            transform: rotate(-35deg);
+            border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%;
+        }
+
+        /* Broken concentric rings - OUTSIDE the iris with blur filter */
+        .concentric-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+            filter: blur(5px);
+        }
+
+        .ring-1 {
+            width: 289px;
+            height: 289px;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg 40deg,
+                rgba(0, 0, 0, 0.8) 40deg 80deg,
+                transparent 80deg 140deg,
+                rgba(0, 0, 0, 0.8) 140deg 200deg,
+                transparent 200deg 260deg,
+                rgba(0, 0, 0, 0.8) 260deg 320deg,
+                transparent 320deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+        }
+
+        .ring-2 {
+            width: 320px;
+            height: 320px;
+            background: conic-gradient(
+                from 30deg,
+                transparent 0deg 50deg,
+                rgba(0, 0, 0, 0.7) 50deg 110deg,
+                transparent 110deg 180deg,
+                rgba(0, 0, 0, 0.7) 180deg 250deg,
+                transparent 250deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+        }
+
+        .ring-3 {
+            width: 371px;
+            height: 371px;
+            background: conic-gradient(
+                from 60deg,
+                transparent 0deg 70deg,
+                rgba(0, 0, 0, 0.6) 70deg 150deg,
+                transparent 150deg 220deg,
+                rgba(0, 0, 0, 0.6) 220deg 300deg,
+                transparent 300deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+        }
+
+        .ring-4 {
+            width: 392px;
+            height: 392px;
+            background: conic-gradient(
+                from 90deg,
+                transparent 0deg 60deg,
+                rgba(0, 0, 0, 0.5) 60deg 130deg,
+                transparent 130deg 200deg,
+                rgba(0, 0, 0, 0.5) 200deg 280deg,
+                transparent 280deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+        }
+
+        .ring-5 {
+            width: 430px;
+            height: 430px;
+            background: conic-gradient(
+                from 120deg,
+                transparent 0deg 80deg,
+                rgba(0, 0, 0, 0.4) 80deg 160deg,
+                transparent 160deg 240deg,
+                rgba(0, 0, 0, 0.4) 240deg 320deg,
+                transparent 320deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
+        }
+
+        /* Red ring between iris and pupil - no blur */
+        .iris-pupil-ring {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: conic-gradient(
+                from 0deg,
+                #FF0000 0deg 30deg,
+                #CC0000 30deg 60deg,
+                #FF0000 60deg 120deg,
+                #DD0000 120deg 180deg,
+                #FF0000 180deg 240deg,
+                #CC0000 240deg 300deg,
+                #FF0000 300deg 360deg
+            );
+            -webkit-mask: radial-gradient(circle, transparent 45%, black 45%, black 55%, transparent 55%);
+            mask: radial-gradient(circle, transparent 45%, black 45%, black 55%, transparent 55%);
+        }
+
+        /* Pupil (dark black with oscillation) */
+        .pupil {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: #000000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 1);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+        }
+
+        /* Bright red center dot */
+        .pupil-center {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #FF0000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+        }
+
+        /* Eyelids for blinking - just black, no outline */
+        .eyelid {
+            position: absolute;
+            width: 100%;
+            background: #000000;
+            transition: none;
+            z-index: 10;
+        }
+
+        .eyelid-top {
+            top: 0;
+            left: 0;
+            height: 0%;
+            transform-origin: bottom;
+            clip-path: url(#eyeShape);
+        }
+
+        .eyelid-bottom {
+            bottom: 0;
+            left: 0;
+            height: 0%;
+            transform-origin: top;
+            clip-path: url(#eyeShape);
+        }
+
+        /* Opening animation */
+        @keyframes openEyeTop {
+            0% {
+                height: 85%;
+            }
+            100% {
+                height: 0%;
+            }
+        }
+
+        @keyframes openEyeBottom {
+            0% {
+                height: 15%;
+            }
+            100% {
+                height: 0%;
+            }
+        }
+
+        .eye-opening .eyelid-top {
+            animation: openEyeTop 1.5s ease-out forwards;
+        }
+
+        .eye-opening .eyelid-bottom {
+            animation: openEyeBottom 1.5s ease-out forwards;
+        }
+
+        /* Blinking animation */
+        @keyframes blinkTop {
+            0% {
+                height: 0%;
+            }
+            50% {
+                height: 85%;
+            }
+            100% {
+                height: 0%;
+            }
+        }
+
+        @keyframes blinkBottom {
+            0% {
+                height: 0%;
+            }
+            50% {
+                height: 15%;
+            }
+            100% {
+                height: 0%;
+            }
+        }
+
+        .eye-blinking .eyelid-top {
+            animation: blinkTop 0.5s ease-in-out;
+        }
+
+        .eye-blinking .eyelid-bottom {
+            animation: blinkBottom 0.5s ease-in-out;
+        }
+
         .fire-particle {
             position: fixed;
             pointer-events: none;
@@ -267,6 +640,43 @@
                 transform: scale(1);
             }
         }
+
+        /* Glitch overlay for sclera */
+        .glitch-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            clip-path: url(#eyeShape);
+            pointer-events: none;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.4) 0px,
+                    rgba(0, 0, 0, 0.4) 2px,
+                    transparent 2px,
+                    transparent 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.4) 0px,
+                    rgba(0, 0, 0, 0.4) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            opacity: 1;
+            animation: glitchShift 0.08s infinite;
+        }
+
+        @keyframes glitchShift {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
     </style>
 </head>
 
@@ -299,6 +709,74 @@
         <img id="surprise-image" src="" alt="Surprise!">
         <div id="surprise-text">🎉 SURPRISE! 🎉</div>
         <div id="refresh-hint">Enjoy your surprise!</div>
+        
+        <!-- Eye for special surprise -->
+        <div class="eye-container">
+            <!-- SVG definitions for eye shape -->
+            <svg width="0" height="0">
+                <defs>
+                    <!-- Eye shape - top edge mirrored to bottom edge -->
+                    <clipPath id="eyeShape">
+                        <path d="M 300,55
+                                 C 350,55 400,60 440,75
+                                 C 480,90 510,105 540,120
+                                 C 560,130 575,135 585,137
+                                 C 590,138 590,138 590,138
+                                 C 585,139 575,141 560,146
+                                 C 540,156 510,171 480,186
+                                 C 450,201 400,215 350,224
+                                 C 290,232 260,223 230,216
+                                 C 180,201 140,186 100,168
+                                 C 80,160 60,146 40,141
+                                 C 25,139 30,138 30,138
+                                 C 30,138 30,138 35,137
+                                 C 45,135 60,130 80,120
+                                 C 110,105 140,90 180,75
+                                 C 220,60 250,55 300,55
+                                 Z" />
+                    </clipPath>
+                </defs>
+            </svg>
+            
+            <div class="eye">
+                <div class="eye-outline">
+                    <div class="sclera"></div>
+                    
+                    <!-- Iris container (jitters) -->
+                    <div class="iris-container">
+                        <!-- Iris with oscillation -->
+                        <div class="iris">
+                            <!-- Random red blobs with blur -->
+                            <div class="red-blob blob-1"></div>
+                            <div class="red-blob blob-2"></div>
+                            <div class="red-blob blob-3"></div>
+                            <div class="red-blob blob-4"></div>
+                            <div class="red-blob blob-5"></div>
+                            
+                            <!-- Broken concentric rings with blur -->
+                            <div class="concentric-ring ring-1"></div>
+                            <div class="concentric-ring ring-2"></div>
+                            <div class="concentric-ring ring-3"></div>
+                            <div class="concentric-ring ring-4"></div>
+                            <div class="concentric-ring ring-5"></div>
+                            
+                            <!-- Red ring between iris and pupil -->
+                            <div class="iris-pupil-ring"></div>
+                            
+                            <!-- Pupil -->
+                            <div class="pupil">
+                                <!-- Bright red center -->
+                                <div class="pupil-center"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Eyelids -->
+                    <div class="eyelid eyelid-top"></div>
+                    <div class="eyelid eyelid-bottom"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Confetti library -->
@@ -318,8 +796,8 @@
         ];
 
         // Countdown range in seconds (15 to 30 minutes)
-        const MIN_COUNTDOWN = 10;  // 15 minutes/900
-        const MAX_COUNTDOWN = 20; // 30 minutes/1800
+        const MIN_COUNTDOWN = 2;  // 15 minutes/900
+        const MAX_COUNTDOWN = 3; // 30 minutes/1800
 
         // ============================================
         // Surprise Counter Management
@@ -348,6 +826,110 @@
         }
 
         // ============================================
+        // Eye Animation Functions
+        // ============================================
+
+        let blinkInterval;
+        let jitterInterval;
+        let oscillateInterval;
+
+        function startEyeAnimation() {
+            const eyeOutline = document.querySelector('.eye-outline');
+            
+            // Start with eye closed, then open it
+            eyeOutline.classList.add('eye-opening');
+            
+            // After 1.5 seconds (opening duration), start all animations
+            setTimeout(() => {
+                eyeOutline.classList.remove('eye-opening');
+                scheduleNextBlink();
+                startJittering();
+                startOscillation();
+            }, 500);
+        }
+
+        function scheduleNextBlink() {
+            // Generate random delay between 0.5 and 10 seconds
+            // Using square root to favor larger numbers
+            const random = Math.random();
+            const sqrtRandom = Math.sqrt(random);
+            const delay = 500 + (sqrtRandom * 9500);
+            
+            blinkInterval = setTimeout(() => {
+                blinkEye();
+                scheduleNextBlink();
+            }, delay);
+        }
+
+        function blinkEye() {
+            const eyeOutline = document.querySelector('.eye-outline');
+            eyeOutline.classList.add('eye-blinking');
+            
+            setTimeout(() => {
+                eyeOutline.classList.remove('eye-blinking');
+            }, 500);
+        }
+
+        function startJittering() {
+            const irisContainer = document.querySelector('.iris-container');
+            
+            function jitter() {
+                // Random small movements - increased by 200% (3x multiplier)
+                const offsetX = (Math.random() - 0.5) * 45; // -22.5 to 22.5px
+                const offsetY = (Math.random() - 0.5) * 30; // -15 to 15px
+                
+                irisContainer.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+                
+                // Random interval between 100-400ms for fast jittering
+                const nextJitter = 100 + Math.random() * 300;
+                jitterInterval = setTimeout(jitter, nextJitter);
+            }
+            
+            jitter();
+        }
+
+        function startOscillation() {
+            const iris = document.querySelector('.iris');
+            const pupil = document.querySelector('.pupil');
+            const rings = document.querySelectorAll('.concentric-ring');
+            
+            let growing = true;
+            const minSize = 0.80;
+            const maxSize = 1.20;
+            let currentScale = 1;
+            
+            function oscillate() {
+                if (growing) {
+                    currentScale += 0.05;
+                    if (currentScale >= maxSize) {
+                        growing = false;
+                    }
+                } else {
+                    currentScale -= 0.05;
+                    if (currentScale <= minSize) {
+                        growing = true;
+                    }
+                }
+                
+                // Apply scale
+                iris.style.width = (140 * currentScale) + 'px';
+                iris.style.height = (140 * currentScale) + 'px';
+                pupil.style.width = (45 * currentScale) + 'px';
+                pupil.style.height = (45 * currentScale) + 'px';
+                
+                // Scale rings
+                rings.forEach((ring, index) => {
+                    const baseSize = [189, 220, 251, 282, 313][index];
+                    ring.style.width = (baseSize * currentScale) + 'px';
+                    ring.style.height = (baseSize * currentScale) + 'px';
+                });
+            }
+            
+            // Fast oscillation - every 50ms
+            oscillateInterval = setInterval(oscillate, 50);
+        }
+
+        // ============================================
         // Date/Time Functions
         // ============================================
 
@@ -365,7 +947,7 @@
             let minutes = now.getMinutes();
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // 0 should be 12
+            hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0' + minutes : minutes;
             
             let timeStr = `${hours}:${minutes} ${ampm}`;
@@ -388,16 +970,12 @@
         let countdownInterval;
 
         function initializeCountdown() {
-            // Check if countdown already exists in localStorage
             const storedRemaining = localStorage.getItem("countdown_remaining");
             
             if (storedRemaining && parseInt(storedRemaining) > 0) {
-                // Resume existing countdown
                 remainingSeconds = parseInt(storedRemaining);
-                // Recalculate release timestamp based on current time + remaining seconds
                 releaseTimestamp = Date.now() + (remainingSeconds * 1000);
             } else {
-                // Generate new random countdown (either first time or after countdown reached 0)
                 const randomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 remainingSeconds = randomSeconds;
                 releaseTimestamp = Date.now() + (randomSeconds * 1000);
@@ -446,21 +1024,16 @@
 
         function countdown() {
             if (remainingSeconds === 0) {
-                // Countdown reached zero!
                 clearInterval(countdownInterval);
                 
-                // Generate and save NEW random countdown value for next refresh
                 const newRandomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 localStorage.setItem("countdown_remaining", newRandomSeconds);
                 
-                // Show the surprise
                 showSurprise();
             } else {
-                // Decrement and save
                 remainingSeconds--;
                 localStorage.setItem("countdown_remaining", remainingSeconds);
                 updateCountdownDisplay();
-                // Update release time on each tick so it stays accurate
                 releaseTimestamp = Date.now() + (remainingSeconds * 1000);
                 updateReleaseDateTime();
             }
@@ -471,36 +1044,28 @@
         // ============================================
 
         function showSurprise() {
-            // Increment the surprise counter BEFORE checking
             incrementSurpriseCounter();
             
-            // Hide countdown, show surprise
             document.getElementById('countdown-container').style.display = 'none';
             const surpriseContainer = document.getElementById('surprise-container');
             surpriseContainer.classList.add('active');
             
-            // Check if this should be a special surprise
             if (isSpecialSurprise()) {
-                // Special surprise: black screen
                 surpriseContainer.classList.add('special-surprise');
-                // You can customize the text for special surprise if desired
-                // document.getElementById('surprise-text').textContent = '✨ SPECIAL SURPRISE! ✨';
+                startEyeAnimation();
             } else {
-                // Normal surprise: show random image
                 const randomImage = SURPRISE_IMAGES[Math.floor(Math.random() * SURPRISE_IMAGES.length)];
                 document.getElementById('surprise-image').src = randomImage;
                 
-                // Trigger both confetti effects
                 triggerOriginalConfetti();
                 triggerSideConfetti();
                 
-                // Trigger fire effect
                 setTimeout(() => triggerFireEffect(), 500);
             }
         }
 
         function triggerOriginalConfetti() {
-            const duration = 7000; // 7 seconds of confetti
+            const duration = 7000;
             const animationEnd = Date.now() + duration;
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
@@ -517,7 +1082,6 @@
 
                 const particleCount = 100 * (timeLeft / duration);
                 
-                // Confetti from multiple positions
                 confetti(Object.assign({}, defaults, {
                     particleCount,
                     origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
@@ -530,39 +1094,31 @@
         }
 
         function triggerSideConfetti() {
-            // Set the confetti duration in seconds
             const confettiDurationSeconds = 3;
-
-            // Calculate the end time for the confetti effect
             const confettiEndTime = Date.now() + confettiDurationSeconds * 1000;
 
-            // Function to create confetti particles
             function createConfetti() {
-                // Create two bursts of confetti particles, one from the left and one from the right
                 confetti({
-                    particleCount: 7,         // Number of confetti particles in the burst
-                    angle: 60,                // Angle of projection (60 degrees, towards the top-right)
-                    spread: 55,               // Spread of particles (how wide the burst is)
-                    origin: { x: 0 },         // Starting point for the burst (0 = left side)
+                    particleCount: 7,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
                     zIndex: 9999
                 });
 
                 confetti({
-                    particleCount: 7,         // Number of confetti particles in the burst
-                    angle: 120,               // Angle of projection (120 degrees, towards the top-left)
-                    spread: 55,               // Spread of particles (how wide the burst is)
-                    origin: { x: 1 },         // Starting point for the burst (1 = right side)
+                    particleCount: 7,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
                     zIndex: 9999
                 });
 
-                // Check if the current time is before the confettiEndTime
                 if (Date.now() < confettiEndTime) {
-                    // Continue creating confetti by requesting the next animation frame
                     requestAnimationFrame(createConfetti);
                 }
             }
 
-            // Start the confetti effect
             createConfetti();
         }
 
@@ -580,50 +1136,40 @@
             const particle = document.createElement('div');
             particle.className = 'fire-particle';
             
-            // Random angle for circular spread
             const angle = Math.random() * Math.PI * 2;
             
-            // Starting position: 150-200 pixel radius circle around center
             const startRadius = 150 + Math.random() * 50;
             const startX = centerX + Math.cos(angle) * startRadius;
             const startY = centerY + Math.sin(angle) * startRadius;
             
-            // End position: much further out in the same direction
             const distance = 200 + Math.random() * 600;
             const endX = centerX + Math.cos(angle) * distance;
             const endY = centerY + Math.sin(angle) * distance;
             
-            // Random size
             const size = 8 + Math.random() * 35;
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             particle.style.borderRadius = '50%';
             
-            // Fire colors (red, orange, yellow)
             const colors = ['#ff0000', '#ff4500', '#ff6347', '#ff8c00', '#ffa500', '#ffd700', '#ffff00'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             particle.style.background = `radial-gradient(circle, ${color}, ${color}80)`;
             particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
             particle.style.opacity = '1';
             
-            // Set starting position
             particle.style.left = startX + 'px';
             particle.style.top = startY + 'px';
             
             document.body.appendChild(particle);
             
-            // Animate using CSS transitions for better visibility
             const duration = 1200 + Math.random() * 1500;
             
-            // Force a reflow to ensure the starting position is applied
             particle.offsetHeight;
             
-            // Apply transition
             particle.style.transition = `all ${duration}ms ease-out`;
             particle.style.transform = `translate(${endX - startX}px, ${endY - startY}px) scale(0)`;
             particle.style.opacity = '0';
             
-            // Remove after animation
             setTimeout(() => {
                 if (particle.parentNode) {
                     particle.remove();
@@ -659,15 +1205,12 @@
         // Initialize
         // ============================================
 
-        // Normal countdown mode - always start countdown when page loads
         initializeCountdown();
         updateCurrentDateTime();
         createSparkles();
         
-        // Update current time every second
         setInterval(updateCurrentDateTime, 1000);
         
-        // Start countdown
         countdownInterval = setInterval(countdown, 1000);
     </script>
 </body>
