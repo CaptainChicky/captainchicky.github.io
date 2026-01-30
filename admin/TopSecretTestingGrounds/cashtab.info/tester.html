@@ -4,675 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Surprise Countdown</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-        }
-
-        #countdown-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 30px;
-            padding: 60px 80px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            max-width: 700px;
-            width: 90%;
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.8s ease-out;
-            position: relative;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 42px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .date-time-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 20px 30px;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
-        }
-
-        .date-time-label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .date-time-value {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .countdown-section {
-            text-align: center;
-            margin: 40px 0;
-        }
-
-        .countdown-label {
-            font-size: 24px;
-            color: #667eea;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .countdown-display {
-            font-size: 72px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 5px;
-            text-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-            font-family: 'Courier New', monospace;
-        }
-
-        .release-card {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            padding: 25px 30px;
-            border-radius: 15px;
-            margin-top: 40px;
-            box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
-        }
-
-        .release-label {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .release-value {
-            font-size: 18px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .gift-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        #surprise-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        #surprise-container.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #surprise-image {
-            max-width: 70%;
-            max-height: 60%;
-            border-radius: 25px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-            animation: scaleIn 1s ease-out;
-            border: 8px solid rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0.3) rotate(-5deg);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05) rotate(2deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        #surprise-text {
-            color: white;
-            font-size: 64px;
-            font-weight: 800;
-            margin-top: 40px;
-            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-            animation: fadeInUp 1s ease-out 0.5s both;
-            letter-spacing: 3px;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        #refresh-hint {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 20px;
-            margin-top: 30px;
-            animation: fadeInUp 1s ease-out 1.5s both;
-            font-style: italic;
-        }
-
-        /* Special black screen surprise styles */
-        #surprise-container.special-surprise {
-            background: #000000;
-        }
-
-        #surprise-container.special-surprise #surprise-image {
-            display: none;
-        }
-
-        #surprise-container.special-surprise #surprise-text {
-            display: none;
-        }
-
-        #surprise-container.special-surprise #refresh-hint {
-            display: none;
-        }
-
-        /* Eye Animation Styles */
-        .eye-container {
-            display: none;
-            position: relative;
-            width: 600px;
-            height: 300px;
-        }
-
-        #surprise-container.special-surprise .eye-container {
-            display: block;
-        }
-
-        .eye {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Eye shape - concave using SVG for smooth bezier curves */
-        .eye-outline {
-            position: absolute;
-            width: 600px;
-            height: 250px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #000000;
-            overflow: hidden;
-        }
-
-        /* Sclera with red gradient - positioned from eye outline top */
-        .sclera {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #FF0000;
-            clip-path: url(#eyeShape);
-            animation: scleraGlitch 3s infinite;
-        }
-
-        @keyframes scleraGlitch {
-            0% {
-                transform: translate(0, 0);
-            }
-            2%, 8% {
-                transform: translate(-3px, 1px);
-            }
-            6% {
-                transform: translate(3px, -1px);
-            }
-            9% {
-                transform: translate(0, 0);
-            }
-            10% {
-                transform: translate(2px, 2px);
-            }
-            13% {
-                transform: translate(0, 0);
-            }
-            14%, 21% {
-                transform: translate(-2px, -1px);
-            }
-            25% {
-                transform: translate(4px, 0);
-            }
-            30% {
-                transform: translate(-4px, 0);
-            }
-            35%, 45% {
-                transform: translate(-3px, 2px);
-            }
-            40% {
-                transform: translate(3px, -2px);
-            }
-            50% {
-                transform: translate(0, 0);
-            }
-            55% {
-                transform: translate(2px, -1px);
-            }
-            60% {
-                transform: translate(0, 0);
-            }
-            31%, 61%, 100% {
-                transform: translate(0, 0);
-            }
-        }
-
-        /* Dark red overlay on top with heavily blurred edge */
-        .sclera::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background: linear-gradient(
-                to bottom,
-                #5c0000 0%,
-                #5c0000 70%,
-                transparent 100%
-            );
-            filter: blur(20px);
-        }
-
-        /* Blood vessels - SVG paths for organic bezier curves */
-        .blood-vessels {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-
-        /* Iris container - will jitter */
-        .iris-container {
-            position: absolute;
-            top: 56%;
-            left: 52%;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out;
-        }
-
-        /* Iris (dark with oscillation) */
-        .iris {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle at center, #0d0000 0%, #000000 100%);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-        }
-
-        /* Random red blobs inside iris */
-        .red-blob {
-            position: absolute;
-            background: rgba(255, 0, 0, 0.3);
-            border-radius: 50%;
-            filter: blur(3px);
-        }
-
-        .blob-1 {
-            width: 30px;
-            height: 25px;
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-        }
-
-        .blob-2 {
-            width: 25px;
-            height: 35px;
-            border-radius: 30% 70% 70% 30% / 40% 40% 60% 60%;
-        }
-
-        .blob-3 {
-            width: 35px;
-            height: 30px;
-            border-radius: 70% 30% 50% 50% / 60% 40% 60% 40%;
-        }
-
-        .blob-4 {
-            width: 20px;
-            height: 28px;
-            border-radius: 40% 60% 60% 40% / 70% 30% 70% 30%;
-        }
-
-        .blob-5 {
-            width: 28px;
-            height: 22px;
-            border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%;
-        }
-
-        /* Broken concentric rings - OUTSIDE the iris with blur filter */
-        .concentric-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 0, 0, 0.8);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-            filter: blur(5px);
-        }
-
-        .ring-1 {
-            width: 289px;
-            height: 289px;
-            background: conic-gradient(
-                from 0deg,
-                transparent 0deg 40deg,
-                rgba(0, 0, 0, 0.8) 40deg 80deg,
-                transparent 80deg 140deg,
-                rgba(0, 0, 0, 0.8) 140deg 200deg,
-                transparent 200deg 260deg,
-                rgba(0, 0, 0, 0.8) 260deg 320deg,
-                transparent 320deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-        }
-
-        .ring-2 {
-            width: 320px;
-            height: 320px;
-            background: conic-gradient(
-                from 30deg,
-                transparent 0deg 50deg,
-                rgba(0, 0, 0, 0.7) 50deg 110deg,
-                transparent 110deg 180deg,
-                rgba(0, 0, 0, 0.7) 180deg 250deg,
-                transparent 250deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-        }
-
-        .ring-3 {
-            width: 371px;
-            height: 371px;
-            background: conic-gradient(
-                from 60deg,
-                transparent 0deg 70deg,
-                rgba(0, 0, 0, 0.6) 70deg 150deg,
-                transparent 150deg 220deg,
-                rgba(0, 0, 0, 0.6) 220deg 300deg,
-                transparent 300deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-        }
-
-        .ring-4 {
-            width: 392px;
-            height: 392px;
-            background: conic-gradient(
-                from 90deg,
-                transparent 0deg 60deg,
-                rgba(0, 0, 0, 0.5) 60deg 130deg,
-                transparent 130deg 200deg,
-                rgba(0, 0, 0, 0.5) 200deg 280deg,
-                transparent 280deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-        }
-
-        .ring-5 {
-            width: 430px;
-            height: 430px;
-            background: conic-gradient(
-                from 120deg,
-                transparent 0deg 80deg,
-                rgba(0, 0, 0, 0.4) 80deg 160deg,
-                transparent 160deg 240deg,
-                rgba(0, 0, 0, 0.4) 240deg 320deg,
-                transparent 320deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-            mask: radial-gradient(circle, transparent 48%, black 48%, black 52%, transparent 52%);
-        }
-
-        /* Red ring between iris and pupil - no blur */
-        .iris-pupil-ring {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: conic-gradient(
-                from 0deg,
-                #FF0000 0deg 30deg,
-                #CC0000 30deg 60deg,
-                #FF0000 60deg 120deg,
-                #DD0000 120deg 180deg,
-                #FF0000 180deg 240deg,
-                #CC0000 240deg 300deg,
-                #FF0000 300deg 360deg
-            );
-            -webkit-mask: radial-gradient(circle, transparent 45%, black 45%, black 55%, transparent 55%);
-            mask: radial-gradient(circle, transparent 45%, black 45%, black 55%, transparent 55%);
-        }
-
-        /* Pupil (dark black with oscillation) */
-        .pupil {
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            background: #000000;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 1);
-            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-        }
-
-        /* Bright red center dot */
-        .pupil-center {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #FF0000;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
-        }
-
-        /* Eyelids - flat black rectangles */
-        .eyelid {
-            position: absolute;
-            width: 100%;
-            background: #000000;
-            z-index: 10;
-            left: 0;
-        }
-
-        .eyelid-top {
-            top: 0;
-            height: 0%;
-        }
-
-        .eyelid-bottom {
-            bottom: 0;
-            height: 0%;
-        }
-
-        /* Opening animation - top slides down to 73%, bottom slides up to 27% then both retract */
-        @keyframes openEyeTop {
-            0% {
-                height: 73%;
-                animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-            100% {
-                height: 0%;
-            }
-        }
-
-        @keyframes openEyeBottom {
-            0% {
-                height: 27%;
-                animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-            100% {
-                height: 0%;
-            }
-        }
-
-        .eye-opening .eyelid-top {
-            animation: openEyeTop 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-
-        .eye-opening .eyelid-bottom {
-            animation: openEyeBottom 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-
-        /* Blinking animation - 0.4s timing with polynomial easing like a real blink */
-        @keyframes blinkTop {
-            0% {
-                height: 0%;
-            }
-            50% {
-                height: 73%;
-            }
-            100% {
-                height: 0%;
-            }
-        }
-
-        @keyframes blinkBottom {
-            0% {
-                height: 0%;
-            }
-            50% {
-                height: 27%;
-            }
-            100% {
-                height: 0%;
-            }
-        }
-
-        .eye-blinking .eyelid-top {
-            animation: blinkTop 0.4s cubic-bezier(0.65, 0.05, 0.35, 1) forwards;
-        }
-
-        .eye-blinking .eyelid-bottom {
-            animation: blinkBottom 0.4s cubic-bezier(0.65, 0.05, 0.35, 1) forwards;
-        }
-
-        /* Glitch overlay effect - REMOVED, now applied directly to sclera */
-
-        .fire-particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 10001;
-            will-change: transform, opacity;
-        }
-
-        /* Subtle background pattern */
-        #countdown-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
-            border-radius: 30px;
-            z-index: -1;
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            animation: sparkle 2s infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./media/main.css">
 </head>
 
 <body>
@@ -737,9 +72,8 @@
                 <div class="eye-outline">
                     <div class="sclera"></div>
                     
-                    <!-- Iris container (jitters) -->
+                    <!-- Iris container -->
                     <div class="iris-container">
-                        <!-- Iris with oscillation -->
                         <div class="iris">
                             <!-- Random red blobs with blur -->
                             <div class="red-blob blob-1"></div>
@@ -766,7 +100,7 @@
                         </div>
                     </div>
                     
-                    <!-- Eyelids - FLAT RECTANGLES -->
+                    <!-- Eyelids -->
                     <div class="eyelid eyelid-top"></div>
                     <div class="eyelid eyelid-bottom"></div>
                 </div>
@@ -775,7 +109,7 @@
     </div>
 
     <!-- Confetti library -->
-    <script src="./confetti.js"></script>
+    <script src="./media/confetti.js"></script>
 
     <script>
         // ============================================
@@ -829,6 +163,39 @@
         let oscillateInterval;
 
         function startEyeAnimation() {
+            // Hide mouse cursor across entire page
+            document.body.style.cursor = 'none';
+            
+            // Add click handler for fullscreen
+            document.addEventListener('click', async () => {
+                if (!document.fullscreenElement) {
+                    try {
+                        await document.documentElement.requestFullscreen();
+                    } catch (err) {
+                        console.error('Error attempting to enable fullscreen:', err);
+                    }
+                }
+            });
+            
+            // Add beforeunload handler for close confirmation
+            window.addEventListener('beforeunload', (e) => {
+                e.preventDefault();
+                e.returnValue = ''; // Required for the confirmation dialog to show
+            });
+            
+            // disable bringing up devtools or right click when on this page lol
+            document.addEventListener("contextmenu", e => e.preventDefault());
+            document.addEventListener("keydown", e => {
+                if (
+                    e.key === "F12" ||
+                    (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key)) ||
+                    (e.ctrlKey && e.key === "U")
+                ) {
+                    e.preventDefault();
+                }
+            });
+            
+            // start main eye animation
             const eyeOutline = document.querySelector('.eye-outline');
             
             // Randomize concentric ring angles
@@ -969,7 +336,9 @@
         // Date/Time Functions
         // ============================================
 
+        // Get formatted date with optional day offset
         function getFormattedDateTime(includeSeconds = false) {
+            // Calculate the date by subtracting the days offset
             const now = new Date();
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1006,12 +375,18 @@
         let countdownInterval;
 
         function initializeCountdown() {
+            // Check if there is a value stored in the "countdown_remaining" key of localStorage
+            // localStorage is sort of equivalent to cookie but less "storage"-y.
+            // It's not sent to the server with every request, unlike cookies.
             const storedRemaining = localStorage.getItem("countdown_remaining");
             
             if (storedRemaining && parseInt(storedRemaining) > 0) {
                 remainingSeconds = parseInt(storedRemaining);
+                // Calculate the end time for the countdown
+                // Date.now() returns the current timestamp in milliseconds since January 1, 1970 (Unix timestamp)
                 releaseTimestamp = Date.now() + (remainingSeconds * 1000);
             } else {
+                // Generate a random countdown between 15 and 30 minutes (in seconds)
                 const randomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 remainingSeconds = randomSeconds;
                 releaseTimestamp = Date.now() + (randomSeconds * 1000);
@@ -1028,6 +403,7 @@
             const minutes = Math.floor((remainingSeconds % 3600) / 60);
             const seconds = remainingSeconds % 60;
             
+            // Pad single digits with leading zero
             const hoursStr = hours < 10 ? '0' + hours : hours;
             const minutesStr = minutes < 10 ? '0' + minutes : minutes;
             const secondsStr = seconds < 10 ? '0' + seconds : seconds;
@@ -1058,15 +434,18 @@
                 `${dayName}, ${monthName} ${date}, ${year} at ${hours}:${minutes}:${seconds} ${ampm}`;
         }
 
+        // Countdown function that runs every second
         function countdown() {
             if (remainingSeconds === 0) {
                 clearInterval(countdownInterval);
                 
+                // Reset to a new random countdown when reaching zero
                 const newRandomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 localStorage.setItem("countdown_remaining", newRandomSeconds);
                 
                 showSurprise();
             } else {
+                // Decrement by 1 second
                 remainingSeconds--;
                 localStorage.setItem("countdown_remaining", remainingSeconds);
                 updateCountdownDisplay();
@@ -1131,30 +510,37 @@
 
         function triggerSideConfetti() {
             const confettiDurationSeconds = 3;
+
+            // Calculate the end time for the confetti effect
+            // Date.now() returns the current timestamp in milliseconds since January 1, 1970 (Unix timestamp)
             const confettiEndTime = Date.now() + confettiDurationSeconds * 1000;
 
             function createConfetti() {
+                // Create two bursts of confetti particles, one from the left and one from the right
                 confetti({
-                    particleCount: 7,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
+                    particleCount: 7,         // Number of confetti particles in the burst
+                    angle: 60,                // Angle of projection (60 degrees, towards the top-right)
+                    spread: 55,               // Spread of particles (how wide the burst is)
+                    origin: { x: 0 },         // Starting point for the burst (0 = left side)
                     zIndex: 9999
                 });
 
                 confetti({
-                    particleCount: 7,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
+                    particleCount: 7,         // Number of confetti particles in the burst
+                    angle: 120,               // Angle of projection (120 degrees, towards the top-left)
+                    spread: 55,               // Spread of particles (how wide the burst is)
+                    origin: { x: 1 },         // Starting point for the burst (1 = right side)
                     zIndex: 9999
                 });
 
+                // Check if the current time is before the confettiEndTime
                 if (Date.now() < confettiEndTime) {
+                    // Continue creating confetti by requesting the next animation frame
                     requestAnimationFrame(createConfetti);
                 }
             }
 
+            // Start the confetti effect
             createConfetti();
         }
 
@@ -1245,8 +631,10 @@
         updateCurrentDateTime();
         createSparkles();
         
+        // Update the display with the initial countdown value
         setInterval(updateCurrentDateTime, 1000);
         
+        // Run countdown every 1 second
         countdownInterval = setInterval(countdown, 1000);
     </script>
 </body>
