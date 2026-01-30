@@ -403,7 +403,8 @@
                 releaseTimestamp = Date.now() + (remainingSeconds * 1000);
             } else {
                 // Generate a random countdown between 15 and 30 minutes (in seconds)
-                const randomSeconds = Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
+                // Cubic skew to favor lower numbers
+                const randomSeconds = Math.floor(Math.pow(Math.random(), 3) * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 remainingSeconds = randomSeconds;
                 releaseTimestamp = Date.now() + (randomSeconds * 1000);
 
