@@ -1,0 +1,196 @@
+<html><head><style>html { overflow: hidden; }</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&amp;display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        html {
+            font-size: 15px;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: transparent;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        .creative {
+            width: 100%;
+            max-width: 350px;
+            height: 190px;
+            padding: 5px;
+        }
+
+        .wrapper {
+            background: #fff;
+            width: 100%;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            padding: 20px;
+            -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .wrapper__top {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: row;
+            -ms-flex-direction: row;
+            flex-direction: row;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-bottom: 11px;
+        }
+
+        .wrapper__top img {
+            width: 32px;
+            margin-right: 14px;
+        }
+
+        .offerText {
+            font-size: 1rem;
+            line-height: 1.2rem;
+            font-weight: 400;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            max-height: 54px;
+            overflow: hidden;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+        }
+
+        .offerText p {
+            margin-bottom: 3px;
+        }
+
+        .offerText p:last-child {
+            margin-bottom: 0;
+        }
+
+        b {
+            font-weight: 700;
+        }
+
+        .buttons-wrapper {
+            width: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: end;
+            -webkit-justify-content: flex-end;
+            -ms-flex-pack: end;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .buttons-wrapper button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #319cff;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .buttons-wrapper .inactive-button {
+            color: #bfbfbf;
+            padding: 0 28px;
+        }
+
+        .mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+<style id="animation-shufflebox">
+/*----------------- Animation css -----------------*/
+/*animation_styles*/
+/*----------------- Animation css -----------------*/
+</style>
+<style id="cssEditor"></style></head>
+
+<body class="vsc-initialized">
+    <div class="creative">
+        <div class="wrapper" data-area="area3">
+            <div class="wrapper__top">
+                <img src="//leafboyaggress.shop/lp/3a/63/3a63bf1f21dde13157c2cfe3b331a3261b60b0b4.svg">
+                <p>Warning: threat of tracking</p>
+            </div>
+            <div class="offerText">
+                <p>They can see you, but you cannot. Update the VPN module and don't let creepy trackers spy on you.</p>
+            </div>
+            <div class="mask" data-onopen="0"></div>
+            <div class="buttons-wrapper">
+                <button class="inactive-button" data-onclose="0" data-area="area2">Cancel</button>
+                <button data-onopen="0" data-area="area1">Update</button>
+            </div>
+        </div>
+    </div>
+
+<script id="jsEditor">
+//-------------------- Default script --------------------
+
+            function onOpen(event) {
+                const { clientX, clientY } = event;
+                          window.top.postMessage({ $G$: 1, event: 'open', clientX, clientY }, '*');
+                window.open('[[OUT_URL]]');
+            }
+
+            function onClose() {
+                    window.top.postMessage({ $G$: 1, event: 'close' }, '*');
+                }
+
+                function showAlert(payload) {
+                    window.top.postMessage({ $G$: 1, event: 'alert', payload }, '*');
+                }
+        
+//-------------------- Default script --------------------
+</script>
+
+</body></html>

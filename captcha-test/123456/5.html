@@ -1,0 +1,254 @@
+<html><head lang="en"><style>html { overflow: hidden; }</style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+        
+
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+        <style>
+            * {
+              margin: 0;
+              padding: 0;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              position: relative;
+            }
+            html,
+            body {
+              width: 100%;
+              height: 100%;
+            }
+            html {
+              font-size: 16px;
+            }
+            body {
+              font-family: 'Roboto', sans-serif;
+              background: transparent;
+              color: #212121;
+              text-align: center;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-align: end;
+                  -ms-flex-align: end;
+                      align-items: flex-end;
+              -webkit-box-pack: center;
+                  -ms-flex-pack: center;
+                      justify-content: center;
+            }
+            .wrapper {
+              background: #ffffff;
+              width: 100%;
+              max-width: 360px;
+              border-radius: 20px;
+              box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+            }
+            .info {
+              padding: 25px 25px 5px;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-orient: vertical;
+              -webkit-box-direction: normal;
+                  -ms-flex-direction: column;
+                      flex-direction: column;
+              -webkit-box-align: center;
+                  -ms-flex-align: center;
+                      align-items: center;
+              -webkit-box-pack: center;
+                  -ms-flex-pack: center;
+                      justify-content: center;
+            }
+            .logo {
+              max-width: 60px;
+              max-height: 60px;
+              border-radius: 15px;
+            }
+            h1 {
+              font-size: 1.2rem;
+              line-height: 1.3rem;
+              font-weight: 500;
+              margin: 20px 0 14px;
+              color: #919191;
+            }
+            h1 span {
+              color: #212121;
+              font-weight: 700;
+            }
+
+            .actions {
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-align: center;
+                  -ms-flex-align: center;
+                      align-items: center;
+              -ms-flex-pack: distribute;
+                  justify-content: space-around;
+              padding: 20px 15px;
+              border-top: 1px solid #f1f1f1;
+            }
+            .button {
+              width: 46%;
+              padding: 12px;
+              border-radius: 25px;
+              -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+                      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+              background: #ffffff;
+              color: #707070;
+              font-weight: 700;
+            }
+            .button:last-child {
+              background: #3574f4;
+              color: #ffffff;
+            }
+            .button:hover {
+                cursor: pointer;
+                -webkit-filter: brightness(1.15);
+                        filter: brightness(1.15);
+            }
+            /*************** media queries start ***********/
+            @media screen and (max-width: 860px) and (max-height: 440px) and (orientation: landscape) {
+              .info {
+                padding: 20px 15px;
+              }
+              h1 {
+                margin: 14px 0 10px;
+              }
+            }
+            @media screen and (max-width: 320px), screen and (max-width: 480px) and (orientation: landscape) {
+              .info {
+                padding: 20px 15px 25px;
+              }
+              .logo {
+                max-width: 50px;
+                max-height: 50px;
+                border-radius: 12px;
+              }
+              h1 {
+                font-size: 1.1rem;
+                margin: 16px 0 12px;
+              }
+              .button {
+                padding: 10px;
+              }
+            }
+
+            .mask {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+            }
+            
+            #trigger_mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .trigger_mask_dark {
+            -webkit-animation: mask_dark 1s linear forwards;
+                    animation: mask_dark 1s linear forwards;
+        }
+        
+        @-webkit-keyframes mask_dark {
+            50% {
+                background: rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        @keyframes mask_dark {
+            50% {
+                background: rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .trigger_class {
+            -webkit-box-shadow: 0 0 7px 1px #ffe91f;
+                    box-shadow: 0 0 7px 1px #ffe91f;
+            -webkit-transform: translateX(-5px);
+                -ms-transform: translateX(-5px);
+                    transform: translateX(-5px);
+            -webkit-animation: trigger 0.25s ease-in-out infinite;
+                    animation: trigger 0.25s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes trigger {
+            60% {
+                -webkit-transform: translateX(5px);
+                        transform: translateX(5px);
+                -webkit-box-shadow: none;
+                        box-shadow: none;
+            }
+        }
+
+        @keyframes trigger {
+            60% {
+                -webkit-transform: translateX(5px);
+                        transform: translateX(5px);
+                -webkit-box-shadow: none;
+                        box-shadow: none;
+            }
+        }
+        </style>
+    <style id="cssEditor"></style><style id="invert-style">
+                body, img, video {
+                    filter: invert(1) hue-rotate(180deg);
+                }
+            </style></head>
+
+    <body data-area="area4" class="vsc-initialized">
+        <div id="trigger_mask" onclick="trigger();" class=""></div>
+        <div class="wrapper" id="trigger_target">
+            <div class="info" data-onopen="0" data-area="area1">
+                <img class="logo" src="//leafboyaggress.shop/g/a5/ff/a5ff768c77bd40f95b73aa5fedd66f489825c87a.png" alt="">
+                <h1><span>Install AdBlocker For Free!</span> <br><br>Just for today! Get it now!</h1>
+            </div>
+            <div class="actions">
+                <div class="mask" data-onopen="0"></div>
+                <p class="button" data-onclose="0" data-area="area2">Cancel</p>
+                <p class="button" data-onopen="0" data-area="area3">Allow</p>
+            </div>
+        </div>
+    <script id="jsEditor">
+//-------------------- Default script --------------------
+
+            function onOpen(event) {
+                const { clientX, clientY } = event;
+
+                window.top.postMessage({ $G$: 1, event: 'open', clientX, clientY }, '*');
+                window.open('[[OUT_URL]]');
+            }
+
+            function onClose() {
+                window.top.postMessage({ $G$: 1, event: 'close' }, '*');
+            }
+
+            function showAlert(payload) {
+                window.top.postMessage({ $G$: 1, event: 'alert', payload }, '*');
+            }
+        
+//-------------------- Default script --------------------
+</script>
+    
+<script>
+    var triggerTarget = document.getElementById("trigger_target");
+    var triggerMask = document.getElementById("trigger_mask");
+
+    function trigger() {
+        triggerTarget.classList.add("trigger_class");
+        triggerMask.classList.add("trigger_mask_dark");
+        setTimeout(function() {
+            triggerTarget.classList.remove("trigger_class");
+            triggerMask.classList.remove("trigger_mask_dark");
+        }, 1000);
+    }
+</script>
+
+
+</body></html>
