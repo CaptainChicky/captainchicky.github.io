@@ -48,6 +48,7 @@ jobs:
             Archive/www.jakiecola.com/
             Archive/www.toweroffantasy-global.com/
             Archive/webstatic-sea.mihoyo.com/
+            Archive/Surprise!!!/
             Archive/Cloud.png
             Archive/PRINCIPLES OF UNDERWATER SOUND Chapter 8.html
             Archive/Sonar Propagation.html
@@ -64,6 +65,7 @@ jobs:
             The-Aviary/
             Zip-Bomb/
             plant-generator/
+            Tools/
           sparse-checkout-cone-mode: false
           # By setting cone mode to false, I can specify specific files to include during sparse checkout
           # this means I will specify all root dir files (including the Gemfile and yaml file)
