@@ -270,9 +270,7 @@
         function scheduleNextBlink() {
             // Generate random delay between 0.5 and 10 seconds
             // Using square root to skew towards larger numbers
-            const random = Math.random();
-            const sqrtRandom = Math.sqrt(random);
-            const delay = 500 + (sqrtRandom * 9500);
+            const delay = 500 + (Math.sqrt(Math.random()) * 9500);
 
             blinkInterval = setTimeout(() => {
                 blinkEye();
@@ -402,9 +400,9 @@
                 // Date.now() returns the current timestamp in milliseconds since January 1, 1970 (Unix timestamp)
                 releaseTimestamp = Date.now() + (remainingSeconds * 1000);
             } else {
-                // Generate a random countdown between 15 and 30 minutes (in seconds)
-                // Cubic skew to favor lower numbers
-                const randomSeconds = Math.floor(Math.pow(Math.random(), 3) * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
+                // Generate a random countdown between 1 and 30 minutes
+                // Quadratic skew to favor lower numbers
+                const randomSeconds = Math.floor((Math.random() ** 2) * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
                 remainingSeconds = randomSeconds;
                 releaseTimestamp = Date.now() + (randomSeconds * 1000);
 
@@ -487,8 +485,7 @@
                 startEyeAnimation();
             } else {
                 // Use quadratic distribution to favor lower numbers
-                const skewedRandom = Math.random() ** 2;
-                const randomIndex = Math.floor(skewedRandom * SURPRISE_IMAGES.length);
+                const randomIndex = Math.floor((Math.random() ** 2) * SURPRISE_IMAGES.length);
                 const randomImage = SURPRISE_IMAGES[randomIndex];
                 document.getElementById('surprise-image').src = randomImage;
                 
