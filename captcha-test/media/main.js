@@ -1,6 +1,7 @@
 'use strict';
 
-$(document).ready(function () {
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', function () {
 	// Cache DOM element references
 	var armLeft = document.getElementById('armLeft'),
 		armRight = document.getElementById('armRight'),
