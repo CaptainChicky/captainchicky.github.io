@@ -1,130 +1,140 @@
-'use strict'
-$(document).ready(function () {
-	wave()
-	setInterval(function () {
-		wave()
-	}, 5000)
+'use strict';
 
-	// DOM element references
+$(document).ready(function () {
+	// Cache DOM element references
 	var armLeft = document.getElementById('armLeft'),
 		armRight = document.getElementById('armRight'),
 		eyeNormal = document.getElementById('eyeNormal'),
 		eyeBlink = document.getElementById('eyeBlink'),
 		headBox = document.getElementById('rHeadBox'),
-		mouth1 = document.getElementById('mouth1'),
-		mouth2 = document.getElementById('mouth2'),
-		mouth3 = document.getElementById('mouth3'),
+		mouthWide = document.getElementById('mouth1'),
+		mouthMedium = document.getElementById('mouth2'),
+		mouthSmall = document.getElementById('mouth3'),
 		bodyBox = document.getElementById('rBodyBox'),
-		isRotated = false
+		isBodySwaying = false;
 
-	// Toggle rotation animation on body and head every 4 seconds
+	// Toggle body sway animation every 4 seconds
 	setInterval(function () {
-		isRotated = isRotated
-			? (bodyBox.classList.remove('rAnim'), headBox.classList.remove('rAnim'), false)
-			: (bodyBox.classList.add('rAnim'), headBox.classList.add('rAnim'), true)
-	}, 4000)
+		if (isBodySwaying) {
+			bodyBox.classList.remove('rAnim');
+			headBox.classList.remove('rAnim');
+			isBodySwaying = false;
+		} else {
+			bodyBox.classList.add('rAnim');
+			headBox.classList.add('rAnim');
+			isBodySwaying = true;
+		}
+	}, 4000);
 
 	// Blink animation every 5 seconds (300ms blink duration)
 	setInterval(function () {
 		setTimeout(function () {
-			eyeNormal.classList.add('hide')
-			eyeBlink.classList.add('showBlock')
-		}, 0)
+			eyeNormal.classList.add('hide');
+			eyeBlink.classList.remove('hide');
+		}, 0);
 		setTimeout(function () {
-			eyeNormal.classList.remove('hide')
-			eyeBlink.classList.remove('showBlock')
-		}, 300)
-	}, 5000)
+			eyeNormal.classList.remove('hide');
+			eyeBlink.classList.add('hide');
+		}, 300);
+	}, 5000);
 
+	// Mouth animation state
 	var mouthAnimInterval,
 		mouthAnimTimeout,
-		mouthFrame = 0
+		mouthFrame = 0;
 
 	// Animate mouth talking (cycles through 4 mouth positions)
-	function animateMouth() {
+	function animateMouthTalking() {
 		if (mouthAnimInterval) {
-			stopMouthAnimation()
+			stopMouthAnimation();
 		}
 
 		mouthAnimInterval = setInterval(function () {
 			if (mouthFrame === 0) {
-				mouth1.classList.add('hide')
-				mouth2.classList.remove('hide')
-				mouth3.classList.add('hide')
+				mouthWide.classList.add('hide');
+				mouthMedium.classList.remove('hide');
+				mouthSmall.classList.add('hide');
 			} else if (mouthFrame === 1) {
-				mouth1.classList.add('hide')
-				mouth2.classList.add('hide')
-				mouth3.classList.remove('hide')
+				mouthWide.classList.add('hide');
+				mouthMedium.classList.add('hide');
+				mouthSmall.classList.remove('hide');
 			} else if (mouthFrame === 2) {
-				mouth1.classList.add('hide')
-				mouth2.classList.remove('hide')
-				mouth3.classList.add('hide')
+				mouthWide.classList.add('hide');
+				mouthMedium.classList.remove('hide');
+				mouthSmall.classList.add('hide');
 			} else if (mouthFrame === 3) {
-				mouth1.classList.remove('hide')
-				mouth2.classList.add('hide')
-				mouth3.classList.add('hide')
+				mouthWide.classList.remove('hide');
+				mouthMedium.classList.add('hide');
+				mouthSmall.classList.add('hide');
 			}
 
-			mouthFrame++
+			mouthFrame++;
 			if (mouthFrame > 3) {
-				mouthFrame = 0
+				mouthFrame = 0;
 			}
-		}, 170) // Each frame lasts 170ms
+		}, 170); // Each frame lasts 170ms
 
-		// Stop mouth animation after ~1.7 seconds
+		// Stop mouth animation after 1.5 seconds to match arm animation
 		mouthAnimTimeout = setTimeout(function () {
-			stopMouthAnimation()
-		}, 1701)
+			stopMouthAnimation();
+		}, 1500);
 	}
 
-	// Stop mouth animation and reset to default state
+	// Stop mouth animation and reset to default state (mouth2 visible)
 	function stopMouthAnimation() {
-		clearInterval(mouthAnimInterval)
-		clearTimeout(mouthAnimTimeout)
-		mouthFrame = 0
-		$('#mouth1').removeClass('hide')
-		$('#mouth2').removeClass('hide')
-		$('#mouth3').removeClass('hide')
+		clearInterval(mouthAnimInterval);
+		clearTimeout(mouthAnimTimeout);
+		mouthFrame = 0;
+		mouthWide.classList.add('hide');
+		mouthMedium.classList.remove('hide');
+		mouthSmall.classList.add('hide');
 	}
 
+	// Wave animation state
 	var armWaveInterval,
-		isArmUp = false,
-		isWaving = false
+		areArmsRaised = false,
+		isCurrentlyWaving = false;
 
 	// Main wave animation (arms + mouth)
-	function wave() {
-		animateMouth()
+	function performWaveAnimation() {
+		animateMouthTalking();
 
 		// Prevent overlapping wave animations
-		if (isWaving) {
-			return
+		if (isCurrentlyWaving) {
+			return;
 		}
 
-		isWaving = true
-		$('#armRight').addClass('armRightAnim')
-		$('#armLeft').addClass('armRightAnim')
-		isArmUp = true
+		isCurrentlyWaving = true;
+		armRight.classList.add('armRightAnim');
+		armLeft.classList.add('armLeftAnim');
+		areArmsRaised = true;
 
-		// Alternate arm positions every 250ms
+		// Alternate arm positions every 250ms to create waving motion
 		armWaveInterval = setInterval(function () {
-			if (isArmUp) {
-				isArmUp = false
-				armRight.classList.remove('armRightAnim')
-				armLeft.classList.remove('armLeftAnim')
+			if (areArmsRaised) {
+				areArmsRaised = false;
+				armRight.classList.remove('armRightAnim');
+				armLeft.classList.remove('armLeftAnim');
 			} else {
-				isArmUp = true
-				armRight.classList.add('armRightAnim')
-				armLeft.classList.add('armLeftAnim')
+				areArmsRaised = true;
+				armRight.classList.add('armRightAnim');
+				armLeft.classList.add('armLeftAnim');
 			}
-		}, 250)
+		}, 250);
 
-		// Stop waving after 1.75 seconds
+		// Stop waving after 1.5 seconds (exactly 3 complete up-down cycles)
 		setTimeout(function () {
-			clearInterval(armWaveInterval)
-			stopMouthAnimation()
-			armRight.classList.remove('armRightAnim')
-			armLeft.classList.remove('armLeftAnim')
-			isWaving = false
-		}, 1750)
+			clearInterval(armWaveInterval);
+			stopMouthAnimation();
+			armRight.classList.remove('armRightAnim');
+			armLeft.classList.remove('armLeftAnim');
+			isCurrentlyWaving = false;
+		}, 1500);
 	}
-})
+
+	// Start wave animation and repeat every 5 seconds
+	performWaveAnimation();
+	setInterval(function () {
+		performWaveAnimation();
+	}, 5000);
+});
