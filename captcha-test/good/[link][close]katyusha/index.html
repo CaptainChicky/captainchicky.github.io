@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            padding: 0 8px;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+
+        /* Notification Card */
+        .notification-card {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            margin: 8px 0;
+            padding: 6px;
+            border-radius: 12px;
+            background-color: #fafafa;
+            box-shadow:
+                0.6px 0.6px 1.9px rgba(0, 0, 0, 0.024),
+                2.2px 2.2px 4.9px rgba(0, 0, 0, 0.035),
+                6.6px 6.6px 12px rgba(0, 0, 0, 0.046),
+                12px 12px 24px rgba(0, 0, 0, 0.07);
+            visibility: hidden;
+            user-select: none;
+            transform: translateX(100%);
+        }
+
+        .notification-card.visible {
+            visibility: visible;
+            transition: transform 0.25s ease-out;
+            transform: translateX(0);
+        }
+
+        .notification-card.hide-right {
+            visibility: visible;
+            transition: transform 0.25s ease-in;
+            transform: translateX(110%);
+        }
+
+        .notification-card.hide-left {
+            visibility: visible;
+            transition: transform 0.25s ease-in;
+            transform: translateX(-110%);
+        }
+
+        .notification-card[contrast='dark'] {
+            background-color: #282C34;
+            box-shadow:
+                0.6px 0.6px 1.9px rgba(0, 0, 0, 0.024),
+                2.2px 2.2px 4.9px rgba(0, 0, 0, 0.035),
+                6.6px 6.6px 12px rgba(0, 0, 0, 0.046),
+                24px 24px 48px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Card Content Container */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Header Section */
+        .card-header {
+            display: flex;
+        }
+
+        /* Product Image */
+        .image-container {
+            position: relative;
+            flex: 0 0 18%;
+            width: 18%;
+            height: 0;
+            padding-top: 18%;
+        }
+
+        .image-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #45cc20;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        .product-image.round {
+            border-radius: 50%;
+        }
+
+        /* Text Content */
+        .text-content {
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 4px 0 6px;
+        }
+
+        html[dir='rtl'] .text-content {
+            margin: 0 6px 0 4px;
+        }
+
+        .text-content>div {
+            color: #222;
+        }
+
+        .notification-card[contrast='dark'] .text-content>div {
+            color: #fff;
+        }
+
+        .product-title {
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        .product-rating {
+            color: #ff9a00;
+            font-size: 22px;
+        }
+
+        /* Message Bubble */
+        .message-container {
+            margin: 5px 0;
+            padding: 10px 10px 10px 20px;
+            background-color: white;
+        }
+
+        .notification-card[contrast='light'] .message-container {
+            background-color: #e1e1e1;
+        }
+
+        .message-bubble {
+            padding: 5px;
+            border-radius: 8px;
+            background-color: #e1e1e1;
+            box-shadow: 0 3px 6px #00000029;
+            position: relative;
+        }
+
+        .notification-card[contrast='light'] .message-bubble {
+            background-color: white;
+        }
+
+        .message-bubble::before {
+            content: ' ';
+            position: absolute;
+            top: 27%;
+            left: -12px;
+            border-color: transparent transparent #e1e1e1;
+            border-style: solid;
+            border-width: 0 0 16px 16px;
+        }
+
+        .notification-card[contrast='light'] .message-bubble::before {
+            border-color: transparent transparent #fff;
+        }
+
+        .message-text {
+            font-size: 13px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .action-btn {
+            width: 49%;
+            height: 32px;
+            padding: 0 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-transform: capitalize;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close {
+            background-color: white;
+            color: #2172e7;
+        }
+
+        .notification-card[contrast='light'] .btn-close,
+        .notification-card[contrast='dark'] .btn-close {
+            background-color: #e1e1e1;
+        }
+
+        .notification-card[contrast='light'] .btn-close.active,
+        .notification-card[contrast='dark'] .btn-close.active,
+        .notification-card[contrast='colored'] .btn-close.active,
+        .notification-card[contrast='default'] .btn-close.active {
+            background-color: #2172e7;
+            color: white;
+        }
+
+        .btn-more {
+            background-color: #2172e7;
+            color: white;
+        }
+
+        /* Color overrides for specific styling */
+        .btn-more.dark {
+            background-color: #0f0f0f !important;
+        }
+
+        .notification-card.red-theme {
+            background-color: #e61736 !important;
+        }
+
+        .red-theme .product-rating {
+            color: #1b1b1a !important;
+        }
+
+        .red-theme .btn-close {
+            color: #090909 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notification-card red-theme visible" contrast="light">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="image-container">
+                    <img class="product-image round" src="./katyusha.jpg" alt="katyusha">
+                </div>
+                <div class="text-content">
+                    <div class="product-title">Top Rated Russian Bride</div>
+                    <div class="product-rating">★★★★★</div>
+                </div>
+            </div>
+            <div class="message-container">
+                <div class="message-bubble">
+                    <div class="message-text">The most beautiful woman, voted the bestest in the world since 1945.</div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn btn-close">Close</button>
+                <button class="action-btn btn-more dark">more</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.btn-close').addEventListener('click', function () {
+            const card = document.querySelector('.notification-card');
+            card.classList.remove('visible');
+            card.classList.add('hide-right');
+        });
+
+        document.querySelector('.btn-more').addEventListener('click', function () {
+            window.location.href = "#";
+        });
+    </script>
+</body>
+
+</html>

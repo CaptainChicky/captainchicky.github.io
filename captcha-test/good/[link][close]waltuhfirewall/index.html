@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		body {
+			padding: 0 8px;
+			overflow: hidden;
+			font-family: 'Open Sans', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+		}
+
+		/* Notification Card */
+		.notification-card {
+			position: relative;
+			display: flex;
+			overflow: hidden;
+			width: 100%;
+			margin: 0;
+			padding: 6px;
+			border-radius: 0;
+			border-bottom: 2px solid #9f9f9f;
+			box-shadow: none;
+			background-color: #fafafa;
+			visibility: hidden;
+			user-select: none;
+			opacity: 0;
+			transform: scale(0);
+			transition: all .4s ease-in;
+		}
+
+		.notification-card.visible {
+			opacity: 1;
+			visibility: visible;
+			transform: scale(1);
+		}
+
+		.notification-card[contrast=colored] {
+			background: transparent linear-gradient(90deg, #97eff6, #cca6ff) 0 0 no-repeat padding-box;
+		}
+
+		.notification-card[contrast=default] {
+			background-color: #e1e1e1;
+		}
+
+		/* Main Content */
+		.notification-content {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		.notification-body {
+			display: flex;
+			padding: 10px;
+		}
+
+		/* Icon Container */
+		.icon-container {
+			position: relative;
+			flex: 0 0 18%;
+			width: 18%;
+			height: 0;
+			padding-top: 18%;
+		}
+
+		.icon-image {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+		}
+
+		/* Badge Indicators */
+		.badge-counter::before {
+			content: "1";
+			position: absolute;
+			top: 0;
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background-color: red;
+			color: #fff;
+			font-weight: 700;
+			font-family: monospace;
+		}
+
+		.badge-online::after {
+			content: "";
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background-color: #44cc20;
+		}
+
+		/* Text Content */
+		.text-content {
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			margin: 0 4px 0 6px;
+		}
+
+		.title-text {
+			font-size: 15px;
+			line-height: 1.5;
+		}
+
+		.description-text {
+			font-size: 13px;
+			line-height: 1.2;
+		}
+
+		.timestamp {
+			color: #9f9f9f;
+			font-size: 11px;
+			line-height: 1;
+			align-self: flex-start;
+		}
+
+		/* Action Buttons */
+		.action-buttons {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 5px;
+		}
+
+		.action-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 49%;
+			padding: 7px;
+			border-radius: 5px;
+			text-align: center;
+			text-transform: capitalize;
+			cursor: pointer;
+		}
+
+		.button-close {
+			background-color: #fff;
+			color: #2172e7;
+		}
+
+		.notification-card[contrast=dark] .button-close,
+		.notification-card[contrast=light] .button-close {
+			background-color: #e1e1e1;
+		}
+
+		.button-more {
+			background-color: #2172e7;
+			color: #fff;
+		}
+
+		/* Header Banner */
+		.header-banner {
+			width: 100%;
+			padding: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 50px;
+			padding: 0;
+			border-radius: 8px 8px 0 0;
+			background-color: #2172e7;
+			color: #fff;
+			font-weight: 700;
+			visibility: hidden;
+			user-select: none;
+			transform: translateY(-100%);
+		}
+
+		.header-banner.visible {
+			visibility: visible;
+			transition: transform .1s ease-in;
+			transform: translateY(0);
+		}
+
+		.notification-card:last-of-type {
+			border-bottom: none !important;
+			border-bottom-left-radius: 12px !important;
+			border-bottom-right-radius: 12px !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="header-banner visible">NEW MESSAGES</div>
+
+	<div class="notification-card visible" data-role="on-page" contrast="colored">
+		<div class="notification-content">
+			<div class="notification-body">
+				<div class="icon-container badge-counter badge-online" data-role="icon-container">
+					<img class="icon-image" src="./newdrug.png">
+				</div>
+				<div class="text-content">
+					<div class="title-text"></div>
+					<div class="description-text">Chicky's New OTC Memory Drug Hits Market</div>
+				</div>
+				<div class="timestamp">now</div>
+			</div>
+			<div class="action-buttons" contrast="colored">
+				<div data-role="close" class="action-button button-close">×</div>
+				<div class="action-button button-more">more</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="notification-card visible" data-role="on-page" contrast="colored">
+		<div class="notification-content">
+			<div class="notification-body">
+				<div class="icon-container badge-counter badge-online" data-role="icon-container">
+					<img class="icon-image" src="./firewall.jpg">
+				</div>
+				<div class="text-content">
+					<div class="title-text"></div>
+					<div class="description-text">Your Firewall Might Be Hacked</div>
+				</div>
+				<div class="timestamp">3 minutes ago</div>
+			</div>
+			<div class="action-buttons" contrast="colored">
+				<div data-role="close" class="action-button button-close">×</div>
+				<div class="action-button button-more">more</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

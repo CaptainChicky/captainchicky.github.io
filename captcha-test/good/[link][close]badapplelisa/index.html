@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		body {
+			padding: 10px 18px;
+			overflow: hidden;
+			font-family: 'Open Sans', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+		}
+
+		/* Notification Card Base */
+		.notification-card {
+			position: relative;
+			display: flex;
+			overflow: hidden;
+			width: 100%;
+			margin: 8px 0;
+			padding: 6px;
+			border-radius: 12px;
+			background-color: #fafafa;
+			box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 4px 0 rgba(0, 0, 0, 0.12);
+			visibility: hidden;
+			user-select: none;
+			transform: translateX(100%);
+		}
+
+		.notification-card.visible {
+			visibility: visible;
+			transition: transform 0.25s ease-out;
+			transform: translateX(0);
+		}
+
+		.notification-card[contrast='dark'] {
+			background-color: #282C34;
+			box-shadow: 0 3px 3px -2px rgba(220, 220, 220, 0.2), 0 3px 4px 0 rgba(220, 220, 220, 0.14), 0 1px 4px 0 rgba(220, 220, 220, 0.12);
+		}
+
+		.notification-card[contrast='light'] {
+			background-color: #03a9f4 !important;
+			box-shadow: 3px 3px 10px 10px rgba(244, 67, 54, 1) !important;
+		}
+
+		.notification-card.with-margin-bottom {
+			margin-bottom: 25px !important;
+		}
+
+		/* Content Container */
+		.notification-content {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		/* Header with Icon and Text */
+		.notification-header {
+			display: flex;
+		}
+
+		/* Icon Container */
+		.icon-container {
+			position: relative;
+			flex: 0 0 18%;
+			width: 18%;
+			height: 0;
+			padding-top: 18%;
+		}
+
+		.icon-image {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+		}
+
+		/* Badge Indicators */
+		.badge-online::after {
+			content: '';
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			z-index: 1;
+			width: 14px;
+			height: 14px;
+			border-radius: 50%;
+			background-color: #45cc20;
+		}
+
+		/* Text Content */
+		.text-content {
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			margin: 0 4px 0 6px;
+		}
+
+		.title-text {
+			font-weight: bold;
+			font-size: 16px;
+			line-height: 1.5;
+		}
+
+		.notification-card[contrast='dark'] .text-content .title-text {
+			color: #fff;
+		}
+
+		.star-rating {
+			color: #ff9a00;
+			font-size: 22px;
+		}
+
+		/* Message Bubble */
+		.message-container {
+			margin: 5px 0;
+			padding: 10px 10px 10px 20px;
+			background-color: white;
+		}
+
+		.notification-card[contrast='light'] .message-container {
+			background-color: #e1e1e1;
+		}
+
+		.message-bubble {
+			padding: 5px;
+			border-radius: 8px;
+			background-color: #e1e1e1;
+			box-shadow: 0 3px 6px #00000029;
+			position: relative;
+		}
+
+		.notification-card[contrast='light'] .message-bubble {
+			background-color: white;
+		}
+
+		.message-bubble::before {
+			content: ' ';
+			position: absolute;
+			top: 27%;
+			left: -12px;
+			border-color: transparent transparent #e1e1e1;
+			border-style: solid;
+			border-width: 0 0 16px 16px;
+		}
+
+		.notification-card[contrast='light'] .message-bubble::before {
+			border-color: transparent transparent #fff;
+		}
+
+		.message-text {
+			font-size: 13px;
+			line-height: 1.2;
+		}
+
+		/* Action Buttons */
+		.action-buttons {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 5px;
+		}
+
+		.action-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 49%;
+			padding: 7px;
+			border-radius: 5px;
+			text-align: center;
+			text-transform: capitalize;
+			cursor: pointer;
+		}
+
+		.button-close {
+			background-color: white;
+			color: #2172e7;
+		}
+
+		.notification-card[contrast='light'] .button-close,
+		.notification-card[contrast='dark'] .button-close {
+			background-color: #e1e1e1;
+		}
+
+		.button-more {
+			background-color: #f44336 !important;
+			color: #1b1919 !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="notification-card visible with-margin-bottom" contrast="light">
+		<div class="notification-content">
+			<div class="notification-header">
+				<div class="icon-container badge-online">
+					<img class="icon-image" src="./badapple.jpg">
+				</div>
+				<div class="text-content">
+					<div class="title-text">What is Life But a <u>Bad Apple</u>?</div>
+					<div class="star-rating">★★★★★</div>
+				</div>
+			</div>
+			<div class="message-container">
+				<div class="message-bubble">
+					<div class="message-text">
+						Even as time keeps slipping by, I remain shrounded in heavy languor.
+						Even though I clutch my heart, it is drifting away from me.
+						I never move of my own accord, just carried along through cracks in time.
+						I know nothing of what’s around me. I know only of myself. Am I dreaming? Or seeing nothing at all?
+						My words are useless, a waste to speak. To grieve is only tiring, better to live on feeling nothing.
+					</div>
+				</div>
+			</div>
+			<div class="action-buttons">
+				<div data-role="close" class="action-button button-close">Does a future exist in wasted time?</div>
+				<div class="action-button button-more">Do I even exist in a world like this?</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="notification-card visible with-margin-bottom" contrast="light">
+		<div class="notification-content">
+			<div class="notification-header">
+				<div class="icon-container badge-online">
+					<img class="icon-image" src="./monalisa.jpg">
+				</div>
+				<div class="text-content">
+					<div class="title-text">See Leonardo da Vinci's Newest Work</div>
+					<div class="star-rating">★★★★★</div>
+				</div>
+			</div>
+			<div class="message-container">
+				<div class="message-bubble">
+					<div class="message-text">A reimagining of a classic for a new era. Built on legacy. Designed for today.</div>
+				</div>
+			</div>
+			<div class="action-buttons">
+				<div data-role="close" class="action-button button-close">See more information</div>
+				<div class="action-button button-more">Additional works</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

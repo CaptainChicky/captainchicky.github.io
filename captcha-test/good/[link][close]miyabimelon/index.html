@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		/* Reset */
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		/* Container */
+		.notification-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			width: 390px;
+			z-index: 2147483647;
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
+
+		.notification-wrapper {
+			width: 100%;
+		}
+
+		/* Card */
+		.notification-card {
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			width: 98%;
+			margin: 10px 0;
+			padding: 15px 0 10px 0;
+			background: rgba(60, 64, 67, 1);
+			border: 1px solid rgba(60, 64, 67, 1);
+			box-shadow: 2px 3px 5px 0 rgba(111, 111, 111, 1);
+			overflow: hidden;
+			text-decoration: none;
+		}
+
+		/* Header */
+		.notification-header {
+			display: flex;
+			flex-direction: row;
+			width: calc(100% - 15px);
+			padding: 0 0 4px 15px;
+		}
+
+		.header-icon {
+			width: 17px;
+			height: 17px;
+			top: 1px;
+			z-index: 9;
+			cursor: pointer;
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-image: url(./ad.png);
+		}
+
+		.header-label {
+			color: #fff;
+			padding-left: 5px;
+			font: 13px/1.4 medium-content-sans-serif-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Montserrat, 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+		}
+
+		.header-label:hover {
+			text-decoration: underline;
+		}
+
+		.header-time {
+			color: #fff;
+		}
+
+		.notification-indicator {
+			font-size: 14px;
+			color: #fff;
+			animation: blink 0.5s infinite alternate linear;
+		}
+
+		/* Content */
+		.notification-content {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			height: 60px;
+			width: 100%;
+		}
+
+		.notification-title {
+			width: calc(92% - 60px);
+			padding: 5px 5px 5px 0;
+			position: relative;
+			overflow: hidden;
+			color: black;
+			text-align: left;
+			font: 14px/1.4 medium-content-sans-serif-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Montserrat, 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+		}
+
+		.title-text {
+			max-height: 16px;
+			margin: 0;
+			padding-bottom: 3px;
+			line-height: 16px;
+			font-weight: 400;
+			color: #fff;
+			overflow: hidden;
+		}
+
+		.subtitle-text {
+			max-height: 32px;
+			margin: 0;
+			line-height: 16px;
+			font-weight: 500;
+			color: #fff;
+			overflow: hidden;
+		}
+
+		.notification-title:hover .title-text,
+		.notification-title:hover .subtitle-text {
+			text-decoration: underline;
+		}
+
+		/* Avatar */
+		.avatar-wrapper {
+			position: relative;
+		}
+
+		.avatar-image {
+			width: 60px;
+			height: 60px;
+			position: relative;
+			bottom: 14px;
+			right: 15px;
+			border-radius: 10px;
+		}
+
+		.avatar-badge {
+			position: absolute;
+			bottom: 6px;
+			right: 13px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 15px;
+			height: 15px;
+			background-color: #0056c3;
+			border-radius: 50%;
+		}
+
+		.badge-icon {
+			position: absolute;
+			width: 9px;
+			height: 9px;
+			background-repeat: no-repeat;
+			background-size: contain;
+			background-image: url(./arrow.svg);
+		}
+
+		/* Close Button */
+		.close-button {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 33px;
+			height: 33px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: transparent;
+			z-index: 2147483647;
+			cursor: pointer;
+		}
+
+		.close-button:hover {
+			background-color: #f2f2f257;
+		}
+
+		.close-icon {
+			width: 10px;
+			height: 10px;
+			background-repeat: no-repeat;
+			background-size: contain;
+			background-image: url(./close.svg);
+		}
+
+		/* Action Buttons */
+		.action-buttons {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			width: 100%;
+			padding: 5px 0;
+			box-sizing: border-box;
+			z-index: 2147483647;
+		}
+
+		.button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 32px;
+			padding: 0 10px;
+			background-color: #676565;
+			color: white;
+			font: 14px/1.4 medium-content-sans-serif-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Montserrat, 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+			text-decoration: none;
+			cursor: pointer;
+			white-space: nowrap;
+		}
+
+		.button-protect {
+			order: -1 !important;
+		}
+
+		.button-close {
+			order: 1 !important;
+		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				opacity: 0;
+				right: -50vw;
+			}
+
+			to {
+				opacity: 1;
+				right: 0;
+			}
+		}
+
+		@keyframes blink {
+			0% {
+				color: white;
+			}
+
+			100% {
+				color: black;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="notification-container">
+		<div class="notification-wrapper">
+			<div>
+				<a class="notification-card" rel="nofollow noopener" href="#">
+
+					<!-- Header -->
+					<div class="notification-header">
+						<div class="header-icon"></div>
+						<span class="header-label">
+							Messages
+							<span class="header-time"> • 2 mins ago</span>
+							<span class="notification-indicator">↓</span>
+						</span>
+					</div>
+
+					<!-- Close Button -->
+					<div class="close-button">
+						<div class="close-icon"></div>
+					</div>
+
+					<!-- Content -->
+					<div class="notification-content">
+						<div class="notification-title">
+							<p class="title-text">Miyabi sent you 7 photo (very good photo)</p>
+							<p class="subtitle-text">Click to see melon (very good melon)</p>
+						</div>
+
+						<!-- Avatar -->
+						<div class="avatar-wrapper">
+							<img class="avatar-image" src="./melon.png" alt="Profile">
+							<div class="avatar-badge">
+								<div class="badge-icon"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="action-buttons">
+						<a class="button button-protect" href="#">
+							See the melon🍈
+						</a>
+						<a class="button button-close">Close</a>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

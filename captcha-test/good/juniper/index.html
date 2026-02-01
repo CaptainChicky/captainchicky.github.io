@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+			overflow: hidden;
+		}
+
+		.container {
+			width: 140px;
+			height: 140px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.circle-button {
+			position: relative;
+			width: 70px;
+			height: 70px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			background-color: #1da8f2;
+			box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.25);
+			user-select: none;
+		}
+
+		.circle-button::before,
+		.circle-button::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			border: 1px solid #1da8f2;
+			border-radius: 50%; /* if you delete this it becomes a square wave lmao */
+		}
+
+		.circle-button::before {
+			animation: ripple-1 1.2s ease-out 0.2s infinite;
+		}
+
+		.circle-button::after {
+			animation: ripple-2 1.2s ease-out infinite;
+		}
+
+		@keyframes ripple-1 {
+			0% {
+				opacity: 0;
+				transform: scale(0.3);
+			}
+
+			50% {
+				opacity: 1;
+			}
+
+			100% {
+				opacity: 0;
+				transform: scale(1.5);
+			}
+		}
+
+		@keyframes ripple-2 {
+			0% {
+				opacity: 0;
+				transform: scale(0.3);
+			}
+
+			50% {
+				opacity: 1;
+			}
+
+			100% {
+				opacity: 0;
+				transform: scale(2);
+			}
+		}
+
+		.image-content {
+			position: relative;
+			z-index: 1;
+			display: block;
+			width: 100%;
+			height: 100%;
+			/* IMPORTANT! Border radius determines how much of the image inside the blue circles
+               is cut off. I set a low border radius because the moth is cute. A higher border
+               radius would mean that more of the moth is cut off from a cirular cutoff that
+               grows inwards in a circle as the border radius grows in percentage. */
+			border-radius: 0%;
+			opacity: 1;
+			cursor: pointer;
+			transition: opacity 0.25s ease-in;
+		}
+	</style>
+</head>
+
+<body class="notranslate">
+	<div class="container">
+		<div class="circle-button">
+			<img style="width: 90%; height: 90%;" src="./MothBabyJuniper.png" class="image-content">
+		</div>
+	</div>
+</body>
+
+</html>

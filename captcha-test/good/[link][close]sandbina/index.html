@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<style>
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: 500;
+			src: url(./roboto500.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: 700;
+			src: url(./roboto700.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	</style>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			position: relative;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		html {
+			font-size: 16px;
+		}
+
+		body {
+			font-family: 'Roboto', sans-serif;
+			background: transparent;
+			color: #212121;
+			text-align: center;
+			display: flex;
+			align-items: flex-end;
+			justify-content: center;
+			animation: slideUp 0.4s ease-out forwards;
+		}
+
+		body.closing {
+			animation: slideDown 0.3s ease-in forwards;
+		}
+
+		body.spinning {
+			animation: spinAndSlideDown 0.8s ease-in-out forwards;
+		}
+
+		.popup {
+			background: #ffffff;
+			width: 100%;
+			max-width: 360px;
+			border-radius: 20px;
+			box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+		}
+
+		.popup.shake {
+			box-shadow: 0 0 7px 1px #ffe91f;
+			transform: translateX(-5px);
+			animation: shake 0.25s ease-in-out infinite;
+		}
+
+		.popup-content {
+			padding: 25px 25px 5px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.popup-logo {
+			max-width: 200px;
+			max-height: 200px;
+			border-radius: 15px;
+		}
+
+		h1 {
+			font-size: 1.2rem;
+			line-height: 1.3rem;
+			font-weight: 500;
+			margin: 20px 0 14px;
+			color: #919191;
+		}
+
+		h1 span {
+			color: #212121;
+			font-weight: 700;
+		}
+
+		.popup-actions {
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+			padding: 20px 15px;
+			border-top: 1px solid #f1f1f1;
+		}
+
+		.popup-button {
+			width: 46%;
+			padding: 12px;
+			border-radius: 25px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+			background: #ffffff;
+			color: #707070;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.popup-button:hover {
+			filter: brightness(1.15);
+		}
+
+		.popup-button.primary {
+			background: #3574f4;
+			color: #ffffff;
+		}
+
+		.overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.overlay.darken {
+			animation: darken 1s linear forwards;
+		}
+
+		@keyframes shake {
+			60% {
+				transform: translateX(5px);
+				box-shadow: none;
+			}
+		}
+
+		@keyframes darken {
+			50% {
+				background: rgba(0, 0, 0, 0.2);
+			}
+		}
+
+		@keyframes slideUp {
+			0% {
+				transform: translateY(100%);
+			}
+
+			100% {
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes slideDown {
+			0% {
+				transform: translateY(0);
+			}
+
+			100% {
+				transform: translateY(100%);
+			}
+		}
+
+		@keyframes spinAndSlideDown {
+			0% {
+				transform: translateY(0) rotate(0deg);
+			}
+
+			50% {
+				transform: translateY(0) rotate(360deg);
+			}
+
+			100% {
+				transform: translateY(100%) rotate(360deg);
+			}
+		}
+	</style>
+
+	<style id="invert-style">
+		body,
+		img,
+		video {
+			filter: invert(1) hue-rotate(180deg);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="overlay" id="overlay" onclick="triggerShake()"></div>
+	<div class="popup" id="popup">
+		<div class="popup-content">
+			<img class="popup-logo" src="./SandBina.gif" alt="yuri">
+			<h1>
+				<span>Sandrone and Columbina are making out right now!</span> <br><br>
+				Will you join in for the threesome? Or will you just watch them make out and scissor?
+			</h1>
+		</div>
+		<div class="popup-actions">
+			<p class="popup-button" onclick="closePopup()">Watch</p>
+			<p class="popup-button primary" onclick="acceptPopup()">Join </p>
+		</div>
+	</div>
+
+	<script>
+		function acceptPopup() {
+			document.body.classList.add('spinning');
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 800);
+		}
+
+		function closePopup() {
+			document.body.classList.add('closing');
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 300);
+		}
+
+		function triggerShake() {
+			const popup = document.getElementById('popup');
+			const overlay = document.getElementById('overlay');
+
+			popup.classList.add('shake');
+			overlay.classList.add('darken');
+
+			setTimeout(() => {
+				popup.classList.remove('shake');
+				overlay.classList.remove('darken');
+			}, 1000);
+		}
+	</script>
+</body>
+
+</html>

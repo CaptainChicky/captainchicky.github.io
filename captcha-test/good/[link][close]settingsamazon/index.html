@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		/* Reset and base styles */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		body {
+			padding: 0 8px;
+			overflow: hidden;
+			font-family: 'Open Sans', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+		}
+
+		/* Notification card container */
+		.notification-card {
+			position: relative;
+			display: flex;
+			overflow: hidden;
+			width: 100%;
+			margin: 3px 0;
+			padding: 6px;
+			border-radius: 24px;
+			background-color: #fafafa;
+			box-shadow: 0 3px 3px -2px rgba(0, 0, 0, .2), 0 3px 4px 0 rgba(0, 0, 0, .14), 0 1px 4px 0 rgba(0, 0, 0, .12);
+			visibility: hidden;
+			user-select: none;
+			transform: translateX(100%);
+		}
+
+		/* Colored theme */
+		.notification-card[contrast=colored] {
+			background: transparent linear-gradient(90deg, #97eff6, #cca6ff) 0 0 no-repeat padding-box;
+		}
+
+		/* Default theme */
+		.notification-card[contrast=default] {
+			background-color: #e1e1e1;
+		}
+
+		/* Dark theme */
+		.notification-card[contrast=dark] {
+			background-color: #282c34;
+			box-shadow: 0 3px 3px -2px hsla(0, 0%, 86.3%, .2), 0 3px 4px 0 hsla(0, 0%, 86.3%, .14), 0 1px 4px 0 hsla(0, 0%, 86.3%, .12);
+		}
+
+		/* Visible state */
+		.notification-card.visible {
+			visibility: visible;
+			transition: transform .3s ease-in;
+			transform: translateX(0);
+		}
+
+		/* Icon container */
+		.icon-container {
+			position: relative;
+			flex: 0 0 18%;
+			width: 18%;
+			height: 0;
+			padding-top: 18%;
+		}
+
+		/* Icon image */
+		.icon-image {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
+			border-radius: 2px;
+		}
+
+		.icon-image.rounded {
+			border-radius: 50%;
+		}
+
+		/* Content wrapper */
+		.content-wrapper {
+			width: 100%;
+		}
+
+		/* Text content */
+		.text-content {
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			margin: 0 4px 0 6px;
+		}
+
+		html[dir=rtl] .text-content {
+			margin: 0 6px 0 4px;
+		}
+
+		.text-content>div {
+			color: #222;
+		}
+
+		.notification-card[contrast=dark] .text-content>div {
+			color: #fff;
+		}
+
+		/* Title text */
+		.title-text {
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		.title-text.large {
+			font-weight: 700;
+			font-size: 15px;
+		}
+
+		/* Subtitle text */
+		.subtitle-text {
+			font-size: 12px;
+			line-height: 1.2;
+		}
+
+		.subtitle-text.medium {
+			font-size: 13px;
+		}
+
+		.notification-card:not([contrast=dark]) .subtitle-text {
+			color: #686868;
+		}
+
+		/* Top row with icon and text */
+		.top-row {
+			display: flex;
+			padding: 5px;
+		}
+
+		/* Button container */
+		.button-container {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 5px;
+		}
+
+		.button-container.full-width {
+			margin: 0 -6px -6px;
+		}
+
+		/* Buttons */
+		.action-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 40px;
+			padding: 5px;
+			background-color: inherit;
+			color: #2172e7;
+			font-weight: 700;
+			font-size: 15px;
+		}
+
+		.action-button.primary {
+			width: 50%;
+			text-align: start;
+		}
+
+		.action-button.close {
+			width: 50%;
+			text-align: end;
+		}
+
+		/* Alternative button style */
+		.button {
+			width: 49%;
+			padding: 7px;
+			border-radius: 5px;
+			text-align: center;
+			text-transform: capitalize;
+			cursor: pointer;
+		}
+
+		.button.primary-alt {
+			background-color: #2172e7;
+			color: #fff;
+		}
+
+		.button.secondary {
+			background-color: #fff;
+			color: #2172e7;
+		}
+
+		.notification-card[contrast=dark] .button.secondary,
+		.notification-card[contrast=light] .button.secondary {
+			background-color: #e1e1e1;
+		}
+
+		.notification-card[contrast=colored] .button.secondary.active,
+		.notification-card[contrast=dark] .button.secondary.active,
+		.notification-card[contrast=default] .button.secondary.active,
+		.notification-card[contrast=light] .button.secondary.active {
+			background-color: #2172e7;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body class="notranslate">
+	<div class="notification-card visible" data-role="on-page" contrast="colored">
+		<div class="content-wrapper">
+			<div class="top-row">
+				<div class="text-content">
+					<div class="title-text large"></div>
+					<div class="subtitle-text medium">Your iPhone is severely damaged by <b><u>(4)</u></b> 😲</div>
+				</div>
+				<div class="icon-container" data-role="icon-container">
+					<img class="icon-image rounded" src="./settings.png" alt="Settings notification">
+				</div>
+			</div>
+			<div class="button-container full-width" contrast="colored">
+				<div class="action-button primary">Click here to fix your iPhone!</div>
+				<div data-role="close" class="action-button close">×</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="notification-card visible" data-role="on-page" contrast="colored">
+		<div class="content-wrapper">
+			<div class="top-row">
+				<div class="text-content">
+					<div class="title-text large"><b>FREE</b> Amazon Giftcard!</div>
+				</div>
+				<div class="icon-container" data-role="icon-container">
+					<img class="icon-image rounded" src="./amazon.png" alt="Amazon gift card">
+				</div>
+			</div>
+			<div class="button-container full-width" contrast="colored">
+				<div class="action-button primary">Claim here!</div>
+				<div data-role="close" class="action-button close">×</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

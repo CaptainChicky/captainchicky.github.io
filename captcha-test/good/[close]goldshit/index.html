@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		/* Reset */
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		/* Container */
+		.notification-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			width: 390px;
+			margin: 2px;
+			z-index: 2147483647;
+			display: flex;
+			align-items: center;
+			border-radius: 10px;
+			opacity: 0.99;
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
+
+		.notification-wrapper {
+			width: 100%;
+		}
+
+		/* Card */
+		.notification-card {
+			display: flex;
+			flex-direction: row-reverse;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			position: relative;
+			width: 98%;
+			height: 90px;
+			overflow: hidden;
+			border-radius: 10px;
+			text-decoration: none;
+		}
+
+		/* Avatar */
+		.avatar-wrapper {
+			position: relative;
+		}
+
+		.notification-badge {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 18px;
+			height: 18px;
+			background-color: red;
+			color: white;
+			border-radius: 50%;
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.avatar-image {
+			width: 60px;
+			height: 60px;
+			margin: 10px;
+			padding: 5px;
+			border-radius: 50%;
+			box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.75);
+		}
+
+		/* Content */
+		.notification-content {
+			width: calc(80% - 43px);
+			max-height: 48px;
+			margin-left: 5px;
+			padding: 5px 20px 5px 5px;
+			position: relative;
+			text-align: left;
+			background: #007eec;
+			border-radius: 10px;
+			box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+			font: 12px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Montserrat, 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+			color: white;
+		}
+
+		.title-text {
+			max-height: 16px;
+			margin: 0;
+			line-height: 16px;
+			font-weight: bold;
+			overflow: hidden;
+		}
+
+		.subtitle-text {
+			max-height: 32px;
+			margin: 0;
+			line-height: 16px;
+			font-weight: 300;
+			overflow: hidden;
+		}
+
+		/* Close Button */
+		.close-button {
+			position: absolute;
+			top: -5px;
+			right: -7px;
+			bottom: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			background-color: rgba(255, 1, 1, 0.7);
+			background-clip: padding-box;
+			border: 8px solid rgba(0, 0, 0, 0);
+			border-radius: 50%;
+			z-index: 2147483647;
+			cursor: pointer;
+		}
+
+		.close-icon {
+			width: 10px;
+			height: 10px;
+			background-repeat: no-repeat;
+			background-size: contain;
+			background-image: url(./close.svg);
+		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				opacity: 0;
+				right: -50vw;
+			}
+
+			to {
+				opacity: 1;
+				right: 0;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="notification-container">
+		<div class="notification-wrapper">
+			<div>
+				<a class="notification-card" rel="nofollow noopener" href="#">
+
+					<!-- Avatar -->
+					<span class="avatar-wrapper">
+						<span class="notification-badge">1</span>
+						<img class="avatar-image" src="./goldshit.png" alt="goldshitter">
+					</span>
+
+					<!-- Content -->
+					<div class="notification-content">
+						<p class="title-text">Goldshitter moment</p>
+						<p class="subtitle-text">Trainer detected Trainer detected</p>
+					</div>
+
+					<!-- Close Button -->
+					<div class="close-button">
+						<div class="close-icon"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- font -->
+	<style>
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: 400;
+			font-stretch: 100%;
+			src: url(./roboto400extendedlatin.woff2) format('woff2');
+			unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+		}
+
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: 500;
+			font-stretch: 100%;
+			src: url(./roboto500.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	</style>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			position: relative;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		html {
+			font-size: 16px;
+		}
+
+		body {
+			font-family: 'Roboto', sans-serif;
+			color: #383638;
+			user-select: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: transparent;
+		}
+
+		body.closing {
+			animation: slideOut 0.3s ease-in forwards;
+		}
+
+		body.spinning {
+			animation: spinAndSlideOut 0.8s ease-in-out forwards;
+		}
+
+		.modal {
+			padding: 20px;
+			background: #fff;
+			border-radius: 10px;
+			width: 90%;
+			max-width: 400px;
+			z-index: 10;
+			box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+		}
+
+		.modal p {
+			color: #666;
+		}
+
+		h1 {
+			font-size: 1.5rem;
+			font-weight: 700;
+		}
+
+		.modal-content {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			margin: 8px 0 16px;
+		}
+
+		.modal-icon {
+			width: 120px;
+			height: 120px;
+			object-fit: contain;
+			border-radius: 10px;
+			margin-right: 10px;
+		}
+
+		.modal-buttons {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.modal-button {
+			cursor: pointer;
+			background: #0088ff;
+			font-size: 1.1rem;
+			color: #fff;
+			padding: 13px 25px;
+			border-radius: 10px;
+			border: none;
+			font-weight: 400;
+			display: block;
+			width: 47%;
+			transition: box-shadow 0.5s, background 0.5s;
+			box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+		}
+
+		.modal-button:hover {
+			box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+			background: #0078E0;
+		}
+
+		.modal-button.cancel {
+			background: #fff;
+			color: #666;
+		}
+
+		.modal-button.cancel:hover {
+			background: #ececec;
+		}
+
+		@keyframes slideOut {
+			0% {
+				transform: translate(0, 0);
+			}
+
+			100% {
+				transform: translate(-100%, -100%);
+			}
+		}
+
+		@keyframes spinAndSlideOut {
+			0% {
+				transform: translate(0, 0) rotate(0deg);
+			}
+
+			50% {
+				transform: translate(0, 0) rotate(360deg);
+			}
+
+			100% {
+				transform: translate(-100%, -100%) rotate(360deg);
+			}
+		}
+	</style>
+
+	<style id="animation-shufflebox">
+		body {
+			animation: slideFromLeftTop 1.6s forwards ease-out;
+		}
+
+		@keyframes slideFromLeftTop {
+			0% {
+				transform: translate(-100%, -100%);
+			}
+
+			100% {
+				transform: translate(0, 0);
+			}
+		}
+	</style>
+
+	<style id="invert-style">
+		body,
+		img,
+		video {
+			filter: invert(1) hue-rotate(180deg);
+		}
+	</style>
+</head>
+
+<body>
+	<section class="modal">
+		<h1>He's Launched His 38 cm</h1>
+		<div class="modal-content">
+			<img class="modal-icon" src="./run.png" alt="run">
+			<p>The Sturmmörserwagen 606/4 mit 38 cm RW 61 has just launched his 380 mm rocket at you. What are you doing? Run away!</p>
+		</div>
+		<div class="modal-buttons">
+			<button class="modal-button cancel" onclick="closePopup()">Run</button>
+			<button class="modal-button" onclick="acceptPopup()">Accept Fate</button>
+		</div>
+	</section>
+
+	<script>
+		function acceptPopup() {
+			document.body.classList.add('spinning');
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 800);
+		}
+
+		function closePopup() {
+			document.body.classList.add('closing');
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 300);
+		}
+	</script>
+</body>
+
+</html>

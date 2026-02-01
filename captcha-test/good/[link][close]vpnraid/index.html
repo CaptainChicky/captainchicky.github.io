@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		/* Reset and base styles */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		body {
+			padding: 0 8px;
+			overflow: hidden;
+			font-family: 'Open Sans', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+		}
+
+		/* Notification card container */
+		.notification-card {
+			position: relative;
+			display: flex;
+			overflow: hidden;
+			width: 100%;
+			margin: 8px 0;
+			padding: 6px;
+			border-radius: 12px;
+			background-color: #fafafa;
+			box-shadow: 0 3px 3px -2px rgba(0, 0, 0, .2), 0 3px 4px 0 rgba(0, 0, 0, .14), 0 1px 4px 0 rgba(0, 0, 0, .12);
+			visibility: hidden;
+			user-select: none;
+			transform: translateX(100%);
+		}
+
+		/* Colored theme */
+		.notification-card[contrast=colored] {
+			background: transparent linear-gradient(90deg, #97eff6, #cca6ff) 0 0 no-repeat padding-box;
+		}
+
+		/* Default theme */
+		.notification-card[contrast=default] {
+			background-color: #e1e1e1;
+		}
+
+		/* Dark theme */
+		.notification-card[contrast=dark] {
+			background-color: #282c34;
+			box-shadow: 0 3px 3px -2px hsla(0, 0%, 86.3%, .2), 0 3px 4px 0 hsla(0, 0%, 86.3%, .14), 0 1px 4px 0 hsla(0, 0%, 86.3%, .12);
+		}
+
+		/* Visible state */
+		.notification-card.visible {
+			visibility: visible;
+			transition: transform .3s ease-in;
+			transform: translateX(0);
+		}
+
+		/* Icon container */
+		.icon-container {
+			position: relative;
+			flex: 0 0 18%;
+			width: 18%;
+			height: 0;
+			padding-top: 18%;
+		}
+
+		.icon-container.has-badge:after {
+			right: 0;
+			bottom: 0;
+		}
+
+		.icon-container.active-badge:after {
+			content: "";
+			position: absolute;
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background-color: #44cc20;
+		}
+
+		/* Icon image */
+		.icon-image {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
+			border-radius: 2px;
+		}
+
+		.icon-image.rounded {
+			border-radius: 50%;
+		}
+
+		/* Content wrapper */
+		.content-wrapper {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		/* Text content */
+		.text-content {
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			margin: 0 4px 0 6px;
+		}
+
+		html[dir=rtl] .text-content {
+			margin: 0 6px 0 4px;
+		}
+
+		.text-content>div {
+			color: #222;
+		}
+
+		.notification-card[contrast=dark] .text-content>div {
+			color: #fff;
+		}
+
+		/* Title text */
+		.title-text {
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		.title-text.large {
+			font-weight: 700;
+			font-size: 16px;
+		}
+
+		/* Stars */
+		.stars {
+			color: #ff9a00;
+			font-size: 22px;
+		}
+
+		/* Top row with icon and text */
+		.top-row {
+			display: flex;
+		}
+
+		/* Message box container */
+		.message-container {
+			margin: 5px 0;
+			padding: 10px 10px 25px 25px;
+			background-color: #fff;
+		}
+
+		.notification-card[contrast=light] .message-container {
+			background-color: #e1e1e1;
+		}
+
+		/* Message bubble */
+		.message-bubble {
+			padding: 5px;
+			border-radius: 8px;
+			background-color: #e1e1e1;
+			box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
+		}
+
+		.notification-card[contrast=light] .message-bubble {
+			background-color: #fff;
+		}
+
+		.message-bubble:before {
+			content: " ";
+			position: absolute;
+			top: 47%;
+			left: 16px;
+			border-color: transparent transparent #e1e1e1;
+			border-style: solid;
+			border-width: 0 0 16px 16px;
+		}
+
+		.notification-card[contrast=light] .message-bubble:before {
+			border-color: transparent transparent #fff;
+			margin-left: -10rem;
+			position: sticky;
+		}
+
+		/* Message text */
+		.message-text {
+			font-size: 13px;
+			line-height: 1.2;
+		}
+
+		/* Button container */
+		.button-container {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 5px;
+		}
+
+		/* Button styles */
+		.button {
+			width: 49%;
+			padding: 7px;
+			border-radius: 5px;
+			text-align: center;
+			text-transform: capitalize;
+			cursor: pointer;
+		}
+
+		.button.primary {
+			background-color: #2172e7;
+			color: #fff;
+		}
+
+		.button.secondary {
+			background-color: #fff;
+			color: #2172e7;
+		}
+
+		.notification-card[contrast=dark] .button.secondary,
+		.notification-card[contrast=light] .button.secondary {
+			background-color: #e1e1e1;
+		}
+
+		/* Custom overrides */
+		body {
+			padding: 5px 13px;
+		}
+
+		body>div:last-child {
+			border-bottom: none;
+		}
+
+		.notification-card {
+			margin-bottom: 12.5px !important;
+		}
+
+		.button.primary {
+			background-color: #060606 !important;
+		}
+
+		.notification-card {
+			background-color: #009688 !important;
+			box-shadow: 0px 3px 10px 5px rgba(0, 150, 136, 0.51) !important;
+		}
+
+		.stars {
+			color: #ffeb3b !important;
+		}
+
+		.button.secondary {
+			color: #020202 !important;
+		}
+	</style>
+</head>
+
+<body class="notranslate">
+	<div class="notification-card visible" data-role="on-page" contrast="light">
+		<div class="content-wrapper">
+			<div class="top-row">
+				<div class="icon-container has-badge active-badge" data-role="icon-container">
+					<img class="icon-image rounded" src="./RSL.jpg" alt="Raid: Shadow Legends">
+				</div>
+				<div class="text-content">
+					<div class="title-text large">Come play <u>Raid: Shadow Legends</u>!</div>
+					<div class="stars">★★★★★★</div>
+				</div>
+			</div>
+			<div class="message-container">
+				<div class="message-bubble">
+					<div class="message-text"
+						style="color:black;padding-left:1rem;padding-right:1rem;padding-bottom:1rem;">
+						Today's video is sponsored by Raid Shadow Legends, one of the biggest mobile role-playing 
+						games of 2019 and it's totally free! Click the link in the description to get 50,000 silver 
+						and a free epic champion to start your journey!
+					</div>
+				</div>
+			</div>
+			<div class="button-container" contrast="light">
+				<div data-role="close" class="button secondary">×</div>
+				<div class="button primary">more</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="notification-card visible" data-role="on-page" contrast="light">
+		<div class="content-wrapper">
+			<div class="top-row">
+				<div class="icon-container has-badge active-badge" data-role="icon-container">
+					<img class="icon-image rounded" src="./nordVPN.png" alt="NordVPN">
+				</div>
+				<div class="text-content">
+					<div class="title-text large">✉️ (1) <u>NordVPN</u> sent you a message!</div>
+					<div class="stars">★★★★★★★★★</div>
+				</div>
+			</div>
+			<div class="message-container">
+				<div class="message-bubble">
+					<div class="message-text"
+						style="color:black;padding-left:1rem;padding-right:1rem;padding-bottom:1rem;">
+						This video is sponsored by NordVPN. Staying safe online is an ever growing difficulty and you
+						could be exploited by hackers. NordVPN allows you to change your IP address, making you harder
+						to track, securing your privacy. Check out the link in the description to get 20% off for the 
+						first two months.
+					</div>
+				</div>
+			</div>
+			<div class="button-container" contrast="light">
+				<div data-role="close" class="button secondary">×</div>
+				<div class="button primary">more</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

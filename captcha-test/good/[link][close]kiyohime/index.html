@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		@font-face {
+			font-family: 'SF UI Display';
+			src: url('./SFUIDisplay-Regular.eot');
+			src: local('SF UI Display Regular'),
+				 local('SFUIDisplay-Regular'),
+				 url('./SFUIDisplay-Regular.eot') format('embedded-opentype'),
+				 url('./SFUIDisplay-Regular.woff2') format('woff2'),
+				 url('./SFUIDisplay-Regular.woff') format('woff'),
+				 url('./SFUIDisplay-Regular.ttf') format('truetype');
+			font-weight: 500;
+			font-style: normal;
+		}
+
+		@keyframes bounceInDown {
+			from,
+			60%,
+			75%,
+			90%,
+			to {
+				animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+			}
+
+			0% {
+				opacity: 0;
+				transform: translate3d(0, -3000px, 0);
+			}
+
+			60% {
+				opacity: 1;
+				transform: translate3d(0, 25px, 0);
+			}
+
+			75% {
+				transform: translate3d(0, -10px, 0);
+			}
+
+			90% {
+				transform: translate3d(0, 5px, 0);
+			}
+
+			to {
+				transform: translate3d(0, 0, 0);
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: 'SF UI Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+		}
+
+		.animated {
+			animation-duration: 1s;
+			animation-fill-mode: both;
+		}
+
+		.bounceInDown {
+			animation-name: bounceInDown;
+		}
+
+		.wrapper {
+			position: relative;
+			width: 100%;
+			height: 100vh;
+			font-family: 'SF UI Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+		}
+
+		.notification-modal {
+			position: fixed;
+			top: 25%;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 95%;
+			max-width: 375px;
+			z-index: 1000;
+			background: #000;
+			border-radius: 16px;
+			box-shadow: 0 0 3px 2px rgba(45, 45, 45, 0.72);
+			display: none;
+			overflow: visible;
+		}
+
+		.notification-modal.show {
+			display: block;
+		}
+
+		.close-button {
+			position: absolute;
+			top: -5px;
+			left: -5px;
+			width: 20px;
+			height: 20px;
+			background-color: #c7c7c7;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			z-index: 10;
+		}
+
+		.close-button::before {
+			content: "";
+			width: 10px;
+			height: 2px;
+			background-color: #000;
+		}
+
+		.notification-content {
+			text-decoration: none;
+			color: inherit;
+			display: block;
+		}
+
+		.notification-header {
+			display: flex;
+			align-items: center;
+			padding: 0 12px;
+			gap: 0;
+		}
+
+		.notification-icon {
+			width: 70px;
+			height: 70px;
+			flex-shrink: 0;
+			margin-top: 15px;
+			margin-left: 5px;
+			margin-right: 12px;
+			margin-bottom: 5px;
+		}
+
+		.notification-message {
+			flex: 1;
+		}
+
+		.notification-message p {
+			margin: 9px 0;
+			color: #fff;
+			line-height: 17px;
+		}
+
+		.primary-text {
+			font-size: 18px;
+			font-weight: 500;
+		}
+
+		.secondary-text {
+			font-size: 15px;
+			font-weight: 500;
+		}
+
+		.button-container {
+			border-top: 2px solid #fff;
+			margin-top: 10px;
+		}
+
+		.button-link {
+			text-decoration: none;
+			color: #fff;
+			display: block;
+			text-align: center;
+			padding: 12px 0;
+			font-size: 17px;
+			font-weight: 500;
+			letter-spacing: 1px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="notification-modal animated bounceInDown">
+
+			<div class="close-button"></div>
+
+			<a href="#" class="notification-content">
+				<div class="notification-header">
+					<img class="notification-icon" src="./Kiyohime.png" alt="Kiyohime">
+					<div class="notification-message">
+						<p class="primary-text" id="a1">Download FGO plsplsplspls</p>
+						<p class="secondary-text" id="a2">If not I will kidnap you take you to my basement and 😳</p>
+					</div>
+				</div>
+			</a>
+
+			<div class="button-container">
+				<a href="#" class="button-link" id="a3">
+					Download FGO
+				</a>
+			</div>
+
+		</div>
+	</div>
+
+	<script>
+		(function () {
+			const modal = document.querySelector('.notification-modal');
+			const closeBtn = document.querySelector('.close-button');
+
+			// Show modal
+			modal.classList.add('show');
+
+			// Close modal on button click
+			closeBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				modal.style.display = 'none';
+			});
+		})();
+	</script>
+</body>
+
+</html>
