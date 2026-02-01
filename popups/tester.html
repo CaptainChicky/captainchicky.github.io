@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Manager Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        button.danger:hover {
+            background: #c0392b;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+            color: #666;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎉 Popup Manager Demo</h1>
+        <p>Click the buttons below to test different popup notifications. They will appear in the bottom-right corner.</p>
+
+        <div class="button-group">
+            <button onclick="showNotif1()">Show Notification 1</button>
+            <button onclick="showNotif2()">Show Notification 2</button>
+            <button onclick="showNotif3()">Show Notification 3</button>
+            <button onclick="showCircle()">Show Circle (Click to Navigate)</button>
+            <button class="danger" onclick="closeAll()">Close All Popups</button>
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Features:</h3>
+            <ul>
+                <li>Multiple popups stack nicely</li>
+                <li>Maximum 3 popups at once (queues extras)</li>
+                <li>Smooth slide-in/out animations</li>
+                <li>Click circle popup to navigate to a link</li>
+                <li>Close buttons work automatically</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Include the popup manager -->
+    <script src="/popups/popupmanager.js"></script>
+
+    <script>
+        function showNotif1() {
+            popupManager.show('/popups/[close]BCell/');
+        }
+
+        function showNotif2() {
+            popupManager.show('/popups/[link][close]katyusha/');
+        }
+
+        function showNotif3() {
+            popupManager.show('/popups/[link][close]pantherauction/');
+        }
+
+        function showCircle() {
+            popupManager.show('/popups/baddragon/', {
+                duration: 20000 // Auto-close after 20 seconds
+            });
+        }
+
+        function closeAll() {
+            popupManager.closeAll();
+        }
+    </script>
+</body>
+</html>
