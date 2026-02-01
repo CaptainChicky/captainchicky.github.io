@@ -22,7 +22,7 @@ class PopupManager {
                 width: 100%;
                 height: 100%;
                 z-index: 999999;
-                pointer-events: all;
+                pointer-events: none;
                 animation: fadeIn 0.3s ease-out;
             }
             
@@ -32,6 +32,14 @@ class PopupManager {
                 border: none;
                 background: transparent;
                 display: block;
+                pointer-events: none;
+            }
+            
+            .popup-manager-overlay .click-zone {
+                position: absolute;
+                pointer-events: auto;
+                cursor: pointer;
+                z-index: 9999999;
             }
             
             .popup-manager-overlay.closing {
@@ -83,7 +91,8 @@ class PopupManager {
         const popupData = {
             id: this.nextId++,
             path: popupPath,
-            duration: options.duration || 0
+            duration: options.duration || 0,
+            clickSelector: options.clickSelector || null
         };
         
         this.createPopup(popupData);
@@ -99,24 +108,55 @@ class PopupManager {
         iframe.src = popupData.path;
         iframe.scrolling = 'no';
         
-        // Intercept clicks on links in the iframe
         iframe.addEventListener('load', () => {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 
-                // Find all links and intercept clicks
+                // Setup clickable zone if selector provided
+                if (popupData.clickSelector) {
+                    const clickableElement = iframeDoc.querySelector(popupData.clickSelector);
+                    
+                    if (clickableElement) {
+                        const updateClickZone = () => {
+                            const rect = clickableElement.getBoundingClientRect();
+                            
+                            // Remove old click zone if exists
+                            const oldZone = overlay.querySelector('.click-zone');
+                            if (oldZone) oldZone.remove();
+                            
+                            // Create new click zone overlay
+                            const clickZone = document.createElement('div');
+                            clickZone.className = 'click-zone';
+                            clickZone.style.top = rect.top + 'px';
+                            clickZone.style.left = rect.left + 'px';
+                            clickZone.style.width = rect.width + 'px';
+                            clickZone.style.height = rect.height + 'px';
+                            
+                            // Forward click to iframe element
+                            clickZone.addEventListener('click', () => {
+                                clickableElement.click();
+                            });
+                            
+                            overlay.appendChild(clickZone);
+                        };
+                        
+                        updateClickZone();
+                        
+                        // Update on resize
+                        window.addEventListener('resize', updateClickZone);
+                    }
+                }
+                
+                // Handle links
                 const links = iframeDoc.querySelectorAll('a');
                 links.forEach(link => {
                     link.addEventListener('click', (e) => {
                         const href = link.getAttribute('href');
                         
-                        // If it's a placeholder (#), prevent default and just close
                         if (!href || href === '#' || href === '') {
                             e.preventDefault();
                             this.close(popupData.id);
                         } else {
-                            // Real link - let it navigate, then close popup
-                            // Don't prevent default, let the link work normally
                             setTimeout(() => this.close(popupData.id), 50);
                         }
                     });
@@ -131,7 +171,6 @@ class PopupManager {
         
         this.activePopups.push(popupData);
         
-        // Auto-close if duration is set
         if (popupData.duration > 0) {
             setTimeout(() => {
                 this.close(popupData.id);

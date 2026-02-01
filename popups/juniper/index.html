@@ -111,11 +111,23 @@
 </head>
 
 <body class="notranslate">
-	<div class="container">
+	<div class="container" id="mainContainer">
 		<div class="circle-button">
 			<img style="width: 90%; height: 90%;" src="./MothBabyJuniper.png" class="image-content">
 		</div>
 	</div>
+
+	<script>
+		document.getElementById('mainContainer').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://twitter.com/Egocider', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+	</script>
 </body>
 
 </html>

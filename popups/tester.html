@@ -63,53 +63,24 @@
         button.danger:hover {
             background: #c0392b;
         }
-
-        .info-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            margin-top: 30px;
-        }
-
-        .info-box h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-        }
-
-        .info-box ul {
-            margin: 10px 0;
-            padding-left: 20px;
-            color: #666;
-        }
-
-        .info-box li {
-            margin: 5px 0;
-        }
     </style>
 </head>
 <body>
     <div class="demo-container">
-        <h1>🎉 Popup Manager Demo</h1>
-        <p>Click the buttons below to test different popup notifications. They will appear in the bottom-right corner.</p>
+        <h1>Popup Manager Demo</h1>
 
+        <p>Popups with no buttons (mainly circular rings) that hyperlink when clicked on in general area.</p>
         <div class="button-group">
-            <button onclick="showNotif1()">Show Notification 1</button>
-            <button onclick="showNotif2()">Show Notification 2</button>
-            <button onclick="showNotif3()">Show Notification 3</button>
-            <button onclick="showCircle()">Show Circle (Click to Navigate)</button>
+            <button onclick="noButtonNotifAshley()">show ashley notif (no buttons)</button>
+            <button onclick="noButtonNotifBadDragon()">show bad dragon notif (no buttons)</button>
+            <button onclick="noButtonNotifJuniper()">show juniper notif (no buttons)</button>
             <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
 
-        <div class="info-box">
-            <h3>📋 Features:</h3>
-            <ul>
-                <li>Multiple popups stack nicely</li>
-                <li>Maximum 3 popups at once (queues extras)</li>
-                <li>Smooth slide-in/out animations</li>
-                <li>Click circle popup to navigate to a link</li>
-                <li>Close buttons work automatically</li>
-            </ul>
+        <p>Popups with only close button, and hyperlink when clicked on elsewhere.</p>
+        <div class="button-group">
+            <button onclick="closeNotifBCell()">show b cell notif (close)</button>
+            <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
     </div>
 
@@ -117,21 +88,30 @@
     <script src="/popups/popupmanager.js"></script>
 
     <script>
-        function showNotif1() {
-            popupManager.show('/popups/[close]BCell/');
+        function noButtonNotifAshley() {
+            popupManager.show('/popups/ashley/', {
+                clickSelector: '.wrapper',
+                duration: 60000 // Auto-close after 1 min
+            });
         }
 
-        function showNotif2() {
-            popupManager.show('/popups/[link][close]katyusha/');
-        }
-
-        function showNotif3() {
-            popupManager.show('/popups/[link][close]pantherauction/');
-        }
-
-        function showCircle() {
+        function noButtonNotifBadDragon() {
             popupManager.show('/popups/baddragon/', {
-                duration: 20000 // Auto-close after 20 seconds
+                clickSelector: '.notification-wrapper',
+                duration: 60000 // Auto-close after 1 min
+            });
+        }
+
+        function noButtonNotifJuniper() {
+            popupManager.show('/popups/juniper/', {
+                clickSelector: '.container',
+                duration: 60000 // Auto-close after 1 min
+            });
+        }
+
+        function closeNotifBCell() {
+            popupManager.show('/popups/[close]BCell/', {
+                clickSelector: '.notification-container'
             });
         }
 

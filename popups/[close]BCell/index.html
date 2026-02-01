@@ -255,6 +255,28 @@
 			</div>
 		</div>
 	</div>
+
+	<script>
+		const card = document.querySelector('.notification-card');
+		const closeButton = document.querySelector('.close-button');
+
+		// Card click → navigate + close popup
+		card.addEventListener('click', () => {
+			window.open('https://annas-archive.li/md5/f27f7a088ce97771a3155676ae0f753e', '_blank');
+			
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 100);
+		});
+
+		// Close button click → ONLY close popup
+		closeButton.addEventListener('click', (e) => {
+			e.preventDefault();     // stops <a> navigation
+			e.stopPropagation();    // stops bubbling to card
+
+			window.parent.postMessage('closePopup', '*');
+		});
+	</script>
 </body>
 
 </html>

@@ -17,21 +17,26 @@
 			align-items: flex-end;
 			justify-content: center;
 			font-family: Arial, sans-serif;
+			background: transparent;
+			pointer-events: none;
+			width: 100vw;
+			height: 100vh;
 		}
 
 		/* Main container */
 		.notification-wrapper {
 			position: absolute;
 			width: 140px;
-			height: 140px;
+			height: 280px;
 			inset: 0px 0px 0px auto;
 			margin: auto 0px;
 		}
 
 		.notification-container {
-			position: relative;
+			position: absolute;
+			transform: translateY(60%); 
 			display: flex;
-			align-items: center;
+			align-items: flex-end;
 			justify-content: center;
 			width: 140px;
 			height: 140px;
@@ -438,7 +443,7 @@
 </head>
 
 <body>
-	<div class="notification-wrapper">
+	<div class="notification-wrapper" id="mainContainer">
 		<div class="notification-container">
 			<div class="notification-circle">
 				<img src="./baddragon.png" class="profile-image" alt="Profile">
@@ -486,14 +491,25 @@
 	<!-- SVG Filters -->
 	<svg style="position: absolute; width: 0; height: 0;">
 		<defs>
-			<filter id="goo-filter">
+			<filter id="goo-filter" x="-100%" y="-100%" width="300%" height="300%">
 				<feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
-				<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
-					result="goo" />
+				<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
 				<feBlend in="SourceGraphic" in2="goo" />
 			</filter>
 		</defs>
 	</svg>
+
+	<script>
+		document.getElementById('mainContainer').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://bad-dragon.com/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+	</script>
 </body>
 
 </html>

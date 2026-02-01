@@ -166,11 +166,18 @@
 				transform: rotate(0deg);
 			}
 		}
+
+		/* wrapper over the whole svg anim+textbox for popup manager purposes */
+		.wrapper {
+			position: absolute !important;
+			width: 517px; /* compued by adding svg + excess text box */
+			margin-right: -137px; /* computed using browser computation layout */
+		}
 	</style>
 </head>
 
 <body>
-	<div class="container">
+	<div class="wrapper" id="mainContainer"><div class="container">
 		<button class="call-to-action-button">
 			Is incest truly wincest? Click to find out!
 		</button>
@@ -231,7 +238,19 @@
 				</svg>
 			</div>
 		</div>
-	</div>
+	</div></div>
+
+	<script>
+		document.getElementById('mainContainer').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://store.steampowered.com/app/2378900/The_Coffin_of_Andy_and_Leyley/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+	</script>
 </body>
 
 </html>
