@@ -1,4 +1,4 @@
-// popup-manager.js - Drop-in popup notification system
+// popup-manager.js - Popup notification system with flexible sizing and positioning
 
 class PopupManager {
     constructor(config = {}) {
@@ -17,29 +17,16 @@ class PopupManager {
         style.textContent = `
             .popup-manager-overlay {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
                 z-index: 999999;
-                pointer-events: none;
+                pointer-events: auto;
                 animation: fadeIn 0.3s ease-out;
             }
             
             .popup-manager-overlay iframe {
-                width: 100%;
-                height: 100%;
                 border: none;
                 background: transparent;
                 display: block;
-                pointer-events: none;
-            }
-            
-            .popup-manager-overlay .click-zone {
-                position: absolute;
                 pointer-events: auto;
-                cursor: pointer;
-                z-index: 9999999;
             }
             
             .popup-manager-overlay.closing {
@@ -49,18 +36,22 @@ class PopupManager {
             @keyframes fadeIn {
                 from {
                     opacity: 0;
+                    transform: scale(0.95);
                 }
                 to {
                     opacity: 1;
+                    transform: scale(1);
                 }
             }
             
             @keyframes fadeOut {
                 from {
                     opacity: 1;
+                    transform: scale(1);
                 }
                 to {
                     opacity: 0;
+                    transform: scale(0.95);
                 }
             }
         `;
@@ -69,7 +60,7 @@ class PopupManager {
     
     setupMessageListener() {
         window.addEventListener('message', (event) => {
-            if (event.data === 'closePopup') {
+            if (event.data === 'closePopup' || event.data?.type === 'closePopup') {
                 this.handleCloseMessage(event.source);
             }
         });
@@ -87,12 +78,37 @@ class PopupManager {
         }
     }
     
+    /**
+     * Show a popup
+     * @param {string} popupPath - Path to the popup HTML file
+     * @param {Object} options - Configuration options
+     * @param {number} options.duration - Auto-close duration in ms (0 = manual close)
+     * 
+     * SIZE OPTIONS (choose one):
+     * @param {string} options.sizeSelector - CSS selector to match element size in iframe
+     * @param {string} options.width - Manual width (e.g., '300px', '20rem', '50vw')
+     * @param {string} options.height - Manual height (e.g., '200px', '15rem', '30vh')
+     * @param {boolean} options.fullPage - Render fullscreen (100vw x 100vh)
+     * 
+     * POSITION OPTIONS (choose one):
+     * @param {string} options.corner - 'top-left', 'top-right', 'bottom-left', 'bottom-right'
+     * @param {string} options.edge - 'top', 'bottom', 'left', 'right' (centered on edge)
+     * @param {Object} options.center - {x: number, y: number} - position iframe center at coords
+     * @param {string} options.offset - Offset from edges (e.g., '20px', '1rem'). Default: '20px'
+     */
     show(popupPath, options = {}) {
         const popupData = {
             id: this.nextId++,
             path: popupPath,
             duration: options.duration || 0,
-            clickSelector: options.clickSelector || null
+            sizeSelector: options.sizeSelector || null,
+            width: options.width || null,
+            height: options.height || null,
+            fullPage: options.fullPage || false,
+            corner: options.corner || null,
+            edge: options.edge || null,
+            center: options.center || null,
+            offset: options.offset || '20px'
         };
         
         this.createPopup(popupData);
@@ -108,63 +124,42 @@ class PopupManager {
         iframe.src = popupData.path;
         iframe.scrolling = 'no';
         
-        iframe.addEventListener('load', () => {
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
-                // Setup clickable zone if selector provided
-                if (popupData.clickSelector) {
-                    const clickableElement = iframeDoc.querySelector(popupData.clickSelector);
+        // Apply sizing immediately if manual or fullPage
+        if (popupData.fullPage) {
+            iframe.style.width = '100vw';
+            iframe.style.height = '100vh';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+        } else if (popupData.width && popupData.height) {
+            iframe.style.width = popupData.width;
+            iframe.style.height = popupData.height;
+            this.applyPosition(overlay, popupData);
+        }
+        
+        // Handle sizeSelector (need to wait for iframe load)
+        if (popupData.sizeSelector) {
+            iframe.addEventListener('load', () => {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const targetElement = iframeDoc.querySelector(popupData.sizeSelector);
                     
-                    if (clickableElement) {
-                        const updateClickZone = () => {
-                            const rect = clickableElement.getBoundingClientRect();
-                            
-                            // Remove old click zone if exists
-                            const oldZone = overlay.querySelector('.click-zone');
-                            if (oldZone) oldZone.remove();
-                            
-                            // Create new click zone overlay
-                            const clickZone = document.createElement('div');
-                            clickZone.className = 'click-zone';
-                            clickZone.style.top = rect.top + 'px';
-                            clickZone.style.left = rect.left + 'px';
-                            clickZone.style.width = rect.width + 'px';
-                            clickZone.style.height = rect.height + 'px';
-                            
-                            // Forward click to iframe element
-                            clickZone.addEventListener('click', () => {
-                                clickableElement.click();
-                            });
-                            
-                            overlay.appendChild(clickZone);
-                        };
+                    if (targetElement) {
+                        // Get computed dimensions
+                        const rect = targetElement.getBoundingClientRect();
+                        iframe.style.width = rect.width + 'px';
+                        iframe.style.height = rect.height + 'px';
                         
-                        updateClickZone();
-                        
-                        // Update on resize
-                        window.addEventListener('resize', updateClickZone);
+                        this.applyPosition(overlay, popupData);
+                    } else {
+                        console.warn(`Element not found: ${popupData.sizeSelector}`);
                     }
+                } catch (e) {
+                    console.error('Cannot access iframe content (cross-origin):', e);
                 }
-                
-                // Handle links
-                const links = iframeDoc.querySelectorAll('a');
-                links.forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        const href = link.getAttribute('href');
-                        
-                        if (!href || href === '#' || href === '') {
-                            e.preventDefault();
-                            this.close(popupData.id);
-                        } else {
-                            setTimeout(() => this.close(popupData.id), 50);
-                        }
-                    });
-                });
-            } catch (e) {
-                console.log('Cannot access iframe content (cross-origin):', e);
-            }
-        });
+            });
+        }
         
         overlay.appendChild(iframe);
         document.body.appendChild(overlay);
@@ -175,6 +170,66 @@ class PopupManager {
             setTimeout(() => {
                 this.close(popupData.id);
             }, popupData.duration);
+        }
+    }
+    
+    applyPosition(overlay, popupData) {
+        const offset = popupData.offset;
+        
+        if (popupData.corner) {
+            // Position at corner
+            switch (popupData.corner) {
+                case 'top-left':
+                    overlay.style.top = offset;
+                    overlay.style.left = offset;
+                    break;
+                case 'top-right':
+                    overlay.style.top = offset;
+                    overlay.style.right = offset;
+                    break;
+                case 'bottom-left':
+                    overlay.style.bottom = offset;
+                    overlay.style.left = offset;
+                    break;
+                case 'bottom-right':
+                    overlay.style.bottom = offset;
+                    overlay.style.right = offset;
+                    break;
+            }
+        } else if (popupData.edge) {
+            // Position centered on edge
+            switch (popupData.edge) {
+                case 'top':
+                    overlay.style.top = offset;
+                    overlay.style.left = '50%';
+                    overlay.style.transform = 'translateX(-50%)';
+                    break;
+                case 'bottom':
+                    overlay.style.bottom = offset;
+                    overlay.style.left = '50%';
+                    overlay.style.transform = 'translateX(-50%)';
+                    break;
+                case 'left':
+                    overlay.style.left = offset;
+                    overlay.style.top = '50%';
+                    overlay.style.transform = 'translateY(-50%)';
+                    break;
+                case 'right':
+                    overlay.style.right = offset;
+                    overlay.style.top = '50%';
+                    overlay.style.transform = 'translateY(-50%)';
+                    break;
+            }
+        } else if (popupData.center) {
+            // Position center at specific coordinates
+            overlay.style.left = popupData.center.x + 'px';
+            overlay.style.top = popupData.center.y + 'px';
+            overlay.style.transform = 'translate(-50%, -50%)';
+        } else {
+            // Default: center of screen
+            overlay.style.left = '50%';
+            overlay.style.top = '50%';
+            overlay.style.transform = 'translate(-50%, -50%)';
         }
     }
     

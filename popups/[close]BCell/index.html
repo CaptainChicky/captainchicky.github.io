@@ -222,7 +222,7 @@
 				<a class="notification-card" rel="nofollow noopener" href="#">
 
 					<!-- Header -->
-					<div class="notification-header">
+					<div class="notification-header" id="surprise">
 						<div class="header-icon"></div>
 						<span class="header-label">
 							Messages
@@ -232,12 +232,12 @@
 					</div>
 
 					<!-- Close Button -->
-					<div class="close-button">
+					<div class="close-button" id="close">
 						<div class="close-icon"></div>
 					</div>
 
 					<!-- Content -->
-					<div class="notification-content">
+					<div class="notification-content" id="content">
 						<div class="notification-title">
 							<p class="title-text">Local B-Cell Needs Your Help 🧬💉</p>
 							<p class="subtitle-text">Guide it to the nearest germinal center! 🦠</p>
@@ -257,23 +257,27 @@
 	</div>
 
 	<script>
-		const card = document.querySelector('.notification-card');
-		const closeButton = document.querySelector('.close-button');
-
-		// Card click → navigate + close popup
-		card.addEventListener('click', () => {
+		document.getElementById('content').addEventListener('click', function() {
+			// Navigate to the link in a new tab
 			window.open('https://annas-archive.li/md5/f27f7a088ce97771a3155676ae0f753e', '_blank');
 			
+			// After 3 seconds, tell parent to close popup
 			setTimeout(() => {
 				window.parent.postMessage('closePopup', '*');
-			}, 100);
+			}, 3000);
 		});
 
-		// Close button click → ONLY close popup
-		closeButton.addEventListener('click', (e) => {
-			e.preventDefault();     // stops <a> navigation
-			e.stopPropagation();    // stops bubbling to card
+		document.getElementById('surprise').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('/Archive/Surprise!!!/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
 
+		document.getElementById('close').addEventListener('click', function() {
 			window.parent.postMessage('closePopup', '*');
 		});
 	</script>

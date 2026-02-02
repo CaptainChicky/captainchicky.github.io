@@ -90,34 +90,74 @@
     <script>
         function noButtonNotifAshley() {
             popupManager.show('/popups/ashley/', {
-                clickSelector: '.wrapper',
-                duration: 60000 // Auto-close after 1 min
+                sizeSelector: '.wrapper',
+                edge: 'right',
+                offset: '0px',
+                duration: 60000
             });
         }
 
         function noButtonNotifBadDragon() {
             popupManager.show('/popups/baddragon/', {
-                clickSelector: '.notification-wrapper',
-                duration: 60000 // Auto-close after 1 min
             });
         }
 
         function noButtonNotifJuniper() {
             popupManager.show('/popups/juniper/', {
-                clickSelector: '.container',
-                duration: 60000 // Auto-close after 1 min
+                sizeSelector: '.container',
+                corner: 'top-right',
+                offset: '0px',
+                duration: 60000
             });
         }
 
         function closeNotifBCell() {
             popupManager.show('/popups/[close]BCell/', {
-                clickSelector: '.notification-container'
+                sizeSelector: '.notification-container',
+                corner: 'top-left',
+                offset: '10px'
             });
         }
 
         function closeAll() {
             popupManager.closeAll();
         }
+
+        //// Example 1: Size based on element, position at bottom-right corner
+        //popupManager.show('/popups/juniper/', {
+        //    sizeSelector: '.notification-card',
+        //    corner: 'bottom-right',
+        //    offset: '20px',
+        //    duration: 60000
+        //});
+        //
+        //// Example 2: Manual size, centered on top edge
+        //popupManager.show('/popups/alert/', {
+        //    width: '400px',
+        //    height: '200px',
+        //    edge: 'top',
+        //    offset: '30px'
+        //});
+        //
+        //// Example 3: Full page overlay
+        //popupManager.show('/popups/modal/', {
+        //    fullPage: true
+        //});
+        //
+        //// Example 4: Position center at specific coordinates
+        //popupManager.show('/popups/tooltip/', {
+        //    width: '250px',
+        //    height: '100px',
+        //    center: { x: 500, y: 300 }
+        //});
+        //
+        //// Example 5: Bottom-left with rem units
+        //popupManager.show('/popups/banner/', {
+        //    width: '20rem',
+        //    height: '10rem',
+        //    corner: 'bottom-left',
+        //    offset: '2rem'
+        //});
     </script>
 </body>
 </html>
