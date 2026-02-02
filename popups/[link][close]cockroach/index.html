@@ -99,11 +99,33 @@
 				that one of the legs was actually a large penis, and thus was renamed.  
 			</div>
 			<div class="button-container">
-				<div class="modal-button">DISAGREE</div>
-				<div class="modal-button primary">AGREE</div>
+				<div class="modal-button" id="disagree">DISAGREE</div>
+				<div class="modal-button primary" id="agree">AGREE</div>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		document.getElementById('disagree').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('/Archive/Surprise!!!/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('agree').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('/Archive/Surprise!!!/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+	</script>
 </body>
 
 </html>

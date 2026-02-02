@@ -14,91 +14,39 @@
 			font-family: medium-content-sans-serif-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, Montserrat, "Open Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 		}
 
-		/* Animations */
-		@keyframes topCenter {
-			from {
-				opacity: 0;
-				top: -500px;
-			}
-
-			to {
-				opacity: 1;
-				top: 0;
-			}
-		}
-
+		/* Animation */
 		@keyframes bottomCenter {
 			from {
-				opacity: 0;
+				transform: translateY(100vh);
 			}
-
 			to {
-				opacity: 1;
-				bottom: 0;
+				transform: translateY(0);
 			}
 		}
 
-		@keyframes leftTop {
+		@keyframes slideDown {
 			from {
-				opacity: 0;
-				left: -50vw;
+				transform: translateY(0);
 			}
-
 			to {
-				opacity: 1;
-				left: 0;
-			}
-		}
-
-		@keyframes rightTop {
-			from {
-				opacity: 0;
-				right: -50vw;
-			}
-
-			to {
-				opacity: 1;
-				right: 0;
-			}
-		}
-
-		@keyframes leftBottom {
-			from {
-				opacity: 0;
-				left: -50vw;
-			}
-
-			to {
-				opacity: 1;
-				left: 0;
-			}
-		}
-
-		@keyframes rightBottom {
-			from {
-				opacity: 0;
-				right: -50vw;
-			}
-
-			to {
-				opacity: 1;
-				right: 0;
+				transform: translateY(100vh);
 			}
 		}
 
 		/* Notification Container */
 		.notification-container {
 			position: fixed;
-			top: 0;
-			left: 0;
+			bottom: 0;
+			left: calc(50% - 195px); /* half of notification-wrapper width */
+			transform: translateX(-50%);
 			z-index: 2147483647;
 			animation: bottomCenter 0.3s ease-in-out forwards;
+			cursor: pointer;
 		}
 
 		.notification-wrapper {
 			margin: 2px;
 			width: 390px;
-			opacity: 0.99;
 		}
 
 		/* Notification Card */
@@ -229,13 +177,13 @@
 		<div class="notification-wrapper">
 			<div class="notification-card">
 				<!-- Avatar Section -->
-				<div class="avatar-container">
+				<div class="avatar-container" id="pfp">
 					<span class="notification-badge"><span>1</span></span>
 					<img class="avatar-image" src="./Mashiro.png" alt="Mashiro avatar">
 				</div>
 
 				<!-- Message Content -->
-				<div class="message-container">
+				<div class="message-container" id="content">
 					<p class="message-sender">Mashiro</p>
 					<p class="message-text">
 						Are you a lamp because I am attracted 💡
@@ -243,7 +191,7 @@
 				</div>
 
 				<!-- Close Button -->
-				<div class="close-button" onclick="closeNotification()">
+				<div class="close-button" id="close">
 					<div class="close-icon"></div>
 				</div>
 			</div>
@@ -251,10 +199,37 @@
 	</div>
 
 	<script>
-		function closeNotification() {
-			const notification = document.getElementById('notificationPopup');
-			notification.classList.add('hidden');
-		}
+		document.getElementById('content').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://nhentai.net/g/424380/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('pfp').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://nhentai.net/g/424380/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('close').addEventListener('click', function() {
+			const container = document.querySelector('.notification-container');
+			
+			// Add closing animation
+			container.style.animation = 'slideDown 0.3s ease-in-out forwards';
+			
+			// Wait for animation to finish, then close
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 300);
+		});
 	</script>
 </body>
 

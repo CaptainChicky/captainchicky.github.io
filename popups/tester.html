@@ -80,6 +80,17 @@
         <p>Popups with only close button, and hyperlink when clicked on elsewhere.</p>
         <div class="button-group">
             <button onclick="closeNotifBCell()">show b cell notif (close)</button>
+            <button onclick="closeNotifDancingDino()">show dancing dino notif (close)</button>
+            <button onclick="closeNotifGoldshit()">show goldshit notif (close)</button>
+            <button onclick="closeNotifMashiro()">show mashiro notif (close)</button>
+            <button onclick="closeNotifMiyabiNO()">show miyabo no notif (close)</button>
+            <button class="danger" onclick="closeAll()">Close All Popups</button>
+        </div>
+
+        <p>Popups with a shitton of buttons.</p>
+        <div class="button-group">
+            <button onclick="closeBadAppleLisa()">show bad apple/mona lisa notif (link+close)</button>
+            <button onclick="closeCockroach()">show cockroach notif (link+close)</button>
             <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
     </div>
@@ -92,13 +103,15 @@
             popupManager.show('/popups/ashley/', {
                 sizeSelector: '.wrapper',
                 edge: 'right',
-                offset: '0px',
                 duration: 60000
             });
         }
 
         function noButtonNotifBadDragon() {
             popupManager.show('/popups/baddragon/', {
+                sizeSelector: '.notification-wrapper',
+                edge: 'right',
+                duration: 60000
             });
         }
 
@@ -111,6 +124,8 @@
             });
         }
 
+        //============================
+
         function closeNotifBCell() {
             popupManager.show('/popups/[close]BCell/', {
                 sizeSelector: '.notification-container',
@@ -118,6 +133,54 @@
                 offset: '10px'
             });
         }
+
+        function closeNotifDancingDino() {
+            popupManager.show('/popups/[close]dancingdino/', {
+                fullPage: true
+            });
+        }
+
+        function closeNotifGoldshit() {
+            popupManager.show('/popups/[close]goldshit/', {
+                sizeSelector: '.notification-container',
+                corner: 'top-right',
+                offset: '0px'
+            });
+        }
+
+        function closeNotifMashiro() {
+            popupManager.show('/popups/[close]mashiro/', {
+                sizeSelector: '.notification-container',
+                edge: 'bottom',
+                offset: '0px'
+            });
+        }
+
+        function closeNotifMiyabiNO() {
+            popupManager.show('/popups/[close]miyabino/', {
+                sizeSelector: '.container'
+                // defaults to center of the page if no positioning
+            });
+        }
+
+        //============================
+
+        function closeBadAppleLisa() {
+            popupManager.show('/popups/[link][close]badapplelisa/', {
+                width: '445px',
+                height: '570px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeCockroach() {
+            popupManager.show('/popups/[link][close]cockroach/', {
+                fullPage: true
+            });
+        }
+
+        //============================
 
         function closeAll() {
             popupManager.closeAll();

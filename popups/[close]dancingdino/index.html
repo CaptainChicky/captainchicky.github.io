@@ -125,6 +125,7 @@
 			audio.muted = true;
 
 			document.body.style.display = 'none';
+			window.parent.postMessage('closePopup', '*');
 		}
 
 		function toggleMute(event) {

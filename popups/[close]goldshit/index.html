@@ -15,7 +15,7 @@
 		.notification-container {
 			position: fixed;
 			top: 0;
-			left: 0;
+			left: auto;
 			right: 0;
 			width: 390px;
 			margin: 2px;
@@ -23,7 +23,6 @@
 			display: flex;
 			align-items: center;
 			border-radius: 10px;
-			opacity: 0.99;
 			animation: slideInFromRight 0.3s ease-in-out forwards;
 		}
 
@@ -137,13 +136,10 @@
 		/* Animations */
 		@keyframes slideInFromRight {
 			from {
-				opacity: 0;
-				right: -50vw;
+				transform: translateX(100%);
 			}
-
 			to {
-				opacity: 1;
-				right: 0;
+				transform: translateX(0);
 			}
 		}
 	</style>
@@ -156,25 +152,51 @@
 				<a class="notification-card" rel="nofollow noopener" href="#">
 
 					<!-- Avatar -->
-					<span class="avatar-wrapper">
+					<span class="avatar-wrapper" id="avatar">
 						<span class="notification-badge">1</span>
 						<img class="avatar-image" src="./goldshit.png" alt="goldshitter">
 					</span>
 
 					<!-- Content -->
-					<div class="notification-content">
+					<div class="notification-content" id="content">
 						<p class="title-text">Goldshitter moment</p>
 						<p class="subtitle-text">Trainer detected Trainer detected</p>
 					</div>
 
 					<!-- Close Button -->
-					<div class="close-button">
+					<div class="close-button" id="close">
 						<div class="close-icon"></div>
 					</div>
 				</a>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		document.getElementById('content').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://umamusume.com/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('avatar').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://umamusume.com/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('close').addEventListener('click', function() {
+			window.parent.postMessage('closePopup', '*');
+		});
+	</script>
 </body>
 
 </html>

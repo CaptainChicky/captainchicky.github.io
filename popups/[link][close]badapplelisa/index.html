@@ -22,6 +22,29 @@
 			justify-content: center;
 		}
 
+		.wrapperWhole {
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
+
 		/* Notification Card Base */
 		.notification-card {
 			position: relative;
@@ -208,7 +231,9 @@
 </head>
 
 <body>
-	<div class="notification-card visible with-margin-bottom" contrast="light">
+
+	<div class="wrapperWhole">
+	<div class="notification-card visible with-margin-bottom" contrast="light" id="firstNotif">
 		<div class="notification-content">
 			<div class="notification-header">
 				<div class="icon-container badge-online">
@@ -231,13 +256,13 @@
 				</div>
 			</div>
 			<div class="action-buttons">
-				<div data-role="close" class="action-button button-close">Does a future exist in wasted time?</div>
-				<div class="action-button button-more">Do I even exist in a world like this?</div>
+				<div class="action-button button-close" id="surprise1">Does a future exist in wasted time?</div>
+				<div class="action-button button-more" id="surprise2">Do I even exist in a world like this?</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible with-margin-bottom" contrast="light">
+	<div class="notification-card visible with-margin-bottom" contrast="light" id="secondNotif">
 		<div class="notification-content">
 			<div class="notification-header">
 				<div class="icon-container badge-online">
@@ -254,11 +279,43 @@
 				</div>
 			</div>
 			<div class="action-buttons">
-				<div data-role="close" class="action-button button-close">See more information</div>
-				<div class="action-button button-more">Additional works</div>
+				<div class="action-button button-close" id="monalisamore">See more information</div>
+				<div class="action-button button-more" id="monalisaadditional">Additional works</div>
 			</div>
 		</div>
 	</div>
+	</div>
+
+	<script>
+		let counter = 0;
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				window.open(url, '_blank');
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 3000)
+				}
+			}, 300);
+		}
+
+		document.getElementById('surprise1').addEventListener('click', () => 
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('surprise2').addEventListener('click', () => 
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('monalisamore').addEventListener('click', () => 
+			handleClick('secondNotif', 'https://twitter.com/SquChan/status/1013864377211121664')
+		);
+		document.getElementById('monalisaadditional').addEventListener('click', () => 
+			handleClick('secondNotif', 'https://twitter.com/SquChan/media')
+		);
+	</script>
 </body>
 
 </html>

@@ -16,10 +16,10 @@
 			position: fixed;
 			top: 0;
 			left: 0;
-			right: 0;
+			right: auto;
 			width: 390px;
 			z-index: 2147483647;
-			animation: slideInFromRight 0.3s ease-in-out forwards;
+			animation: slideInFromLeft 0.3s ease-in-out forwards;
 		}
 
 		.notification-wrapper {
@@ -191,15 +191,14 @@
 		}
 
 		/* Animations */
-		@keyframes slideInFromRight {
+		@keyframes slideInFromLeft {
 			from {
+				transform: translateX(-100%);
 				opacity: 0;
-				right: -50vw;
 			}
-
 			to {
+				transform: translateX(0);
 				opacity: 1;
-				right: 0;
 			}
 		}
 
@@ -207,7 +206,6 @@
 			0% {
 				color: white;
 			}
-
 			100% {
 				color: black;
 			}

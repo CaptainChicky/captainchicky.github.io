@@ -36,22 +36,18 @@ class PopupManager {
             @keyframes fadeIn {
                 from {
                     opacity: 0;
-                    transform: scale(0.95);
                 }
                 to {
                     opacity: 1;
-                    transform: scale(1);
                 }
             }
             
             @keyframes fadeOut {
                 from {
                     opacity: 1;
-                    transform: scale(1);
                 }
                 to {
                     opacity: 0;
-                    transform: scale(0.95);
                 }
             }
         `;
@@ -88,7 +84,7 @@ class PopupManager {
      * @param {string} options.sizeSelector - CSS selector to match element size in iframe
      * @param {string} options.width - Manual width (e.g., '300px', '20rem', '50vw')
      * @param {string} options.height - Manual height (e.g., '200px', '15rem', '30vh')
-     * @param {boolean} options.fullPage - Render fullscreen (100vw x 100vh)
+     * @param {boolean} options.fullPage - Render fullscreen (100% x 100%)
      * 
      * POSITION OPTIONS (choose one):
      * @param {string} options.corner - 'top-left', 'top-right', 'bottom-left', 'bottom-right'
@@ -124,14 +120,20 @@ class PopupManager {
         iframe.src = popupData.path;
         iframe.scrolling = 'no';
         
+        // Hide initially if using sizeSelector (prevent flash)
+        if (popupData.sizeSelector) {
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+        }
+        
         // Apply sizing immediately if manual or fullPage
         if (popupData.fullPage) {
-            iframe.style.width = '100vw';
-            iframe.style.height = '100vh';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
             overlay.style.top = '0';
             overlay.style.left = '0';
-            overlay.style.width = '100vw';
-            overlay.style.height = '100vh';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
         } else if (popupData.width && popupData.height) {
             iframe.style.width = popupData.width;
             iframe.style.height = popupData.height;
@@ -152,11 +154,19 @@ class PopupManager {
                         iframe.style.height = rect.height + 'px';
                         
                         this.applyPosition(overlay, popupData);
+                        
+                        // Show after positioning is complete
+                        overlay.style.opacity = '1';
+                        overlay.style.visibility = 'visible';
                     } else {
                         console.warn(`Element not found: ${popupData.sizeSelector}`);
+                        overlay.style.opacity = '1';
+                        overlay.style.visibility = 'visible';
                     }
                 } catch (e) {
                     console.error('Cannot access iframe content (cross-origin):', e);
+                    overlay.style.opacity = '1';
+                    overlay.style.visibility = 'visible';
                 }
             });
         }

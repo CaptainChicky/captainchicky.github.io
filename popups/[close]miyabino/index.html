@@ -230,9 +230,9 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container" style="padding: 143px;">
 		<div class="icon-wrapper">
-			<div class="close-button">
+			<div class="close-button" id="close">
 				<div class="progress-ring">
 					<div class="progress-clip">
 						<div class="progress-fill"></div>
@@ -243,7 +243,7 @@
 				</div>
 			</div>
 
-			<div class="animated-icon">
+			<div class="animated-icon" id="content">
 				<img src="./miyabino.gif" class="icon-image" alt="Animated icon">
 
 				<svg class="radio-waves-svg" version="1.1" viewBox="0 0 390 200">
@@ -299,6 +299,26 @@
 			</div>
 		</div>
 	</div>
+
+	<script>
+		document.getElementById('content').addEventListener('click', function() {
+			// Navigate to the link in a new tab
+			window.open('https://twitter.com/X__Vanny/status/1887113056423231996/', '_blank');
+			
+			// After 3 seconds, tell parent to close popup
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
+		});
+
+		document.getElementById('close').addEventListener('click', function() {
+			window.open('https://www.reddit.com/r/ZZZ_Official/comments/1gpiksn/shes_all_ears/', '_blank');
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 300);
+		});
+	</script>
 </body>
 
 </html>
