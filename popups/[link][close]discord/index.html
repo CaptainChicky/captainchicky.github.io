@@ -23,6 +23,29 @@
 			justify-content: center;
 		}
 
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
+
+		.wrapperWhole {
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
+
 		/* Notification card container */
 		.notification-card {
 			position: relative;
@@ -153,12 +176,13 @@
 		.button {
 			width: 49%;
 			padding: 7px;
-			border-radius: 5px;
-			text-align: center;
 			cursor: pointer;
 			font: inherit;
 			border-radius: 10px;
 			font-weight: 700;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.button.primary {
@@ -225,7 +249,8 @@
 </head>
 
 <body class="notranslate">
-	<div class="notification-card visible" data-role="on-page" contrast="light">
+	<div class="wrapperWhole">
+	<div class="notification-card visible" data-role="on-page" contrast="light" id="firstNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="icon-container" data-role="icon-container">
@@ -238,16 +263,20 @@
 					</div>
 					<br>
 					<div class="button-container" contrast="light">
-						<div class="button primary">Visit https://discor<span
-								style="letter-spacing: -3px !important">c</span>l.com today!</div>
-						<div data-role="close" class="button secondary">×</div>
+						<div class="button primary" id="discord">
+							<!-- span wrapper to not fuck up the flexbox -->
+							<span style="text-align: center">
+								Visit https://discor<span style="letter-spacing: -3px !important">c</span>l.com today!
+							</span>
+						</div>
+						<div class="button secondary" id="closediscord">×</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="light">
+	<div class="notification-card visible" data-role="on-page" contrast="light" id="secondNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="icon-container" data-role="icon-container">
@@ -260,13 +289,47 @@
 					</div>
 					<br>
 					<div class="button-container" contrast="light">
-						<div class="button primary">Claim here</div>
-						<div data-role="close" class="button secondary">×</div>
+						<div class="button primary" id="nitro">Claim here</div>
+						<div class="button secondary" id="closenitro">×</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	</div>
+
+	<script>
+		let counter = 0;
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				if (url) {  // Only open if URL exists
+					window.open(url, '_blank');
+				}
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 3000)
+				}
+			}, 300);
+		}
+
+		document.getElementById('discord').addEventListener('click', () => 
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('closediscord').addEventListener('click', () => 
+			handleClick('firstNotif', null)
+		);
+		document.getElementById('nitro').addEventListener('click', () => 
+			handleClick('secondNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('closenitro').addEventListener('click', () => 
+			handleClick('secondNotif', null)
+		);
+	</script>
 </body>
 
 </html>

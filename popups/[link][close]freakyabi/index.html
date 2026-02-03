@@ -229,10 +229,14 @@
 			const wrapper = document.querySelector('.banner-wrapper');
 			wrapper.classList.add('spinning');
 
+			setTimeout(() => {
+				window.open('https://twitter.com/the_freakin_yui/status/1873659817832910970', '_blank');
+			}, 500);
+
 			// Wait for animation to complete before closing
 			setTimeout(() => {
 				window.parent.postMessage('closePopup', '*');
-			}, 800);
+			}, 3000);
 		}
 
 		function closePopup() {
@@ -242,7 +246,7 @@
 			// Wait for animation to complete before closing
 			setTimeout(() => {
 				window.parent.postMessage('closePopup', '*');
-			}, 300);
+			}, 3000);
 		}
 	</script>
 </body>

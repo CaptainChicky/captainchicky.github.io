@@ -91,6 +91,8 @@
         <div class="button-group">
             <button onclick="closeBadAppleLisa()">show bad apple/mona lisa notif (link+close)</button>
             <button onclick="closeCockroach()">show cockroach notif (link+close)</button>
+            <button onclick="closeDiscord()">show discord notif (link+close)</button>
+            <button onclick="closeFreakyabi()">show freaky miyabi notif (link+close)</button>
             <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
     </div>
@@ -177,6 +179,24 @@
         function closeCockroach() {
             popupManager.show('/popups/[link][close]cockroach/', {
                 fullPage: true
+            });
+        }
+
+        function closeDiscord() {
+            popupManager.show('/popups/[link][close]discord/', {
+                width: '660px',
+                height: '300px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeFreakyabi() {
+            popupManager.show('/popups/[link][close]freakyabi/', {
+                width: '450px',
+                height: '350px',
+                corner: 'top-left',
+                offset: '0px'
             });
         }
 
