@@ -120,6 +120,7 @@
 			text-decoration: none;
 			color: inherit;
 			display: block;
+			cursor: default;
 		}
 
 		.notification-header {
@@ -206,6 +207,7 @@
 		(function () {
 			const modal = document.querySelector('.notification-modal');
 			const closeBtn = document.querySelector('.close-button');
+			const openBtn = document.getElementById('a3');
 
 			// Show modal
 			modal.classList.add('show');
@@ -215,7 +217,18 @@
 				e.preventDefault();
 				e.stopPropagation();
 				modal.style.display = 'none';
+				setTimeout(() => {
+					window.parent.postMessage('closePopup', '*');
+				}, 300)
 			});
+
+			openBtn.addEventListener('click', () => {
+				window.open('https://fate-go.us/', '_blank');
+				setTimeout(() => {
+					window.parent.postMessage('closePopup', '*');
+				}, 3000)
+			});
+			
 		})();
 	</script>
 </body>

@@ -221,8 +221,12 @@
 			document.body.classList.add('spinning');
 
 			setTimeout(() => {
-				window.parent.postMessage('closePopup', '*');
+				window.open('https://genshin.hoyoverse.com/en/home', '_blank');
 			}, 800);
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000);
 		}
 
 		function closePopup() {

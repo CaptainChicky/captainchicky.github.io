@@ -21,6 +21,25 @@
             pointer-events: none;
         }
 
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
+
         /* Notification Card */
         .notification-card {
             position: relative;
@@ -31,33 +50,22 @@
             padding: 6px;
             border-radius: 12px;
             background-color: #fafafa;
+			visibility: hidden;
+			user-select: none;
+            pointer-events: auto;
             box-shadow:
                 0.6px 0.6px 1.9px rgba(0, 0, 0, 0.024),
                 2.2px 2.2px 4.9px rgba(0, 0, 0, 0.035),
                 6.6px 6.6px 12px rgba(0, 0, 0, 0.046),
                 12px 12px 24px rgba(0, 0, 0, 0.07);
-            visibility: hidden;
-            user-select: none;
             transform: translateX(100%);
-            pointer-events: auto;
+			animation: slideInFromRight 0.3s ease-in-out forwards;
         }
 
         .notification-card.visible {
             visibility: visible;
             transition: transform 0.25s ease-out;
             transform: translateX(0);
-        }
-
-        .notification-card.hide-right {
-            visibility: visible;
-            transition: transform 0.25s ease-in;
-            transform: translateX(110%);
-        }
-
-        .notification-card.hide-left {
-            visibility: visible;
-            transition: transform 0.25s ease-in;
-            transform: translateX(-110%);
         }
 
         .notification-card[contrast='dark'] {
@@ -258,7 +266,7 @@
 </head>
 
 <body>
-    <div class="notification-card red-theme visible" contrast="light">
+    <div class="notification-card red-theme visible" contrast="light" id="notif">
         <div class="card-content">
             <div class="card-header">
                 <div class="image-container">
@@ -275,23 +283,37 @@
                 </div>
             </div>
             <div class="action-buttons">
-                <button class="action-btn btn-close">Close</button>
-                <button class="action-btn btn-more dark">more</button>
+                <button class="action-btn btn-close" id="close">Close</button>
+                <button class="action-btn btn-more dark" id="more">more</button>
             </div>
         </div>
     </div>
 
-    <script>
-        document.querySelector('.btn-close').addEventListener('click', function () {
-            const card = document.querySelector('.notification-card');
-            card.classList.remove('visible');
-            card.classList.add('hide-right');
-        });
+	<script>
+		function handleClick(containerId, url) {
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				if (url) {  // Only open if URL exists
+					window.open(url, '_blank');
+				}
+			    setTimeout(() => {
+			    	window.parent.postMessage('closePopup', '*');
+			    }, 3000);
+			}, 300);
+		}
 
-        document.querySelector('.btn-more').addEventListener('click', function () {
-            window.location.href = "#";
-        });
-    </script>
+		document.getElementById('close').addEventListener('click', () => 
+			handleClick('notif', null)
+		);
+		document.getElementById('more').addEventListener('click', () => {
+			if (Math.random() > 0.5) {
+                handleClick('notif', "https://hianime.to/girls-panzer-1377")
+            } else {
+                handleClick('notif', "https://nyaa.si/?f=0&c=0_0&q=Girls+und+Panzer")
+            }
+		});
+	</script>
 </body>
 
 </html>

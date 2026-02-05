@@ -93,6 +93,12 @@
             <button onclick="closeCockroach()">show cockroach notif (link+close)</button>
             <button onclick="closeDiscord()">show discord notif (link+close)</button>
             <button onclick="closeFreakyabi()">show freaky miyabi notif (link+close)</button>
+            <button onclick="closeSSNIQ()">show SSN IQ test notif (link+close)</button>
+            <button onclick="closeGuP()">show girls und panzer notif (link+close)</button>
+            <button onclick="closeFGO()">show fgo notif (link+close)</button>
+            <button onclick="closeMiyabiMelon()">show miyabi melon notif (link+close)</button>
+            <button onclick="closepanther()">show panther notif (link+close)</button>
+            <button onclick="closeSandbina()">show sandbina notif (link+close)</button>
             <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
     </div>
@@ -170,7 +176,7 @@
         function closeBadAppleLisa() {
             popupManager.show('/popups/[link][close]badapplelisa/', {
                 width: '445px',
-                height: '570px',
+                height: '560px',
                 corner: 'top-right',
                 offset: '10px'
             });
@@ -197,6 +203,50 @@
                 height: '350px',
                 corner: 'top-left',
                 offset: '0px'
+            });
+        }
+
+        function closeSSNIQ() {
+            popupManager.show('/popups/[link][close]iqphone/', {
+                width: '650px',
+                height: '380px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeGuP() {
+            popupManager.show('/popups/[link][close]katyusha/', {
+                width: '450px',
+                height: '200px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeFGO() {
+            popupManager.show('/popups/[link][close]kiyohime/', {
+                fullPage: true
+            });
+        }
+
+        function closeMiyabiMelon() {
+            popupManager.show('/popups/[link][close]miyabimelon/', {
+                sizeSelector: '.notification-container',
+                corner: 'top-left',
+                offset: '0px'
+            });
+        }
+
+        function closepanther() {
+            popupManager.show('/popups/[link][close]pantherauction/', {
+                fullPage: true
+            });
+        }
+
+        function closeSandbina() {
+            popupManager.show('/popups/[link][close]sandbina/', {
+                fullPage: true
             });
         }
 

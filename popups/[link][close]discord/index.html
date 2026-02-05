@@ -42,10 +42,6 @@
 			}
 		}
 
-		.wrapperWhole {
-			animation: slideInFromRight 0.3s ease-in-out forwards;
-		}
-
 		/* Notification card container */
 		.notification-card {
 			position: relative;
@@ -60,6 +56,7 @@
 			visibility: hidden;
 			user-select: none;
 			transform: translateX(100%);
+			animation: slideInFromRight 0.3s ease-in-out forwards;
 		}
 
 		/* Colored theme */
@@ -249,7 +246,6 @@
 </head>
 
 <body class="notranslate">
-	<div class="wrapperWhole">
 	<div class="notification-card visible" data-role="on-page" contrast="light" id="firstNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
@@ -266,7 +262,7 @@
 						<div class="button primary" id="discord">
 							<!-- span wrapper to not fuck up the flexbox -->
 							<span style="text-align: center">
-								Visit https://discor<span style="letter-spacing: -3px !important">c</span>l.com today!
+								Visit https://discor<span style="letter-spacing: -2px !important">c</span>l.com today!
 							</span>
 						</div>
 						<div class="button secondary" id="closediscord">×</div>
@@ -295,7 +291,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 
 	<script>

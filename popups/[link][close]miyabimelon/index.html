@@ -253,7 +253,7 @@
 				<a class="notification-card" rel="nofollow noopener" href="#">
 
 					<!-- Header -->
-					<div class="notification-header">
+					<div class="notification-header" id="surprise">
 						<div class="header-icon"></div>
 						<span class="header-label">
 							Messages
@@ -263,12 +263,12 @@
 					</div>
 
 					<!-- Close Button -->
-					<div class="close-button">
+					<div class="close-button" id="close">
 						<div class="close-icon"></div>
 					</div>
 
 					<!-- Content -->
-					<div class="notification-content">
+					<div class="notification-content" id="melon">
 						<div class="notification-title">
 							<p class="title-text">Miyabi sent you 7 photo (very good photo)</p>
 							<p class="subtitle-text">Click to see melon (very good melon)</p>
@@ -285,15 +285,41 @@
 
 					<!-- Action Buttons -->
 					<div class="action-buttons">
-						<a class="button button-protect" href="#">
+						<a class="button button-protect" href="#" id="melon2">
 							See the melon🍈
 						</a>
-						<a class="button button-close">Close</a>
+						<a class="button button-close" id="close2">Close</a>
 					</div>
 				</a>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		function handleClick(url) {
+			window.open(url, '_blank');
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 3000)
+		}
+
+		document.getElementById('melon').addEventListener('click', () => 
+			handleClick('https://twitter.com/Unajyudayo/status/1981283955912691910')
+		);
+		document.getElementById('melon2').addEventListener('click', () => 
+			handleClick('https://www.reddit.com/r/ZenlessZoneZero/comments/1m2zph0/miyabi_eating_melon_by_ruiuncle/')
+		);
+		document.getElementById('surprise').addEventListener('click', () => 
+			handleClick('/Archive/Surprise!!!/')
+		);
+
+		document.getElementById('close').addEventListener('click', function() {
+			window.parent.postMessage('closePopup', '*');
+		});
+		document.getElementById('close2').addEventListener('click', function() {
+			window.parent.postMessage('closePopup', '*');
+		});
+	</script>
 </body>
 
 </html>

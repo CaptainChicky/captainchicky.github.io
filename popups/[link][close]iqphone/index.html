@@ -23,6 +23,25 @@
 			justify-content: center;
 		}
 
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
+
 		/* Notification card container */
 		.notification-card {
 			position: relative;
@@ -37,6 +56,7 @@
 			visibility: hidden;
 			user-select: none;
 			transform: translateX(100%);
+			animation: slideInFromRight 0.3s ease-in-out forwards;
 		}
 
 		/* Colored theme */
@@ -251,7 +271,7 @@
 </head>
 
 <body class="notranslate">
-	<div class="notification-card visible" data-role="on-page" contrast="dark">
+	<div class="notification-card visible" data-role="on-page" contrast="dark" id="firstNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="text-content">
@@ -265,13 +285,13 @@
 				</div>
 			</div>
 			<div class="button-container full-width" contrast="dark">
-				<div class="button action primary">99% can't solve this question. Can you?</div>
-				<div data-role="close" class="button action secondary">×</div>
+				<div class="button action primary" id="SSN">99% can't solve this question. Can you?</div>
+				<div class="button action secondary" id="SSNclose">×</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="dark">
+	<div class="notification-card visible" data-role="on-page" contrast="dark" id="secondNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="text-content">
@@ -283,11 +303,44 @@
 				</div>
 			</div>
 			<div class="button-container full-width" contrast="dark">
-				<div class="button action primary">SAVE your iPhone NOW!</div>
-				<div data-role="close" class="button action secondary">×</div>
+				<div class="button action primary" id="phone">SAVE your iPhone NOW!</div>
+				<div class="button action secondary" id="phoneclose">×</div>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		let counter = 0;
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				if (url) {  // Only open if URL exists
+					window.open(url, '_blank');
+				}
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 3000)
+				}
+			}, 300);
+		}
+
+		document.getElementById('SSN').addEventListener('click', () => 
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('SSNclose').addEventListener('click', () => 
+			handleClick('firstNotif', null)
+		);
+		document.getElementById('phone').addEventListener('click', () => 
+			handleClick('secondNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('phoneclose').addEventListener('click', () => 
+			handleClick('secondNotif', null)
+		);
+	</script>
 </body>
 
 </html>
