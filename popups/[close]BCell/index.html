@@ -262,7 +262,7 @@
 			// After 3 seconds, tell parent to close popup
 			setTimeout(() => {
 				window.parent.postMessage('closePopup', '*');
-			}, 2000);
+			}, 1000);
 		});
 
 		document.getElementById('surprise').addEventListener('click', function() {
@@ -272,7 +272,7 @@
 			// After 3 seconds, tell parent to close popup
 			setTimeout(() => {
 				window.parent.postMessage('closePopup', '*');
-			}, 2000);
+			}, 1000);
 		});
 
 		document.getElementById('close').addEventListener('click', function() {
