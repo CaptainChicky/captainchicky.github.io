@@ -58,8 +58,6 @@
 		/* Visible state */
 		.notification-card.visible {
 			visibility: visible;
-			transition: transform .3s ease-in;
-			transform: translateX(0);
 		}
 
 		/* Icon container */
@@ -168,6 +166,7 @@
 			color: #2172e7;
 			font-weight: 700;
 			font-size: 15px;
+			cursor: pointer;
 		}
 
 		.action-button.primary {
@@ -187,7 +186,6 @@
 			border-radius: 5px;
 			text-align: center;
 			text-transform: capitalize;
-			cursor: pointer;
 		}
 
 		.button.primary-alt {
@@ -212,11 +210,34 @@
 			background-color: #2172e7;
 			color: #fff;
 		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
+
+		.notification-card {
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
 	</style>
 </head>
 
 <body class="notranslate">
-	<div class="notification-card visible" data-role="on-page" contrast="colored">
+	<div class="notification-card visible" data-role="on-page" contrast="colored" id="firstNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="text-content">
@@ -228,13 +249,13 @@
 				</div>
 			</div>
 			<div class="button-container full-width" contrast="colored">
-				<div class="action-button primary">Click here to fix your iPhone!</div>
-				<div data-role="close" class="action-button close">×</div>
+				<div class="action-button primary" id="settingsLink">Click here to fix your iPhone!</div>
+				<div class="action-button close" id="settingsClose">×</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="colored">
+	<div class="notification-card visible" data-role="on-page" contrast="colored" id="secondNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
 				<div class="text-content">
@@ -245,11 +266,45 @@
 				</div>
 			</div>
 			<div class="button-container full-width" contrast="colored">
-				<div class="action-button primary">Claim here!</div>
-				<div data-role="close" class="action-button close">×</div>
+				<div class="action-button primary" id="amazonLink">Claim here!</div>
+				<div class="action-button close" id="amazonClose">×</div>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		let counter = 0;
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				container.style.visibility = 'hidden';
+				if (url) {
+					window.open(url, '_blank');
+				}
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 1000)
+				}
+			}, 300);
+		}
+
+		document.getElementById('settingsLink').addEventListener('click', () =>
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('settingsClose').addEventListener('click', () =>
+			handleClick('firstNotif', null)
+		);
+		document.getElementById('amazonLink').addEventListener('click', () =>
+			handleClick('secondNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('amazonClose').addEventListener('click', () =>
+			handleClick('secondNotif', null)
+		);
+	</script>
 </body>
 
 </html>

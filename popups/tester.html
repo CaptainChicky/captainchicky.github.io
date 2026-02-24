@@ -99,6 +99,10 @@
             <button onclick="closeMiyabiMelon()">show miyabi melon notif (link+close)</button>
             <button onclick="closepanther()">show panther notif (link+close)</button>
             <button onclick="closeSandbina()">show sandbina notif (link+close)</button>
+            <button onclick="closeSturmtiger()">show sturmtiger notif (link+close)</button>
+            <button onclick="closeSettingsAmazon()">show settings/amazon notif (link+close)</button>
+            <button onclick="closeVPNRaid()">show vpn/raid notif (link+close)</button>
+            <button onclick="closeWaltuhFirewall()">show waltuh firewall notif (link+close)</button>
             <button class="danger" onclick="closeAll()">Close All Popups</button>
         </div>
     </div>
@@ -247,6 +251,39 @@
         function closeSandbina() {
             popupManager.show('/popups/[link][close]sandbina/', {
                 fullPage: true
+            });
+        }
+
+        function closeSturmtiger() {
+            popupManager.show('/popups/[link][close]sturmtiger/', {
+                fullPage: true
+            });
+        }
+
+        function closeSettingsAmazon() {
+            popupManager.show('/popups/[link][close]settingsamazon/', {
+                width: '520px',
+                height: '300px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeVPNRaid() {
+            popupManager.show('/popups/[link][close]vpnraid/', {
+                width: '534px',
+                height: '640px',
+                corner: 'top-right',
+                offset: '10px'
+            });
+        }
+
+        function closeWaltuhFirewall() {
+            popupManager.show('/popups/[link][close]waltuhfirewall/', {
+                width: '520px',
+                height: '365px',
+                corner: 'top-right',
+                offset: '10px'
             });
         }
 

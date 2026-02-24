@@ -34,17 +34,8 @@
 			border-bottom: 2px solid #9f9f9f;
 			box-shadow: none;
 			background-color: #fafafa;
-			visibility: hidden;
 			user-select: none;
-			opacity: 0;
-			transform: scale(0);
-			transition: all .4s ease-in;
-		}
-
-		.notification-card.visible {
-			opacity: 1;
-			visibility: visible;
-			transform: scale(1);
+			animation: slideInFromRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 		}
 
 		.notification-card[contrast=colored] {
@@ -185,7 +176,6 @@
 		/* Header Banner */
 		.header-banner {
 			width: 100%;
-			padding: 10px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -195,15 +185,8 @@
 			background-color: #2172e7;
 			color: #fff;
 			font-weight: 700;
-			visibility: hidden;
 			user-select: none;
-			transform: translateY(-100%);
-		}
-
-		.header-banner.visible {
-			visibility: visible;
-			transition: transform .1s ease-in;
-			transform: translateY(0);
+			animation: slideInFromRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 		}
 
 		.notification-card:last-of-type {
@@ -211,16 +194,41 @@
 			border-bottom-left-radius: 12px !important;
 			border-bottom-right-radius: 12px !important;
 		}
+
+		.notification-card.last-notif {
+			border-bottom: none !important;
+			border-bottom-left-radius: 12px !important;
+			border-bottom-right-radius: 12px !important;
+		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
 	</style>
 </head>
 
 <body>
-	<div class="header-banner visible">NEW MESSAGES</div>
+	<div class="header-banner">NEW MESSAGES</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="colored">
+	<div class="notification-card" contrast="colored" id="firstNotif">
 		<div class="notification-content">
 			<div class="notification-body">
-				<div class="icon-container badge-counter badge-online" data-role="icon-container">
+				<div class="icon-container badge-counter badge-online">
 					<img class="icon-image" src="./newdrug.png">
 				</div>
 				<div class="text-content">
@@ -230,16 +238,16 @@
 				<div class="timestamp">now</div>
 			</div>
 			<div class="action-buttons" contrast="colored">
-				<div data-role="close" class="action-button button-close">×</div>
-				<div class="action-button button-more">more</div>
+				<div class="action-button button-close" id="drugClose">×</div>
+				<div class="action-button button-more" id="drugMore">more</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="colored">
+	<div class="notification-card" contrast="colored" id="secondNotif">
 		<div class="notification-content">
 			<div class="notification-body">
-				<div class="icon-container badge-counter badge-online" data-role="icon-container">
+				<div class="icon-container badge-counter badge-online">
 					<img class="icon-image" src="./firewall.jpg">
 				</div>
 				<div class="text-content">
@@ -249,11 +257,85 @@
 				<div class="timestamp">3 minutes ago</div>
 			</div>
 			<div class="action-buttons" contrast="colored">
-				<div data-role="close" class="action-button button-close">×</div>
-				<div class="action-button button-more">more</div>
+				<div class="action-button button-close" id="firewallClose">×</div>
+				<div class="action-button button-more" id="firewallMore">more</div>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		let counter = 0;
+		let firstClosed = false;
+		let secondClosed = false;
+
+		function slideOutHeader() {
+			const header = document.querySelector('.header-banner');
+			header.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				header.style.visibility = 'hidden';
+			}, 300);
+		}
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			const firstNotif = document.getElementById('firstNotif');
+			const secondNotif = document.getElementById('secondNotif');
+
+			if (containerId === 'secondNotif') {
+				// Bottom notif closed, slide it out, then make first notif the "last notif" (rounded edges)
+				secondClosed = true;
+				container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+				if (firstClosed) {
+					slideOutHeader();
+				}
+				setTimeout(() => {
+					container.style.display = 'none';
+					if (!firstClosed) {
+						firstNotif.classList.add('last-notif');
+					}
+				}, 300);
+			} else if (containerId === 'firstNotif') {
+				// First notif closed, slide it out, then slide bottom notif up to fill gap
+				firstClosed = true;
+				container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+				if (secondClosed) {
+					slideOutHeader();
+				}
+				setTimeout(() => {
+					container.style.display = 'none';
+					if (!secondClosed) {
+						secondNotif.style.transition = 'margin-top 0.3s ease-out';
+						secondNotif.style.marginTop = '-' + container.offsetHeight + 'px';
+					}
+				}, 300);
+			}
+
+			setTimeout(() => {
+				if (url) {
+					window.open(url, '_blank');
+				}
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 1000);
+				}
+			}, 300);
+		}
+
+		document.getElementById('drugMore').addEventListener('click', () =>
+			handleClick('firstNotif', 'https://www.sciencemadness.org/whisper/')
+		);
+		document.getElementById('drugClose').addEventListener('click', () =>
+			handleClick('firstNotif', null)
+		);
+		document.getElementById('firewallMore').addEventListener('click', () =>
+			handleClick('secondNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('firewallClose').addEventListener('click', () =>
+			handleClick('secondNotif', null)
+		);
+	</script>
 </body>
 
 </html>

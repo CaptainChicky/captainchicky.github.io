@@ -21,18 +21,18 @@ class PopupManager {
                 pointer-events: auto;
                 animation: fadeIn 0.3s ease-out;
             }
-            
+
             .popup-manager-overlay iframe {
                 border: none;
                 background: transparent;
                 display: block;
                 pointer-events: auto;
             }
-            
+
             .popup-manager-overlay.closing {
                 animation: fadeOut 0.3s ease-in forwards;
             }
-            
+
             @keyframes fadeIn {
                 from {
                     opacity: 0;
@@ -106,7 +106,7 @@ class PopupManager {
             center: options.center || null,
             offset: options.offset || '20px'
         };
-        
+
         this.createPopup(popupData);
         return popupData.id;
     }

@@ -263,14 +263,39 @@
 		.button.secondary {
 			color: #020202 !important;
 		}
+
+		.wrapperWhole {
+			animation: slideInFromRight 0.3s ease-in-out forwards;
+		}
+
+		/* Animations */
+		@keyframes slideInFromRight {
+			from {
+				transform: translateX(100%);
+			}
+			to {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes slideOutToRight {
+			from {
+				transform: translateX(0);
+			}
+			to {
+				transform: translateX(150%);
+			}
+		}
 	</style>
 </head>
 
 <body class="notranslate">
-	<div class="notification-card visible" data-role="on-page" contrast="light">
+
+	<div class="wrapperWhole">
+	<div class="notification-card visible" contrast="light" id="firstNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
-				<div class="icon-container has-badge active-badge" data-role="icon-container">
+				<div class="icon-container has-badge active-badge">
 					<img class="icon-image rounded" src="./RSL.jpg" alt="Raid: Shadow Legends">
 				</div>
 				<div class="text-content">
@@ -282,23 +307,23 @@
 				<div class="message-bubble">
 					<div class="message-text"
 						style="color:black;padding-left:1rem;padding-right:1rem;padding-bottom:1rem;">
-						Today's video is sponsored by Raid Shadow Legends, one of the biggest mobile role-playing 
-						games of 2019 and it's totally free! Click the link in the description to get 50,000 silver 
+						Today's video is sponsored by Raid Shadow Legends, one of the biggest mobile role-playing
+						games of 2019 and it's totally free! Click the link in the description to get 50,000 silver
 						and a free epic champion to start your journey!
 					</div>
 				</div>
 			</div>
 			<div class="button-container" contrast="light">
-				<div data-role="close" class="button secondary">×</div>
-				<div class="button primary">more</div>
+				<div class="button secondary" id="raidClose">×</div>
+				<div class="button primary" id="raidMore">more</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="notification-card visible" data-role="on-page" contrast="light">
+	<div class="notification-card visible" contrast="light" id="secondNotif">
 		<div class="content-wrapper">
 			<div class="top-row">
-				<div class="icon-container has-badge active-badge" data-role="icon-container">
+				<div class="icon-container has-badge active-badge">
 					<img class="icon-image rounded" src="./nordVPN.png" alt="NordVPN">
 				</div>
 				<div class="text-content">
@@ -312,17 +337,51 @@
 						style="color:black;padding-left:1rem;padding-right:1rem;padding-bottom:1rem;">
 						This video is sponsored by NordVPN. Staying safe online is an ever growing difficulty and you
 						could be exploited by hackers. NordVPN allows you to change your IP address, making you harder
-						to track, securing your privacy. Check out the link in the description to get 20% off for the 
+						to track, securing your privacy. Check out the link in the description to get 20% off for the
 						first two months.
 					</div>
 				</div>
 			</div>
 			<div class="button-container" contrast="light">
-				<div data-role="close" class="button secondary">×</div>
-				<div class="button primary">more</div>
+				<div class="button secondary" id="vpnClose">×</div>
+				<div class="button primary" id="vpnMore">more</div>
 			</div>
 		</div>
 	</div>
+	</div>
+
+	<script>
+		let counter = 0;
+
+		function handleClick(containerId, url) {
+			counter++;
+			const container = document.getElementById(containerId);
+			container.style.animation = 'slideOutToRight 0.3s ease-in-out forwards';
+			setTimeout(() => {
+				if (url) {
+					window.open(url, '_blank');
+				}
+				if (counter >= 2) {
+					setTimeout(() => {
+						window.parent.postMessage('closePopup', '*');
+					}, 1000)
+				}
+			}, 300);
+		}
+
+		document.getElementById('raidMore').addEventListener('click', () =>
+			handleClick('firstNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('raidClose').addEventListener('click', () =>
+			handleClick('firstNotif', null)
+		);
+		document.getElementById('vpnMore').addEventListener('click', () =>
+			handleClick('secondNotif', '/Archive/Surprise!!!/')
+		);
+		document.getElementById('vpnClose').addEventListener('click', () =>
+			handleClick('secondNotif', null)
+		);
+	</script>
 </body>
 
 </html>

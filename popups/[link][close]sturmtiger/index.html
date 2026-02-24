@@ -200,8 +200,12 @@
 			document.body.classList.add('spinning');
 
 			setTimeout(() => {
-				window.parent.postMessage('closePopup', '*');
+				window.open('https://www.youtube.com/watch?v=8ZRy9Xz2IQA', '_blank');
 			}, 800);
+
+			setTimeout(() => {
+				window.parent.postMessage('closePopup', '*');
+			}, 1000);
 		}
 
 		function closePopup() {
