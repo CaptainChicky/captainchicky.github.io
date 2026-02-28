@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #ccd;
+			font: 13px monospace;
+			background: rgba(10, 10, 20, 0.7);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to cut new section</div>
+	<script>
+		const c = document.getElementById('c'), ctx = c.getContext('2d');
+		const P = new Uint8Array(512);
+		function seed() { for (let i = 0; i < 256; i++)P[i] = P[i + 256] = Math.random() * 256 | 0; }
+		function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+		function lerp(a, b, t) { return a + (b - a) * t; }
+		function grad(h, x, y) { const a = h & 3; return a === 0 ? x + y : a === 1 ? -x + y : a === 2 ? x - y : -x - y; }
+		function noise(x, y) { const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, xf = x - Math.floor(x), yf = y - Math.floor(y); const u = fade(xf), v = fade(yf); return lerp(lerp(grad(P[P[X] + Y], xf, yf), grad(P[P[X + 1] + Y], xf - 1, yf), u), lerp(grad(P[P[X] + Y + 1], xf, yf - 1), grad(P[P[X + 1] + Y + 1], xf - 1, yf - 1), u), v); }
+		function fbm(x, y, n) { let v = 0, a = 0.5, f = 1; for (let i = 0; i < n; i++) { v += a * noise(x * f, y * f); a *= 0.5; f *= 2; } return v; }
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+
+		// Michel-Lévy birefringence color chart approximation
+		function birefringenceColor(retardation) {
+			// retardation 0-3 maps through orders of interference colors
+			const r = ((retardation % 1) + 1) % 1;
+			const order = Math.floor(retardation) % 4;
+			let R, G, B;
+			if (order === 0) {
+				// 1st order: grey→white→yellow→orange→red→purple
+				if (r < 0.15) { R = lerp(40, 255, r / 0.15); G = lerp(40, 255, r / 0.15); B = lerp(40, 255, r / 0.15); }
+				else if (r < 0.35) { R = 255; G = lerp(255, 230, ((r - 0.15) / 0.2)); B = lerp(255, 100, (r - 0.15) / 0.2); }
+				else if (r < 0.55) { R = 255; G = lerp(230, 130, (r - 0.35) / 0.2); B = lerp(100, 30, (r - 0.35) / 0.2); }
+				else if (r < 0.75) { R = lerp(255, 200, (r - 0.55) / 0.2); G = lerp(130, 40, (r - 0.55) / 0.2); B = lerp(30, 80, (r - 0.55) / 0.2); }
+				else { R = lerp(200, 140, (r - 0.75) / 0.25); G = lerp(40, 20, (r - 0.75) / 0.25); B = lerp(80, 160, (r - 0.75) / 0.25); }
+			} else if (order === 1) {
+				// 2nd order: indigo→blue→green→yellow→orange→pink
+				if (r < 0.2) { R = lerp(100, 30, r / 0.2); G = lerp(30, 80, r / 0.2); B = lerp(180, 220, r / 0.2); }
+				else if (r < 0.4) { R = lerp(30, 50, (r - 0.2) / 0.2); G = lerp(80, 200, (r - 0.2) / 0.2); B = lerp(220, 130, (r - 0.2) / 0.2); }
+				else if (r < 0.6) { R = lerp(50, 220, (r - 0.4) / 0.2); G = lerp(200, 220, (r - 0.4) / 0.2); B = lerp(130, 40, (r - 0.4) / 0.2); }
+				else if (r < 0.8) { R = lerp(220, 255, (r - 0.6) / 0.2); G = lerp(220, 150, (r - 0.6) / 0.2); B = lerp(40, 50, (r - 0.6) / 0.2); }
+				else { R = lerp(255, 230, (r - 0.8) / 0.2); G = lerp(150, 100, (r - 0.8) / 0.2); B = lerp(50, 120, (r - 0.8) / 0.2); }
+			} else if (order === 2) {
+				// 3rd order: blue-violet→blue-green→green→yellow-green→pink
+				if (r < 0.25) { R = lerp(120, 40, r / 0.25); G = lerp(60, 140, r / 0.25); B = lerp(200, 210, r / 0.25); }
+				else if (r < 0.5) { R = lerp(40, 80, (r - 0.25) / 0.25); G = lerp(140, 210, (r - 0.25) / 0.25); B = lerp(210, 100, (r - 0.25) / 0.25); }
+				else if (r < 0.75) { R = lerp(80, 200, (r - 0.5) / 0.25); G = lerp(210, 210, (r - 0.5) / 0.25); B = lerp(100, 60, (r - 0.5) / 0.25); }
+				else { R = lerp(200, 220, (r - 0.75) / 0.25); G = lerp(210, 120, (r - 0.75) / 0.25); B = lerp(60, 140, (r - 0.75) / 0.25); }
+			} else {
+				// higher orders: pastel washed out
+				R = 180 + Math.sin(r * Math.PI * 2) * 40; G = 180 + Math.sin(r * Math.PI * 2 + 2) * 40; B = 180 + Math.sin(r * Math.PI * 2 + 4) * 40;
+			}
+			return [R, G, B];
+		}
+
+		let job = null;
+
+		function generate() {
+			if (job) { cancelAnimationFrame(job); job = null; }
+			seed();
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+
+			// generate voronoi crystal grains
+			const grainCount = ri(30, 80);
+			const grains = [];
+			const ox = rr(0, 200), oy = rr(0, 200);
+			const rockType = ri(0, 4); // 0=granite, 1=gabbro, 2=sandstone, 3=gneiss
+
+			for (let i = 0; i < grainCount; i++) {
+				const x = rr(0, W), y = rr(0, H);
+				// mineral type per grain
+				let mineral;
+				if (rockType === 0) mineral = pick(['quartz', 'feldspar', 'feldspar', 'mica', 'mica', 'hornblende']);
+				else if (rockType === 1) mineral = pick(['olivine', 'pyroxene', 'pyroxene', 'plagioclase', 'plagioclase', 'magnetite']);
+				else if (rockType === 2) mineral = pick(['quartz', 'quartz', 'quartz', 'feldspar', 'calcite', 'clay']);
+				else mineral = pick(['quartz', 'feldspar', 'garnet', 'mica', 'mica', 'pyroxene']);
+
+				const crystalAngle = rr(0, Math.PI); // crystallographic orientation
+				const biref = mineral === 'quartz' ? rr(0.3, 0.8) :
+					  mineral === 'feldspar' ? rr(0.5, 1.2) :
+					  mineral === 'mica' ? rr(1.2, 2.5) :
+					  mineral === 'olivine' ? rr(1.5, 2.8) :
+					  mineral === 'pyroxene' ? rr(1, 2) :
+					  mineral === 'hornblende' ? rr(0.8, 1.8) :
+					  mineral === 'plagioclase' ? rr(0.4, 1) :
+					  mineral === 'garnet' ? rr(0, 0.05) : // isotropic
+					  mineral === 'magnetite' ? 0 : // opaque
+					  mineral === 'calcite' ? rr(2, 3.5) :
+					  mineral === 'clay' ? rr(0.2, 0.6) : 0.5;
+
+				const twinning = mineral === 'plagioclase' ? Math.random() > 0.3 :
+					  mineral === 'feldspar' ? Math.random() > 0.5 : false;
+				const twinCount = twinning ? ri(3, 12) : 0;
+				const twinAngle = rr(0, Math.PI);
+				const cleavage = (mineral === 'mica' || mineral === 'pyroxene' || mineral === 'hornblende') ? rr(0, Math.PI) : null;
+				const cleavage2 = mineral === 'pyroxene' ? cleavage + rr(0.7, 1.1) : mineral === 'hornblende' ? cleavage + rr(1, 1.3) : null;
+				const extinction = rr(0, Math.PI / 2);
+				const zoneSeed = rr(0, 100);
+				const zoning = mineral === 'plagioclase' || mineral === 'garnet' ? Math.random() > 0.4 : false;
+				const fractured = Math.random() > 0.85;
+				const fracSeed = rr(0, 100);
+
+				grains.push({
+					x, y, mineral, crystalAngle, biref, twinning, twinCount, twinAngle,
+					cleavage, cleavage2, extinction, zoneSeed, zoning, fractured, fracSeed
+				});
+			}
+
+			const ROWS = 8;
+			let row = 0;
+
+			ctx.fillStyle = '#0a0a12'; ctx.fillRect(0, 0, W, H);
+
+			function renderChunk() {
+				const end = Math.min(row + ROWS, H);
+				const img = ctx.createImageData(W, end - row);
+				const d = img.data;
+				let p = 0;
+
+				for (let y = row; y < end; y++) {
+					for (let x = 0; x < W; x++) {
+						// find closest grain (voronoi)
+						let minD = Infinity, minI = 0, secD = Infinity;
+						for (let i = 0; i < grains.length; i++) {
+							const dx = x - grains[i].x, dy = y - grains[i].y;
+							const dist = dx * dx + dy * dy;
+							if (dist < minD) { secD = minD; minI = i; minD = dist; }
+							else if (dist < secD) secD = dist;
+						}
+						const g = grains[minI];
+						const md = Math.sqrt(minD), sd = Math.sqrt(secD);
+						const edge = sd - md;
+
+						// grain boundary
+						if (edge < 1.8) {
+							d[p++] = 15; d[p++] = 15; d[p++] = 20; d[p++] = 255;
+							continue;
+						}
+
+						let R, G, B;
+						const dx = x - g.x, dy = y - g.y;
+						const localAng = Math.atan2(dy, dx);
+
+						if (g.mineral === 'magnetite') {
+							// opaque
+							R = 5 + rr(-2, 2); G = 5 + rr(-2, 2); B = 8 + rr(-2, 2);
+						} else if (g.mineral === 'garnet' && !g.zoning) {
+							// isotropic
+							const n = fbm(x * 0.03 + g.zoneSeed, y * 0.03, 2) * 0.15;
+							R = 25 + n * 50; G = 20 + n * 40; B = 25 + n * 45;
+						} else {
+							// birefringent
+							const nx = x * 0.005, ny = y * 0.005;
+
+							// crystal orientation + noise
+							let effAngle = g.crystalAngle + fbm(nx + g.zoneSeed, ny + g.zoneSeed, 2) * 0.2;
+
+							// twinning
+							if (g.twinning) {
+								const tProj = Math.cos(g.twinAngle) * dx + Math.sin(g.twinAngle) * dy;
+								const tBand = Math.sin(tProj * g.twinCount * 0.15);
+								if (tBand > 0) effAngle += Math.PI / 4 + rr(-0.05, 0.05);
+							}
+
+							// extinction angle relative to polarizer
+							const polarizerAngle = 0;
+							const analyzerAngle = Math.PI / 2;
+							const theta = effAngle - polarizerAngle + g.extinction;
+
+							// intensity sin^2(2θ) for crossed polars
+							const intensity = Math.pow(Math.sin(2 * theta), 2);
+
+							// retardation with optional zoning
+							let retardation = g.biref;
+							if (g.zoning) {
+								const zoneDist = md * 0.02;
+								retardation += Math.sin(zoneDist + g.zoneSeed) * 0.4;
+							}
+
+							// texture noise within grain
+							retardation += fbm(nx * 2 + g.zoneSeed, ny * 2, 2) * 0.15;
+
+							const col = birefringenceColor(retardation);
+							const bright = 0.15 + intensity * 0.85;
+
+							R = col[0] * bright; G = col[1] * bright; B = col[2] * bright;
+
+							// cleavage lines
+							if (g.cleavage !== null) {
+								const cProj = Math.abs(Math.cos(g.cleavage) * dx + Math.sin(g.cleavage) * dy);
+								const cLine = cProj % rr(12, 18);
+								if (cLine < 0.8) { R *= 0.6; G *= 0.6; B *= 0.6; }
+								if (g.cleavage2 !== null) {
+									const c2Proj = Math.abs(Math.cos(g.cleavage2) * dx + Math.sin(g.cleavage2) * dy);
+									const c2Line = c2Proj % rr(12, 18);
+									if (c2Line < 0.8) { R *= 0.6; G *= 0.6; B *= 0.6; }
+								}
+							}
+
+							// fractures
+							if (g.fractured) {
+								const fn = fbm(x * 0.02 + g.fracSeed, y * 0.02 + g.fracSeed, 3);
+								if (Math.abs(fn) < 0.015) { R *= 0.3; G *= 0.3; B *= 0.3; }
+							}
+
+							// garnet zoning visible as color rings
+							if (g.mineral === 'garnet' && g.zoning) {
+								const zoneR = md * 0.04 + g.zoneSeed;
+								const zoneCol = Math.sin(zoneR) * 0.5 + 0.5;
+								R = lerp(30, 100, zoneCol) + rr(-5, 5);
+								G = lerp(15, 40, zoneCol) + rr(-3, 3);
+								B = lerp(20, 50, 1 - zoneCol) + rr(-3, 3);
+							}
+						}
+
+						// subtle grain boundary halo (thicker crystal edge darkening)
+						if (edge < 6) { const t = (edge - 1.8) / 4.2; R *= 0.7 + 0.3 * t; G *= 0.7 + 0.3 * t; B *= 0.7 + 0.3 * t; }
+
+						// film grain
+						const gn = rr(-3, 3);
+						d[p++] = Math.max(0, Math.min(255, R + gn)) | 0;
+						d[p++] = Math.max(0, Math.min(255, G + gn)) | 0;
+						d[p++] = Math.max(0, Math.min(255, B + gn)) | 0;
+						d[p++] = 255;
+					}
+				}
+				ctx.putImageData(img, 0, row);
+				row = end;
+				if (row < H) { job = requestAnimationFrame(renderChunk); }
+				else { drawOverlay(); job = null; }
+			}
+
+			function drawOverlay() {
+				const scopeR = dim * 0.46;
+
+				// scope mask
+				ctx.save();
+				ctx.fillStyle = '#000';
+				ctx.beginPath(); ctx.rect(0, 0, W, H);
+				ctx.arc(W / 2, H / 2, scopeR, 0, Math.PI * 2, true);
+				ctx.fill();
+				ctx.strokeStyle = 'rgba(60,60,80,0.4)'; ctx.lineWidth = 3;
+				ctx.beginPath(); ctx.arc(W / 2, H / 2, scopeR, 0, Math.PI * 2); ctx.stroke();
+				ctx.restore();
+
+				// lens edge glow
+				const eg = ctx.createRadialGradient(W / 2, H / 2, scopeR * 0.85, W / 2, H / 2, scopeR);
+				eg.addColorStop(0, 'transparent'); eg.addColorStop(1, 'rgba(0,0,0,0.5)');
+				ctx.fillStyle = eg; ctx.fillRect(0, 0, W, H);
+
+				// crosshair
+				ctx.strokeStyle = 'rgba(160,160,190,0.9)'; ctx.lineWidth = 1;
+				ctx.beginPath(); ctx.moveTo(W / 2 - 25, H / 2); ctx.lineTo(W / 2 + 25, H / 2); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(W / 2, H / 2 - 25); ctx.lineTo(W / 2, H / 2 + 25); ctx.stroke();
+
+				// HUD
+				ctx.save();
+				ctx.shadowColor = 'rgba(140,140,200,0.6)';
+				ctx.shadowBlur = 10;
+				ctx.fillStyle = 'rgba(180,180,210,1)';
+				ctx.font = `${dim * 0.018 | 0}px monospace`;
+				ctx.textAlign = 'left';
+				const rockNames = ['GRANITE', 'GABBRO', 'SANDSTONE', 'GNEISS'];
+				ctx.fillText(`XPL · ${pick(['4x', '10x', '20x', '40x'])} · ${rockNames[rockType]}`, W / 2 - scopeR + 15, H / 2 + scopeR - 15);
+				ctx.textAlign = 'right';
+				ctx.fillText(`THIN SECTION #${ri(1000, 9999)}`, W / 2 + scopeR - 15, H / 2 + scopeR - 15);
+
+				// polarizer indicator
+				ctx.fillStyle = 'rgba(160,160,190,0.8)';
+				ctx.font = `${dim * 0.014 | 0}px monospace`;
+				ctx.fillText('CROSSED POLARS', W / 2 + scopeR - 15, H / 2 + scopeR - 35);
+
+				// scale bar
+				const barW = dim * 0.07;
+				ctx.strokeStyle = 'rgba(180,180,210,0.8)'; ctx.lineWidth = 1.5;
+				ctx.beginPath(); ctx.moveTo(W / 2 + scopeR - barW - 20, H / 2 - scopeR + 20); ctx.lineTo(W / 2 + scopeR - 20, H / 2 - scopeR + 20); ctx.stroke();
+				ctx.fillText(`${pick(['0.5', '1', '2', '5'])} mm`, W / 2 + scopeR - 20, H / 2 - scopeR + 14);
+				ctx.shadowBlur = 0;
+				ctx.restore();
+			}
+
+			job = requestAnimationFrame(renderChunk);
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize(); window.addEventListener('resize', resize); c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

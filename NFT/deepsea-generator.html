@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #4a8090;
+			font: 13px monospace;
+			background: rgba(0, 8, 18, 0.7);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to dive deeper</div>
+	<script>
+		const c = document.getElementById('c'), ctx = c.getContext('2d');
+		const off = document.createElement('canvas'), ox = off.getContext('2d');
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+		function hsl(h, s, l, a) { return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a ?? 1})`; }
+		function glow(x, y, r, h, s, l, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, hsl(h, s, l, a)); g.addColorStop(0.3, hsl(h, s, l * 0.7, a * 0.4)); g.addColorStop(1, 'transparent'); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+		function bez(pts, t) { const n = pts.length - 1; let x = 0, y = 0; for (let i = 0; i <= n; i++) { let b = 1; for (let j = 0; j < i; j++)b *= (n - j) / (j + 1); b *= Math.pow(1 - t, n - i) * Math.pow(t, i); x += pts[i][0] * b; y += pts[i][1] * b; } return [x, y]; }
+		function wob(cx, cy, r, amt) { const s = rr(0, 99); ctx.beginPath(); for (let i = 0; i <= 20; i++) { const a = i / 20 * Math.PI * 2; const w = 1 + Math.sin(a * 3.7 + s) * amt * 0.6 + Math.sin(a * 5.3 + s * 1.7) * amt * 0.4; ctx.lineTo(cx + Math.cos(a) * r * w, cy + Math.sin(a) * r * w); } ctx.closePath(); }
+
+		function drawJelly(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const variant = ri(0, 5);
+			// 0=moon, 1=deep red crown, 2=long trailing, 3=compact box, 4=wide flat
+			const bw = sz * (variant === 3 ? rr(0.25, 0.35) : variant === 4 ? rr(0.7, 1) : rr(0.45, 0.8));
+			const bh = sz * (variant === 4 ? rr(0.2, 0.3) : variant === 3 ? rr(0.2, 0.3) : rr(0.3, 0.5));
+			const op = rr(0.4, 0.8);
+			const bHue = variant === 1 ? rr(335, 365) : hue;
+			const skew = rr(-0.12, 0.12);
+			ctx.transform(1, skew, 0, 1, 0, 0);
+
+			// glow
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			glow(0, -bh * 0.2, sz * 1.4, bHue, 75, 50, op * 0.35);
+			glow(0, -bh * 0.15, bw * 0.6, bHue + 20, 85, 60, op * 0.25);
+			ctx.restore();
+
+			// tentacles
+			const tCnt = variant === 2 ? ri(20, 40) : variant === 3 ? ri(4, 8) : ri(8, 18);
+			const tLen = variant === 2 ? sz * rr(3, 7) : variant === 3 ? sz * rr(0.4, 0.8) : sz * rr(1, 2.5);
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < tCnt; i++) {
+				const tx = rr(-bw * 0.88, bw * 0.88);
+				const pts = [[tx, bh * 0.05]]; let px = tx, py = bh * 0.05;
+				const curl = rr(0.08, 0.35);
+				for (let j = 0; j < ri(4, 7); j++) { px += rr(-sz * curl, sz * curl) * (1 - j * 0.1); py += tLen / (5 + j * 0.5) * rr(0.7, 1.3); pts.push([px, py]); }
+				ctx.beginPath(); for (let t = 0; t <= 1; t += 0.015) { const p = bez(pts, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+				// brighter tentacles
+				ctx.strokeStyle = hsl(bHue + rr(-15, 15), 65, 60, op * rr(0.2, 0.45));
+				ctx.lineWidth = rr(0.3, variant === 2 ? 0.7 : 1.5); ctx.stroke();
+				// glow nodes along tentacles
+				for (let t = rr(0.1, 0.25); t < 1; t += rr(0.08, 0.2)) {
+					const p = bez(pts, t);
+					glow(p[0], p[1], rr(2, 5), bHue + rr(-10, 30), 80, 65, op * rr(0.1, 0.3));
+				}
+			}
+			ctx.restore();
+
+			// oral arms
+			const aCnt = variant === 3 ? ri(2, 4) : ri(4, 8);
+			for (let i = 0; i < aCnt; i++) {
+				const ax = rr(-bw * 0.4, bw * 0.4);
+				const aLen = sz * rr(0.5, variant === 2 ? 0.8 : 1.2);
+				const pts = [[ax, 0]]; let px2 = ax, py2 = 0;
+				for (let j = 0; j < 5; j++) { px2 += rr(-sz * 0.1, sz * 0.1); py2 += aLen / 5; pts.push([px2, py2]); }
+				const frillF = ri(10, 22), frillA = sz * rr(0.02, 0.04);
+				ctx.beginPath();
+				for (let t = 0; t <= 1; t += 0.006) { const p = bez(pts, t); ctx.lineTo(p[0] + Math.sin(t * Math.PI * frillF) * frillA * (1 - t * 0.4), p[1]); }
+				for (let t = 1; t >= 0; t -= 0.006) { const p = bez(pts, t); ctx.lineTo(p[0] - Math.sin(t * Math.PI * frillF + 1) * frillA * (1 - t * 0.4), p[1]); }
+				ctx.closePath();
+				ctx.fillStyle = hsl(bHue + 10, 55, 52, op * 0.35); ctx.fill();
+				ctx.strokeStyle = hsl(bHue + 15, 60, 58, op * 0.3); ctx.lineWidth = 0.5; ctx.stroke();
+				// glow along oral arms
+				ctx.save(); ctx.globalCompositeOperation = 'screen';
+				for (let t = 0.2; t < 0.9; t += 0.3) { const p = bez(pts, t); glow(p[0], p[1], sz * 0.04, bHue + 20, 75, 58, op * 0.12); }
+				ctx.restore();
+			}
+
+			// bell
+			const bL = rr(0.88, 1.12), bR = rr(0.88, 1.12);
+			ctx.beginPath(); ctx.moveTo(-bw * bL, bh * 0.05);
+			ctx.bezierCurveTo(-bw * bL * rr(1, 1.1), -bh * rr(0.25, 0.45), -bw * rr(0.35, 0.55) * bL, -bh * rr(0.92, 1.08), 0, -bh);
+			ctx.bezierCurveTo(bw * rr(0.35, 0.55) * bR, -bh * rr(0.92, 1.08), bw * bR * rr(1, 1.1), -bh * rr(0.25, 0.45), bw * bR, bh * 0.05);
+			const sc = ri(12, 24); for (let i = 0; i <= sc; i++) { const t = i / sc; ctx.lineTo(bw * (bL + bR) / 2 * (1 - t * 2), bh * 0.05 + Math.sin(t * Math.PI * sc) * bh * rr(0.04, 0.08)); }
+			ctx.closePath();
+			const bg = ctx.createRadialGradient(0, -bh * 0.4, 0, 0, -bh * 0.3, bw);
+			bg.addColorStop(0, hsl(bHue + 15, 78, 68, op * 0.6)); bg.addColorStop(0.3, hsl(bHue, 62, 52, op * 0.4));
+			bg.addColorStop(0.7, hsl(bHue - 10, 52, 42, op * 0.2)); bg.addColorStop(1, hsl(bHue, 55, 45, op * 0.1));
+			ctx.fillStyle = bg; ctx.fill(); ctx.strokeStyle = hsl(bHue, 68, 62, op * 0.55); ctx.lineWidth = 1.2; ctx.stroke();
+
+			// canals + gonads
+			const cn = variant === 0 ? 4 : ri(4, 8);
+			for (let i = 0; i < cn; i++) {
+				const a = Math.PI + i / cn * Math.PI;
+				ctx.beginPath(); ctx.moveTo(0, -bh * 0.1); ctx.quadraticCurveTo(Math.cos(a) * bw * 0.4, -bh * 0.5, Math.cos(a) * bw * 0.85, bh * 0.02);
+				ctx.strokeStyle = hsl(bHue + 20, 60, 58, op * 0.2); ctx.lineWidth = 0.8; ctx.stroke();
+				const gx = Math.cos(a) * bw * rr(0.4, 0.55), gy = -bh * rr(0.2, 0.35);
+				ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(gx, gy, sz * 0.08, bHue + 30, 82, 62, op * 0.35); ctx.restore();
+				if (variant === 0) { ctx.beginPath(); ctx.arc(gx, gy, sz * 0.03, 0.5, Math.PI * 1.8); ctx.strokeStyle = hsl(bHue + 35, 82, 62, op * 0.55); ctx.lineWidth = sz * 0.01; ctx.stroke(); }
+				else { wob(gx, gy, sz * rr(0.015, 0.025), 0.2); ctx.fillStyle = hsl(bHue + 30, 85, 65, op * 0.55); ctx.fill(); }
+			}
+			// bell highlight
+			ctx.beginPath(); ctx.ellipse(-bw * rr(0.15, 0.3), -bh * rr(0.5, 0.7), bw * rr(0.15, 0.25), bh * rr(0.08, 0.15), rr(-0.4, -0.2), 0, Math.PI * 2);
+			ctx.fillStyle = `rgba(255,255,255,${op * 0.06})`; ctx.fill();
+			ctx.restore();
+		}
+
+		function drawSiphonophore(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const segs = ri(20, 45); const cLen = sz * rr(8, 16);
+			const pts = []; let px = 0, py = 0;
+			for (let i = 0; i <= segs; i++) { pts.push([px, py]); px += Math.sin(i * rr(0.3, 0.7) + rr(-1, 1)) * sz * rr(0.06, 0.12); py += cLen / segs; }
+
+			// brighter overall glow
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let t = 0; t < 1; t += 0.12) { const p = bez(pts, t); glow(p[0], p[1], sz * rr(0.2, 0.4), hue + rr(-20, 20), 65, 52, rr(0.06, 0.12)); }
+			ctx.restore();
+
+			// pneumatophore
+			const fW = sz * rr(0.06, 0.1), fH = sz * rr(0.04, 0.07);
+			ctx.beginPath(); ctx.ellipse(0, -fH, fW, fH, rr(-0.2, 0.2), 0, Math.PI * 2);
+			const fg = ctx.createRadialGradient(0, -fH, 0, 0, -fH, fW);
+			fg.addColorStop(0, hsl(hue + 30, 75, 62, 0.55)); fg.addColorStop(1, hsl(hue, 50, 42, 0.1));
+			ctx.fillStyle = fg; ctx.fill(); ctx.strokeStyle = hsl(hue, 62, 55, 0.4); ctx.lineWidth = 0.7; ctx.stroke();
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(0, -fH, fW * 1.8, hue + 30, 78, 58, 0.18); ctx.restore();
+
+			// nectophores
+			for (let i = 0; i < ri(2, 5); i++) {
+				const t = rr(0, 0.15); const p = bez(pts, t); const ns = sz * rr(0.04, 0.07); const sd = Math.random() > 0.5 ? 1 : -1;
+				ctx.beginPath(); ctx.moveTo(p[0], p[1] - ns); ctx.bezierCurveTo(p[0] + sd * ns * 1.5, p[1] - ns * 0.5, p[0] + sd * ns * 1.5, p[1] + ns * 0.5, p[0], p[1] + ns);
+				ctx.bezierCurveTo(p[0] + sd * ns * 0.3, p[1] + ns * 0.3, p[0] + sd * ns * 0.3, p[1] - ns * 0.3, p[0], p[1] - ns); ctx.closePath();
+				ctx.fillStyle = hsl(hue, 52, 52, 0.3); ctx.fill(); ctx.strokeStyle = hsl(hue, 60, 55, 0.35); ctx.lineWidth = 0.6; ctx.stroke();
+				ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(p[0] + sd * ns * 0.5, p[1], ns * 2, hue + 20, 72, 58, 0.18); ctx.restore();
+			}
+
+			// stem
+			ctx.beginPath(); for (let t = 0; t <= 1; t += 0.01) { const p = bez(pts, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+			ctx.strokeStyle = hsl(hue, 58, 55, 0.4); ctx.lineWidth = 1.2; ctx.stroke();
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.beginPath();
+			for (let t = 0; t <= 1; t += 0.01) { const p = bez(pts, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+			ctx.strokeStyle = hsl(hue + 15, 65, 58, 0.12); ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+
+			// zooids
+			for (let i = 1; i < segs; i++) {
+				const t = i / segs; const p = bez(pts, t); const tp = i % 4; const sd = i % 2 === 0 ? 1 : -1;
+				if (tp === 0) {
+					const tL = sz * rr(0.3, 0.9); const tp2 = [[p[0], p[1]]]; let tx = p[0], ty = p[1];
+					for (let j = 0; j < 4; j++) { tx += sd * rr(sz * 0.01, sz * 0.08); ty += tL / 4 * rr(0.8, 1.2); tp2.push([tx, ty]); }
+					ctx.beginPath(); for (let tt = 0; tt <= 1; tt += 0.03) { const pp = bez(tp2, tt); tt === 0 ? ctx.moveTo(pp[0], pp[1]) : ctx.lineTo(pp[0], pp[1]); }
+					ctx.strokeStyle = hsl(hue + rr(-15, 15), 55, 52, 0.3); ctx.lineWidth = 0.6; ctx.stroke();
+					// tentilla
+					for (let tt = 0.3; tt < 1; tt += rr(0.1, 0.18)) {
+						const pp = bez(tp2, tt); const bl = sz * rr(0.02, 0.06);
+						ctx.beginPath(); ctx.moveTo(pp[0], pp[1]); ctx.lineTo(pp[0] + sd * bl, pp[1] + bl * rr(-0.3, 0.5));
+						ctx.strokeStyle = hsl(hue + rr(-10, 25), 50, 50, 0.2); ctx.lineWidth = 0.4; ctx.stroke();
+					}
+					const ep = bez(tp2, 1); ctx.save(); ctx.globalCompositeOperation = 'screen';
+					glow(ep[0], ep[1], sz * 0.06, hue + 40, 85, 65, 0.4); ctx.restore();
+					wob(ep[0], ep[1], sz * 0.01, 0.2); ctx.fillStyle = hsl(hue + 40, 88, 72, 0.75); ctx.fill();
+				} else if (tp === 1) {
+					ctx.save(); ctx.translate(p[0], p[1]); ctx.rotate(sd * rr(0.2, 0.6));
+					ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(sd * sz * 0.03, -sz * 0.02, sd * sz * 0.04, -sz * 0.005, sd * sz * 0.035, sz * 0.015);
+					ctx.bezierCurveTo(sd * sz * 0.02, sz * 0.02, sd * sz * 0.005, sz * 0.012, 0, 0);
+					ctx.fillStyle = hsl(hue - 10, 45, 45, 0.22); ctx.fill(); ctx.restore();
+				} else if (tp === 2) {
+					ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(p[0] + sd * sz * 0.02, p[1], sz * 0.05, hue + 60, 80, 55, 0.25); ctx.restore();
+					wob(p[0] + sd * sz * 0.02, p[1], sz * 0.012, 0.2); ctx.fillStyle = hsl(hue + 60, 75, 58, 0.5); ctx.fill();
+				} else {
+					const dl = sz * rr(0.06, 0.15); ctx.beginPath(); ctx.moveTo(p[0], p[1]);
+					ctx.quadraticCurveTo(p[0] + sd * dl * 0.6, p[1] + dl * 0.3, p[0] + sd * dl * rr(0.3, 0.8), p[1] + dl);
+					ctx.strokeStyle = hsl(hue + 20, 48, 48, 0.22); ctx.lineWidth = 0.5; ctx.stroke();
+				}
+			}
+			ctx.restore();
+		}
+
+		function drawCteno(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const variant = ri(0, 3); // +bloodybelly
+			const bW = sz * rr(0.3, 0.5), bH = sz * rr(0.5, 0.8);
+			const bodyHue = variant === 2 ? rr(340, 360) : hue;
+			const lobeW = variant === 1 ? bW * rr(0.6, 1) : 0;
+
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(0, 0, sz * 1.2, bodyHue, 65, 48, 0.22); ctx.restore();
+
+			ctx.beginPath(); for (let i = 0; i <= 40; i++) {
+				const a = i / 40 * Math.PI * 2; let rx = bW * (1 + Math.sin(a * 2) * 0.05); let ry = bH * (1 + Math.cos(a * 3) * 0.03);
+				if (variant === 1 && a > Math.PI * 0.6 && a < Math.PI * 1.4) rx += lobeW * Math.sin((a - Math.PI * 0.6) / (Math.PI * 0.8) * Math.PI);
+				ctx.lineTo(Math.cos(a) * rx, Math.sin(a) * ry);
+			} ctx.closePath();
+			const bg = ctx.createRadialGradient(0, 0, 0, 0, 0, bH);
+			bg.addColorStop(0, hsl(bodyHue, 55, 58, 0.28)); bg.addColorStop(0.5, hsl(bodyHue, 48, 48, 0.18)); bg.addColorStop(1, hsl(bodyHue, 42, 40, 0.08));
+			ctx.fillStyle = bg; ctx.fill(); ctx.strokeStyle = hsl(bodyHue, 58, 52, 0.35); ctx.lineWidth = 1; ctx.stroke();
+
+			for (let i = 0; i < 8; i++) {
+				const a = i / 8 * Math.PI * 2; const rH = (bodyHue + i * 45) % 360;
+				ctx.beginPath(); for (let t = 0; t <= 1; t += 0.015) { const lat = Math.PI * 0.15 + t * Math.PI * 0.7; const rx = bW * Math.sin(lat) * (1 + Math.sin(a) * 0.3); const ry = bH * Math.cos(lat); ctx.lineTo(Math.cos(a) * rx + Math.sin(t * Math.PI * 12) * bW * 0.015, -ry); }
+				ctx.strokeStyle = hsl(rH, 88, 65, 0.5); ctx.lineWidth = rr(2, 3.5); ctx.stroke();
+				ctx.save(); ctx.globalCompositeOperation = 'screen';
+				for (let t = 0; t < 1; t += rr(0.07, 0.12)) { const lat = Math.PI * 0.15 + t * Math.PI * 0.7; const rx = bW * Math.sin(lat) * (1 + Math.sin(a) * 0.3); glow(Math.cos(a) * rx, -bH * Math.cos(lat), sz * 0.04, rH, 92, 68, rr(0.12, 0.3)); }
+				ctx.restore();
+			}
+
+			wob(0, -bH * 0.85, sz * 0.015, 0.2); ctx.fillStyle = hsl(bodyHue + 30, 60, 60, 0.35); ctx.fill();
+
+			if (Math.random() > 0.3) {
+				for (const sd of [-1, 1]) {
+					const tL = sz * rr(1, 3); const tp = [[sd * bW * rr(0.4, 0.6), 0]]; let tx = sd * bW * 0.5, ty = 0;
+					for (let j = 0; j < 6; j++) { tx += sd * rr(sz * 0.05, sz * 0.2); ty += tL / 6; tp.push([tx, ty]); }
+					ctx.beginPath(); for (let t = 0; t <= 1; t += 0.015) { const p = bez(tp, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+					ctx.strokeStyle = hsl(bodyHue, 52, 55, 0.25); ctx.lineWidth = 0.7; ctx.stroke();
+					for (let t = 0.15; t < 1; t += rr(0.06, 0.12)) {
+						const p = bez(tp, t); const bl = sz * rr(0.03, 0.1); const ba = rr(-0.5, 0.5);
+						ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + sd * bl * Math.cos(ba), p[1] + bl * Math.sin(ba));
+						ctx.strokeStyle = hsl(bodyHue + rr(-20, 40), 48, 52, 0.18); ctx.lineWidth = 0.3; ctx.stroke();
+						if (Math.random() > 0.5) { ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(p[0] + sd * bl * 0.5 * Math.cos(ba), p[1] + bl * 0.5 * Math.sin(ba), sz * 0.02, bodyHue + rr(0, 60), 78, 62, 0.18); ctx.restore(); }
+					}
+				}
+			}
+			ctx.restore();
+		}
+
+		function drawAngler(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-0.6, 0.6));
+			const flip = Math.random() > 0.5 ? -1 : 1; ctx.scale(flip, 1);
+			const bW = sz * rr(0.35, 0.5), bH = sz * rr(0.25, 0.38);
+
+			// smoother body shape
+			ctx.beginPath();
+			for (let i = 0; i <= 60; i++) {
+				const a = i / 60 * Math.PI * 2;
+				let rx = bW, ry = bH;
+				// head bulge
+				const headBulge = Math.exp(-Math.pow((a - 0) / 0.8, 2)) * 0.2 + Math.exp(-Math.pow((a - Math.PI * 2) / 0.8, 2)) * 0.2;
+				rx *= 1 + headBulge;
+				// jaw droop
+				const jaw = Math.exp(-Math.pow((a - Math.PI * 0.35) / 0.3, 2)) * 0.15;
+				ry *= 1 + jaw;
+				// lumpy but smooth
+				rx *= 1 + Math.sin(a * 3 + 1) * 0.08 + Math.sin(a * 5 + 2) * 0.04;
+				ry *= 1 + Math.cos(a * 2 + 0.5) * 0.06;
+				// tail taper
+				const tailT = Math.exp(-Math.pow((a - Math.PI) / 0.6, 2)) * 0.15;
+				rx *= 1 - tailT;
+				ctx.lineTo(Math.cos(a) * rx, Math.sin(a) * ry);
+			}
+			ctx.closePath();
+
+			// body
+			const abg = ctx.createRadialGradient(bW * 0.1, -bH * 0.1, 0, 0, 0, bW);
+			abg.addColorStop(0, hsl(hue + 10, 28, 22, 0.92)); abg.addColorStop(0.3, hsl(hue + 5, 22, 16, 0.92));
+			abg.addColorStop(0.7, hsl(hue, 18, 10, 0.9)); abg.addColorStop(1, hsl(hue - 5, 15, 7, 0.85));
+			ctx.fillStyle = abg; ctx.fill();
+
+			// rim light from lure above
+			ctx.save(); ctx.clip();
+			const rim = ctx.createRadialGradient(bW * 0.3, -bH * 1.5, 0, bW * 0.3, -bH * 1.5, bW * 2);
+			rim.addColorStop(0, hsl(180, 40, 40, 0.08)); rim.addColorStop(0.3, hsl(180, 30, 30, 0.03)); rim.addColorStop(1, 'transparent');
+			ctx.fillStyle = rim; ctx.fillRect(-bW * 2, -bH * 3, bW * 4, bH * 4); ctx.restore();
+
+			ctx.strokeStyle = hsl(hue + 15, 25, 22, 0.3); ctx.lineWidth = 1; ctx.stroke();
+
+			// lateral line
+			ctx.beginPath(); ctx.moveTo(bW * 0.7, 0); ctx.quadraticCurveTo(0, bH * 0.05, -bW * 0.7, 0);
+			ctx.strokeStyle = hsl(hue, 18, 18, 0.1); ctx.lineWidth = 0.5; ctx.stroke();
+
+			// pectoral fin
+			ctx.beginPath(); ctx.moveTo(-bW * 0.1, bH * 0.5);
+			ctx.bezierCurveTo(-bW * 0.3, bH * 0.8, -bW * 0.45, bH * 0.9, -bW * 0.35, bH * 0.6);
+			ctx.bezierCurveTo(-bW * 0.25, bH * 0.45, -bW * 0.15, bH * 0.48, -bW * 0.1, bH * 0.5);
+			ctx.fillStyle = hsl(hue, 15, 12, 0.6); ctx.fill();
+			// dorsal
+			ctx.beginPath(); ctx.moveTo(-bW * 0.1, -bH * 0.8);
+			ctx.bezierCurveTo(bW * 0.05, -bH * 1.1, bW * 0.15, -bH * 1, bW * 0.1, -bH * 0.75);
+			ctx.fillStyle = hsl(hue, 15, 11, 0.5); ctx.fill();
+			// tail
+			ctx.beginPath(); ctx.moveTo(-bW * 0.85, 0);
+			ctx.bezierCurveTo(-bW * 1.15, -bH * 0.3, -bW * 1.2, bH * 0.3, -bW * 0.85, 0);
+			ctx.fillStyle = hsl(hue, 12, 10, 0.5); ctx.fill();
+
+			// eye
+			const ex = bW * rr(0.45, 0.6), ey = -bH * rr(0.15, 0.3);
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(ex, ey, sz * 0.035, 50, 55, 42, 0.3); ctx.restore();
+			wob(ex, ey, sz * 0.02, 0.12); ctx.fillStyle = hsl(42, 50, 28, 0.65); ctx.fill();
+			wob(ex, ey, sz * 0.01, 0.1); ctx.fillStyle = hsl(50, 60, 42, 0.55); ctx.fill();
+			ctx.fillStyle = 'rgba(230,230,210,0.4)'; ctx.beginPath(); ctx.arc(ex + sz * 0.006, ey - sz * 0.005, sz * 0.004, 0, Math.PI * 2); ctx.fill();
+
+			// mouth
+			ctx.beginPath(); ctx.moveTo(bW * 0.95, -bH * 0.12); ctx.quadraticCurveTo(bW * 1.08, 0, bW * 0.95, bH * 0.12);
+			ctx.strokeStyle = hsl(hue, 18, 16, 0.35); ctx.lineWidth = 0.8; ctx.stroke();
+			// teeth
+			for (let i = 0; i < ri(6, 12); i++) {
+				const t = rr(0, 1); const ty = bH * (-0.1 + t * 0.2); const tx = bW * (0.92 + Math.sin(t * Math.PI) * 0.08);
+				const tl = sz * rr(0.008, 0.02); const ta = rr(-0.3, 0.3);
+				ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx + Math.cos(ta) * tl, ty + Math.sin(ta) * tl);
+				ctx.strokeStyle = hsl(0, 0, rr(22, 38), rr(0.25, 0.45)); ctx.lineWidth = rr(0.3, 0.6); ctx.stroke();
+			}
+
+			// illicium
+			const rL = sz * rr(0.4, 0.8);
+			const rPts = [[bW * rr(0.15, 0.3), -bH * rr(0.7, 0.85)]];
+			let rx = rPts[0][0], ry = rPts[0][1];
+			for (let i = 0; i < 4; i++) { rx += rr(-sz * 0.06, sz * 0.1); ry -= rL / 4; rPts.push([rx, ry]); }
+			ctx.beginPath(); for (let t = 0; t <= 1; t += 0.02) { const p = bez(rPts, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+			ctx.strokeStyle = hsl(hue, 22, 20, 0.45); ctx.lineWidth = 1.2; ctx.stroke();
+
+			// esca (lure)
+			const lure = bez(rPts, 1); const lH = 180 + rr(-40, 40);
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			glow(lure[0], lure[1], sz * 0.55, lH, 82, 52, 0.45); glow(lure[0], lure[1], sz * 0.22, lH, 88, 62, 0.55); glow(lure[0], lure[1], sz * 0.08, lH, 92, 74, 0.75);
+			ctx.restore();
+			ctx.fillStyle = `rgba(200,255,240,0.95)`; wob(lure[0], lure[1], sz * 0.02, 0.15); ctx.fill();
+			for (let i = 0; i < ri(4, 8); i++) {
+				const fa = rr(0, Math.PI * 2), fl = sz * rr(0.03, 0.1);
+				const fp = [[lure[0], lure[1]], [lure[0] + Math.cos(fa) * fl * 0.5, lure[1] + Math.sin(fa) * fl * 0.5], [lure[0] + Math.cos(fa + rr(-0.3, 0.3)) * fl, lure[1] + Math.sin(fa + rr(-0.3, 0.3)) * fl]];
+				ctx.beginPath(); for (let t = 0; t <= 1; t += 0.05) { const p = bez(fp, t); ctx.lineTo(p[0], p[1]); }
+				ctx.strokeStyle = hsl(lH, 62, 58, rr(0.18, 0.35)); ctx.lineWidth = 0.4; ctx.stroke();
+			}
+			ctx.restore();
+		}
+
+		// dragonfish
+		function drawDragonfish(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const len = sz * rr(1.5, 2.5), w = sz * rr(0.08, 0.14);
+
+			// long serpentine body
+			const pts = []; const segs = 8; let px = 0, py = 0;
+			for (let i = 0; i <= segs; i++) { pts.push([px, py]); px += len / segs; py += Math.sin(i * rr(0.4, 0.8)) * w * rr(0.5, 2); }
+
+			// body
+			ctx.beginPath();
+			for (let t = 0; t <= 1; t += 0.01) { const p = bez(pts, t); const bw2 = w * (1 - Math.pow(t - 0.3, 2) * 1.5); t === 0 ? ctx.moveTo(p[0], p[1] - bw2) : ctx.lineTo(p[0], p[1] - bw2); }
+			for (let t = 1; t >= 0; t -= 0.01) { const p = bez(pts, t); const bw2 = w * (1 - Math.pow(t - 0.3, 2) * 1.5); ctx.lineTo(p[0], p[1] + bw2); }
+			ctx.closePath();
+			ctx.fillStyle = hsl(hue, 20, 12, 0.85); ctx.fill(); ctx.strokeStyle = hsl(hue, 25, 18, 0.3); ctx.lineWidth = 0.8; ctx.stroke();
+
+			// photophores along belly
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let t = 0.05; t < 0.95; t += rr(0.03, 0.06)) {
+				const p = bez(pts, t); const bw2 = w * (1 - Math.pow(t - 0.3, 2) * 1.5);
+				const ph = rr(170, 220);
+				glow(p[0], p[1] + bw2 * 0.8, sz * 0.015, ph, 80, 60, rr(0.15, 0.35));
+				ctx.fillStyle = hsl(ph, 85, 68, rr(0.4, 0.7)); ctx.beginPath(); ctx.arc(p[0], p[1] + bw2 * 0.8, sz * 0.003, 0, Math.PI * 2); ctx.fill();
+			}
+			ctx.restore();
+
+			// barbel with bioluminescent lure
+			const head = bez(pts, 0);
+			const barbLen = sz * rr(0.3, 0.7);
+			const bp = [[head[0], head[1] + w * 0.5]]; let bx = head[0], by = head[1] + w * 0.5;
+			for (let i = 0; i < 3; i++) { bx += rr(-sz * 0.05, sz * 0.05); by += barbLen / 3; bp.push([bx, by]); }
+			ctx.beginPath(); for (let t = 0; t <= 1; t += 0.03) { const p = bez(bp, t); t === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+			ctx.strokeStyle = hsl(hue, 20, 16, 0.35); ctx.lineWidth = 0.6; ctx.stroke();
+			const bl = bez(bp, 1);
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			glow(bl[0], bl[1], sz * 0.08, 200, 80, 58, 0.4); glow(bl[0], bl[1], sz * 0.03, 200, 88, 68, 0.6);
+			ctx.restore();
+			ctx.fillStyle = 'rgba(180,255,240,0.8)'; ctx.beginPath(); ctx.arc(bl[0], bl[1], sz * 0.006, 0, Math.PI * 2); ctx.fill();
+
+			// red photophore (suborbital organ)
+			const ep = bez(pts, 0.04);
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(ep[0], ep[1] - w * 0.3, sz * 0.12, 0, 70, 45, 0.2); ctx.restore();
+
+			// eye
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; glow(ep[0], ep[1] - w * 0.5, sz * 0.02, 50, 50, 40, 0.25); ctx.restore();
+			ctx.fillStyle = hsl(40, 50, 30, 0.6); ctx.beginPath(); ctx.arc(ep[0], ep[1] - w * 0.5, sz * 0.008, 0, Math.PI * 2); ctx.fill();
+
+			// teeth at head
+			const mp = bez(pts, 0);
+			for (let i = 0; i < ri(4, 8); i++) {
+				const a = rr(-0.6, 0.6); const tl = sz * rr(0.01, 0.025);
+				ctx.beginPath(); ctx.moveTo(mp[0] - w * 0.3, mp[1] + rr(-w * 0.3, w * 0.3));
+				ctx.lineTo(mp[0] - w * 0.3 - tl * Math.cos(a), mp[1] + rr(-w * 0.3, w * 0.3) + tl * Math.sin(a));
+				ctx.strokeStyle = hsl(0, 0, 30, 0.3); ctx.lineWidth = 0.4; ctx.stroke();
+			}
+			ctx.restore();
+		}
+
+		// sea angel (Clione)
+		function drawSeaAngel(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const bLen = sz * rr(0.5, 0.8), bW = sz * rr(0.12, 0.2);
+			const wingPhase = rr(0, Math.PI * 2);
+			const bodyHue = rr(280, 320); // purplish-pink
+
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			glow(0, 0, sz * 0.6, bodyHue, 65, 50, 0.2);
+			ctx.restore();
+
+			// body
+			ctx.beginPath();
+			for (let i = 0; i <= 40; i++) {
+				const a = i / 40 * Math.PI * 2;
+				let rx = bW * (1 + Math.sin(a * 2) * 0.05);
+				let ry = bLen / 2;
+				// taper at tail (top in swimming orientation)
+				const taper = Math.cos(a);
+				if (taper < 0) rx *= 1 + taper * 0.4;
+				// head bulge
+				if (taper > 0.7) rx *= 1.15;
+				ctx.lineTo(Math.cos(a) * rx, Math.sin(a) * ry);
+			}
+			ctx.closePath();
+			const bg = ctx.createLinearGradient(0, -bLen / 2, 0, bLen / 2);
+			bg.addColorStop(0, hsl(bodyHue, 55, 55, 0.15)); bg.addColorStop(0.4, hsl(bodyHue, 60, 52, 0.3));
+			bg.addColorStop(0.7, hsl(bodyHue - 10, 50, 45, 0.25)); bg.addColorStop(1, hsl(bodyHue, 45, 40, 0.1));
+			ctx.fillStyle = bg; ctx.fill(); ctx.strokeStyle = hsl(bodyHue, 60, 55, 0.4); ctx.lineWidth = 0.8; ctx.stroke();
+
+			// visceral mass visible through body
+			ctx.beginPath(); ctx.ellipse(0, bLen * 0.05, bW * 0.5, bLen * 0.2, 0, 0, Math.PI * 2);
+			ctx.fillStyle = hsl(bodyHue + 30, 50, 40, 0.2); ctx.fill();
+			// orange/red digestive gland
+			ctx.beginPath(); ctx.ellipse(0, bLen * 0.1, bW * 0.25, bLen * 0.1, rr(-0.2, 0.2), 0, Math.PI * 2);
+			ctx.fillStyle = hsl(20, 65, 40, 0.25); ctx.fill();
+
+			// wings (parapodia)
+			for (const sd of [-1, 1]) {
+				const wingW = sz * rr(0.2, 0.35); const wingH = sz * rr(0.15, 0.25);
+				const wingY = -bLen * rr(0.1, 0.25);
+				const flap = Math.sin(wingPhase + sd * 0.5) * 0.3;
+				ctx.save(); ctx.translate(sd * bW * 0.8, wingY); ctx.rotate(sd * rr(0.3, 0.8) + flap);
+				ctx.beginPath();
+				ctx.moveTo(0, 0);
+				ctx.bezierCurveTo(sd * wingW * 0.3, -wingH * 0.6, sd * wingW * 0.8, -wingH * 0.3, sd * wingW, 0);
+				ctx.bezierCurveTo(sd * wingW * 0.8, wingH * 0.4, sd * wingW * 0.3, wingH * 0.5, 0, 0);
+				ctx.closePath();
+				const wg = ctx.createRadialGradient(sd * wingW * 0.3, 0, 0, sd * wingW * 0.3, 0, wingW);
+				wg.addColorStop(0, hsl(bodyHue + 10, 60, 58, 0.3)); wg.addColorStop(0.5, hsl(bodyHue, 50, 50, 0.15)); wg.addColorStop(1, hsl(bodyHue - 10, 45, 42, 0.05));
+				ctx.fillStyle = wg; ctx.fill(); ctx.strokeStyle = hsl(bodyHue, 55, 55, 0.3); ctx.lineWidth = 0.5; ctx.stroke();
+				ctx.restore();
+
+				// wing glow
+				ctx.save(); ctx.globalCompositeOperation = 'screen';
+				glow(sd * bW * 1.5 + sd * Math.sin(flap) * sz * 0.1, wingY, sz * 0.12, bodyHue + 15, 70, 55, 0.12);
+				ctx.restore();
+			}
+
+			// head tentacles (buccal cones)
+			for (let i = 0; i < ri(3, 6); i++) {
+				const ta = rr(-0.6, 0.6); const tl = sz * rr(0.06, 0.15);
+				ctx.beginPath(); ctx.moveTo(rr(-bW * 0.4, bW * 0.4), -bLen * 0.48);
+				ctx.quadraticCurveTo(Math.cos(ta) * tl * 0.5, -bLen * 0.48 - tl * 0.5, Math.cos(ta) * tl, -bLen * 0.48 - tl);
+				ctx.strokeStyle = hsl(bodyHue + 20, 50, 52, 0.3); ctx.lineWidth = 0.4; ctx.stroke();
+			}
+
+			// tail tip glow
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			glow(0, bLen * 0.45, sz * 0.06, bodyHue + 30, 75, 58, 0.2);
+			ctx.restore();
+			ctx.restore();
+		}
+
+		// pyrosome
+		function drawPyrosome(x, y, sz, hue) {
+			ctx.save(); ctx.translate(x, y); ctx.rotate(rr(-Math.PI, Math.PI));
+			const tubeLen = sz * rr(2, 4); const tubeW = sz * rr(0.15, 0.3);
+			const curve = rr(-0.3, 0.3);
+			const bodyHue = rr(180, 220);
+
+			// tube path
+			const pts = [];
+			for (let i = 0; i <= 8; i++) { const t = i / 8; pts.push([Math.sin(t * Math.PI * curve + rr(-0.1, 0.1)) * tubeLen * 0.15, t * tubeLen]); }
+
+			// overall glow
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let t = 0; t < 1; t += 0.08) {
+				const p = bez(pts, t);
+				const pulseT = Math.sin(t * Math.PI * 4 + rr(0, Math.PI * 2)) * 0.5 + 0.5;
+				glow(p[0], p[1], tubeW * 3, bodyHue + rr(-15, 15), 70, 52, rr(0.05, 0.12) * pulseT + 0.03);
+			}
+			ctx.restore();
+
+			// tube walls
+			for (const sd of [-1, 1]) {
+				ctx.beginPath();
+				for (let t = 0; t <= 1; t += 0.01) {
+					const p = bez(pts, t);
+					const norm = t < 0.99 ? [-(bez(pts, t + 0.01)[1] - p[1]), bez(pts, t + 0.01)[0] - p[0]] : [0, 1];
+					const nl = Math.hypot(norm[0], norm[1]) || 1;
+					const w = tubeW * (1 - Math.pow(t - 0.5, 2) * 1.5);
+					ctx.lineTo(p[0] + norm[0] / nl * w * sd, p[1] + norm[1] / nl * w * sd);
+				}
+				ctx.strokeStyle = hsl(bodyHue, 50, 50, 0.3); ctx.lineWidth = 1; ctx.stroke();
+			}
+
+			// open end at bottom
+			const endP = bez(pts, 1);
+			ctx.beginPath(); ctx.ellipse(endP[0], endP[1], tubeW * 0.6, tubeW * 0.2, 0, 0, Math.PI * 2);
+			ctx.strokeStyle = hsl(bodyHue, 48, 48, 0.25); ctx.lineWidth = 0.8; ctx.stroke();
+
+			// individual zooids visible as bumpy texture along walls
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let t = 0.05; t < 0.95; t += rr(0.02, 0.04)) {
+				const p = bez(pts, t);
+				const w = tubeW * (1 - Math.pow(t - 0.5, 2) * 1.5);
+				for (const sd of [-1, 1]) {
+					const zx = p[0] + sd * w * rr(0.5, 0.95);
+					const zy = p[1] + rr(-tubeW * 0.05, tubeW * 0.05);
+					const zr = sz * rr(0.005, 0.012);
+					// each zooid glows independently
+					const bright = rr(0.1, 0.4);
+					glow(zx, zy, zr * 4, bodyHue + rr(-15, 25), 75, 58, bright);
+					ctx.fillStyle = hsl(bodyHue + rr(-10, 20), 80, 65, bright * 1.5);
+					ctx.beginPath(); ctx.arc(zx, zy, zr, 0, Math.PI * 2); ctx.fill();
+				}
+			}
+			ctx.restore();
+
+			// fill between walls with faint translucent body
+			ctx.beginPath();
+			for (let t = 0; t <= 1; t += 0.01) { const p = bez(pts, t); const w = tubeW * (1 - Math.pow(t - 0.5, 2) * 1.5); ctx.lineTo(p[0] - w, p[1]); }
+			for (let t = 1; t >= 0; t -= 0.01) { const p = bez(pts, t); const w = tubeW * (1 - Math.pow(t - 0.5, 2) * 1.5); ctx.lineTo(p[0] + w, p[1]); }
+			ctx.closePath();
+			ctx.fillStyle = hsl(bodyHue, 40, 45, 0.08); ctx.fill();
+
+			ctx.restore();
+		}
+
+		function drawMarineSnow(W, H) {
+			off.width = W; off.height = H; ox.clearRect(0, 0, W, H);
+			for (let i = 0; i < ri(400, 800); i++) {
+				const px = rr(0, W), py = rr(0, H), bright = rr(0.02, 0.15), type = ri(0, 5);
+				ox.strokeStyle = ox.fillStyle = `rgba(170,190,210,${bright})`;
+				if (type < 2) { ox.beginPath(); ox.arc(px, py, rr(0.08, 0.2), 0, Math.PI * 2); ox.fill(); }
+				else if (type === 2) { const a = rr(0, Math.PI * 2), l = rr(0.4, 1.8); ox.beginPath(); ox.moveTo(px, py); ox.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); ox.lineWidth = rr(0.08, 0.15); ox.stroke(); }
+				else if (type === 3) { for (let j = 0; j < ri(2, 3); j++) { ox.beginPath(); ox.arc(px + rr(-0.8, 0.8), py + rr(-0.8, 0.8), rr(0.08, 0.15), 0, Math.PI * 2); ox.fill(); } }
+				else { ox.beginPath(); ox.moveTo(px, py); let fx = px, fy = py; for (let j = 0; j < ri(2, 3); j++) { fx += rr(-1, 1); fy += rr(0.2, 1); ox.lineTo(fx, fy); } ox.lineWidth = rr(0.06, 0.12); ox.stroke(); }
+			}
+			ctx.save(); ctx.filter = 'blur(0.5px)'; ctx.drawImage(off, 0, 0); ctx.filter = 'none'; ctx.restore();
+		}
+
+		function drawPlankton(W, H, dim, hue) {
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(4, 8); i++) {
+				const cx = rr(0, W), cy = rr(0, H), cr = rr(dim * 0.05, dim * 0.2), ch = hue + rr(-60, 60);
+				glow(cx, cy, cr, ch, 65, 45, rr(0.02, 0.06));
+				for (let j = 0; j < ri(10, 30); j++) {
+					const px = cx + rr(-cr, cr) * 0.7, py = cy + rr(-cr, cr) * 0.7;
+					if (Math.hypot(px - cx, py - cy) > cr * 0.8) continue; const pr = rr(dim * 0.001, dim * 0.004);
+					glow(px, py, pr * 5, ch + rr(-15, 15), 75, 58, rr(0.1, 0.3)); ctx.fillStyle = hsl(ch + rr(-10, 10), 80, 65, rr(0.3, 0.6));
+					ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.fill();
+				}
+			}
+			for (let i = 0; i < ri(25, 70); i++) {
+				const sx = rr(0, W), sy = rr(0, H), sr = rr(dim * 0.001, dim * 0.005), sh = hue + rr(-80, 80);
+				glow(sx, sy, sr * 5, sh, 75, 55, rr(0.08, 0.2)); ctx.fillStyle = hsl(sh, 85, 68, rr(0.4, 0.8)); ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+			}
+			ctx.restore();
+		}
+
+		function generate() {
+			const W = c.width, H = c.height, dim = Math.min(W, H); const bgHue = ri(200, 230);
+			const bg = ctx.createLinearGradient(0, 0, 0, H);
+			bg.addColorStop(0, hsl(bgHue, 40, 14, 1)); bg.addColorStop(0.15, hsl(bgHue + 3, 37, 10, 1)); bg.addColorStop(0.4, hsl(bgHue + 8, 32, 7, 1)); bg.addColorStop(0.7, hsl(bgHue + 12, 25, 4, 1)); bg.addColorStop(1, hsl(bgHue + 15, 18, 2, 1));
+			ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(3, 7); i++) {
+				const sx = rr(W * 0.1, W * 0.9), sw = rr(dim * 0.05, dim * 0.15);
+				const g = ctx.createLinearGradient(sx, 0, sx + rr(-sw, sw), H * 0.6);
+				g.addColorStop(0, hsl(bgHue - 10, 30, 35, 0.04)); g.addColorStop(0.3, hsl(bgHue, 25, 25, 0.015)); g.addColorStop(1, 'transparent');
+				ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx - sw / 2, 0); ctx.lineTo(sx + sw / 2, 0); ctx.lineTo(sx + sw * rr(0.5, 1.5), H * 0.6); ctx.lineTo(sx - sw * rr(0.3, 1), H * 0.6); ctx.closePath(); ctx.fill();
+			}
+			ctx.restore();
+
+			drawMarineSnow(W, H);
+
+			const palette = rr(0, 360); const creatures = [];
+			for (let i = 0; i < ri(0, 2); i++) { const sz = dim * rr(0.06, 0.12); creatures.push({ z: 0.1, draw: () => drawAngler(rr(W * 0.1, W * 0.9), rr(H * 0.4, H * 0.85), sz, bgHue) }); }
+			for (let i = 0; i < ri(0, 2); i++) { const sz = dim * rr(0.05, 0.1); creatures.push({ z: rr(0.15, 0.5), draw: () => drawDragonfish(rr(W * 0.05, W * 0.95), rr(H * 0.3, H * 0.8), sz, bgHue) }); }
+			for (let i = 0; i < ri(3, 6); i++) { const sz = dim * rr(0.025, 0.07); creatures.push({ z: rr(0.2, 0.8), draw: () => drawJelly(rr(W * 0.05, W * 0.95), rr(H * 0.05, H * 0.85), sz, palette + rr(-40, 40)) }); }
+			for (let i = 0; i < ri(1, 3); i++) { const sz = dim * rr(0.025, 0.05); creatures.push({ z: rr(0.2, 0.7), draw: () => drawSiphonophore(rr(W * 0.1, W * 0.9), rr(H * 0.02, H * 0.5), sz, palette + rr(60, 120)) }); }
+			for (let i = 0; i < ri(1, 3); i++) { const sz = dim * rr(0.02, 0.06); creatures.push({ z: rr(0.3, 0.9), draw: () => drawCteno(rr(W * 0.05, W * 0.95), rr(H * 0.1, H * 0.85), sz, palette + rr(-30, 90)) }); }
+			for (let i = 0; i < ri(2, 5); i++) { const sz = dim * rr(0.02, 0.05); creatures.push({ z: rr(0.3, 0.8), draw: () => drawSeaAngel(rr(W * 0.05, W * 0.95), rr(H * 0.1, H * 0.8), sz, palette + rr(-20, 60)) }); }
+			for (let i = 0; i < ri(0, 2); i++) { const sz = dim * rr(0.04, 0.08); creatures.push({ z: rr(0.2, 0.6), draw: () => drawPyrosome(rr(W * 0.1, W * 0.9), rr(H * 0.05, H * 0.6), sz, palette + rr(40, 100)) }); }
+
+			creatures.sort((a, b) => a.z - b.z); for (const cr of creatures) cr.draw();
+			drawPlankton(W, H, dim, palette);
+
+			const dp = ctx.createLinearGradient(0, H * 0.5, 0, H); dp.addColorStop(0, 'transparent'); dp.addColorStop(1, 'rgba(0,0,5,0.4)'); ctx.fillStyle = dp; ctx.fillRect(0, 0, W, H);
+			const vig = ctx.createRadialGradient(W / 2, H / 2, dim * 0.25, W / 2, H / 2, dim * 0.8); vig.addColorStop(0, 'transparent'); vig.addColorStop(1, 'rgba(0,0,0,0.5)'); ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+			ctx.save(); ctx.fillStyle = 'rgba(60,100,120,0.25)'; ctx.font = `${dim * 0.01 | 0}px monospace`; ctx.textAlign = 'right'; ctx.fillText(`${ri(800, 4000)}m`, W - 15, H - 15); ctx.restore();
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize(); window.addEventListener('resize', resize); c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #4a3520;
+			font: 13px monospace;
+			background: rgba(210, 180, 130, 0.7);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to chart new lands</div>
+	<script>
+		const c = document.getElementById('c'), ctx = c.getContext('2d');
+		const P = new Uint8Array(512);
+		function seed() { for (let i = 0; i < 256; i++)P[i] = P[i + 256] = Math.random() * 256 | 0; }
+		function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+		function lerp(a, b, t) { return a + (b - a) * t; }
+		function grad(h, x, y) { const a = h & 3; return a === 0 ? x + y : a === 1 ? -x + y : a === 2 ? x - y : -x - y; }
+		function noise(x, y) {
+			const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, xf = x - Math.floor(x), yf = y - Math.floor(y);
+			const u = fade(xf), v = fade(yf);
+			return lerp(lerp(grad(P[P[X] + Y], xf, yf), grad(P[P[X + 1] + Y], xf - 1, yf), u),
+				lerp(grad(P[P[X] + Y + 1], xf, yf - 1), grad(P[P[X + 1] + Y + 1], xf - 1, yf - 1), u), v);
+		}
+		function fbm(x, y, n) { let v = 0, a = 0.5, f = 1; for (let i = 0; i < n; i++) { v += a * noise(x * f, y * f); a *= 0.5; f *= 2; } return v; }
+
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+
+		// name generator
+		const pre = ["Ash", "Storm", "Iron", "Shadow", "Gold", "Crystal", "Ember", "Frost", "Thorn", "Raven", "Drift", "Moon", "Sun", "Star", "Hollow", "Wander", "Drake", "Wolf", "Mist", "Stone", "Silver", "Dark", "Bright", "Wild", "Ancient", "Bone", "Coral"];
+		const suf = ["haven", "reach", "vale", "peak", "hollow", "mire", "bay", "point", "keep", "fall", "crest", "wood", "holm", "gate", "spire", "watch", "shore", "deep", "ford", "mouth", "cliff", "ridge", "isle", "mere", "bloom", "rest", "drift"];
+		function genName() { return pick(pre) + pick(suf); }
+
+		let job = null;
+		function generate() {
+			if (job) { cancelAnimationFrame(job); job = null; }
+			seed();
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+			const ox = rr(0, 200), oy = rr(0, 200);
+			const sc = 2.5 + rr(0, 2);
+
+			// parchment colors
+			const parchLight = [225, 205, 165], parchDark = [180, 155, 110];
+			const seaLight = [160, 175, 150], seaDark = [110, 130, 115];
+			const deepSea = [70, 90, 80];
+			const land = [185, 170, 130], hills = [155, 140, 105], mount = [120, 105, 80];
+
+			// compute height map
+			const hmap = new Float32Array(W * H);
+			const ROWS = 12;
+			let row = 0;
+
+			// precompute all heights first pass at lower res, then interpolate
+			function renderChunk() {
+				const end = Math.min(row + ROWS, H);
+				const img = ctx.createImageData(W, end - row);
+				const d = img.data;
+				let p = 0;
+				for (let y = row; y < end; y++) {
+					for (let x = 0; x < W; x++) {
+						const nx = x / dim * sc + ox, ny = y / dim * sc + oy;
+						// multi-octave terrain
+						let h = fbm(nx, ny, 6) * 0.7;
+						// add some ridges
+						h += Math.abs(fbm(nx * 1.5 + 50, ny * 1.5 + 50, 4)) * 0.35;
+						// island mask — push edges underwater
+						const ex = (x / W - 0.5) * 2, ey = (y / H - 0.5) * 2;
+						const edist = ex * ex + ey * ey;
+						h -= edist * 0.8;
+						hmap[y * W + x] = h;
+
+						const seaLevel = 0.0;
+						let r, g, b;
+						if (h < seaLevel - 0.15) {
+							// deep water
+							const t = Math.min(1, (seaLevel - 0.15 - h) * 3);
+							r = lerp(seaDark[0], deepSea[0], t);
+							g = lerp(seaDark[1], deepSea[1], t);
+							b = lerp(seaDark[2], deepSea[2], t);
+							// wave lines
+							const wave = Math.sin((nx * 8 + fbm(nx * 2, ny * 2, 2) * 3)) * 0.5 + 0.5;
+							if (wave > 0.92) { r += 10; g += 12; b += 8; }
+						} else if (h < seaLevel) {
+							// shallow water
+							const t = (h - seaLevel + 0.15) / 0.15;
+							r = lerp(seaDark[0], seaLight[0], t);
+							g = lerp(seaDark[1], seaLight[1], t);
+							b = lerp(seaDark[2], seaLight[2], t);
+						} else if (h < seaLevel + 0.02) {
+							// beach
+							r = 210; g = 195; b = 155;
+						} else if (h < 0.15) {
+							// lowland
+							const t = (h - seaLevel - 0.02) / 0.13;
+							r = lerp(land[0], hills[0], t);
+							g = lerp(land[1], hills[1], t);
+							b = lerp(land[2], hills[2], t);
+						} else {
+							// mountains
+							const t = Math.min(1, (h - 0.15) / 0.25);
+							r = lerp(hills[0], mount[0], t);
+							g = lerp(hills[1], mount[1], t);
+							b = lerp(hills[2], mount[2], t);
+						}
+
+						// parchment texture overlay
+						const pTex = fbm(x * 0.015 + 300, y * 0.015 + 300, 3) * 0.15;
+						r = r * 0.85 + parchLight[0] * 0.15 + pTex * 30;
+						g = g * 0.85 + parchLight[1] * 0.15 + pTex * 25;
+						b = b * 0.85 + parchLight[2] * 0.15 + pTex * 20;
+
+						// grain
+						const grain = (Math.random() - 0.5) * 8;
+						d[p++] = Math.max(0, Math.min(255, r + grain)) | 0;
+						d[p++] = Math.max(0, Math.min(255, g + grain)) | 0;
+						d[p++] = Math.max(0, Math.min(255, b + grain)) | 0;
+						d[p++] = 255;
+					}
+				}
+				ctx.putImageData(img, 0, row);
+				row = end;
+				if (row < H) { job = requestAnimationFrame(renderChunk); }
+				else { drawOverlay(); job = null; }
+			}
+
+			function drawOverlay() {
+				// contour lines on land
+				ctx.strokeStyle = 'rgba(80,60,35,0.12)';
+				ctx.lineWidth = 0.8;
+				const contourStep = 0.04;
+				for (let y = 1; y < H - 1; y++) {
+					for (let x = 1; x < W - 1; x++) {
+						const h = hmap[y * W + x];
+						if (h < 0) continue;
+						const hR = hmap[y * W + x + 1];
+						const hD = hmap[(y + 1) * W + x];
+						const level = Math.floor(h / contourStep);
+						if (Math.floor(hR / contourStep) !== level || Math.floor(hD / contourStep) !== level) {
+							ctx.fillStyle = 'rgba(80,60,35,0.1)';
+							ctx.fillRect(x, y, 1, 1);
+						}
+					}
+				}
+
+				// mountain symbols
+				ctx.save();
+				for (let i = 0; i < 200; i++) {
+					const x = ri(0, W), y = ri(0, H);
+					const h = hmap[y * W + x];
+					if (h < 0.15) continue;
+					const sz = 4 + h * 25;
+					const a = 0.2 + Math.min(h * 1.5, 0.6);
+					ctx.strokeStyle = `rgba(60,45,25,${a})`;
+					ctx.lineWidth = 0.8 + h * 2;
+					ctx.beginPath();
+					ctx.moveTo(x - sz * 0.6, y + sz * 0.3);
+					ctx.lineTo(x + rr(-2, 2), y - sz);
+					ctx.lineTo(x + sz * 0.6, y + sz * 0.3);
+					ctx.stroke();
+					// snow cap
+					if (h > 0.25) {
+						ctx.strokeStyle = `rgba(220,210,185,${a * 0.7})`;
+						ctx.lineWidth = 0.6;
+						ctx.beginPath();
+						ctx.moveTo(x - sz * 0.2, y - sz * 0.5);
+						ctx.lineTo(x, y - sz);
+						ctx.lineTo(x + sz * 0.2, y - sz * 0.5);
+						ctx.stroke();
+					}
+				}
+				ctx.restore();
+
+				// tree symbols in lowlands
+				ctx.save();
+				for (let i = 0; i < 400; i++) {
+					const x = ri(0, W), y = ri(0, H);
+					const h = hmap[y * W + x];
+					if (h < 0.03 || h > 0.13) continue;
+					const sz = 2 + Math.random() * 3;
+					ctx.fillStyle = `rgba(70,80,50,${0.2 + Math.random() * 0.3})`;
+					ctx.beginPath();
+					ctx.arc(x, y - sz, sz, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.strokeStyle = 'rgba(60,45,25,0.15)';
+					ctx.lineWidth = 0.5;
+					ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - sz * 0.5); ctx.stroke();
+				}
+				ctx.restore();
+
+				// place names
+				ctx.save();
+				const names = [];
+				// land names
+				const landCount = ri(6, 12);
+				for (let attempt = 0; attempt < landCount * 40 && names.length < landCount; attempt++) {
+					const x = ri(W * 0.1, W * 0.9), y = ri(H * 0.1, H * 0.9);
+					const h = hmap[y * W + x];
+					if (h < 0.01) continue;
+					let ok = true;
+					for (const n of names) { if (Math.hypot(x - n.x, y - n.y) < dim * 0.12) { ok = false; break; } }
+					if (!ok) continue;
+					const name = genName();
+					const isMountain = h > 0.2;
+					names.push({ x, y, name, isCoastal: false, isMountain, isOcean: false });
+				}
+				// ocean names
+				const seaPre = ["Sea of", "Gulf of", "Bay of", "The", "Strait of"];
+				const seaSuf = ["Sorrows", "Whispers", "Storms", "Silence", "Glass", "Teeth", "Stars", "Echoes", "Bones", "Embers", "Dreams", "Mists"];
+				const oceanCount = ri(2, 5);
+				for (let attempt = 0; attempt < oceanCount * 40 && names.filter(n => n.isOcean).length < oceanCount; attempt++) {
+					const x = ri(W * 0.1, W * 0.9), y = ri(H * 0.1, H * 0.9);
+					const h = hmap[y * W + x];
+					if (h > -0.05) continue;
+					let ok = true;
+					for (const n of names) { if (Math.hypot(x - n.x, y - n.y) < dim * 0.14) { ok = false; break; } }
+					if (!ok) continue;
+					const name = pick(seaPre) + " " + pick(seaSuf);
+					names.push({ x, y, name, isCoastal: false, isMountain: false, isOcean: true });
+				}
+
+				for (const n of names) {
+					const sz = n.isMountain ? dim * 0.018 : n.isOcean ? dim * 0.016 : dim * 0.013;
+					ctx.font = `${n.isMountain ? 'bold ' : ''}${n.isOcean ? 'italic ' : ''}${sz | 0}px Georgia, serif`;
+					ctx.textAlign = 'center';
+					ctx.textBaseline = 'middle';
+					// halo
+					ctx.strokeStyle = n.isOcean ? 'rgba(130,150,135,0.5)' : 'rgba(210,195,160,0.6)';
+					ctx.lineWidth = 3;
+					ctx.strokeText(n.name, n.x, n.y);
+					ctx.fillStyle = n.isOcean ? 'rgba(35,50,40,0.65)' : 'rgba(55,35,15,0.75)';
+					ctx.fillText(n.name, n.x, n.y);
+					if (!n.isOcean) {
+						// dot
+						ctx.beginPath(); ctx.arc(n.x, n.y + sz * 0.8, 2, 0, Math.PI * 2);
+						ctx.fillStyle = 'rgba(55,35,15,0.5)'; ctx.fill();
+					}
+				}
+				ctx.restore();
+
+				// compass rose
+				ctx.save();
+				const rx = W * 0.88, ry = H * 0.12, rs = dim * 0.04;
+				ctx.translate(rx, ry);
+				ctx.strokeStyle = 'rgba(80,55,25,0.6)';
+				ctx.fillStyle = 'rgba(80,55,25,0.5)';
+				ctx.lineWidth = 1.5;
+				// cardinal points
+				for (let i = 0; i < 4; i++) {
+					ctx.save(); ctx.rotate(i * Math.PI / 2);
+					ctx.beginPath(); ctx.moveTo(0, -rs); ctx.lineTo(-rs * 0.12, 0); ctx.lineTo(rs * 0.12, 0); ctx.closePath();
+					ctx.fill(); ctx.stroke();
+					ctx.restore();
+				}
+				// ordinal points
+				ctx.strokeStyle = 'rgba(80,55,25,0.35)';
+				ctx.lineWidth = 0.8;
+				for (let i = 0; i < 4; i++) {
+					ctx.save(); ctx.rotate(i * Math.PI / 2 + Math.PI / 4);
+					ctx.beginPath(); ctx.moveTo(0, -rs * 0.6); ctx.lineTo(-rs * 0.06, 0); ctx.lineTo(rs * 0.06, 0); ctx.closePath();
+					ctx.stroke();
+					ctx.restore();
+				}
+				// circle
+				ctx.beginPath(); ctx.arc(0, 0, rs * 0.15, 0, Math.PI * 2); ctx.stroke();
+				// N label
+				ctx.font = `bold ${rs * 0.4 | 0}px Georgia, serif`;
+				ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(80,55,25,0.7)';
+				ctx.fillText('N', 0, -rs - rs * 0.25);
+				ctx.restore();
+
+				// decorative border
+				ctx.save();
+				const bw = dim * 0.015;
+				ctx.strokeStyle = 'rgba(100,70,30,0.35)';
+				ctx.lineWidth = bw;
+				ctx.strokeRect(bw / 2, bw / 2, W - bw, H - bw);
+				ctx.lineWidth = 1;
+				ctx.strokeRect(bw * 1.8, bw * 1.8, W - bw * 3.6, H - bw * 3.6);
+				// corner flourishes
+				const fl = dim * 0.04;
+				for (const [fx, fy] of [[bw * 2, bw * 2], [W - bw * 2, bw * 2], [bw * 2, H - bw * 2], [W - bw * 2, H - bw * 2]]) {
+					ctx.beginPath(); ctx.arc(fx, fy, fl, 0, Math.PI * 2);
+					ctx.strokeStyle = 'rgba(100,70,30,0.2)'; ctx.lineWidth = 0.8; ctx.stroke();
+					ctx.beginPath(); ctx.arc(fx, fy, fl * 0.5, 0, Math.PI * 2); ctx.stroke();
+				}
+				ctx.restore();
+
+				// aged edges vignette
+				const v = ctx.createRadialGradient(W / 2, H / 2, dim * 0.3, W / 2, H / 2, dim * 0.85);
+				v.addColorStop(0, 'transparent');
+				v.addColorStop(0.7, 'rgba(120,90,50,0.05)');
+				v.addColorStop(1, 'rgba(60,40,15,0.35)');
+				ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+
+				// stain spots
+				for (let i = 0; i < ri(2, 5); i++) {
+					const sx = rr(0, W), sy = rr(0, H), sr = rr(dim * 0.03, dim * 0.12);
+					const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+					sg.addColorStop(0, 'rgba(150,120,70,0.06)');
+					sg.addColorStop(1, 'transparent');
+					ctx.fillStyle = sg; ctx.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
+				}
+			}
+
+			job = requestAnimationFrame(renderChunk);
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

@@ -1,33 +1,626 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<script src="https://code.jquery.com/jquery-latest.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <title>Random NFT Generator</title>
-  <style>
-    div {
-  height: 10px;
-  width: 10px;
-  float: left;
-}
-    body {
-      position:absolute;
-      margin-left:34%;
-      margin-right:34%;
-    }
-  </style>
-  <script>
-$(document).ready(function(){
-  for(var i=0; i<400; i++){
-    var color ='#'+Math.random().toString(16).substr(2,6);
-    var div = $('<div>').css('background-color', color);
-    $('body').append(div);
-    if(!div.attr('style')) console.log(color);
-  }
-});
-  </script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GΞNΞSIS LAB</title>
+
+	<style>
+		/* latin */
+		@font-face {
+			font-family: 'Instrument Serif';
+			font-style: italic;
+			font-weight: 400;
+			font-display: swap;
+			src: url(./fonts/InstrumentSerifItalic400.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	
+		/* latin */
+		@font-face {
+			font-family: 'JetBrains Mono';
+			font-style: normal;
+			font-weight: 300;
+			font-display: swap;
+			src: url(./fonts/JetBrainsMonoNormal300.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	
+		/* latin */
+		@font-face {
+			font-family: 'JetBrains Mono';
+			font-style: normal;
+			font-weight: 400;
+			font-display: swap;
+			src: url(./fonts/JetBrainsMonoNormal400.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	
+		/* latin */
+		@font-face {
+			font-family: 'JetBrains Mono';
+			font-style: normal;
+			font-weight: 500;
+			font-display: swap;
+			src: url(./fonts/JetBrainsMonoNormal500.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	
+		/* latin */
+		@font-face {
+			font-family: 'Syne';
+			font-style: normal;
+			font-weight: 700;
+			font-display: swap;
+			src: url(./fonts/SyneNormal700.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	
+		/* greek */
+		@font-face {
+			font-family: 'Syne';
+			font-style: normal;
+			font-weight: 800;
+			font-display: swap;
+			src: url(./fonts/SyneNormal800Greek.woff2) format('woff2');
+			unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+		}
+	
+		/* latin */
+		@font-face {
+			font-family: 'Syne';
+			font-style: normal;
+			font-weight: 800;
+			font-display: swap;
+			src: url(./fonts/SyneNormal800.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+	</style>
+
+	<style>
+		:root {
+			--bg: #08080c;
+			--surface: #0e0e14;
+			--border: #1a1a24;
+			--text: #e8e8f0;
+			--text-dim: #9090a8;
+			--accent: #a0f0c0;
+			--accent2: #80c0ff;
+			--accent3: #ff9080;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background: var(--bg);
+			color: var(--text);
+			font-family: 'JetBrains Mono', monospace;
+			min-height: 100vh;
+			overflow-x: hidden;
+		}
+
+		/* grain overlay */
+		body::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+			pointer-events: none;
+			z-index: 1000;
+		}
+
+		/* scanline effect */
+		body::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background: repeating-linear-gradient(0deg,
+						transparent,
+						transparent 2px,
+						rgba(0, 0, 0, 0.08) 2px,
+						rgba(0, 0, 0, 0.08) 4px);
+			pointer-events: none;
+			z-index: 999;
+		}
+
+		.glow-orb {
+			position: fixed;
+			border-radius: 50%;
+			filter: blur(120px);
+			pointer-events: none;
+			z-index: 0;
+			opacity: 0.4;
+		}
+
+		.glow-orb.a {
+			width: 500px;
+			height: 500px;
+			background: #0a3020;
+			top: -100px;
+			left: -100px;
+			animation: drift1 20s ease-in-out infinite;
+		}
+
+		.glow-orb.b {
+			width: 400px;
+			height: 400px;
+			background: #0a1830;
+			bottom: -100px;
+			right: -100px;
+			animation: drift2 25s ease-in-out infinite;
+		}
+
+		.glow-orb.c {
+			width: 300px;
+			height: 300px;
+			background: #201020;
+			top: 50%;
+			left: 50%;
+			animation: drift3 18s ease-in-out infinite;
+		}
+
+		@keyframes drift1 {
+
+			0%,
+			100% {
+				transform: translate(0, 0);
+			}
+
+			50% {
+				transform: translate(80px, 60px);
+			}
+		}
+
+		@keyframes drift2 {
+
+			0%,
+			100% {
+				transform: translate(0, 0);
+			}
+
+			50% {
+				transform: translate(-60px, -80px);
+			}
+		}
+
+		@keyframes drift3 {
+
+			0%,
+			100% {
+				transform: translate(-50%, -50%);
+			}
+
+			50% {
+				transform: translate(-30%, -60%);
+			}
+		}
+
+		header {
+			position: relative;
+			z-index: 1;
+			padding: 60px 40px 20px;
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+
+		.lab-tag {
+			display: inline-block;
+			font-size: 10px;
+			letter-spacing: 4px;
+			text-transform: uppercase;
+			color: var(--accent);
+			border: 1px solid rgba(160, 240, 192, 0.2);
+			padding: 4px 12px;
+			border-radius: 2px;
+			margin-bottom: 24px;
+			animation: fadeIn 0.8s ease both;
+		}
+
+		h1 {
+			font-family: 'Syne', sans-serif;
+			font-weight: 800;
+			font-size: clamp(48px, 8vw, 100px);
+			line-height: 0.95;
+			letter-spacing: -2px;
+			margin-bottom: 16px;
+			animation: fadeIn 0.8s 0.1s ease both;
+		}
+
+		h1 .serif {
+			font-family: 'Instrument Serif', serif;
+			font-weight: 400;
+			font-style: italic;
+		}
+
+		h1 .dim {
+			color: var(--text-dim);
+		}
+
+		h1 .accent {
+			color: var(--accent);
+		}
+
+		.subtitle {
+			font-size: 13px;
+			color: var(--text-dim);
+			font-weight: 300;
+			letter-spacing: 1px;
+			max-width: 500px;
+			line-height: 1.7;
+			animation: fadeIn 0.8s 0.2s ease both;
+		}
+
+		.divider {
+			max-width: 1400px;
+			margin: 30px auto 40px;
+			padding: 0 40px;
+			position: relative;
+			z-index: 1;
+			animation: fadeIn 0.8s 0.3s ease both;
+		}
+
+		.divider-line {
+			height: 1px;
+			background: linear-gradient(90deg, var(--accent), var(--border) 40%, transparent);
+		}
+
+		.divider-meta {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 10px;
+			font-size: 10px;
+			letter-spacing: 2px;
+			color: var(--text-dim);
+			text-transform: uppercase;
+		}
+
+		.grid {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 0 40px 80px;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+			gap: 20px;
+			position: relative;
+			z-index: 1;
+		}
+
+		.card {
+			position: relative;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			overflow: hidden;
+			background: var(--surface);
+			cursor: pointer;
+			text-decoration: none;
+			color: inherit;
+			display: block;
+			transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+			animation: cardIn 0.6s ease both;
+		}
+
+		.card:hover {
+			border-color: rgba(160, 240, 192, 0.25);
+			transform: translateY(-4px);
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(160, 240, 192, 0.04);
+		}
+
+		.card-preview {
+			height: 220px;
+			position: relative;
+			overflow: hidden;
+			background: #0a0a10;
+		}
+
+		.card-preview iframe {
+			width: 200%;
+			height: 200%;
+			border: none;
+			transform: scale(0.5);
+			transform-origin: top left;
+			pointer-events: none;
+			opacity: 0.85;
+			transition: opacity 0.4s;
+		}
+
+		.card:hover .card-preview iframe {
+			opacity: 1;
+		}
+
+		.card-preview-overlay {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, transparent 50%, var(--surface));
+			pointer-events: none;
+		}
+
+		.card-number {
+			position: absolute;
+			top: 12px;
+			right: 14px;
+			font-size: 10px;
+			letter-spacing: 2px;
+			color: rgba(160, 240, 192, 0.35);
+			z-index: 2;
+		}
+
+		.card-body {
+			padding: 20px 22px 22px;
+		}
+
+		.card-type {
+			font-size: 9px;
+			letter-spacing: 3px;
+			text-transform: uppercase;
+			margin-bottom: 8px;
+			display: inline-block;
+			padding: 2px 8px;
+			border-radius: 2px;
+			font-weight: 500;
+		}
+
+		.card-type.gen {
+			color: var(--accent);
+			background: rgba(160, 240, 192, 0.07);
+		}
+
+		.card-type.sim {
+			color: var(--accent2);
+			background: rgba(128, 192, 255, 0.07);
+		}
+
+		.card-type.viz {
+			color: var(--accent3);
+			background: rgba(255, 144, 128, 0.07);
+		}
+
+		.card-title {
+			font-family: 'Syne', sans-serif;
+			font-weight: 700;
+			font-size: 20px;
+			margin-bottom: 6px;
+			letter-spacing: -0.5px;
+		}
+
+		.card-desc {
+			font-size: 11px;
+			color: var(--text);
+			line-height: 1.6;
+			font-weight: 300;
+			opacity: 0.75;
+		}
+
+		.card-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 12px 22px;
+			border-top: 1px solid var(--border);
+			font-size: 10px;
+			color: var(--text-dim);
+			letter-spacing: 1px;
+		}
+
+		.card-launch {
+			color: var(--accent);
+			transition: letter-spacing 0.3s;
+		}
+
+		.card:hover .card-launch {
+			letter-spacing: 3px;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(12px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes cardIn {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.footer {
+			position: relative;
+			z-index: 1;
+			text-align: center;
+			padding: 30px 40px 50px;
+			font-size: 10px;
+			letter-spacing: 3px;
+			color: var(--text-dim);
+			text-transform: uppercase;
+		}
+
+		.footer span {
+			color: var(--accent);
+		}
+
+		/* Mobile */
+		@media (max-width: 600px) {
+			header {
+				padding: 40px 20px 16px;
+			}
+
+			.divider,
+			.grid {
+				padding-left: 20px;
+				padding-right: 20px;
+			}
+
+			.grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
 </head>
+
 <body>
-  <div id="box" style="width:50px;height:50px;">
-  </div>
+
+	<div class="glow-orb a"></div>
+	<div class="glow-orb b"></div>
+	<div class="glow-orb c"></div>
+
+	<header>
+		<div class="lab-tag">Generative Collection</div>
+		<h1>GΞNΞSIS<br><span class="serif">Lab</span> <span class="dim">/</span> <span class="accent">NFT (???)</span></h1>
+		<p class="subtitle">Procedural art generators. Each click mints a unique specimen. Microscopy, fractals,
+			landscapes, and noise fields rendered in real-time on canvas.</p>
+	</header>
+
+	<div class="divider">
+		<div class="divider-line"></div>
+		<div class="divider-meta">
+			<span>Generators list</span>
+			<span>scroll to explore</span>
+		</div>
+	</div>
+
+	<div class="grid" id="grid"></div>
+
+	<div class="footer">who even reads this text? <span>◆</span> do you???</div>
+
+	<script>
+		const generators = [
+			{
+				file: "microscopy-generator.html",
+				title: "Microscopy",
+				desc: "Simulated dark-field microscopy of pond water organisms. Paramecium, amoeba, euglena, volvox, and more.",
+				type: "sim", tag: "SIMULATION",
+				tech: "Canvas 2D"
+			},
+			{
+				file: "rockcrystal-generator.html",
+				title: "Thin Section",
+				desc: "Cross-polarized light petrography. Voronoi crystal grains with birefringence, twinning, and cleavage.",
+				type: "sim", tag: "SIMULATION",
+				tech: "Voronoi"
+			},
+			{
+				file: "fractal-generator.html",
+				title: "Fractals",
+				desc: "Layered fractal blobs with midpoint subdivision, screen-blended glow, and nebula backdrops across six color palettes.",
+				type: "gen", tag: "GENERATIVE",
+				tech: "Math"
+			},
+			{
+				file: "geode-generator.html",
+				title: "Geode",
+				desc: "Procedural crystal geode cross-sections with Perlin noise fields using color banding and vein lines.",
+				type: "gen", tag: "GENERATIVE",
+				tech: "Perlin noise"
+			},
+			{
+				file: "deepsea-generator.html",
+				title: "Deep Sea",
+				desc: "Bioluminescent deep ocean creatures and environments. Anglerfish, jellyfish, and abyssal plains.",
+				type: "viz", tag: "VISUAL",
+				tech: "Canvas 2D"
+			},
+			{
+				file: "constellation-generator.html",
+				title: "Constellation",
+				desc: "Procedural star fields and constellation patterns with nebula backdrops, galaxies, and star clusters.",
+				type: "viz", tag: "VISUAL",
+				tech: "Canvas 2D"
+			},
+			{
+				file: "noise-generator.html",
+				title: "Noise Fields",
+				desc: "Raw RGB white noise. Every pixel is a random color, every click a new static field.",
+				type: "gen", tag: "GENERATIVE",
+				tech: "Random noise"
+			},
+			{
+				file: "abstractart-generator.html",
+				title: "Abstract Art",
+				desc: "Generative abstract compositions with geometric forms, color theory, and compositional balance.",
+				type: "gen", tag: "GENERATIVE",
+				tech: "Canvas 2D"
+			},
+			{
+				file: "islandmap-generator.html",
+				title: "Island Map",
+				desc: "Procedural archipelago cartography. Terrain elevation, coastlines, forests, and hand-drawn style.",
+				type: "viz", tag: "VISUAL",
+				tech: "Noise terrain"
+			},
+			{
+				file: "skyline-generator.html",
+				title: "Skyline",
+				desc: "Generative city skylines with atmospheric perspective, window lights, and gradient skies.",
+				type: "viz", tag: "VISUAL",
+				tech: "Canvas 2D"
+			},
+			{
+				file: "boredape-generator/index.html",
+				title: "Bored Ape",
+				desc: "Layer-based ape builder. Mix and match colors, eyes, hats, clothes, and meme text from pre-drawn sprites.",
+				type: "gen", tag: "GENERATIVE",
+				tech: "Sprite layers"
+			},
+		];
+
+		const grid = document.getElementById('grid');
+
+		generators.forEach((g, i) => {
+			const card = document.createElement('a');
+			card.className = 'card';
+			card.href = g.file;
+			card.style.animationDelay = `${0.3 + i * 0.07}s`;
+			card.innerHTML = `
+				<div class="card-preview">
+				<div class="card-number">#${String(i + 1).padStart(3, '0')}</div>
+				<div class="card-preview-overlay"></div>
+				</div>
+				<div class="card-body">
+				<div class="card-type ${g.type}">${g.tag}</div>
+				<div class="card-title">${g.title}</div>
+				<div class="card-desc">${g.desc}</div>
+				</div>
+				<div class="card-footer">
+				<span>${g.tech}</span>
+				<span class="card-launch">LAUNCH →</span>
+				</div>
+			`;
+
+			// lazy-load iframe preview on intersection
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						const preview = card.querySelector('.card-preview');
+						const iframe = document.createElement('iframe');
+						iframe.src = g.file;
+						iframe.loading = 'lazy';
+						iframe.setAttribute('sandbox', 'allow-scripts');
+						preview.insertBefore(iframe, preview.firstChild);
+						observer.unobserve(card);
+					}
+				});
+			}, { threshold: 0.1 });
+
+			grid.appendChild(card);
+			observer.observe(card);
+		});
+	</script>
 </body>
+
 </html>

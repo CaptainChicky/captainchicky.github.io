@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background: #000;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #80e0ff;
+			font: 13px monospace;
+			background: rgba(0, 8, 20, 0.7);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to generate new city</div>
+	<script>
+		const c = document.getElementById('c'), ctx = c.getContext('2d');
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+		function hsl(h, s, l, a) { return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a ?? 1})`; }
+		function lerp(a, b, t) { return a + (b - a) * t; }
+		function glo(x, y, r, h, s, l, a) { if (r < 1) return; const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, hsl(h, s, l, a)); g.addColorStop(0.35, hsl(h, s, l * 0.6, a * 0.3)); g.addColorStop(1, 'transparent'); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+
+		function generate() {
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+
+			const nH = rr(0, 360), a1 = nH, a2 = (nH + rr(80, 160)) % 360, a3 = (nH + rr(200, 280)) % 360;
+			const sH = ri(220, 270);
+			const hrzY = H * rr(0.85, 0.92);
+
+			// sky
+			const sky = ctx.createLinearGradient(0, 0, 0, H);
+			sky.addColorStop(0, hsl(sH, 45, 3, 1)); sky.addColorStop(0.15, hsl(sH, 40, 5, 1));
+			sky.addColorStop(0.3, hsl(sH - 10, 50, 8, 1)); sky.addColorStop(0.5, hsl(sH + 5, 55, 12, 1));
+			sky.addColorStop(0.65, hsl(a1, 45, 15, 1)); sky.addColorStop(0.8, hsl(a1, 35, 10, 1)); sky.addColorStop(1, hsl(sH, 30, 4, 1));
+			ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+
+			// clouds
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(4, 10); i++) {
+				const cy = rr(H * 0.05, H * 0.5), cw = rr(W * 0.15, W * 0.6), cx = rr(-cw * 0.3, W);
+				for (let j = 0; j < ri(3, 7); j++) {
+					const ox = cx + rr(-cw * 0.2, cw * 0.2), oy = cy + rr(-H * 0.02, H * 0.02), or = rr(cw * 0.1, cw * 0.4);
+					const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, or); g.addColorStop(0, hsl(sH - 10, 25, 25, rr(0.01, 0.04))); g.addColorStop(1, 'transparent'); ctx.fillStyle = g; ctx.fillRect(ox - or, oy - or, or * 2, or * 2);
+				}
+			}
+			ctx.restore();
+
+			// stars
+			for (let i = 0; i < ri(150, 400); i++) {
+				const sx = rr(0, W), sy = rr(0, H * 0.5), sb = rr(0.08, 0.6), sr = rr(0.15, sb > 0.4 ? 1.2 : 0.6);
+				ctx.fillStyle = `rgba(255,255,${ri(220, 255)},${sb})`; ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+				if (sb > 0.45) { ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(sx, sy, sr * 4, 40, 15, 80, sb * 0.15); ctx.restore(); }
+			}
+
+			// moon
+			if (Math.random() > 0.25) {
+				const mx = rr(W * 0.1, W * 0.9), my = rr(H * 0.06, H * 0.22), mr = dim * rr(0.015, 0.03);
+				// atmospheric halos
+				ctx.save(); ctx.globalCompositeOperation = 'screen';
+				glo(mx, my, mr * 10, 40, 15, 30, 0.02); glo(mx, my, mr * 5, 40, 15, 40, 0.04); glo(mx, my, mr * 2.5, 45, 12, 55, 0.08);
+				ctx.restore();
+
+				// draw moon to offscreen then stamp it
+				const mOff = document.createElement('canvas');
+				mOff.width = mr * 3; mOff.height = mr * 3;
+				const mc = mOff.getContext('2d');
+				const mcx = mr * 1.5, mcy = mr * 1.5;
+
+				// lit disc with surface detail
+				mc.beginPath(); mc.arc(mcx, mcy, mr, 0, Math.PI * 2); mc.clip();
+
+				// base surface
+				const mg = mc.createRadialGradient(mcx - mr * 0.15, mcy - mr * 0.15, 0, mcx, mcy, mr);
+				mg.addColorStop(0, 'rgba(252,250,242,0.95)'); mg.addColorStop(0.3, 'rgba(238,232,218,0.9)');
+				mg.addColorStop(0.7, 'rgba(210,205,192,0.82)'); mg.addColorStop(1, 'rgba(185,180,170,0.7)');
+				mc.fillStyle = mg; mc.fillRect(0, 0, mr * 3, mr * 3);
+
+				// maria
+				const mareCount = ri(5, 10);
+				for (let i = 0; i < mareCount; i++) {
+					// distribute across full disc, not just center
+					const ma = rr(0, Math.PI * 2), md = mr * rr(0, 0.8);
+					const mx2 = mcx + Math.cos(ma) * md, my2 = mcy + Math.sin(ma) * md;
+					const msW = mr * rr(0.12, 0.4), msH = msW * rr(0.5, 1);
+					mc.beginPath(); mc.ellipse(mx2, my2, msW, msH, rr(0, Math.PI), 0, Math.PI * 2);
+					const mGrad = mc.createRadialGradient(mx2, my2, 0, mx2, my2, msW);
+					mGrad.addColorStop(0, `rgba(70,65,58,${rr(0.3, 0.55)})`);
+					mGrad.addColorStop(0.5, `rgba(90,85,75,${rr(0.2, 0.35)})`);
+					mGrad.addColorStop(1, 'transparent');
+					mc.fillStyle = mGrad; mc.fill();
+				}
+
+				// craters
+				for (let i = 0; i < ri(6, 15); i++) {
+					const ca = rr(0, Math.PI * 2), cd = mr * rr(0, 0.85);
+					const cx2 = mcx + Math.cos(ca) * cd, cy2 = mcy + Math.sin(ca) * cd, cr2 = mr * rr(0.02, 0.12);
+					// rim highlight
+					mc.beginPath(); mc.arc(cx2 - cr2 * 0.1, cy2 - cr2 * 0.1, cr2, 0, Math.PI * 2);
+					mc.strokeStyle = `rgba(245,240,230,${rr(0.08, 0.2)})`; mc.lineWidth = rr(0.3, 0.8); mc.stroke();
+					// floor shadow
+					mc.beginPath(); mc.arc(cx2 + cr2 * 0.12, cy2 + cr2 * 0.12, cr2 * 0.7, 0, Math.PI * 2);
+					mc.fillStyle = `rgba(140,135,128,${rr(0.06, 0.15)})`; mc.fill();
+				}
+
+				// highlands (bright terrain patches)
+				for (let i = 0; i < ri(3, 6); i++) {
+					const ha = rr(0, Math.PI * 2), hd = mr * rr(0, 0.7);
+					const hx = mcx + Math.cos(ha) * hd, hy = mcy + Math.sin(ha) * hd, hr2 = mr * rr(0.1, 0.25);
+					const hg = mc.createRadialGradient(hx, hy, 0, hx, hy, hr2);
+					hg.addColorStop(0, `rgba(248,245,238,${rr(0.08, 0.18)})`); hg.addColorStop(1, 'transparent');
+					mc.fillStyle = hg; mc.beginPath(); mc.arc(hx, hy, hr2, 0, Math.PI * 2); mc.fill();
+				}
+
+				// curved shadow
+				// terminator is an ellipse with ry=mr (always touches top/bottom poles), rx controls phase
+				const phase = rr(0.15, 0.75); // how much is lit (0=half, 1=full-ish)
+				const litRight = Math.random() > 0.5;
+				mc.globalCompositeOperation = 'destination-out';
+				mc.beginPath();
+				// arc along the dark side of the circle (from top pole to bottom pole)
+				mc.arc(mcx, mcy, mr + 1, -Math.PI / 2, Math.PI / 2, litRight); // go through the dark side
+				// elliptical terminator arc back from bottom pole to top pole through the lit side
+				mc.ellipse(mcx, mcy, mr * phase, mr, 0, Math.PI / 2, -Math.PI / 2, !litRight);
+				mc.closePath();
+				mc.fillStyle = 'rgba(0,0,0,1)'; mc.fill();
+
+				// stamp moon onto main canvas
+				ctx.drawImage(mOff, mx - mr * 1.5, my - mr * 1.5);
+			}
+
+			// atmospheric city glow
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < 5; i++) {
+				const gx = rr(W * 0.05, W * 0.95), gy = hrzY + rr(-H * 0.1, 0), gr = rr(dim * 0.1, dim * 0.35);
+				const gg = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr); gg.addColorStop(0, hsl(pick([a1, a2, a3]), 55, 42, 0.07)); gg.addColorStop(0.5, hsl(pick([a1, a2]), 45, 32, 0.025)); gg.addColorStop(1, 'transparent'); ctx.fillStyle = gg; ctx.fillRect(0, 0, W, H);
+			}
+			ctx.restore();
+
+			// buildings
+			const blds = [];
+			for (let i = 0; i < ri(35, 60); i++) {
+				const bw = rr(W * 0.012, W * 0.075), bh = rr(H * 0.15, H * 0.8);
+				blds.push({
+					x: rr(-bw, W), y: hrzY - bh + rr(-H * 0.015, H * 0.015), w: bw, h: bh, d: rr(0, 1), st: ri(0, 6),
+					hue: pick([a1, a2, a3]), sign: Math.random() > 0.45, wd: rr(0.3, 0.9), wh: pick([a1, a2, a3, 40, 55]), lr: rr(0.15, 0.8)
+				});
+			}
+			blds.sort((a, b) => a.d - b.d);
+
+			for (const b of blds) {
+				const ff = lerp(0.25, 1, b.d), bl = lerp(9, 4, b.d), bs = lerp(18, 28, b.d);
+				// buildings fully opaque
+				ctx.fillStyle = hsl(sH, bs, lerp(2, bl, ff), 1);
+				if (b.st === 0) ctx.fillRect(b.x, b.y, b.w, b.h);
+				else if (b.st === 1) { let ty = b.y, tw = b.w; for (let t = 0; t < ri(2, 4); t++) { const th = b.h / 3 * rr(0.7, 1.3); ctx.fillRect(b.x + (b.w - tw) / 2, ty, tw, th); ty += th; tw *= rr(1.05, 1.25); } }
+				else if (b.st === 2) {
+					ctx.fillRect(b.x, b.y + b.h * 0.15, b.w, b.h * 0.85); ctx.beginPath(); ctx.moveTo(b.x + b.w / 2, b.y); ctx.lineTo(b.x + b.w * 0.1, b.y + b.h * 0.2); ctx.lineTo(b.x + b.w * 0.9, b.y + b.h * 0.2); ctx.closePath(); ctx.fill();
+					const antH = b.h * rr(0.08, 0.25); ctx.fillRect(b.x + b.w * 0.47, b.y - antH, b.w * 0.06, antH);
+					ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(b.x + b.w * 0.5, b.y - antH, dim * 0.007, Math.random() > 0.5 ? 0 : a1, 75, 55, 0.5); ctx.restore();
+				}
+				else if (b.st === 3) { ctx.fillRect(b.x, b.y, b.w, b.h); ctx.fillRect(b.x + b.w * 0.1, b.y - b.h * 0.05, b.w * 0.3, b.h * 0.05); ctx.fillRect(b.x + b.w * 0.6, b.y - b.h * 0.08, b.w * 0.2, b.h * 0.08); }
+				else if (b.st === 4) { ctx.beginPath(); ctx.moveTo(b.x, b.y + b.h); ctx.lineTo(b.x + b.w * 0.25, b.y); ctx.lineTo(b.x + b.w, b.y + b.h * 0.12); ctx.lineTo(b.x + b.w, b.y + b.h); ctx.closePath(); ctx.fill(); }
+				else { ctx.fillRect(b.x, b.y + b.w * 0.3, b.w, b.h - b.w * 0.3); ctx.beginPath(); ctx.ellipse(b.x + b.w / 2, b.y + b.w * 0.3, b.w / 2, b.w * 0.3, 0, Math.PI, 0); ctx.fill(); }
+
+				// edge neon bleed
+				if (b.d > 0.3) { const eh = pick([a1, a2, a3]); ctx.fillStyle = hsl(eh, 40, 25, ff * 0.06); ctx.fillRect(b.x, b.y, 2, b.h); ctx.fillStyle = hsl(eh + 30, 35, 20, ff * 0.04); ctx.fillRect(b.x + b.w - 2, b.y, 2, b.h); }
+
+				// windows
+				if (b.d > 0.15) {
+					const wS = rr(2, Math.max(3, b.w * 0.08)), wSh = rr(2, Math.max(3, b.w * 0.06)), gX = wS * rr(1.4, 2.8), gY = wSh * rr(1.6, 3.2);
+					for (let wy = b.y + gY; wy < b.y + b.h - gY; wy += gY) {
+						for (let wx = b.x + gX * 0.4; wx < b.x + b.w - gX * 0.2; wx += gX) {
+							if (Math.random() > b.wd) continue;
+							if (Math.random() < b.lr) {
+								const whu = b.wh + rr(-15, 15), wli = rr(45, 72);
+								ctx.fillStyle = hsl(whu, rr(40, 85), wli, rr(0.3, 0.85) * lerp(0.6, 1, b.d)); ctx.fillRect(wx, wy, wS, wSh);
+								if (Math.random() > 0.75 && b.d > 0.45) { ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(wx + wS / 2, wy + wSh / 2, wS * 3, whu, 55, 48, 0.035); ctx.restore(); }
+							} else { ctx.fillStyle = hsl(sH, 8, rr(3, 7), 0.4); ctx.fillRect(wx, wy, wS, wSh); }
+						}
+					}
+				}
+
+				// neon signs
+				if (b.sign && b.d > 0.35) {
+					const sY = b.y + b.h * rr(0.12, 0.55), sh2 = pick([a1, a2, a3]), sw = b.w * rr(0.4, 0.95), sth = rr(dim * 0.003, dim * 0.012), sx = b.x + (b.w - sw) / 2;
+					ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(sx + sw / 2, sY, sw * 0.5, sh2, 72, 52, 0.18); ctx.restore();
+					ctx.fillStyle = hsl(sh2, 88, 62, rr(0.6, 0.95)); ctx.fillRect(sx, sY, sw, sth);
+					// glow spill down
+					ctx.save(); ctx.globalCompositeOperation = 'screen'; const sp = ctx.createLinearGradient(sx, sY, sx, sY + b.h * 0.15); sp.addColorStop(0, hsl(sh2, 60, 45, 0.06)); sp.addColorStop(1, 'transparent'); ctx.fillStyle = sp; ctx.fillRect(b.x, sY, b.w, b.h * 0.15); ctx.restore();
+					if (Math.random() > 0.4) {
+						const nvH = b.h * rr(0.08, 0.25), nvX = b.x + b.w * rr(0.08, 0.4);
+						ctx.fillStyle = hsl(sh2 + rr(-25, 25), 82, 58, rr(0.4, 0.75)); ctx.fillRect(nvX, sY - nvH / 2, rr(1, 2.5), nvH);
+						ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(nvX, sY, nvH * 0.25, sh2, 62, 48, 0.08); ctx.restore();
+					}
+					if (Math.random() > 0.6) {
+						ctx.strokeStyle = hsl(sh2 + rr(-20, 20), 80, 55, rr(0.3, 0.6)); ctx.lineWidth = rr(0.5, 1.5); ctx.strokeRect(sx - 2, sY - rr(3, 8), sw + 4, rr(8, 20));
+						ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(sx + sw / 2, sY, sw * 0.3, sh2, 60, 48, 0.06); ctx.restore();
+					}
+				}
+			}
+
+			// foreground silhouettes
+			for (let i = 0; i < ri(4, 8); i++) {
+				const bw = rr(W * 0.025, W * 0.1), bh = rr(H * 0.3, H * 0.85), bx = rr(-bw * 0.5, W - bw * 0.5), by = hrzY - bh;
+				ctx.fillStyle = hsl(sH, 22, 2, 1); ctx.fillRect(bx, by, bw, bh + H);
+				ctx.fillRect(bx + bw * 0.1, by - rr(2, 8), bw * 0.15, rr(2, 8)); ctx.fillRect(bx + bw * 0.5, by - rr(3, 12), bw * 0.08, rr(3, 12));
+				if (Math.random() > 0.35) {
+					const ah = bh * rr(0.08, 0.2); ctx.fillRect(bx + bw * rr(0.3, 0.6), by - ah, bw * 0.03, ah);
+					ctx.save(); ctx.globalCompositeOperation = 'screen'; glo(bx + bw * rr(0.3, 0.6), by - ah, dim * 0.006, Math.random() > 0.5 ? 0 : a1, 72, 52, 0.45); ctx.restore();
+				}
+			}
+
+			// neon beams
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(2, 6); i++) {
+				const ny = hrzY - H * rr(0.02, 0.3), nx = rr(0, W * 0.4), nw = rr(W * 0.08, W * 0.45), nh = pick([a1, a2, a3]);
+				ctx.beginPath(); ctx.moveTo(nx, ny); ctx.lineTo(nx + nw, ny + rr(-4, 4)); ctx.strokeStyle = hsl(nh, 82, 58, rr(0.15, 0.4)); ctx.lineWidth = rr(0.5, 1.8); ctx.stroke(); glo(nx + nw / 2, ny, nw * 0.25, nh, 62, 48, 0.04);
+			}
+			ctx.restore();
+
+			// horizon haze
+			const fog = ctx.createLinearGradient(0, hrzY - H * 0.12, 0, hrzY + H * 0.04); fog.addColorStop(0, 'transparent'); fog.addColorStop(0.4, hsl(a1, 35, 22, 0.06)); fog.addColorStop(1, hsl(sH, 22, 12, 0.1));
+			ctx.fillStyle = fog; ctx.fillRect(0, 0, W, H);
+
+			// ground
+			ctx.fillStyle = hsl(sH, 25, 3, 1); ctx.fillRect(0, hrzY, W, H - hrzY);
+
+			// reflections
+			const hasWater = Math.random() > 0.5;
+			const wY = hasWater ? hrzY + H * rr(0.01, 0.04) : hrzY;
+			if (hasWater) { ctx.fillStyle = hsl(sH, 32, 2, 1); ctx.fillRect(0, wY, W, H - wY); }
+			for (let y = wY; y < H; y++) {
+				const rY = wY - (y - wY) * (hasWater ? 0.8 : 0.5); if (rY < 0) break;
+				const d = hasWater ? Math.sin(y * 0.08) * 2 : 0;
+				ctx.globalAlpha = lerp(hasWater ? 0.22 : 0.1, 0.015, (y - wY) / (H - wY)); ctx.drawImage(c, d, rY, W, 1, 0, y, W, 1);
+			}
+			ctx.globalAlpha = 1;
+			if (hasWater) {
+				ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < ri(30, 70); i++) { ctx.fillStyle = hsl(pick([a1, a2, a3]), 50, 48, rr(0.01, 0.05)); ctx.fillRect(rr(0, W), rr(wY, H), rr(8, 50), 1); } ctx.restore();
+				ctx.strokeStyle = hsl(a1, 38, 28, 0.12); ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(0, wY); ctx.lineTo(W, wY); ctx.stroke();
+			}
+			else { ctx.fillStyle = hsl(sH, 15, 8, 0.4); ctx.fillRect(0, hrzY + H * 0.02, W, 1.5); }
+
+			// rain
+			if (Math.random() > 0.25) {
+				const ra = rr(-0.08, 0.08); for (let i = 0; i < ri(120, 500); i++) {
+					const rx = rr(0, W), ry = rr(0, H), rl = rr(4, 18);
+					ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx + Math.sin(ra) * rl, ry + rl); ctx.strokeStyle = `rgba(180,200,220,${rr(0.015, 0.06)})`; ctx.lineWidth = rr(0.2, 0.6); ctx.stroke();
+				}
+			}
+
+			// vehicles
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(2, 7); i++) {
+				const vx = rr(W * 0.05, W * 0.95), vy = rr(H * 0.08, hrzY - H * 0.05), vh = pick([a1, a2, a3]);
+				glo(vx, vy, dim * 0.012, vh, 82, 58, 0.35); ctx.fillStyle = hsl(vh, 88, 68, 0.75); ctx.beginPath(); ctx.arc(vx, vy, rr(0.5, 1.5), 0, Math.PI * 2); ctx.fill();
+				const tl = rr(dim * 0.02, dim * 0.07), ta = rr(-0.5, 0.5); ctx.beginPath(); ctx.moveTo(vx, vy); ctx.lineTo(vx - Math.cos(ta) * tl, vy - Math.sin(ta) * tl + tl * 0.3); ctx.strokeStyle = hsl(vh, 55, 48, 0.1); ctx.lineWidth = 0.5; ctx.stroke();
+			}
+			ctx.restore();
+
+			// vignette
+			const vig = ctx.createRadialGradient(W / 2, H / 2, dim * 0.3, W / 2, H / 2, dim * 0.85); vig.addColorStop(0, 'transparent'); vig.addColorStop(1, 'rgba(0,0,0,0.5)'); ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+
+			// grain + CA
+			const imgd = ctx.getImageData(0, 0, W, H); const dd = imgd.data; for (let i = 0; i < dd.length; i += 4) { const n = (Math.random() - 0.5) * 5; dd[i] += n; dd[i + 1] += n; dd[i + 2] += n; } ctx.putImageData(imgd, 0, 0);
+			ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = 0.025; ctx.drawImage(c, -2, 0); ctx.drawImage(c, 2, 0); ctx.restore();
+		}
+
+		function resize() {
+			const W = window.innerWidth;
+			const H = window.innerHeight + 80;
+			c.width = W; c.height = H;
+			generate();
+			const tmp = document.createElement('canvas');
+			tmp.width = W; tmp.height = H;
+			tmp.getContext('2d').drawImage(c, 0, 0);
+			c.width = W; c.height = window.innerHeight;
+			ctx.drawImage(tmp, 0, 0, W, window.innerHeight, 0, 0, W, window.innerHeight);
+		}
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', resize);
+	</script>
+</body>
+
+</html>

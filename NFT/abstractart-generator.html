@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #fff;
+			font: 13px monospace;
+			background: rgba(0, 0, 0, 0.5);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to regenerate</div>
+	<script>
+		const c = document.getElementById('c');
+		const ctx = c.getContext('2d');
+
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+		function hsl(h, s, l, a) { return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a ?? 1})`; }
+
+		function circlePack(W, H, count, minR, maxR) {
+			const circles = [];
+			let tries = 0;
+			while (circles.length < count && tries < count * 50) {
+				tries++;
+				const r = rr(minR, maxR);
+				const x = rr(r, W - r), y = rr(r, H - r);
+				let ok = true;
+				for (const c of circles) {
+					const dx = x - c.x, dy = y - c.y;
+					if (dx * dx + dy * dy < (r + c.r + 2) * (r + c.r + 2)) { ok = false; break; }
+				}
+				if (ok) circles.push({ x, y, r });
+			}
+			return circles;
+		}
+
+		function generate() {
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+
+			// palette
+			const baseHue = rr(0, 360);
+			const accent = baseHue + (Math.random() > 0.5 ? 1 : -1) * (120 + rr(0, 60));
+			const warm = baseHue + 30;
+			const bgLit = ri(3, 10);
+			const bgSat = ri(10, 30);
+
+			// bg
+			ctx.fillStyle = hsl(baseHue, bgSat, bgLit);
+			ctx.fillRect(0, 0, W, H);
+
+			// subtle grain texture
+			const img = ctx.getImageData(0, 0, W, H);
+			const d = img.data;
+			for (let i = 0; i < d.length; i += 4) {
+				const n = (Math.random() - 0.5) * 12;
+				d[i] += n; d[i + 1] += n; d[i + 2] += n;
+			}
+			ctx.putImageData(img, 0, 0);
+
+			// large background washes
+			ctx.save();
+			ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < 3; i++) {
+				const x = rr(W * 0.1, W * 0.9), y = rr(H * 0.1, H * 0.9);
+				const r = dim * rr(0.2, 0.5);
+				const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+				g.addColorStop(0, hsl(baseHue + i * 60, 50, 40, 0.08));
+				g.addColorStop(1, 'transparent');
+				ctx.fillStyle = g;
+				ctx.fillRect(0, 0, W, H);
+			}
+			ctx.restore();
+
+			// geometric elements toolkit
+			const elements = [];
+
+			// large bold shapes (background)
+			const bigShapes = ri(2, 5);
+			for (let i = 0; i < bigShapes; i++) {
+				elements.push({
+					z: 0, draw: () => {
+						ctx.save();
+						const x = rr(W * -0.1, W * 0.8), y = rr(H * -0.1, H * 0.8);
+						const sz = dim * rr(0.15, 0.4);
+						ctx.translate(x + sz / 2, y + sz / 2);
+						ctx.rotate(rr(-0.3, 0.3));
+						ctx.translate(-sz / 2, -sz / 2);
+						const h = baseHue + rr(-20, 40);
+						ctx.fillStyle = hsl(h, ri(40, 70), ri(20, 45), rr(0.15, 0.4));
+						const shape = ri(0, 3);
+						if (shape === 0) { ctx.fillRect(0, 0, sz, sz * rr(0.6, 1.4)); }
+						else if (shape === 1) { ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.fill(); }
+						else { ctx.beginPath(); ctx.moveTo(sz / 2, 0); ctx.lineTo(sz, sz); ctx.lineTo(0, sz); ctx.closePath(); ctx.fill(); }
+						ctx.restore();
+					}
+				});
+			}
+
+			// circle packing cluster
+			const circles = circlePack(W, H, ri(40, 120), dim * 0.008, dim * 0.06);
+			for (const ci of circles) {
+				elements.push({
+					z: 1, draw: () => {
+						ctx.beginPath();
+						ctx.arc(ci.x, ci.y, ci.r, 0, Math.PI * 2);
+						const style = Math.random();
+						if (style < 0.3) {
+							ctx.fillStyle = hsl(accent + rr(-30, 30), ri(50, 80), ri(40, 65), rr(0.3, 0.7));
+							ctx.fill();
+						} else if (style < 0.6) {
+							ctx.strokeStyle = hsl(baseHue + rr(-20, 60), ri(40, 70), ri(40, 70), rr(0.3, 0.8));
+							ctx.lineWidth = rr(0.5, 2.5);
+							ctx.stroke();
+						} else {
+							// concentric
+							const n = ri(2, 4);
+							for (let j = n; j >= 0; j--) {
+								ctx.beginPath();
+								ctx.arc(ci.x, ci.y, ci.r * (j / n), 0, Math.PI * 2);
+								ctx.strokeStyle = hsl(warm + j * 20, 60, 55, 0.5);
+								ctx.lineWidth = 1;
+								ctx.stroke();
+							}
+						}
+					}
+				});
+			}
+
+			// flowing curves
+			const curves = ri(3, 8);
+			for (let i = 0; i < curves; i++) {
+				elements.push({
+					z: 2, draw: () => {
+						ctx.save();
+						ctx.beginPath();
+						let x = rr(-W * 0.2, W * 0.3), y = rr(H * 0.1, H * 0.9);
+						ctx.moveTo(x, y);
+						const segs = ri(3, 7);
+						for (let j = 0; j < segs; j++) {
+							const cp1x = x + rr(W * 0.05, W * 0.3), cp1y = y + rr(-H * 0.3, H * 0.3);
+							const cp2x = cp1x + rr(W * 0.05, W * 0.2), cp2y = y + rr(-H * 0.3, H * 0.3);
+							x = cp2x + rr(W * 0.02, W * 0.15); y = cp2y + rr(-H * 0.1, H * 0.1);
+							ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+						}
+						ctx.strokeStyle = hsl(accent + rr(-40, 40), ri(40, 80), ri(45, 70), rr(0.15, 0.5));
+						ctx.lineWidth = rr(1, dim * 0.012);
+						ctx.lineCap = 'round';
+						ctx.stroke();
+						ctx.restore();
+					}
+				});
+			}
+
+			// dot grid section
+			if (Math.random() > 0.3) {
+				elements.push({
+					z: 1, draw: () => {
+						const ox = rr(W * 0.1, W * 0.5), oy = rr(H * 0.1, H * 0.5);
+						const gw = rr(W * 0.15, W * 0.4), gh = rr(H * 0.15, H * 0.4);
+						const sp = dim * rr(0.015, 0.03);
+						const h = accent + rr(-20, 20);
+						for (let x = ox; x < ox + gw; x += sp) {
+							for (let y = oy; y < oy + gh; y += sp) {
+								const dist = Math.hypot(x - ox - gw / 2, y - oy - gh / 2);
+								const sz = Math.max(0.5, (1 - dist / Math.hypot(gw / 2, gh / 2)) * sp * 0.3);
+								ctx.beginPath();
+								ctx.arc(x, y, sz, 0, Math.PI * 2);
+								ctx.fillStyle = hsl(h, 60, 55, 0.4 + sz / sp * 0.4);
+								ctx.fill();
+							}
+						}
+					}
+				});
+			}
+
+			// line hatching zone
+			if (Math.random() > 0.4) {
+				elements.push({
+					z: 1, draw: () => {
+						ctx.save();
+						const ox = rr(W * 0.05, W * 0.6), oy = rr(H * 0.05, H * 0.6);
+						const gw = rr(W * 0.1, W * 0.35), gh = rr(H * 0.1, H * 0.35);
+						const angle = rr(-0.5, 0.5);
+						ctx.translate(ox + gw / 2, oy + gh / 2);
+						ctx.rotate(angle);
+						ctx.translate(-gw / 2, -gh / 2);
+						const sp = rr(3, 8);
+						ctx.strokeStyle = hsl(baseHue + rr(0, 60), 40, 50, rr(0.1, 0.3));
+						ctx.lineWidth = rr(0.3, 1.2);
+						for (let x = 0; x < gw; x += sp) {
+							ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gh); ctx.stroke();
+						}
+						ctx.restore();
+					}
+				});
+			}
+
+			// bold accent stripes
+			const stripes = ri(1, 4);
+			for (let i = 0; i < stripes; i++) {
+				elements.push({
+					z: 3, draw: () => {
+						ctx.save();
+						const vertical = Math.random() > 0.5;
+						const pos = rr(0.1, 0.9);
+						const w = dim * rr(0.005, 0.025);
+						ctx.fillStyle = hsl(accent + rr(-10, 10), ri(60, 90), ri(45, 60), rr(0.2, 0.6));
+						if (vertical) ctx.fillRect(W * pos, 0, w, H);
+						else ctx.fillRect(0, H * pos, W, w);
+						ctx.restore();
+					}
+				});
+			}
+
+			// splatter dots
+			const splatters = ri(30, 100);
+			for (let i = 0; i < splatters; i++) {
+				elements.push({
+					z: ri(0, 4), draw: () => {
+						const x = rr(0, W), y = rr(0, H), r = rr(1, dim * 0.005);
+						ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+						ctx.fillStyle = hsl(pick([baseHue, accent, warm]) + rr(-15, 15), ri(40, 80), ri(40, 70), rr(0.2, 0.7));
+						ctx.fill();
+					}
+				});
+			}
+
+			// sort by z and draw
+			elements.sort((a, b) => a.z - b.z);
+			for (const e of elements) e.draw();
+
+			// vignette
+			const v = ctx.createRadialGradient(W / 2, H / 2, dim * 0.2, W / 2, H / 2, dim * 0.8);
+			v.addColorStop(0, 'transparent');
+			v.addColorStop(1, 'rgba(0,0,0,0.4)');
+			ctx.fillStyle = v;
+			ctx.fillRect(0, 0, W, H);
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

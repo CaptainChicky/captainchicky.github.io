@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            cursor: pointer;
+        }
+
+        #info {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            color: #fff;
+            font: 13px monospace;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 10px;
+            border-radius: 6px;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+    <div id="info">click to regenerate</div>
+    <script>
+        const c = document.getElementById('c');
+        const ctx = c.getContext('2d');
+
+        const palettes = [
+            { bg: ['#0a0a2e', '#1a0a3e', '#0a1a2e'], cols: ['#ff006680', '#ff47ab80', '#7b2ff760', '#f7258560', '#00d2ff50', '#fff44f40'] },
+            { bg: ['#0d1b2a', '#1b263b', '#0d2b3a'], cols: ['#00b4d880', '#0077b680', '#48cae460', '#90e0ef50', '#e0aaff60', '#ade8f440'] },
+            { bg: ['#1a1a2e', '#16213e', '#0f3460'], cols: ['#e9456080', '#f5856d60', '#ffb56b50', '#ff006680', '#c7004c60', '#fff44f30'] },
+            { bg: ['#0b0b0b', '#1a1a1a', '#0b1b0b'], cols: ['#00ff8880', '#00cc6a60', '#39ff1470', '#88ff0050', '#ccff0040', '#00ffcc50'] },
+            { bg: ['#2d1b3d', '#1a0a2e', '#3d1b2d'], cols: ['#bf40bf80', '#9b59b660', '#e056a070', '#da70d650', '#ff69b460', '#dda0dd40'] },
+            { bg: ['#1b1510', '#2a1f14', '#0f0d0a'], cols: ['#ff990080', '#ffcc0070', '#ff660060', '#ff444450', '#ffee5860', '#ffa50040'] },
+        ];
+
+        function testate(amp, points) {
+            const p = [];
+            let i = points.length - 2, x1, y1;
+            p.push(x1 = points[i++]);
+            p.push(y1 = points[i]);
+            i = 0;
+            while (i < points.length) {
+                const x2 = points[i++], y2 = points[i++];
+                const dx = x2 - x1, dy = y2 - y1;
+                const r = (Math.random() - 0.5) * 2 * amp;
+                p.push(x1 + dx / 2 - dy * r);
+                p.push(y1 + dy / 2 + dx * r);
+                p.push(x1 = x2);
+                p.push(y1 = y2);
+            }
+            return p;
+        }
+
+        function drawBlob(ctx, size, x, y, noise, sides) {
+            const a = Math.random() * Math.PI * 2;
+            let points = [];
+            const step = Math.PI * 2 / sides;
+            for (let i = 0; i < sides; i++) {
+                const r = (Math.random() * 0.5 + 0.5) * size;
+                points.push(Math.cos(a + i * step) * r);
+                points.push(Math.sin(a + i * step) * r);
+            }
+            let s = size;
+            while (s > 2) { points = testate(noise, points); s >>= 1; }
+            ctx.setTransform(1, 0, 0, 1, x, y);
+            let i = 0;
+            ctx.moveTo(points[i++], points[i++]);
+            while (i < points.length) ctx.lineTo(points[i++], points[i++]);
+            ctx.closePath();
+        }
+
+        function drawLayer(ctx, count, col, min, max, noise, sides, shadow) {
+            ctx.save();
+            ctx.fillStyle = col;
+            if (shadow) {
+                ctx.shadowColor = col.slice(0, 7);
+                ctx.shadowBlur = shadow;
+            }
+            ctx.beginPath();
+            while (count-- > 0) {
+                const x = Math.random() * c.width;
+                const y = Math.random() * c.height;
+                const sz = min + Math.random() * (max - min);
+                drawBlob(ctx, sz, x, y, noise, sides);
+            }
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawBgGradient(pal) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            const g = ctx.createRadialGradient(c.width * 0.5, c.height * 0.5, 0, c.width * 0.5, c.height * 0.5, c.width * 0.7);
+            g.addColorStop(0, pal.bg[0]);
+            g.addColorStop(0.6, pal.bg[1]);
+            g.addColorStop(1, pal.bg[2]);
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, c.width, c.height);
+        }
+
+        function drawVignette() {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            const g = ctx.createRadialGradient(c.width / 2, c.height / 2, c.width * 0.25, c.width / 2, c.height / 2, c.width * 0.8);
+            g.addColorStop(0, 'transparent');
+            g.addColorStop(1, 'rgba(0,0,0,0.6)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, c.width, c.height);
+        }
+
+        function drawNebula(pal) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalCompositeOperation = 'screen';
+            for (let i = 0; i < 5; i++) {
+                const x = Math.random() * c.width;
+                const y = Math.random() * c.height;
+                const r = Math.random() * c.width * 0.4 + c.width * 0.1;
+                const col = pal.cols[Math.floor(Math.random() * pal.cols.length)].slice(0, 7);
+                const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+                g.addColorStop(0, col + '25');
+                g.addColorStop(0.5, col + '10');
+                g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, c.width, c.height);
+            }
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        function drawStars() {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            const n = Math.floor(c.width * c.height / 2000);
+            for (let i = 0; i < n; i++) {
+                const x = Math.random() * c.width;
+                const y = Math.random() * c.height;
+                const r = Math.random() * 1.2;
+                const a = Math.random() * 0.6 + 0.1;
+                ctx.fillStyle = `rgba(255,255,255,${a})`;
+                ctx.fillRect(x, y, r, r);
+            }
+        }
+
+        function generate() {
+            const pal = palettes[Math.floor(Math.random() * palettes.length)];
+            const noise = Math.random() * 0.35 + 0.25;
+            const scale = (c.width * c.height) / (600 * 512);
+
+            drawBgGradient(pal);
+            drawStars();
+            drawNebula(pal);
+
+            // deep background
+            const sides = Math.floor(Math.random() * 4) + 3;
+            ctx.globalCompositeOperation = 'screen';
+            drawLayer(ctx, Math.round(400 * scale), pal.cols[0], 2, 6, noise, sides, 0);
+
+            // mid layers with glow
+            ctx.globalCompositeOperation = 'lighter';
+            drawLayer(ctx, Math.round(150 * scale), pal.cols[1], 6, 14, noise, sides, 20);
+            drawLayer(ctx, Math.round(80 * scale), pal.cols[2], 10, 22, noise * 0.8, sides, 30);
+
+            // accent layers
+            ctx.globalCompositeOperation = 'screen';
+            drawLayer(ctx, Math.round(30 * scale), pal.cols[3], 18, 40, noise * 0.7, sides, 50);
+            drawLayer(ctx, Math.round(12 * scale), pal.cols[4], 30, 60, noise * 0.6, sides + 1, 60);
+
+            // rare big focal blobs
+            ctx.globalCompositeOperation = 'lighter';
+            drawLayer(ctx, Math.round(4 * scale), pal.cols[5], 50, 100, noise * 0.5, sides, 80);
+
+            ctx.globalCompositeOperation = 'source-over';
+            drawVignette();
+        }
+
+        function resize() {
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+            generate();
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        c.addEventListener('click', generate);
+    </script>
+</body>
+
+</html>

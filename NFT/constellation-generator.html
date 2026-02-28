@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #8ba4c8;
+			font: 13px monospace;
+			background: rgba(10, 15, 30, 0.7);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click for new skies</div>
+	<script>
+		const c = document.getElementById('c'), ctx = c.getContext('2d');
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+		function hsl(h, s, l, a) { return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a ?? 1})`; }
+
+		const greek = ["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"];
+		const conNames = ["Serpentis", "Draconis", "Aquilae", "Leonis", "Ursae", "Cygni", "Orionis", "Lyrae", "Pegasi", "Phoenicis", "Vulpis", "Corvi", "Lupi", "Tauri", "Delphini", "Pavonis", "Gruis", "Hydrae", "Centauri", "Eridani", "Velorum", "Puppis", "Trianguli", "Bootis", "Cassiae", "Monocerotis", "Scuti", "Crucis", "Fornacis", "Caeli"];
+
+		function generate() {
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+
+			// sky gradient
+			const skyHue = ri(210, 250);
+			const g = ctx.createLinearGradient(0, 0, 0, H);
+			g.addColorStop(0, hsl(skyHue, 40, 4, 1));
+			g.addColorStop(0.3, hsl(skyHue - 5, 35, 6, 1));
+			g.addColorStop(0.5, hsl(skyHue - 10, 30, 8, 1));
+			g.addColorStop(0.7, hsl(skyHue - 5, 35, 6, 1));
+			g.addColorStop(1, hsl(skyHue, 40, 4, 1));
+			ctx.fillStyle = g;
+			ctx.fillRect(0, 0, W, H);
+
+			// milky way band
+			const mwAngle = rr(-0.4, 0.4);
+			const mwOffset = rr(-H * 0.15, H * 0.15);
+			ctx.save();
+			ctx.translate(W / 2, H / 2); ctx.rotate(mwAngle); ctx.translate(-W / 2, -H / 2);
+			for (let i = 0; i < 15; i++) {
+				const bx = rr(-W * 0.2, W * 1.2), by = H / 2 + mwOffset + rr(-H * 0.12, H * 0.12);
+				const br = rr(dim * 0.08, dim * 0.3);
+				const mg = ctx.createRadialGradient(bx, by, 0, bx + rr(-br * 0.2, br * 0.2), by + rr(-br * 0.1, br * 0.1), br);
+				mg.addColorStop(0, hsl(skyHue + rr(-20, 30), 25, 30, 0.04));
+				mg.addColorStop(0.3, hsl(skyHue + rr(-10, 20), 20, 22, 0.025));
+				mg.addColorStop(1, 'transparent');
+				ctx.fillStyle = mg;
+				ctx.fillRect(0, 0, W, H);
+			}
+			// milky way dust lanes
+			for (let i = 0; i < 8; i++) {
+				const bx = rr(0, W), by = H / 2 + mwOffset + rr(-H * 0.06, H * 0.06);
+				const br = rr(dim * 0.03, dim * 0.1);
+				const dg = ctx.createRadialGradient(bx, by, 0, bx, by, br);
+				dg.addColorStop(0, `rgba(0,0,0,0.03)`);
+				dg.addColorStop(1, 'transparent');
+				ctx.fillStyle = dg;
+				ctx.fillRect(0, 0, W, H);
+			}
+			ctx.restore();
+
+			// nebulae
+			ctx.save(); ctx.globalCompositeOperation = 'screen';
+			const nebHue = rr(0, 360);
+			const nebCount = ri(4, 10);
+			for (let i = 0; i < nebCount; i++) {
+				const nx = rr(W * 0.05, W * 0.95), ny = rr(H * 0.05, H * 0.95);
+				const nr = rr(dim * 0.03, dim * 0.15);
+				const h = (nebHue + i * rr(40, 80)) % 360;
+				const ng = ctx.createRadialGradient(nx, ny, 0, nx + rr(-nr * 0.3, nr * 0.3), ny + rr(-nr * 0.2, nr * 0.2), nr);
+				ng.addColorStop(0, hsl(h, 55, 45, rr(0.03, 0.07)));
+				ng.addColorStop(0.4, hsl(h, 45, 35, rr(0.015, 0.04)));
+				ng.addColorStop(1, 'transparent');
+				ctx.fillStyle = ng;
+				ctx.fillRect(0, 0, W, H);
+			}
+			ctx.restore();
+
+			// coordinate grid
+			ctx.save();
+			const gridAlpha = 0.06;
+			ctx.strokeStyle = `rgba(70,90,130,${gridAlpha})`;
+			ctx.lineWidth = 0.5;
+			// horizontal declination lines
+			const decLines = ri(8, 14);
+			for (let i = 1; i < decLines; i++) {
+				const y = i / decLines * H;
+				ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+			}
+			// vertical RA lines
+			const raLines = ri(12, 20);
+			for (let i = 0; i < raLines; i++) {
+				const x = i / raLines * W;
+				const curve = Math.sin(i / raLines * Math.PI) * H * 0.02;
+				ctx.beginPath(); ctx.moveTo(x + curve, 0);
+				ctx.quadraticCurveTo(x, H / 2, x + curve, H);
+				ctx.stroke();
+			}
+			// labels
+			ctx.fillStyle = 'rgba(70,90,130,0.15)';
+			ctx.font = `${dim * 0.008 | 0}px monospace`;
+			for (let i = 0; i < raLines; i++) {
+				const x = i / raLines * W;
+				ctx.textAlign = 'center';
+				ctx.fillText(`${i}h`, x, 12);
+			}
+			for (let i = 1; i < decLines; i++) {
+				const y = i / decLines * H;
+				const dec = 90 - i / decLines * 180;
+				ctx.textAlign = 'left';
+				ctx.fillText(`${dec > 0 ? '+' : ''}${dec | 0}°`, 4, y - 3);
+			}
+			ctx.restore();
+
+			// stars
+			const stars = [];
+			const starCount = ri(600, 1200);
+			for (let i = 0; i < starCount; i++) {
+				const x = rr(0, W), y = rr(0, H);
+				const mag = Math.pow(Math.random(), 0.5); // more dim stars
+				const temp = rr(0, 1);
+				stars.push({ x, y, mag, temp, r: Math.max(0.3, (1 - mag) * 4) });
+			}
+			// extra bright stars for interest
+			for (let i = 0; i < ri(8, 20); i++) {
+				stars.push({ x: rr(W * 0.05, W * 0.95), y: rr(H * 0.05, H * 0.95), mag: rr(0, 0.1), temp: rr(0, 1), r: rr(3, 5) });
+			}
+
+			// star colors
+			function starColor(temp) {
+				if (temp < 0.15) return [150, 180, 255];
+				if (temp < 0.3) return [180, 210, 255];
+				if (temp < 0.5) return [255, 250, 240];
+				if (temp < 0.7) return [255, 230, 180];
+				if (temp < 0.85) return [255, 200, 140];
+				return [255, 160, 110];
+			}
+
+			// draw stars
+			for (const s of stars) {
+				const [sr, sg, sb] = starColor(s.temp);
+				const bright = 0.25 + (1 - s.mag) * 0.75;
+
+				// lens flare for bright stars
+				if (s.mag < 0.12) {
+					const haloR = s.r * 10;
+					// diffraction spikes FIRST
+					// 2-3 crosses of 4, each a different color
+					ctx.save(); ctx.globalCompositeOperation = 'screen';
+					const colors = [
+						[Math.min(255, sr * 0.4 + 40), Math.min(255, sg * 0.5 + 20), Math.min(255, sb)],
+						[Math.min(255, sr * 0.3), Math.min(255, sg + 60), Math.min(255, sb * 0.4 + 20)],
+						[Math.min(255, sr * 0.5 + 30), Math.min(255, sg * 0.3), Math.min(255, sb * 0.7 + 50)],
+					];
+					const crossCount = ri(2, 3);
+					for (let ci = 0; ci < crossCount; ci++) {
+						const col = colors[ci % 3];
+						const crossRot = ci * Math.PI / crossCount * rr(0.3, 0.7) + rr(-0.15, 0.15);
+						const len = s.r * rr(25, 55);
+						const baseW = s.r * rr(0.25, 0.5);
+						for (let i = 0; i < 4; i++) {
+							const a = crossRot + i * Math.PI / 2;
+							ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(a);
+							const segs = 12;
+							for (let j = 0; j < segs; j++) {
+								const t0 = j / segs, t1 = (j + 1) / segs;
+								const x0 = t0 * len, x1 = t1 * len;
+								const w0 = baseW * (1 - Math.pow(t0, 0.6));
+								const w1 = baseW * (1 - Math.pow(t1, 0.6));
+								const al = bright * (0.15 * (1 - Math.pow(t0, 0.8)));
+								if (al < 0.002) continue;
+								ctx.fillStyle = `rgba(${col[0] | 0},${col[1] | 0},${col[2] | 0},${al})`;
+								ctx.beginPath();
+								ctx.moveTo(x0, -w0); ctx.lineTo(x1, -w1);
+								ctx.lineTo(x1, w1); ctx.lineTo(x0, w0);
+								ctx.closePath(); ctx.fill();
+							}
+							ctx.restore();
+						}
+					}
+					// secondary small flare dots
+					for (let i = 0; i < ri(3, 6); i++) {
+						const a = rr(0, Math.PI * 2);
+						const d = s.r * rr(8, 18);
+						const fx = s.x + Math.cos(a) * d, fy = s.y + Math.sin(a) * d;
+						const fr = s.r * rr(0.3, 0.8);
+						const col = pick(colors);
+						const fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr * 3);
+						fg.addColorStop(0, `rgba(${col[0] | 0},${col[1] | 0},${col[2] | 0},${bright * 0.08})`);
+						fg.addColorStop(0.5, `rgba(${col[0] | 0},${col[1] | 0},${col[2] | 0},${bright * 0.03})`);
+						fg.addColorStop(1, 'transparent');
+						ctx.fillStyle = fg;
+						ctx.fillRect(fx - fr * 3, fy - fr * 3, fr * 6, fr * 6);
+					}
+					ctx.restore();
+					// halo AFTER spikes
+					const gr = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, haloR * 1.5);
+					gr.addColorStop(0, `rgba(255,255,255,${Math.min(1, bright * 1.2)})`);
+					gr.addColorStop(0.02, `rgba(${Math.min(255, sr + 100)},${Math.min(255, sg + 100)},${Math.min(255, sb + 100)},${bright * 0.95})`);
+					gr.addColorStop(0.06, `rgba(${Math.min(255, sr + 40)},${Math.min(255, sg + 40)},${Math.min(255, sb + 40)},${bright * 0.7})`);
+					gr.addColorStop(0.15, `rgba(${sr},${sg},${sb},${bright * 0.35})`);
+					gr.addColorStop(0.3, `rgba(${sr},${sg},${sb},${bright * 0.12})`);
+					gr.addColorStop(0.5, `rgba(${sr},${sg},${sb},${bright * 0.04})`);
+					gr.addColorStop(0.75, `rgba(${sr},${sg},${sb},${bright * 0.01})`);
+					gr.addColorStop(1, 'transparent');
+					ctx.fillStyle = gr;
+					ctx.fillRect(s.x - haloR * 1.5, s.y - haloR * 1.5, haloR * 3, haloR * 3);
+				} else if (s.mag < 0.3) {
+					const hr = s.r * 14;
+					const gr = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, hr);
+					gr.addColorStop(0, `rgba(255,255,255,${Math.min(1, bright * 0.95)})`);
+					gr.addColorStop(0.03, `rgba(${Math.min(255, sr + 50)},${Math.min(255, sg + 50)},${Math.min(255, sb + 50)},${bright * 0.7})`);
+					gr.addColorStop(0.08, `rgba(${sr},${sg},${sb},${bright * 0.35})`);
+					gr.addColorStop(0.2, `rgba(${sr},${sg},${sb},${bright * 0.1})`);
+					gr.addColorStop(0.5, `rgba(${sr},${sg},${sb},${bright * 0.025})`);
+					gr.addColorStop(1, 'transparent');
+					ctx.fillStyle = gr;
+					ctx.fillRect(s.x - hr, s.y - hr, hr * 2, hr * 2);
+				} else if (s.mag < 0.65) {
+					const hr = s.r * 8;
+					const gr = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, hr);
+					gr.addColorStop(0, `rgba(${Math.min(255, sr + 30)},${Math.min(255, sg + 30)},${Math.min(255, sb + 30)},${bright * 0.8})`);
+					gr.addColorStop(0.06, `rgba(${sr},${sg},${sb},${bright * 0.35})`);
+					gr.addColorStop(0.2, `rgba(${sr},${sg},${sb},${bright * 0.08})`);
+					gr.addColorStop(0.5, `rgba(${sr},${sg},${sb},${bright * 0.02})`);
+					gr.addColorStop(1, 'transparent');
+					ctx.fillStyle = gr;
+					ctx.fillRect(s.x - hr, s.y - hr, hr * 2, hr * 2);
+				}
+
+				// star dot
+				ctx.fillStyle = `rgba(${sr},${sg},${sb},${bright})`;
+				ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+				// hot center
+				if (s.r > 1.5) {
+					ctx.fillStyle = `rgba(255,255,255,${bright * 0.5})`;
+					ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 0.35, 0, Math.PI * 2); ctx.fill();
+				}
+			}
+
+			// constellations
+			const brightStars = stars.filter(s => s.mag < 0.3).sort(() => Math.random() - 0.5);
+			const used = new Set();
+			const constellations = [];
+			const usedNames = new Set();
+
+			// helper (do two line segments intersect?)
+			function segsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
+				const d1 = (dx - cx) * (ay - cy) - (dy - cy) * (ax - cx);
+				const d2 = (dx - cx) * (by - cy) - (dy - cy) * (bx - cx);
+				const d3 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+				const d4 = (bx - ax) * (dy - ay) - (by - ay) * (dx - ax);
+				if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
+				return false;
+			}
+			const allEdges = []; // global edge list for cross-checking
+
+			for (let attempt = 0; attempt < 100 && constellations.length < ri(6, 10); attempt++) {
+				const seed2 = brightStars.find(s => !used.has(s));
+				if (!seed2) break;
+				const members = [seed2]; used.add(seed2);
+				const edges = [];
+				function tryEdge(from, to) {
+					for (const [a, b] of allEdges) {
+						if (a === from || a === to || b === from || b === to) continue;
+						if (segsIntersect(from.x, from.y, to.x, to.y, a.x, a.y, b.x, b.y)) return false;
+					}
+					for (const [a, b] of edges) {
+						if (a === from || a === to || b === from || b === to) continue;
+						if (segsIntersect(from.x, from.y, to.x, to.y, a.x, a.y, b.x, b.y)) return false;
+					}
+					return true;
+				}
+				// centroid compactness check
+				function centroid() { let cx = 0, cy = 0; for (const m of members) { cx += m.x; cy += m.y; } return { x: cx / members.length, y: cy / members.length }; }
+				const maxSpread = dim * rr(0.12, 0.22);
+				const maxSteps = ri(5, 10);
+
+				for (let grow = 0; grow < maxSteps; grow++) {
+					// pick a random existing member to grow from (not always the last)
+					const from = grow < 2 ? members[members.length - 1] : pick(members);
+					const candidates = [];
+					const cen = centroid();
+					for (const s of brightStars) {
+						if (members.includes(s)) continue;
+						const d = Math.hypot(s.x - from.x, s.y - from.y);
+						const dCen = Math.hypot(s.x - cen.x, s.y - cen.y);
+						if (d < dim * 0.18 && dCen < maxSpread) candidates.push({ s, d });
+					}
+					candidates.sort((a, b) => a.d - b.d);
+					for (const c of candidates) {
+						if (tryEdge(from, c.s)) { edges.push([from, c.s]); members.push(c.s); used.add(c.s); break; }
+					}
+				}
+				if (members.length >= 3) {
+					allEdges.push(...edges);
+					let name; do { name = pick(conNames); } while (usedNames.has(name));
+					usedNames.add(name);
+					constellations.push({ members, edges, name });
+				}
+			}
+
+			// draw constellation lines + fills
+			for (const con of constellations) {
+				// subtle filled area
+				if (con.members.length >= 4) {
+					ctx.beginPath();
+					// convex-ish hull
+					const sorted = [...con.members].sort((a, b) => Math.atan2(a.y - con.members[0].y, a.x - con.members[0].x) - Math.atan2(b.y - con.members[0].y, b.x - con.members[0].x));
+					ctx.moveTo(sorted[0].x, sorted[0].y);
+					for (const m of sorted) ctx.lineTo(m.x, m.y);
+					ctx.closePath();
+					ctx.fillStyle = 'rgba(80,110,180,0.02)'; ctx.fill();
+				}
+				// lines
+				ctx.setLineDash([8, 5]);
+				ctx.strokeStyle = 'rgba(130,160,220,0.35)'; ctx.lineWidth = 1;
+				for (const [a, b] of con.edges) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+				ctx.setLineDash([]);
+				// solid thinner line on top
+				ctx.strokeStyle = 'rgba(130,160,220,0.18)'; ctx.lineWidth = 1.8;
+				for (const [a, b] of con.edges) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+
+				// name label
+				let mx = 0, my = 0;
+				for (const m of con.members) { mx += m.x; my += m.y; }
+				mx /= con.members.length; my /= con.members.length;
+				ctx.font = `italic ${dim * 0.022 | 0}px Georgia, serif`;
+				ctx.textAlign = 'center';
+				ctx.fillStyle = 'rgba(150,175,225,0.55)';
+				ctx.fillText(con.name, mx, my - dim * 0.022);
+
+				// greek designations
+				ctx.font = `${dim * 0.012 | 0}px Georgia, serif`;
+				ctx.fillStyle = 'rgba(150,175,225,0.4)';
+				for (let i = 0; i < Math.min(con.members.length, greek.length); i++) {
+					const s = con.members[i];
+					ctx.fillText(greek[i], s.x + s.r + 5, s.y - s.r - 3);
+				}
+			}
+
+			// deep sky objects
+			ctx.save();
+			const dsoCount = ri(6, 15);
+			for (let i = 0; i < dsoCount; i++) {
+				const x = rr(W * 0.05, W * 0.95), y = rr(H * 0.05, H * 0.95);
+				const type = ri(0, 4);
+				const id = pick(["NGC", "M", "IC"]) + " " + ri(1, 7000);
+				const sz = dim * rr(0.008, 0.025);
+
+				if (type === 0) {
+					// galaxy
+					ctx.save(); ctx.translate(x, y); ctx.rotate(rr(0, Math.PI));
+					const sq = rr(0.3, 0.7);
+					const gg = ctx.createRadialGradient(0, 0, 0, 0, 0, sz);
+					gg.addColorStop(0, 'rgba(200,180,140,0.12)');
+					gg.addColorStop(0.3, 'rgba(180,160,120,0.05)');
+					gg.addColorStop(1, 'transparent');
+					ctx.scale(1, sq); ctx.fillStyle = gg;
+					ctx.fillRect(-sz, -sz, sz * 2, sz * 2);
+					ctx.strokeStyle = 'rgba(180,160,120,0.15)'; ctx.lineWidth = 0.5;
+					ctx.beginPath(); ctx.ellipse(0, 0, sz * 0.8, sz * 0.8, 0, 0, Math.PI * 2); ctx.stroke();
+					ctx.restore();
+				} else if (type === 1) {
+					// open cluster
+					ctx.fillStyle = 'rgba(200,210,230,0.25)';
+					for (let j = 0; j < ri(8, 20); j++) {
+						const dx = rr(-sz, sz), dy = rr(-sz, sz);
+						ctx.beginPath(); ctx.arc(x + dx, y + dy, rr(0.3, 1), 0, Math.PI * 2); ctx.fill();
+					}
+					ctx.setLineDash([2, 2]); ctx.strokeStyle = 'rgba(180,190,210,0.12)'; ctx.lineWidth = 0.5;
+					ctx.beginPath(); ctx.arc(x, y, sz, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+				} else if (type === 2) {
+					// planetary nebula
+					const ng = ctx.createRadialGradient(x, y, sz * 0.3, x, y, sz);
+					ng.addColorStop(0, 'rgba(80,200,180,0.03)');
+					ng.addColorStop(0.5, 'rgba(80,180,200,0.08)');
+					ng.addColorStop(0.8, 'rgba(60,140,180,0.04)');
+					ng.addColorStop(1, 'transparent');
+					ctx.fillStyle = ng; ctx.fillRect(x - sz, y - sz, sz * 2, sz * 2);
+					ctx.strokeStyle = 'rgba(80,200,180,0.2)'; ctx.lineWidth = 0.6;
+					ctx.beginPath(); ctx.arc(x, y, sz * 0.6, 0, Math.PI * 2); ctx.stroke();
+					// central star
+					ctx.fillStyle = 'rgba(200,220,255,0.4)';
+					ctx.beginPath(); ctx.arc(x, y, 0.8, 0, Math.PI * 2); ctx.fill();
+				} else {
+					// emission nebula
+					const nh = rr(0, 360);
+					for (let j = 0; j < 3; j++) {
+						const ng = ctx.createRadialGradient(x + rr(-sz * 0.3, sz * 0.3), y + rr(-sz * 0.3, sz * 0.3), 0, x, y, sz * rr(0.8, 1.3));
+						ng.addColorStop(0, hsl(nh + j * 20, 50, 45, 0.05));
+						ng.addColorStop(0.5, hsl(nh + j * 20, 40, 35, 0.02));
+						ng.addColorStop(1, 'transparent');
+						ctx.fillStyle = ng; ctx.fillRect(x - sz * 1.5, y - sz * 1.5, sz * 3, sz * 3);
+					}
+				}
+
+				ctx.font = `${dim * 0.007 | 0}px monospace`;
+				ctx.fillStyle = 'rgba(160,150,120,0.3)';
+				ctx.textAlign = 'left';
+				ctx.fillText(id, x + sz + 4, y + 3);
+			}
+			ctx.restore();
+
+			// ecliptic line
+			ctx.save();
+			ctx.beginPath();
+			const eclY = H * rr(0.3, 0.7);
+			const eclAmp = H * rr(0.05, 0.15);
+			for (let x = 0; x <= W; x += 2) {
+				const y = eclY + Math.sin(x / W * Math.PI * 2 + rr(-0.1, 0.1)) * eclAmp;
+				x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+			}
+			ctx.strokeStyle = 'rgba(200,160,80,0.12)'; ctx.lineWidth = 1; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
+			// label
+			ctx.font = `${dim * 0.008 | 0}px monospace`; ctx.fillStyle = 'rgba(200,160,80,0.2)';
+			ctx.textAlign = 'left'; ctx.fillText('ECLIPTIC', 10, eclY - 8);
+			ctx.restore();
+
+			// celestial equator
+			ctx.save(); ctx.beginPath();
+			const eqY = H * 0.5 + rr(-H * 0.03, H * 0.03);
+			ctx.moveTo(0, eqY); ctx.lineTo(W, eqY);
+			ctx.strokeStyle = 'rgba(100,180,200,0.08)'; ctx.lineWidth = 1; ctx.setLineDash([12, 8]); ctx.stroke(); ctx.setLineDash([]);
+			ctx.font = `${dim * 0.007 | 0}px monospace`; ctx.fillStyle = 'rgba(100,180,200,0.15)';
+			ctx.textAlign = 'right'; ctx.fillText('CELESTIAL EQUATOR', W - 10, eqY - 6);
+			ctx.restore();
+
+			// border decoration
+			ctx.save();
+			const bw = dim * 0.008;
+			ctx.strokeStyle = 'rgba(80,100,140,0.2)'; ctx.lineWidth = bw;
+			ctx.strokeRect(bw / 2, bw / 2, W - bw, H - bw);
+			ctx.lineWidth = 0.5;
+			ctx.strokeRect(bw * 2, bw * 2, W - bw * 4, H - bw * 4);
+			// tick marks along edges
+			ctx.strokeStyle = 'rgba(80,100,140,0.15)'; ctx.lineWidth = 0.5;
+			for (let i = 0; i < W; i += W / 48) {
+				ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, bw * 1.5); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(i, H); ctx.lineTo(i, H - bw * 1.5); ctx.stroke();
+			}
+			for (let i = 0; i < H; i += H / 24) {
+				ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(bw * 1.5, i); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(W, i); ctx.lineTo(W - bw * 1.5, i); ctx.stroke();
+			}
+			ctx.restore();
+
+			// title cartouche
+			ctx.save();
+			const epoch = ri(1600, 2500);
+			const season = pick(["Vernal", "Autumnal", "Summer", "Winter"]);
+			const proj = pick(["Mercator", "Mollweide", "Equirectangular", "Aitoff"]);
+			ctx.font = `italic ${dim * 0.02 | 0}px Georgia, serif`;
+			ctx.textAlign = 'center';
+			ctx.fillStyle = 'rgba(160,180,220,0.45)';
+			ctx.fillText(`${season} Sky, Epoch ${epoch}`, W / 2, H - dim * 0.045);
+			ctx.font = `${dim * 0.011 | 0}px Georgia, serif`;
+			ctx.fillStyle = 'rgba(140,160,200,0.28)';
+			ctx.fillText(`${proj} projection · Equatorial coordinates`, W / 2, H - dim * 0.025);
+			ctx.restore();
+
+			// subtle overall grain
+			const img = ctx.getImageData(0, 0, W, H);
+			const dd = img.data;
+			for (let i = 0; i < dd.length; i += 4) { const n = (Math.random() - 0.5) * 5; dd[i] += n; dd[i + 1] += n; dd[i + 2] += n; }
+			ctx.putImageData(img, 0, 0);
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

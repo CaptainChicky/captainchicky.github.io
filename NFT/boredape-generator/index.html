@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Ugly Ass NFT Ape Generator</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			background: #1a1a2e;
+			color: #eee;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center
+		}
+
+		h1 {
+			font-size: 1.3rem;
+			padding: 12px;
+			text-align: center;
+			background: #16213e;
+			width: 100%;
+			color: #e94560
+		}
+
+		.app {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 16px;
+			padding: 16px;
+			max-width: 1100px;
+			width: 100%
+		}
+
+		.preview-wrap {
+			position: relative;
+			flex-shrink: 0
+		}
+
+		canvas {
+			display: block;
+			border: 3px solid #e94560;
+			border-radius: 8px;
+			background: #222;
+			image-rendering: pixelated
+		}
+
+		.controls {
+			flex: 1;
+			min-width: 300px;
+			max-width: 500px;
+			display: flex;
+			flex-direction: column;
+			gap: 8px
+		}
+
+		.tabs {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 4px;
+			align-items: flex-end
+		}
+
+		.tab {
+			width: 48px;
+			height: 48px;
+			border: 2px solid #333;
+			border-bottom: none;
+			border-radius: 8px 8px 0 0;
+			cursor: pointer;
+			background-color: #16213e;
+			background-size: 70%;
+			background-repeat: no-repeat;
+			background-position: center;
+			transition: .2s;
+			flex-shrink: 0
+		}
+
+		.tab:hover {
+			border-color: #e94560;
+			background-color: #1a1a4e
+		}
+
+		.tab.active {
+			border-color: #e94560;
+			background-color: #2a1a3e;
+			box-shadow: 0 0 6px #e9456066
+		}
+
+		.items-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+			gap: 6px;
+			padding: 10px;
+			background: #16213e;
+			border-radius: 0 8px 8px 8px;
+			max-height: 340px;
+			overflow-y: auto;
+			min-height: 120px
+		}
+
+		.items-grid::-webkit-scrollbar {
+			width: 6px
+		}
+
+		.items-grid::-webkit-scrollbar-thumb {
+			background: #e94560;
+			border-radius: 3px
+		}
+
+		.item {
+			width: 100%;
+			aspect-ratio: 1;
+			border: 2px solid #444;
+			border-radius: 6px;
+			cursor: pointer;
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-color: #555;
+			transition: .15s
+		}
+
+		.item:hover {
+			border-color: #e94560;
+			transform: scale(1.05)
+		}
+
+		.item.active {
+			border-color: #e94560;
+			box-shadow: 0 0 8px #e9456088
+		}
+
+		.item.none-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: .65rem;
+			color: #ccc;
+			font-weight: 700;
+			text-transform: uppercase;
+			background-color: #444
+		}
+
+		.btn-row {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap
+		}
+
+		.btn {
+			padding: 10px 20px;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-weight: 700;
+			font-size: .9rem;
+			transition: .2s
+		}
+
+		.btn-rand {
+			background: #0f3460;
+			color: #fff
+		}
+
+		.btn-rand:hover {
+			background: #1a4a8a
+		}
+
+		.btn-finish {
+			background: #e94560;
+			color: #fff
+		}
+
+		.btn-finish:hover {
+			background: #ff6b81
+		}
+
+		.btn-dl {
+			background: #2ecc71;
+			color: #fff
+		}
+
+		.btn-dl:hover {
+			background: #27ae60
+		}
+
+		.btn-back {
+			background: #555;
+			color: #fff
+		}
+
+		.btn-back:hover {
+			background: #777
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: #000c;
+			z-index: 100;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 16px
+		}
+
+		.modal.show {
+			display: flex
+		}
+
+		.modal canvas {
+			border-color: #e94560
+		}
+
+		.modal-btns {
+			display: flex;
+			gap: 12px
+		}
+
+		.part-label {
+			font-size: .75rem;
+			color: #888;
+			padding: 2px 8px
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Ugly Ass NFT Ape Generator</h1>
+
+	<div class="app">
+		<div class="preview-wrap">
+			<canvas id="preview" width="600" height="600" style="width:300px;height:300px"></canvas>
+		</div>
+		<div class="controls">
+			<div class="tabs" id="tabs"></div>
+			<div class="part-label" id="partLabel"></div>
+			<div class="items-grid" id="itemsGrid"></div>
+			<div class="btn-row">
+				<button class="btn btn-rand" onclick="randomize()">🎲 Randomize</button>
+				<button class="btn btn-finish" onclick="finish()">✨ Finish</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="modal">
+		<img id="finalImg" style="max-width:90vw;max-height:60vh;border:3px solid #e94560;border-radius:8px">
+		<div class="modal-btns">
+			<button class="btn btn-dl" onclick="download()">⬇ Download</button>
+			<button class="btn btn-back" onclick="closeModal()">← Back</button>
+		</div>
+	</div>
+
+	<script>
+		const BASE = 'img';
+
+		const PARTS = [
+			{
+				id: 'color', name: 'Color', baseZ: 2, removable: false, defIdx: 0,
+				icon: '1272001/p_5i9Qew3Sxxvvxrld.png',
+				items: [
+					{ thumb: '1272001/ii_U5lo1PzOxwUU25Pn.png', img: '1272001/i_FLvvWKtWE7nl85BD.png' },
+					{ thumb: '1272001/ii_9M73HEzxRhXByVrk.png', img: '1272001/i_EouseaQhP8wTtBQr.png' },
+					{ thumb: '1272001/ii_5nmUIPFKhh6AA964.png', img: '1272001/i_jWBnBqNGkwH6shwM.png' },
+					{ thumb: '1272001/ii_lgp64JkdRrgFJnlq.png', img: '1272001/i_U7IL8ukIebURuT1F.png' },
+					{ thumb: '1272001/ii_jxh3ZcSTXVZ5WOu7.png', img: '1272001/i_7XPSx4aSPKdm8UUP.png' },
+					{ thumb: '1272001/ii_zxXRUJXQPbmmINtY.png', img: '1272001/i_siLuix0kJhN82K44.png' },
+					{ thumb: '1272001/ii_QygOuPoOsPEDdRPK.png', img: '1272001/i_dyE8vceTecGxHibq.png' },
+					{ thumb: '1272001/ii_CkW9AbmL0mvdtc7r.png', img: '1272001/i_FmN9ZXPyTusrW72i.png' },
+					{ thumb: '1272001/ii_eCckvVBJTUn3uQs9.png', img: '1272001/i_9siM8EwTTwK9nYYk.png' },
+					{ thumb: '1272001/ii_pU2KKae3s2PvK7Ov.png', img: '1272001/i_XBf5BHXaBnhmOyC0.png' },
+					{ thumb: '1272001/ii_HyxB6HxmeBa8fLuJ.png', img: '1272001/i_hjQhmogBqVyKMTAH.png' },
+					{ thumb: '1272001/ii_kyvdH7O7ZhfpUjmf.png', img: '1272001/i_iFF9jxo6tvZhs815.png' },
+					{ thumb: '1272001/ii_CeoYSArJeA4mcSJK.png', img: '1272001/i_0Jd6PIEhJt8FAVSV.png' },
+					{ thumb: '1272001/ii_6FGirUR3C9ArXNGQ.png', img: '1272001/i_Q3W46tcPGePuPyWO.png' },
+					{ thumb: '1272001/ii_YSvD9V1EXRC1xJlj.png', img: '1272001/i_6tzSmycq6R5fHyWQ.png' },
+					{ thumb: '1272001/ii_D3SZvwQeT37aKI7W.png', img: '1272001/i_TK6sl2dhICmYt9FA.png' },
+					{ thumb: '1272001/ii_FfC1939YoBAsluJn.png', img: '1272001/i_pyCKHH7xxFTfTrtr.png' },
+					{ thumb: '1272001/ii_gXzz291W7WjP2z6l.png', img: '1272001/i_9299PfU5CBgr1ghi.png' },
+					{ thumb: '1272001/ii_p9VPXt0bl8qadOcS.png', img: '1272001/i_Au0Ct0K9cvXZIxsx.png' },
+					{ thumb: '1272001/ii_dc4wLqtA5iUrd2WG.png', img: '1272001/i_YPpUOzFWrxpNArwZ.png' },
+				]
+			},
+			{
+				id: 'eyes', name: 'Eyes', baseZ: 3, removable: true, defIdx: 0,
+				icon: '1272002/p_ojDyNKVrytUDO6We.png',
+				items: [
+					{ thumb: '1272002/ii_K9kMsbHjGUOyzZYN.png', img: '1272002/i_Rsx5UfIk4avFFk5m.png' },
+					{ thumb: '1272002/ii_PejiytKGNWlWaafE.png', img: '1272002/i_5GMjC0bO2ekWGGER.png' },
+					{ thumb: '1272002/ii_YSPx6ijkzZmGotBr.png', img: '1272002/i_X1U8vXu9o7oGCl2W.png' },
+					{ thumb: '1272002/ii_I5DBfZFkTqNn1Xz2.png', img: '1272002/i_u0IqK8aRK53580UE.png' },
+					{ thumb: '1272002/ii_hqjNh3cAvUeYkxeN.png', img: '1272002/i_xiQdxLiY3hk0YHvx.png' },
+					{ thumb: '1272002/ii_kF2c0RfTdFljIayS.png', img: '1272002/i_MzK9dgPOqChI8NMg.png' },
+				]
+			},
+			{
+				id: 'mouth', name: 'Mouth', baseZ: 6, removable: false, defIdx: 0,
+				icon: '1272004/p_PMUuTQbpead1SVV9.png',
+				items: [
+					{ thumb: '1272004/ii_TRZ3FLaBrecykz5u.png', img: '1272004/i_eIlkdNtCZvxXivwf.png' },
+					{ thumb: '1272004/ii_X89bBi6p8ge6Mp9g.png', img: '1272004/i_jHlTehrTYYP2jD49.png' },
+					{ thumb: '1272004/ii_cxJvHSWChjn7DOzu.png', img: '1272004/i_OPdv7ADDd8KvOXmz.png' },
+					{ thumb: '1272004/ii_cqg7UfOY1yocqYdn.png', img: '1272004/i_kxKWwk5Km1m5ivoa.png' },
+				]
+			},
+			{
+				id: 'clothes', name: 'Clothes', baseZ: 7, removable: true, defIdx: 0,
+				icon: '1272005/p_TQYF3EwLzGkej3J4.png',
+				items: [
+					{ thumb: '1272005/ii_FYamvYpMoAtw51xJ.png', img: '1272005/i_AsnJSRtUs0wo8bNo.png' },
+					{ thumb: '1272005/ii_ReOWSoEr7YG4zQ1L.png', img: '1272005/i_ZPBpDr3D715wOWGH.png' },
+					{ thumb: '1272005/ii_kFS5Q9IEFYpYctcd.png', img: '1272005/i_fPdVeFlJQkds4CXr.png' },
+					{ thumb: '1272005/ii_jm4sM19dgpOFwMUM.png', img: '1272005/i_VHwO7ANFHSRnkCXJ.png' },
+					{ thumb: '1272005/ii_4qr1pusegLC8fsLh.png', img: '1272005/i_YzwGwXfwdMDyhSkx.png' },
+					{ thumb: '1272005/ii_zV7rMvRhejTmaKWx.png', img: '1272005/i_nrmbY8EJzrVmQeCQ.png' },
+					{ thumb: '1272005/ii_zDA8xotSxVPEnGRx.png', img: '1272005/i_MQ4yKawGHfVUGq4N.png' },
+					{ thumb: '1272005/ii_J7sSA8zpaMNMxIay.png', img: '1272005/i_54dw1U0beACOtolE.png' },
+					{ thumb: '1272005/ii_DsKILXcgiCH88sr2.png', img: '1272005/i_zjnIbJT9Qdyu3Pln.png' },
+					{ thumb: '1272005/ii_YOqm5IU5s3Eevsqw.png', img: '1272005/i_gZqcobNDnvXKFvPY.png' },
+					{ thumb: '1272005/ii_yGSGobz2gFAIrlCV.png', img: '1272005/i_PUTiMocfv89vTMhP.png' },
+					{ thumb: '1272005/ii_iwjzrYv8rnwULJwZ.png', img: '1272005/i_DcNuwGOZffI8gaLd.png' },
+					{ thumb: '1272005/ii_kS02hdBjQWXkOAfC.png', img: '1272005/i_1SCo1iM8Y97050bm.png' },
+					{ thumb: '1272005/ii_2FpDXwcz3zSHSfTq.png', img: '1272005/i_31fcV4q3g7CnR8h1.png' },
+					{ thumb: '1272005/ii_qQHAKKVv5KTISD4T.png', img: '1272005/i_d5z1ezMHIPlXySjZ.png' },
+					{ thumb: '1272005/ii_YOJLnMArTBlDmWJ7.png', img: '1272005/i_2Dj9JnLjUNsvTCxP.png' },
+				]
+			},
+			{
+				id: 'glasses', name: 'Glasses', baseZ: 5, removable: true, defIdx: 0,
+				icon: '1272074/p_yRBWXhbFYDDSdh4e.png',
+				items: [
+					{ thumb: '1272074/ii_Fr39UA1G6uHoO0mR.png', img: '1272074/i_tmPLCOFpoTT0d9Rd.png' },
+					{ thumb: '1272074/ii_eDuVDVBO2FJ3zcIg.png', img: '1272074/i_RVtyRSOoUIGJCBQA.png' },
+					{ thumb: '1272074/ii_P96M63F8YEpYFJHF.png', img: '1272074/i_XTNa7p7FwLI5hVC6.png' },
+					{ thumb: '1272074/ii_H5XzaAKqBxR54IGz.png', img: '1272074/i_QppQpjZj7VjPIi2R.png' },
+					{ thumb: '1272074/ii_80G80tzbsuAtBxu6.png', img: '1272074/i_G10X8MV9C77vbGsZ.png' },
+					{ thumb: '1272074/ii_agAMIM0wF4SxwJ0M.png', img: '1272074/i_ZtVAoOM4SgwUqIKE.png' },
+					// idx 6: crown — renders on top of everything except meme text
+					{ thumb: '1272074/ii_VgWYSfC3S3hyylm2.png', img: '1272074/i_ZSibtOT4rLN6Ns8v.png' },
+					// idx 7: hair — renders below hats, except above horns
+					{ thumb: '1272074/ii_32yp8dMso4Z9Opix.png', img: '1272074/i_Bx8hgTqWv2lAi2Xp.png' },
+				]
+			},
+			{
+				id: 'hat', name: 'Hat', baseZ: 4, removable: true, defIdx: 0,
+				icon: '1272006/p_8ghPdjpXgb99ftEP.png',
+				items: [
+					{ thumb: '1272006/ii_cBTmwLtBkqkBQGp6.png', img: '1272006/i_wZJSVwce4zthMPWl.png' },
+					// idx 1-4: horns (hair goes ABOVE these)
+					{ thumb: '1272006/ii_HLaRWoxs9SaqxcuB.png', img: '1272006/i_PFwlFeoWTgfvYWrx.png' },
+					{ thumb: '1272006/ii_GmH8sibJ7XjxkKE0.png', img: '1272006/i_f4M76mIQ280CjHuv.png' },
+					{ thumb: '1272006/ii_Dk32mYKPz6YDYVfM.png', img: '1272006/i_tiMwWAYBCMs93W6X.png' },
+					{ thumb: '1272006/ii_e7yZp7NcbZSi6MuH.png', img: '1272006/i_FzpxrD6eyrVPPQim.png' },
+					{ thumb: '1272006/ii_MMdZ4ZDDH0gcMeJz.png', img: '1272006/i_jXBwM0Azm21jhHpZ.png' },
+					{ thumb: '1272006/ii_UfLabpLBbykSZISZ.png', img: '1272006/i_iUvZp8BSaVyMVNOe.png' },
+					{ thumb: '1272006/ii_3OC7zzej7AGEwGR4.png', img: '1272006/i_c5bEwjPl91aytUsV.png' },
+					{ thumb: '1272006/ii_XJjhdt7ZtQWnn3Wp.png', img: '1272006/i_4AejODHVB5lJEbvg.png' },
+					{ thumb: '1272006/ii_BCOhxuFL718119Ox.png', img: '1272006/i_OofOeZCcbgjGLObe.png' },
+				]
+			},
+			{
+				id: 'bg', name: 'Background', baseZ: 1, removable: true, defIdx: 0,
+				icon: '1272041/p_obswQMu6DLE5buza.png',
+				items: [
+					{ thumb: '1272041/ii_ln5irU3l6Dt8Gmah.png', img: '1272041/i_fsnPEPdljb2bMAYk.png' },
+					{ thumb: '1272041/ii_gKB293Lf926WjuT5.png', img: '1272041/i_zzIl3pSFhUEGWHu2.png' },
+					{ thumb: '1272041/ii_UUrAFghcB8hwXG9k.png', img: '1272041/i_CdBtDITLAkoPEJ2w.png' },
+					{ thumb: '1272041/ii_zEAMkYDBB5j65hTA.png', img: '1272041/i_6QMuFdHZCXUEd2ar.png' },
+					{ thumb: '1272041/ii_HV9P9LG0uXvvcJPW.png', img: '1272041/i_DJxKBzAlxOnGsVCC.png' },
+					{ thumb: '1272041/ii_oxyC4OlwjhgEZuut.png', img: '1272041/i_u9xwcdOoojiu7T2w.png' },
+					{ thumb: '1272041/ii_zJbvdgkENk2x7Qcd.png', img: '1272041/i_0T6BNK0JYoMZRG8S.png' },
+					{ thumb: '1272041/ii_S2lRhqDR3fcIeY5j.png', img: '1272041/i_O77pCw1gUD5W7hbj.png' },
+					{ thumb: '1272041/ii_hGCvSZ40oxUPYt7d.png', img: '1272041/i_zMl58DHJuGhT619n.png' },
+					{ thumb: '1272041/ii_Meor0iA5LshRFdXi.png', img: '1272041/i_ypRyAbh3YrNKUV8L.png' },
+					{ thumb: '1272041/ii_xhDWJNPm5yL4iqtv.png', img: '1272041/i_nSVqy6hmF3xCiy2t.png' },
+					{ thumb: '1272041/ii_OIaHpJDOmsFgMP11.png', img: '1272041/i_Gjl5tplOgsm0bbRM.png' },
+					{ thumb: '1272041/ii_GGs8SF7PSnsIFXjg.png', img: '1272041/i_NghJQWVTfIp8v0rI.png' },
+				]
+			},
+			{
+				id: 'meme', name: 'Meme Text', baseZ: 9, removable: true, defIdx: 0,
+				icon: '1279710/p_0ID8y04u4SD1rKhN.png',
+				items: [
+					{ thumb: '1279710/ii_ujnSG8FUmPlxhjfd.png', img: '1279710/i_vBAJ9ugTedUZm0GS.png' },
+					{ thumb: '1279710/ii_fA46uK8mCDS2lgjW.png', img: '1279710/i_NVjWGyOZpxXU7UER.png' },
+					{ thumb: '1279710/ii_cR4yszD0vVvEhebk.png', img: '1279710/i_AzfbVw49FYzRGZ1z.png' },
+					{ thumb: '1279710/ii_bUdzIYgXs7BQLPaG.png', img: '1279710/i_kD9rQm0mVdZy7078.png' },
+					{ thumb: '1279710/ii_WD9Y0F7Dy2RN9Xon.png', img: '1279710/i_PsJGCg0IrPwblPqs.png' },
+				]
+			},
+		];
+
+		// Special glasses indices
+		const GLASSES_CROWN_IDX = 6;  // on top of everything except meme
+		const GLASSES_HAIR_IDX = 7;   // below hats, except above horns
+		const HORN_HAT_INDICES = [1, 2, 3, 4]; // hat indices that are horns
+
+		// ── STATE ──
+		let selected = {};
+		let activeTab = 0;
+		let imgCache = {};
+		PARTS.forEach(p => { selected[p.id] = p.defIdx; });
+
+		function loadImg(src) {
+			if (!imgCache[src]) {
+				imgCache[src] = new Promise((res, rej) => {
+					const img = new Image();
+					img.onload = () => res(img);
+					img.onerror = () => { delete imgCache[src]; rej(src); };
+					img.src = `${BASE}/${src}`;
+				});
+			}
+			return imgCache[src];
+		}
+
+		// ── Z-INDEX RESOLVER ──
+		function getZ(partId, itemIdx) {
+			const part = PARTS.find(p => p.id === partId);
+			if (!part) return 0;
+
+			// Special: glasses crown item → z 8.5 (above clothes 7, below meme 9)
+			if (partId === 'glasses' && itemIdx === GLASSES_CROWN_IDX) return 8.5;
+
+			// Special: glasses hair item
+			if (partId === 'glasses' && itemIdx === GLASSES_HAIR_IDX) {
+				const hatIdx = selected['hat'];
+				// If hat is horns (or no hat), hair stays at normal z (above hat)
+				if (hatIdx === -1 || HORN_HAT_INDICES.includes(hatIdx)) return 4.5;
+				// Otherwise hair goes BELOW the hat
+				return 3.5;
+			}
+
+			return part.baseZ;
+		}
+
+		// ── RENDER ──
+		async function render(canvasId) {
+			console.log(`[render] START target=${canvasId}`);
+			const cvs = document.getElementById(canvasId);
+			if (!cvs) { console.error(`[render] canvas #${canvasId} not found!`); return; }
+			const ctx = cvs.getContext('2d');
+			if (!ctx) { console.error(`[render] failed to get 2d context for #${canvasId}`); return; }
+			console.log(`[render] canvas size: ${cvs.width}x${cvs.height}, display: ${getComputedStyle(cvs).display}, parent visible: ${cvs.offsetParent !== null}`);
+			ctx.clearRect(0, 0, 600, 600);
+
+			const layers = [];
+			PARTS.forEach(p => {
+				const idx = selected[p.id];
+				if (idx >= 0 && p.items[idx]) {
+					layers.push({ z: getZ(p.id, idx), img: p.items[idx].img, partId: p.id, idx });
+				}
+			});
+			layers.sort((a, b) => a.z - b.z);
+			console.log(`[render] ${layers.length} layers to draw:`, layers.map(l => `${l.partId}[${l.idx}] z=${l.z}`));
+
+			for (const l of layers) {
+				try {
+					console.log(`[render] loading ${l.img}...`);
+					const img = await loadImg(l.img);
+					console.log(`[render] loaded ${l.img} → ${img.naturalWidth}x${img.naturalHeight} complete=${img.complete}`);
+					ctx.drawImage(img, 0, 0, 600, 600);
+					console.log(`[render] drew ${l.img} OK`);
+				} catch (e) { console.warn('[render] FAILED to load:', l.img, e); }
+			}
+
+			// Check if canvas has any non-transparent pixels
+			const pixel = ctx.getImageData(300, 300, 1, 1).data;
+			console.log(`[render] DONE. Center pixel RGBA: ${pixel[0]},${pixel[1]},${pixel[2]},${pixel[3]} (0,0,0,0 = blank)`);
+		}
+
+		// ── UI ──
+		function buildTabs() {
+			const el = document.getElementById('tabs');
+			el.innerHTML = '';
+			PARTS.forEach((p, i) => {
+				const btn = document.createElement('div');
+				btn.className = 'tab' + (i === activeTab ? ' active' : '');
+				btn.style.backgroundImage = `url(${BASE}/${p.icon})`;
+				btn.title = p.name;
+				btn.onclick = () => { activeTab = i; buildTabs(); buildItems(); };
+				el.appendChild(btn);
+			});
+		}
+
+		function buildItems() {
+			const grid = document.getElementById('itemsGrid');
+			const label = document.getElementById('partLabel');
+			const part = PARTS[activeTab];
+			label.textContent = part.name + (part.removable ? ' (optional)' : '');
+			grid.innerHTML = '';
+
+			if (part.removable) {
+				const none = document.createElement('div');
+				none.className = 'item none-btn' + (selected[part.id] === -1 ? ' active' : '');
+				none.textContent = '✕ None';
+				none.onclick = () => { selected[part.id] = -1; buildItems(); render('preview'); };
+				grid.appendChild(none);
+			}
+
+			part.items.forEach((item, idx) => {
+				const div = document.createElement('div');
+				div.className = 'item' + (selected[part.id] === idx ? ' active' : '');
+				div.style.backgroundImage = `url(${BASE}/${item.thumb})`;
+				div.onclick = () => { selected[part.id] = idx; buildItems(); render('preview'); };
+				grid.appendChild(div);
+			});
+		}
+
+		function randomize() {
+			PARTS.forEach(p => {
+				if (p.removable && Math.random() < 0.2) {
+					selected[p.id] = -1;
+				} else {
+					selected[p.id] = Math.floor(Math.random() * p.items.length);
+				}
+			});
+			buildItems();
+			render('preview');
+		}
+
+		async function finish() {
+			// Ensure preview is fully rendered, then snapshot it as a PNG data URL
+			await render('preview');
+			const dataUrl = document.getElementById('preview').toDataURL('image/png');
+			document.getElementById('finalImg').src = dataUrl;
+			document.getElementById('modal').classList.add('show');
+		}
+
+		function closeModal() {
+			document.getElementById('modal').classList.remove('show');
+		}
+
+		function download() {
+			const a = document.createElement('a');
+			a.download = 'nft-ape.png';
+			a.href = document.getElementById('finalImg').src;
+			a.click();
+		}
+
+		buildTabs();
+		buildItems();
+		render('preview');
+	</script>
+</body>
+
+</html>

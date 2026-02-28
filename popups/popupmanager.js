@@ -1,5 +1,3 @@
-// popup-manager.js - Popup notification system with flexible sizing and positioning
-
 class PopupManager {
     constructor(config = {}) {
         this.activePopups = [];

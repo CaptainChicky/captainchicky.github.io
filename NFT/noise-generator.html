@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+		}
+
+		canvas {
+			display: block;
+			max-width: 100vw;
+			max-height: 100vh;
+			image-rendering: pixelated;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #fff;
+			font: 12px monospace;
+			pointer-events: none;
+			background: rgba(0, 0, 0, 0.6);
+			padding: 6px 10px;
+			border-radius: 6px;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to regenerate</div>
+	<script>
+		const c = document.getElementById('c');
+		const ctx = c.getContext('2d');
+		let W, H;
+
+		function resize() {
+			W = window.innerWidth;
+			H = window.innerHeight;
+			c.width = W;
+			c.height = H;
+			c.style.width = W + 'px';
+			c.style.height = H + 'px';
+			draw();
+		}
+
+		function draw() {
+			const img = ctx.createImageData(W, H);
+			const d = img.data;
+			for (let i = 0, n = W * H * 4; i < n; i += 4) {
+				d[i] = Math.random() * 256 | 0;
+				d[i + 1] = Math.random() * 256 | 0;
+				d[i + 2] = Math.random() * 256 | 0;
+				d[i + 3] = 255;
+			}
+			ctx.putImageData(img, 0, 0);
+		}
+
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', draw);
+	</script>
+</body>
+
+</html>
