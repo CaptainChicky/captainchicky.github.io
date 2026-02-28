@@ -561,7 +561,7 @@
 				title: "Island Map",
 				desc: "Procedural archipelago cartography. Terrain elevation, coastlines, forests, and hand-drawn style.",
 				type: "viz", tag: "VISUAL",
-				tech: "Noise terrain"
+				tech: "Perlin noise"
 			},
 			{
 				file: "skyline-generator.html",
@@ -577,6 +577,13 @@
 				type: "gen", tag: "GENERATIVE",
 				tech: "Sprite layers"
 			},
+			{
+				file: "satellitescan-generator.html",
+				title: "Satellite Scan",
+				desc: "Procedural satellite imagery with biome mapping via FBM, terrain features, and military-style HUD overlay.",
+				type: "sim", tag: "SIMULATION",
+				tech: "Simplex noise"
+			}
 		];
 
 		const grid = document.getElementById('grid');

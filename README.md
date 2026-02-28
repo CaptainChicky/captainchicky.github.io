@@ -1,30 +1,16 @@
-# Welcome!
-
-Here is my github pages website :) Well... part of it. This is repo is only for static and pure vanilla html, css, and js projects. Any large projects that use extraneous frameworks like tailwind, typescript, or sass will be independently hosted in another repo.
-
-Since this is a static hosting place, I will try my best to see what I can do with js lol. This has a custom domain *https://theaviary.me/*.
-
-Within each directory leading from the root is either a finished project, or a to-be-completed project. Within the `/Archive/` directory is just where I put html saves and stuff for later use/exploration. Don't bother checking that because it's basically a mess lol. I'll sort it out gradually over the years.
-
-Currently, I have a slew of unfinished projects I need to complete. Below's an overview on what is I have currently as of 7/5/2023.
-
-# Projects
-
 ## Finished Projects
 
 The projects are folders from the root directory.
 
-- `/plant-generator/` - This has a js animation template I found from a robux generator scam site. I've basically implemented this animation, and included the "OnlyPlants" joke logo. Then there's a captcha implementation and redirection based on choices.
-- `/The-Aviary/` - This is a webdev practice recreation of my first website made in wix.
-
-## Maybe Done?
-- `/Idiots!/` - A comprehensive overview and 3 implementations of Trojan.JS.YouAreAnIdiot. polish
+- `/plant-generator/` - This has a js animation template I found from a robux generator scam site. I've basically implemented/refactored this animation, and included the "OnlyPlants" logo. Then there's a captcha implementation and redirection based on choices. Images served are from gelbooru and modified to look grotesque, and the image downloading page has some js fuckery to it :P.
+- `/The-Aviary/` - This is a webdev practice recreation of my first website made in wix, with AJAX go brr.
+- `/NFT/` - Implement not just the a random pixels thing, but also a selector thing for different arts, perhaps.
 
 ## Unfinished Projects
 
+- `/Idiots!/` - A comprehensive overview and 3 implementations of Trojan.JS.YouAreAnIdiot. polish
 - `/Captcha-test/` - I need to actually properly implement the animation and popups lol.
 - `/Clouds/` - I need to restructure the site and make it more practical. Then, I can do the writeup.
-- `/NFT/` - Implement not just the a random pixels thing, but also a selector thing for different arts, perhaps.
 - `/Space/` - Structure this properly lmao and make writeups.
 - `/Zip-Bomb/` - I need to actually relearn everything and finish this. This will take a while.
 
