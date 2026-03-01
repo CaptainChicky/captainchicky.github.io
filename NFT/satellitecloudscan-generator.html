@@ -5,12 +5,15 @@
 		*{margin:0;padding:0;box-sizing:border-box;}
 		body{background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;cursor:pointer;font-family:'Courier New',monospace;}
 		canvas{display:block;max-width:100vw;max-height:100vh;}
-		#click-hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(160,240,192,1);font-size:10px;letter-spacing:2px;text-transform:uppercase;pointer-events:none;z-index:10;background-color:rgba(0,0,0,0.8);border:1px solid rgba(160,240,192,0.8);padding:6px 10px;border-radius:6px;}
+		#bottom-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;pointer-events:none;}
+		#click-hint{color:rgba(160,240,192,1);font-size:10px;letter-spacing:2px;text-transform:uppercase;pointer-events:none;background-color:rgba(0,0,0,0.8);border:1px solid rgba(160,240,192,0.8);padding:6px 10px;border-radius:6px;}
+		#analysis-toggle{color:rgba(160,240,192,1);font-size:10px;letter-spacing:2px;text-transform:uppercase;pointer-events:auto;background-color:rgba(0,0,0,0.8);border:1px solid rgba(160,240,192,0.8);padding:6px 10px;border-radius:6px;cursor:pointer;user-select:none;}
+		#analysis-toggle:hover{background-color:rgba(160,240,192,0.15);}
 	</style>
 </head>
 <body>
 	<canvas id="c"></canvas>
-	<div id="click-hint">click to regenerate</div>
+	<div id="bottom-bar"><div id="click-hint">click to regenerate</div><div id="analysis-toggle">analysis: on</div></div>
 	<script>
 		const canvas=document.getElementById('c');
 		const ctx=canvas.getContext('2d');
@@ -20,11 +23,13 @@
 		hudC.style.cssText='position:fixed;top:0;left:0;pointer-events:none;z-index:2;';
 		document.body.appendChild(hudC);
 		const hctx=hudC.getContext('2d');
+		const preHudC=document.createElement('canvas');
+		const phctx=preHudC.getContext('2d');
 
 		let W,H;
 		function resize(){
-			W=canvas.width=filterC.width=hudC.width=Math.max(1,window.innerWidth);
-			H=canvas.height=filterC.height=hudC.height=Math.max(1,window.innerHeight);
+			W=canvas.width=filterC.width=hudC.width=preHudC.width=Math.max(1,window.innerWidth);
+			H=canvas.height=filterC.height=hudC.height=preHudC.height=Math.max(1,window.innerHeight);
 			canvas.style.width=W+'px';canvas.style.height=H+'px';
 		}
 		resize();
@@ -94,20 +99,56 @@
 			if(moist<0.1)return desertC(d);if(moist<0.2)return lc(desertC(d),aridScrubC(d),(moist-0.1)/0.1);if(moist<0.32)return lc(aridScrubC(d),dryGrassC(d),(moist-0.2)/0.12);if(moist<0.42)return lc(dryGrassC(d),savannaC(d),(moist-0.32)/0.1);if(moist<0.55)return lc(savannaC(d),forestC(d),(moist-0.42)/0.13);if(moist<0.7)return lc(forestC(d),jungleC(d),(moist-0.55)/0.15);return lc(jungleC(d),tropicalC(d),(moist-0.7)/0.3);
 		}
 
-		function surfaceWind(ln,ls){
-			let z=0,m=0;
-			if(ln<0.33){
-				z=-Math.sin(ln/0.33*Math.PI);m=-ls*Math.sin(ln/0.33*Math.PI)*0.4;
-			}else if(ln<0.75){
-				const t=(ln-0.33)/0.42;
-				z=Math.sin(t*Math.PI)*0.45;m=ls*Math.sin(t*Math.PI)*0.08;
-			}else{
-				const t=(ln-0.75)/0.25;
-				z=-Math.sin(t*Math.PI)*0.15;m=-ls*Math.sin(t*Math.PI)*0.04;
-			}
-			return{zonal:z*ls,merid:m};
+		function smoothstep(t) {
+		return t * t * (3 - 2 * t);
 		}
 
+		function surfaceWind(ln, ls) {
+		// Trade winds (0 to ~0.35)
+		let tradeStr = 0, westStr = 0, polarStr = 0;
+
+		if (ln < 0.35) {
+			const t = Math.min(ln / 0.25, 1);
+			const s = Math.sin(t * Math.PI * 0.5);
+			tradeStr = Math.max(s, ln < 0.25 ? 0.25 : 0);
+		}
+
+		// Westerlies (0.2 to 0.75)
+		if (ln > 0.2 && ln < 0.75) {
+			const t = (ln - 0.33) / 0.42;
+			westStr = Math.sin(Math.max(0, t) * Math.PI);
+		}
+
+		// Polar easterlies (0.65 to 1)
+		if (ln > 0.65) {
+			const t = (ln - 0.75) / 0.25;
+			polarStr = Math.sin(Math.max(0, t) * Math.PI);
+		}
+
+		// Blend weights using smoothstep in overlap regions
+		let wTrade = 0, wWest = 0, wPolar = 0;
+
+		if (ln < 0.2) {
+			wTrade = 1;
+		} else if (ln < 0.35) {
+			const blend = smoothstep((ln - 0.2) / 0.15);
+			wTrade = 1 - blend;
+			wWest = blend;
+		} else if (ln < 0.65) {
+			wWest = 1;
+		} else if (ln < 0.75) {
+			const blend = smoothstep((ln - 0.65) / 0.1);
+			wWest = 1 - blend;
+			wPolar = blend;
+		} else {
+			wPolar = 1;
+		}
+
+		const z = -tradeStr * wTrade + westStr * 0.45 * wWest - polarStr * 0.65 * wPolar;
+		const m = -ls * tradeStr * 0.4 * wTrade + ls * westStr * 0.08 * wWest - ls * polarStr * 0.18 * wPolar;
+
+		return { zonal: z, merid: m };
+		}
 		function jetStreamWind(ln,ls){
 			const sd=Math.abs(ln-0.33),pd=Math.abs(ln-0.61);
 			const sj=Math.exp(-sd*sd/(2*0.04*0.04))*3.5;
@@ -116,16 +157,11 @@
 		}
 
 		function convergenceShearLow(ln){
-			const hw=0.03,peak=15.0;
+			const hw=0.06,peak=3.0;
 			if(ln>hw*4)return 1.0;
 			return 1.0+(peak-1.0)*Math.exp(-ln*ln/(2*hw*hw));
 		}
-		function convergenceShearHigh(ln){
-			const hw=0.03,peak=15.0;
-			const d=Math.min(ln,Math.abs(ln-0.33),Math.abs(ln-0.75));
-			if(d>hw*4)return 1.0;
-			return 1.0+(peak-1.0)*Math.exp(-d*d/(2*hw*hw));
-		}
+		function convergenceShearHigh(ln){ return 1.0; }
 
 		function latToScreenY(absLat,hemi,gLat){return H*(0.5+(absLat*hemi-gLat)/0.35);}
 
@@ -136,8 +172,9 @@
 			}return false;
 		}
 
+		let analysisOn=true;
 		let genCount=0,generating=false,currentSeed=0,currentPal=null,currentLat=0,currentLon=0,currentAlt=0;
-		let scanLine=0,animId=null,noiseCache={},params={};
+		let scanLine=0,animId=null,noiseCache={},params={},renderDone=false;
 
 		function initGeneration(){
 			if(generating&&animId){cancelAnimationFrame(animId);animId=null;}
@@ -171,7 +208,6 @@
 			params.hasIce=Math.abs(gLat)>0.25;
 			params.pxToNoise=params.viewScale/dim;
 
-			// Helper: check if screen position is ocean
 			function isOceanAt(sx01,sy01){
 				const px2=sx01*W,py2=sy01*H;
 				let nx2=params.offX+(px2/dim)*params.viewScale;
@@ -182,7 +218,7 @@
 				let cont2=noiseCache.nC.fbm(wnx2*params.contScale,wny2*params.contScale,7,2.1,0.48)*0.5+0.5;
 				cont2+=noiseCache.nC2.fbm(wnx2*params.contScale*4,wny2*params.contScale*4,4,2.2,0.45)*0.06;
 				cont2+=noiseCache.nCo.fbm(wnx2*params.contScale*12,wny2*params.contScale*12,3,2.5,0.4)*0.025;
-				return cont2<params.seaLvl+0.02; // slight coastal buffer
+				return cont2<params.seaLvl+0.02;
 			}
 
 			params.cyclones=[];
@@ -198,7 +234,6 @@
 					if(!hemis.length)continue;
 					const hemi=hemis[Math.floor(Math.random()*hemis.length)];
 
-					// Try up to 20 times to find an ocean position
 					let sx=-1,sy=-1,foundOcean=false;
 					for(let attempt=0;attempt<20;attempt++){
 						const sAbsLat=rr(sMin,sMax);
@@ -224,12 +259,7 @@
 					}
 					if(tooClose)continue;
 
-					// === Direction: ALWAYS poleward (away from equator) ===
-					// Screen coords: Y increases downward
-					// NH (hemi=1): poleward = upward on screen = negative Y = angle around -PI/2
-					// SH (hemi=-1): poleward = downward on screen = positive Y = angle around +PI/2
-					// Add zonal (eastward) recurvature component + forced poleward
-					const zonalDrift=rr(0.15,0.4)*(Math.random()<0.5?1:-1); // random east/west
+					const zonalDrift=rr(0.15,0.4)*(Math.random()<0.5?1:-1);
 					const polewardStr=rr(0.4,0.8);
 					const meridComp=hemi*polewardStr;
 					const ma=Math.atan2(meridComp,zonalDrift);
@@ -260,10 +290,10 @@
 
 			currentLat=gLat*90;currentLon=rr(-180,180);currentAlt=altKm;genCount++;
 			ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+			renderDone=false;
 			hudC.style.display='block';drawHUD();renderChunk();
 		}
 
-		/* ===== Storm proximity: 0=far, 1=at center. Used to suppress ambient wind shear ===== */
 		function getStormProximity(px,py){
 			const cycs=params.cyclones;
 			if(!cycs||!cycs.length)return 0;
@@ -281,7 +311,6 @@
 			return maxP;
 		}
 
-		/* ===== STORM WARP: stronger skew on surrounding clouds ===== */
 		function getStormWarp(px,py){
 			let swx=0,swy=0;
 			const cycs=params.cyclones;
@@ -292,13 +321,12 @@
 				const cxPx=c.sx*W,cyPx=c.sy*H;
 				const dx=px-cxPx,dy=py-cyPx;
 				const dist=Math.sqrt(dx*dx+dy*dy);
-				const infR=c.radiusPx*3.5; // wider influence
+				const infR=c.radiusPx*3.5;
 				if(dist>infR||dist<1)continue;
 				const nd=dist/infR;
 				const str=(1.0-nd)*(1.0-nd)*(1.0-nd);
 				const angle=Math.atan2(dy,dx);
 				const tAng=angle+c.rotation*Math.PI*0.5;
-				// 3× stronger skew on all cloud layers
 				const mag=str*c.swirlStr*0.66*c.radiusPx*p2n;
 				const drift=str*0.36*c.radiusPx*p2n;
 				swx+=Math.cos(tAng)*mag+Math.cos(c.moveAngle)*drift;
@@ -308,7 +336,6 @@
 			return{x:swx,y:swy};
 		}
 
-		/* ===== STORM CLOUD: opaque core ≥80% of red circle, cumulus-white, clearable eye ===== */
 		function stormCloud(px,py,nc){
 			let total=0;
 			const cycs=params.cyclones;
@@ -322,7 +349,7 @@
 				const wakeR=visR*1.15;
 				if(dist>wakeR)continue;
 
-				const nd=dist/visR; // 0=center, 0.5=red circle edge, 1=visual edge
+				const nd=dist/visR;
 				const angle=Math.atan2(dy,dx);
 				const rot=c.rotation;
 
@@ -333,12 +360,10 @@
 				const snx=Math.cos(sAng)*nd*3.0+ph;
 				const sny=Math.sin(sAng)*nd*3.0+ph+50;
 
-				// === Opacity gradient: solid center, quadratic falloff outward ===
 				let core;
 				if(nd<0.35)core=1.0;
 				else{const t=(nd-0.35)/(0.85-0.35);core=Math.max(0,(1.0-t)*(1.0-t));}
 
-				// === Spiral arms ===
 				const aN=nc.nSt.fbm(snx*1.2,sny*1.2,4,2.1,0.48)*0.5+0.5;
 				const aN2=nc.nSt2.fbm(snx*0.6+20,sny*0.6,3,2.0,0.5)*0.5+0.5;
 				let armP=0;
@@ -349,43 +374,35 @@
 				let arms=armP*aN*aN2;
 				arms*=ss(0.1,0.35,nd)*ss(1.1,0.45,nd);
 
-				// === Wisps at outer edge ===
 				const wN=nc.nSt3.fbm(snx*2.5+40,sny*2.5+40,3,2.2,0.45)*0.5+0.5;
 				let wisps=ss(0.5,0.72,wN)*ss(0.45,1.05,nd)*ss(1.2,0.65,nd)*0.55;
 
 				let density=cl(core+arms*0.75+wisps*0.4,0,1);
 
-				// Outer fade
 				if(nd>0.75)density*=ss(1.08,0.75,nd);
 
-				// === Hurricane eye: FULLY clear center, no exceptions ===
 				if(c.isHurricane&&c.eyeRadius>0){
 					const eR=c.eyeRadius;
-					// Hard clear inside the eye
 					if(nd<eR*0.9){
 						density=0;
 					}else if(nd<eR*1.8){
-						// Transition from clear eye to eyewall
 						const eyeT=ss(eR*0.9,eR*1.8,nd);
 						density*=eyeT;
 					}
-					// Dense eyewall ring
 					const wall=Math.exp(-Math.pow(nd-eR*1.4,2)/(2*0.02*0.02))*0.65;
 					density=cl(density+wall,0,1);
-					// Re-clear the inner eye (ensure nothing leaks in)
 					if(nd<eR*0.8)density=0;
 				}
 
-				// === Trailing wake ===
-				if(nd>0.35&&dist<wakeR){  // was nd>0.5 — start closer to center
+				if(nd>0.35&&dist<wakeR){
 					const wAng=c.moveAngle+Math.PI;
 					let ad=angle-wAng;
 					while(ad>Math.PI)ad-=Math.PI*2;
 					while(ad<-Math.PI)ad+=Math.PI*2;
-					const wAlign=Math.exp(-ad*ad/(2*1.2*1.2));  // was 0.7 — wider cone
+					const wAlign=Math.exp(-ad*ad/(2*1.2*1.2));
 					const wNoise=nc.nSt.fbm(snx*0.8+60,sny*0.8+60,3,2,0.5)*0.5+0.5;
-					const wFade=ss(0.35,0.7,nd)*ss(wakeR/visR,0.85,nd);  // adjusted
-					density=cl(density+wAlign*wNoise*wFade*0.7,0,1);  // was *0.5
+					const wFade=ss(0.35,0.7,nd)*ss(wakeR/visR,0.85,nd);
+					density=cl(density+wAlign*wNoise*wFade*0.7,0,1);
 				}
 
 				total=cl(total+density,0,1);
@@ -393,15 +410,13 @@
 			return total;
 		}
 
-		/* ===== Post-render gaussian blur on storm regions ===== */
 		function blurStormRegions(){
 			const cycs=params.cyclones;
 			if(!cycs||!cycs.length)return;
 			const src=ctx.getImageData(0,0,W,H);
 			const dst=new Uint8ClampedArray(src.data);
-			const bR=3; // blur kernel radius
+			const bR=3;
 
-			// Precompute gaussian weights
 			const kSize=bR*2+1;
 			const weights=[];
 			let wTotal=0;
@@ -436,7 +451,6 @@
 							bb+=src.data[si+2]*weights[wi].w;
 						}
 
-						// Blend: stronger blur near center, fade at edges
 						const nd=dist/blurZone;
 						const blend=cl((1.0-nd*nd)*0.75,0,1);
 						const di=(y*W+x)*4;
@@ -526,44 +540,37 @@
 						if(hasIce&&absLat>0.38){const ip=ss(0.38,0.55,absLat);const iN=nc.nIce.fbm(wnx*0.6,wny*0.6,4,2,0.5)*0.5+0.5;const iA=cl(ip*1.8*(iN+0.1),0,1);if(iA>0.08){const cr=nc.nD.fbm(wnx*3,wny*3,2,2,0.5)*5;c=lc(c,[228+cr,236+cr,250+cr],ss(0.08,0.45,iA));}}
 					}
 
-					// ===== CLOUDS =====
 					if(clouds>0){
 						const latNorm=cl(absLat/0.5,0,1);
-						const latSign=latHere>=0?1:-1;
+						const latSign=Math.tanh(latHere*30);
 						const sW=surfaceWind(latNorm,latSign);
 						const jW=jetStreamWind(latNorm,latSign);
-						const cvSL=convergenceShearLow(latNorm);
 						const cvSH=convergenceShearHigh(latNorm);
-						const cvTL=Math.min(cvSL,20);
-						const cvTH=Math.min(cvSH,20);
-						const cvTLX=nc.nCv.fbm(wnx*0.3,wny*0.3,3,2.2,0.5)*0.5*(cvTL-1.0);
-						const cvTLY=nc.nCv.fbm(wnx*0.3+50,wny*0.3+50,3,2.2,0.5)*0.5*(cvTL-1.0);
+						const cvTH=Math.min(cvSH,5);
 						const cvTHX=nc.nCv.fbm(wnx*0.3+100,wny*0.3+100,3,2.2,0.5)*0.5*(cvTH-1.0);
 						const cvTHY=nc.nCv.fbm(wnx*0.3+150,wny*0.3+150,3,2.2,0.5)*0.5*(cvTH-1.0);
-						const cvDenL=1.0/(cvSL*0.3+0.7);
 
-						const shM=1.5;
-						const windDamp=latNorm<0.33?1.0:lerp(1.0,0.2,ss(0.33,0.75,latNorm));
+						const shM=0.7+0.3*ss(0.25,0.75,moist);
+						const windDamp=lerp(1.0,0.7,ss(0.2,0.8,latNorm));
 						const wS=1.0;
-						const sw=nc.nCl4.fbm(wnx*0.06,wny*0.06,2,2,0.5)*0.08*Math.min(cvSL,10)*shM;
-						const swY=nc.nCl5.fbm(wnx*0.06+40,wny*0.06+40,2,2,0.5)*0.04*Math.min(cvSL,10)*shM;
+						const sw=nc.nCl4.fbm(wnx*0.06,wny*0.06,2,2,0.5)*0.08*shM;
+						const swY=nc.nCl5.fbm(wnx*0.06+40,wny*0.06+40,2,2,0.5)*0.04*shM;
 
 						const stW=getStormWarp(x,y);
 						const swpX=stW?stW.x:0, swpY=stW?stW.y:0;
 
-						// STRATUS, reduced coverage (×0.8)
-						const stX=(wnx+swpX+sW.zonal*3.0*shM*windDamp+sw+cvTLX)*0.1;
-						const stY=(wny+swpY+sW.merid*2.25*shM*windDamp+swY+cvTLY)*0.1;
+						const baseDrift=0.3;
+						const stX=(wnx+swpX-(sW.zonal*1.8*shM*windDamp+baseDrift)+sw)*0.1;
+						const stY=(wny+swpY+sW.merid*1.4*shM*windDamp+swY)*0.1;
 						let broad=nc.nCl.fbm(stX,stY,6,2.0,0.47)*0.5+0.5;
-						let strat=ss(0.38,0.62,broad)*clouds*1.6*cvDenL;
+						let strat=ss(0.45,0.65,broad)*clouds*1.6;
 						let med=nc.nCl2.fbm(stX*2.5,stY*2.5,4,2.1,0.46)*0.5+0.5;
 						strat*=lerp(0.65,1.0,ss(0.30,0.55,med));
 						strat=cl(strat,0,1);
 
-						// CUMULUS
 						const cuWS=1.2*shM;
-						const cuBX=(wnx+swpX+sW.zonal*2.4*cuWS*windDamp*wS+sw*1.3*wS+cvTLX*wS)*0.7;
-						const cuBY=(wny+swpY+sW.merid*1.8*cuWS*windDamp*wS+swY*1.3*wS+cvTLY*wS)*0.7;
+						const cuBX=(wnx+swpX-sW.zonal*1.4*cuWS*windDamp*wS+sw*1.3*wS)*0.7;
+						const cuBY=(wny+swpY+sW.merid*1.0*cuWS*windDamp*wS+swY*1.3*wS)*0.7;
 						let cuEnv=nc.nCl6.fbm(cuBX*0.12,cuBY*0.12,3,2,0.5)*0.5+0.5;
 						cuEnv=ss(0.36,0.56,cuEnv);
 						let cuMid=nc.nCu2.fbm(cuBX*0.4,cuBY*0.4,3,2.2,0.45)*0.5+0.5;
@@ -584,43 +591,36 @@
 							wSum+=tw;
 						}
 						let cumulus=(cuSum/wSum)*cuEnv*cuMid;
-						cumulus*=ss(0.65,0.1,latNorm)*clouds*2.2*cvDenL;
+						cumulus*=ss(0.65,0.1,latNorm)*clouds*2.2;
 						cumulus=cl(cumulus,0,1);
 
-						// CIRRUS
-						const cirJetShear=3.5;
+						const jetShear=1.5;
 						const swH=nc.nCl4.fbm(wnx*0.06,wny*0.06,2,2,0.5)*0.08*Math.min(cvSH,10)*shM;
 						const swHY=nc.nCl5.fbm(wnx*0.06+40,wny*0.06+40,2,2,0.5)*0.04*Math.min(cvSH,10)*shM;
-						// Dramatically swirly cirrus edges
 						const edWarpX=nc.nEd.ridged(wnx*0.5,wny*0.5,5,2.2,0.5)*0.9;
 						const edWarpY=nc.nEd.ridged(wnx*0.5+30,wny*0.5+30,5,2.2,0.5)*0.9;
 						const cirSwirlX=nc.nEd.fbm(wnx*0.25+60,wny*0.25,4,2,0.5)*0.7+nc.nEd.ridged(wnx*0.8+10,wny*0.8,3,2.3,0.45)*0.4;
 						const cirSwirlY=nc.nEd.fbm(wnx*0.25+90,wny*0.25+60,4,2,0.5)*0.7+nc.nEd.ridged(wnx*0.8+40,wny*0.8+20,3,2.3,0.45)*0.4;
-						const cirX=(wnx+swpX*0.6+jW.zonal*cirJetShear*shM*wS+cvTHX*0.5*wS+edWarpX+cirSwirlX+swH*0.3*wS)*0.025;
-						const cirY=(wny+swpY*0.6+jW.merid*cirJetShear*0.7*shM*wS+cvTHY*0.5*wS+edWarpY+cirSwirlY+swHY*0.3*wS)*0.08;
+						const cirX=(wnx+swpX*0.6+jW.zonal*jetShear*wS+cvTHX*0.5*wS+edWarpX+cirSwirlX+swH*0.3*wS)*0.025;
+						const cirY=(wny+swpY*0.6+jW.merid*jetShear*0.7*wS+cvTHY*0.5*wS+edWarpY+cirSwirlY+swHY*0.3*wS)*0.08;
 						let cirrus=nc.nCl3.fbm(cirX,cirY,2,2.0,0.45)*0.5+0.5;
 						cirrus=ss(0.48,0.62,cirrus)*0.14;
 						let cirrus2=nc.nCl3.fbm(cirX*0.6+10,cirY*0.6,2,2.0,0.5)*0.5+0.5;
 						cirrus+=ss(0.50,0.62,cirrus2)*0.06;
 						cirrus=cl(cirrus,0,0.3);
-						// Jet proximity: much weaker base, eddy breakup at boundaries
-						const jetStr=Math.max(
-							Math.exp(-Math.pow(latNorm-0.33,2)/(2*0.09*0.09)),
-							Math.exp(-Math.pow(latNorm-0.61,2)/(2*0.10*0.10))
+						const jetProx=Math.max(
+							Math.exp(-Math.pow(latNorm-0.33,2)/(2*0.12*0.12)),
+							Math.exp(-Math.pow(latNorm-0.61,2)/(2*0.12*0.12))
 						);
-						const eddyBreak=nc.nEd.ridged(wnx*1.2+200,wny*1.2+200,4,2.3,0.48)*0.5+0.5;
-						cirrus*=lerp(1.0, cl(eddyBreak*1.5,0,1), jetStr);	
+						cirrus*=lerp(1.0,1.4,jetProx);
 
-						// ITCZ / fronts
 						let itcz=0;
 						if(absLat<0.08){const is2=ss(0.08,0.0,absLat);const iN=nc.nCl2.fbm(wnx*0.07+100,wny*0.07,3,2,0.5)*0.5+0.5;itcz=is2*ss(0.3,0.6,iN)*0.6;}
 						let front=0;
 						if(absLat>0.3&&absLat<0.6){const fs=1-Math.abs(absLat-0.45)/0.15;const fN=nc.nCl.fbm(stX*1.5+200,stY*1.5,3,2,0.5)*0.5+0.5;front=ss(0.4,0.7,fN)*fs*0.4;}
 
-						// STORM CLOUDS
 						const stormDen=stormCloud(x,y,nc);
 
-						// === Eye clearing: erase ALL cloud layers inside hurricane eyes ===
 						let eyeClear=1.0;
 						if(params.cyclones){
 							for(const cyc of params.cyclones){
@@ -649,10 +649,9 @@
 							const cuF=cl((cumulus+stormDen*0.7)/(total+0.001),0,1);
 							const ciF=cl(cirrus/(total+0.001),0,1);
 
-							// Base cloud colours, storms use SAME cumulus white
-							let cR=lerp(lerp(215,253,total),254,cuF*0.6);
-							let cG=lerp(lerp(220,252,total),254,cuF*0.6);
-							let cB=lerp(lerp(228,255,total),255,ciF*0.3+cuF*0.2);
+							let cR=lerp(240,254,cuF*0.6);
+							let cG=lerp(242,254,cuF*0.6);
+							let cB=lerp(248,255,ciF*0.3+cuF*0.2);
 
 							c=lc(c,[cR,cG,cB],total*0.97);
 						}
@@ -668,7 +667,7 @@
 			ctx.fillStyle='rgba(160,240,192,0.04)';ctx.fillRect(0,endRow-3,W,4);
 			scanLine=endRow;
 			if(scanLine<H){animId=requestAnimationFrame(renderChunk);}
-			else{generating=false;animId=null;blurStormRegions();applyFilter();ctx.drawImage(filterC,0,0);ctx.drawImage(hudC,0,0);hudC.style.display='none';}
+			else{generating=false;animId=null;blurStormRegions();applyFilter();ctx.drawImage(filterC,0,0);phctx.drawImage(canvas,0,0);drawHUD();ctx.drawImage(hudC,0,0);hudC.style.display='none';renderDone=true;}
 		}
 
 		function applyFilter(){
@@ -730,81 +729,84 @@
 			hctx.textAlign='center';hctx.font='10px Courier New';hctx.fillStyle=a+'0.8)';
 			hctx.fillText(`${params.scaleBarKm}km`,sbX-30,sbY-8);
 
-			const gLat=params.globalLat,diagX=W-mg-85,diagW=60;
-			const sr=Math.floor(H/30);
-			for(let ri=0;ri<sr;ri++){
-				const iy=Math.floor(H*(ri+0.5)/sr);
-				if(iy<mg+20||iy>H-mg-20)continue;
-				const lH=gLat+(iy/H-0.5)*0.35,aL=Math.abs(lH),ln=cl(aL/0.5,0,1),ls=lH>=0?1:-1;
-				const wind=surfaceWind(ln,ls);
-				let label='';if(aL<0.04)label='ITCZ';else if(ln<0.33)label='TRADES';else if(ln<0.75)label='WESTERLIES';else label='POLAR E';
-				const sc=13,ax=wind.zonal*sc,ay=wind.merid*sc,al=Math.sqrt(ax*ax+ay*ay);
-				const bx=diagX+diagW/2;
-				if(al>2){
-					hctx.strokeStyle=a+'0.6)';hctx.lineWidth=1.2;
-					hctx.beginPath();hctx.moveTo(bx-ax*0.5,iy-ay*0.5);hctx.lineTo(bx+ax*0.5,iy+ay*0.5);hctx.stroke();
-					const ha=Math.atan2(ay,ax),tx=bx+ax*0.5,ty=iy+ay*0.5;
-					hctx.beginPath();hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha-0.5)*4,ty-Math.sin(ha-0.5)*4);
-					hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha+0.5)*4,ty-Math.sin(ha+0.5)*4);hctx.stroke();
+			/* ===== ANALYSIS OVERLAY (togglable) ===== */
+			if(analysisOn){
+				const gLat=params.globalLat,diagX=W-mg-85,diagW=60;
+				const sr=Math.floor(H/30);
+				for(let ri=0;ri<sr;ri++){
+					const iy=Math.floor(H*(ri+0.5)/sr);
+					if(iy<mg+20||iy>H-mg-20)continue;
+					const lH=gLat+(iy/H-0.5)*0.35,aL=Math.abs(lH),ln=cl(aL/0.5,0,1),ls=lH>=0?1:-1;
+					const wind=surfaceWind(ln,ls);
+					let label='';if(aL<0.04)label='ITCZ';else if(ln<0.33)label='TRADES';else if(ln<0.75)label='WESTERLIES';else label='POLAR E';
+					const sc=13,ax=wind.zonal*sc,ay=-wind.merid*sc,al=Math.sqrt(ax*ax+ay*ay);
+					const bx=diagX+diagW/2;
+					if(al>2){
+						hctx.strokeStyle=a+'0.6)';hctx.lineWidth=1.2;
+						hctx.beginPath();hctx.moveTo(bx-ax*0.5,iy-ay*0.5);hctx.lineTo(bx+ax*0.5,iy+ay*0.5);hctx.stroke();
+						const ha=Math.atan2(ay,ax),tx=bx+ax*0.5,ty=iy+ay*0.5;
+						hctx.beginPath();hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha-0.5)*4,ty-Math.sin(ha-0.5)*4);
+						hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha+0.5)*4,ty-Math.sin(ha+0.5)*4);hctx.stroke();
+					}
+					hctx.fillStyle=a+'0.6)';hctx.textAlign='right';hctx.font='9px Courier New';
+					hctx.fillText(label,bx-al*0.5-6,iy+3);
 				}
-				hctx.fillStyle=a+'0.6)';hctx.textAlign='right';hctx.font='9px Courier New';
-				hctx.fillText(label,bx-al*0.5-6,iy+3);
-			}
 
-			if(params.jetStreams){
-				for(const js of params.jetStreams){
-					const jy=js.y,dir=js.zonal>0?1:-1;
-					const sX=dir>0?mg+60:W-mg-60,eX=dir>0?W-mg-100:mg+100,mX=(sX+eX)/2;
-					const cY=js.merid*25;
-					hctx.strokeStyle='rgba(120,180,255,0.45)';hctx.lineWidth=2.5;hctx.setLineDash([10,6]);
-					hctx.beginPath();hctx.moveTo(sX,jy);hctx.quadraticCurveTo(mX,jy+cY,eX,jy);hctx.stroke();
-					hctx.setLineDash([]);
-					const ha=Math.atan2(cY*0.3,eX-mX);
-					hctx.strokeStyle='rgba(120,180,255,0.65)';hctx.lineWidth=2.5;
-					hctx.beginPath();hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha-0.35)*16,jy-Math.sin(ha-0.35)*16);
-					hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha+0.35)*16,jy-Math.sin(ha+0.35)*16);hctx.stroke();
-					hctx.fillStyle='rgba(120,180,255,0.7)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
-					hctx.fillText(js.label,mX,jy-10);
+				if(params.jetStreams){
+					for(const js of params.jetStreams){
+						const jy=js.y,dir=js.zonal>0?1:-1;
+						const sX=dir>0?mg+60:W-mg-60,eX=dir>0?W-mg-100:mg+100,mX=(sX+eX)/2;
+						const cY=js.merid*25;
+						hctx.strokeStyle='rgba(120,180,255,0.45)';hctx.lineWidth=2.5;hctx.setLineDash([10,6]);
+						hctx.beginPath();hctx.moveTo(sX,jy);hctx.quadraticCurveTo(mX,jy+cY,eX,jy);hctx.stroke();
+						hctx.setLineDash([]);
+						const ha=Math.atan2(cY*0.3,eX-mX);
+						hctx.strokeStyle='rgba(120,180,255,0.65)';hctx.lineWidth=2.5;
+						hctx.beginPath();hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha-0.35)*16,jy-Math.sin(ha-0.35)*16);
+						hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha+0.35)*16,jy-Math.sin(ha+0.35)*16);hctx.stroke();
+						hctx.fillStyle='rgba(120,180,255,0.7)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
+						hctx.fillText(js.label,mX,jy-10);
+					}
 				}
-			}
 
-			hctx.setLineDash([2,6]);hctx.strokeStyle=a+'0.2)';hctx.lineWidth=1;
-			for(const hemi of[1,-1])for(const bL of[0.33*0.5,0.75*0.5]){
-				const py=latToScreenY(bL,hemi,gLat);
-				if(py>mg+10&&py<H-mg-10){hctx.beginPath();hctx.moveTo(mg,py);hctx.lineTo(W-mg,py);hctx.stroke();}
-			}
-			const eqY=latToScreenY(0,1,gLat);
-			if(eqY>mg&&eqY<H-mg){
-				hctx.strokeStyle='rgba(255,180,60,0.55)';hctx.setLineDash([8,4]);hctx.lineWidth=1.5;
-				hctx.beginPath();hctx.moveTo(mg,eqY);hctx.lineTo(W-mg,eqY);hctx.stroke();
-				hctx.fillStyle='rgba(255,180,60,0.75)';hctx.font='bold 10px Courier New';hctx.textAlign='left';
-				hctx.fillText('ITCZ / EQUATOR',mg+tp,eqY-6);
-			}
-			hctx.setLineDash([]);
-
-			if(params.cyclones){
-				for(const cyc of params.cyclones){
-					const sx=cyc.sx*W,sy=cyc.sy*H,rP=cyc.radiusPx;
-					hctx.strokeStyle='rgba(255,60,60,0.8)';hctx.lineWidth=2;hctx.setLineDash([6,4]);
-					hctx.beginPath();hctx.arc(sx,sy,rP,0,Math.PI*2);hctx.stroke();
-					if(cyc.isHurricane){hctx.beginPath();hctx.arc(sx,sy,rP*cyc.eyeRadius*2.4,0,Math.PI*2);hctx.stroke();}
-					hctx.setLineDash([]);hctx.strokeStyle='rgba(255,120,60,0.9)';hctx.lineWidth=2;
-					const aL=rP*0.6,ax=sx+Math.cos(cyc.moveAngle)*aL,ay=sy+Math.sin(cyc.moveAngle)*aL;
-					hctx.beginPath();hctx.moveTo(sx,sy);hctx.lineTo(ax,ay);hctx.stroke();
-					const ha=cyc.moveAngle;
-					hctx.beginPath();hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha-0.4)*10,ay-Math.sin(ha-0.4)*10);
-					hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha+0.4)*10,ay-Math.sin(ha+0.4)*10);hctx.stroke();
-					const deg=((cyc.moveAngle*180/Math.PI)+360)%360;
-					const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-					const compass=dirs[Math.round(deg/22.5)%16];
-					hctx.fillStyle='rgba(255,60,60,0.85)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
-					hctx.fillText(cyc.isHurricane?'HURRICANE':'TROP STORM',sx,sy-rP-18);
-					hctx.font='10px Courier New';hctx.fillStyle='rgba(255,120,60,0.8)';
-					hctx.fillText(`R:${cyc.realRadiusKm.toFixed(0)}km  MOV ${compass}`,sx,sy-rP-6);
-					hctx.fillStyle='rgba(255,60,60,0.5)';hctx.font='9px Courier New';
-					hctx.fillText(cyc.rotation>0?'CCW':'CW',sx,sy+rP+14);
+				hctx.setLineDash([2,6]);hctx.strokeStyle=a+'0.2)';hctx.lineWidth=1;
+				for(const hemi of[1,-1])for(const bL of[0.33*0.5,0.75*0.5]){
+					const py=latToScreenY(bL,hemi,gLat);
+					if(py>mg+10&&py<H-mg-10){hctx.beginPath();hctx.moveTo(mg,py);hctx.lineTo(W-mg,py);hctx.stroke();}
+				}
+				const eqY=latToScreenY(0,1,gLat);
+				if(eqY>mg&&eqY<H-mg){
+					hctx.strokeStyle='rgba(255,180,60,0.55)';hctx.setLineDash([8,4]);hctx.lineWidth=1.5;
+					hctx.beginPath();hctx.moveTo(mg,eqY);hctx.lineTo(W-mg,eqY);hctx.stroke();
+					hctx.fillStyle='rgba(255,180,60,0.75)';hctx.font='bold 10px Courier New';hctx.textAlign='left';
+					hctx.fillText('ITCZ / EQUATOR',mg+tp,eqY-6);
 				}
 				hctx.setLineDash([]);
+
+				if(params.cyclones){
+					for(const cyc of params.cyclones){
+						const sx=cyc.sx*W,sy=cyc.sy*H,rP=cyc.radiusPx;
+						hctx.strokeStyle='rgba(255,60,60,0.8)';hctx.lineWidth=2;hctx.setLineDash([6,4]);
+						hctx.beginPath();hctx.arc(sx,sy,rP,0,Math.PI*2);hctx.stroke();
+						if(cyc.isHurricane){hctx.beginPath();hctx.arc(sx,sy,rP*cyc.eyeRadius*2.4,0,Math.PI*2);hctx.stroke();}
+						hctx.setLineDash([]);hctx.strokeStyle='rgba(255,120,60,0.9)';hctx.lineWidth=2;
+						const aL=rP*0.6,ax=sx+Math.cos(cyc.moveAngle)*aL,ay=sy+Math.sin(cyc.moveAngle)*aL;
+						hctx.beginPath();hctx.moveTo(sx,sy);hctx.lineTo(ax,ay);hctx.stroke();
+						const ha=cyc.moveAngle;
+						hctx.beginPath();hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha-0.4)*10,ay-Math.sin(ha-0.4)*10);
+						hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha+0.4)*10,ay-Math.sin(ha+0.4)*10);hctx.stroke();
+						const deg=((cyc.moveAngle*180/Math.PI)+360)%360;
+						const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+						const compass=dirs[Math.round(deg/22.5)%16];
+						hctx.fillStyle='rgba(255,60,60,0.85)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
+						hctx.fillText(cyc.isHurricane?'HURRICANE':'TROP STORM',sx,sy-rP-18);
+						hctx.font='10px Courier New';hctx.fillStyle='rgba(255,120,60,0.8)';
+						hctx.fillText(`R:${cyc.realRadiusKm.toFixed(0)}km  MOV ${compass}`,sx,sy-rP-6);
+						hctx.fillStyle='rgba(255,60,60,0.5)';hctx.font='9px Courier New';
+						hctx.fillText(cyc.rotation>0?'CCW':'CW',sx,sy+rP+14);
+					}
+					hctx.setLineDash([]);
+				}
 			}
 		}
 
@@ -812,6 +814,19 @@
 		window.addEventListener('resize',()=>{resize();initGeneration();});
 		canvas.addEventListener('click',()=>{initGeneration();});
 		document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();initGeneration();}});
+		document.getElementById('analysis-toggle').addEventListener('click',e=>{
+			e.stopPropagation();
+			analysisOn=!analysisOn;
+			e.currentTarget.textContent=analysisOn?'analysis: on':'analysis: off';
+			if(renderDone){
+				ctx.drawImage(preHudC,0,0);
+				drawHUD();
+				ctx.drawImage(hudC,0,0);
+				hudC.style.display='none';
+			}else{
+				drawHUD();
+			}
+		});
 	</script>
 </body>
 </html>
