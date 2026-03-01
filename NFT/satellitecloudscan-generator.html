@@ -1,809 +1,870 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<style>
-		*{margin:0;padding:0;box-sizing:border-box;}
-		body{background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;cursor:pointer;font-family:'Courier New',monospace;}
-		canvas{display:block;max-width:100vw;max-height:100vh;}
-		#bottom-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;pointer-events:none;}
-		#click-hint{color:rgba(160,240,192,1);font-size:10px;letter-spacing:2px;text-transform:uppercase;pointer-events:none;background-color:rgba(0,0,0,0.8);border:1px solid rgba(160,240,192,0.8);padding:6px 10px;border-radius:6px;}
-		#analysis-toggle{color:rgba(160,240,192,1);font-size:10px;letter-spacing:2px;text-transform:uppercase;pointer-events:auto;background-color:rgba(0,0,0,0.8);border:1px solid rgba(160,240,192,0.8);padding:6px 10px;border-radius:6px;cursor:pointer;user-select:none;}
-		#analysis-toggle:hover{background-color:rgba(160,240,192,0.15);}
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background: #000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+			overflow: hidden;
+			cursor: pointer;
+			font-family: 'Courier New', monospace;
+		}
+
+		canvas {
+			display: block;
+			max-width: 100vw;
+			max-height: 100vh;
+		}
+
+		#bottom-bar {
+			position: fixed;
+			bottom: 18px;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			gap: 8px;
+			z-index: 10;
+			pointer-events: none;
+		}
+
+		#click-hint {
+			color: rgba(160, 240, 192, 1);
+			font-size: 10px;
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			pointer-events: none;
+			background-color: rgba(0, 0, 0, 0.8);
+			border: 1px solid rgba(160, 240, 192, 0.8);
+			padding: 6px 10px;
+			border-radius: 6px;
+		}
+
+		#analysis-toggle {
+			color: rgba(160, 240, 192, 1);
+			font-size: 10px;
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			pointer-events: auto;
+			background-color: rgba(0, 0, 0, 0.8);
+			border: 1px solid rgba(160, 240, 192, 0.8);
+			padding: 6px 10px;
+			border-radius: 6px;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		#analysis-toggle:hover {
+			background-color: rgba(160, 240, 192, 0.15);
+		}
 	</style>
 </head>
+
 <body>
 	<canvas id="c"></canvas>
-	<div id="bottom-bar"><div id="click-hint">click to regenerate</div><div id="analysis-toggle">analysis: on</div></div>
+	<div id="bottom-bar">
+		<div id="click-hint">click to regenerate</div>
+		<div id="analysis-toggle">analysis: on</div>
+	</div>
 	<script>
-		const canvas=document.getElementById('c');
-		const ctx=canvas.getContext('2d');
-		const filterC=document.createElement('canvas');
-		const fctx=filterC.getContext('2d');
-		const hudC=document.createElement('canvas');
-		hudC.style.cssText='position:fixed;top:0;left:0;pointer-events:none;z-index:2;';
+		const canvas = document.getElementById('c');
+		const ctx = canvas.getContext('2d');
+		const filterC = document.createElement('canvas');
+		const fctx = filterC.getContext('2d');
+		const hudC = document.createElement('canvas');
+		hudC.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:2;';
 		document.body.appendChild(hudC);
-		const hctx=hudC.getContext('2d');
-		const preHudC=document.createElement('canvas');
-		const phctx=preHudC.getContext('2d');
+		const hctx = hudC.getContext('2d');
+		const preHudC = document.createElement('canvas');
+		const phctx = preHudC.getContext('2d');
 
-		let W,H;
-		function resize(){
-			W=canvas.width=filterC.width=hudC.width=preHudC.width=Math.max(1,window.innerWidth);
-			H=canvas.height=filterC.height=hudC.height=preHudC.height=Math.max(1,window.innerHeight);
-			canvas.style.width=W+'px';canvas.style.height=H+'px';
+		let W, H;
+		function resize() {
+			W = canvas.width = filterC.width = hudC.width = preHudC.width = Math.max(1, window.innerWidth);
+			H = canvas.height = filterC.height = hudC.height = preHudC.height = Math.max(1, window.innerHeight);
+			canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
 		}
 		resize();
 
-		class Noise{
-			constructor(seed){
-				this.p=new Uint8Array(512);const p=new Uint8Array(256);
-				for(let i=0;i<256;i++)p[i]=i;
-				let s=seed||1;const r=()=>{s=(s*16807)%2147483647;return(s-1)/2147483646;};
-				for(let i=255;i>0;i--){const j=Math.floor(r()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
-				for(let i=0;i<512;i++)this.p[i]=p[i&255];
-				this.g=[[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+		class Noise {
+			constructor(seed) {
+				this.p = new Uint8Array(512); const p = new Uint8Array(256);
+				for (let i = 0; i < 256; i++)p[i] = i;
+				let s = seed || 1; const r = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+				for (let i = 255; i > 0; i--) { const j = Math.floor(r() * (i + 1));[p[i], p[j]] = [p[j], p[i]]; }
+				for (let i = 0; i < 512; i++)this.p[i] = p[i & 255];
+				this.g = [[1, 1], [-1, 1], [1, -1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]];
 			}
-			n2(x,y){
-				const F=0.5*(Math.sqrt(3)-1),G=(3-Math.sqrt(3))/6;
-				const s=(x+y)*F,i=Math.floor(x+s),j=Math.floor(y+s);
-				const t=(i+j)*G,x0=x-(i-t),y0=y-(j-t);
-				const i1=x0>y0?1:0,j1=x0>y0?0:1;
-				const x1=x0-i1+G,y1=y0-j1+G,x2=x0-1+2*G,y2=y0-1+2*G;
-				const ii=i&255,jj=j&255;
-				const g0=this.g[this.p[ii+this.p[jj]]%8],g1=this.g[this.p[ii+i1+this.p[jj+j1]]%8],g2=this.g[this.p[ii+1+this.p[jj+1]]%8];
-				let n0=0,n1=0,n2=0;
-				let t0=0.5-x0*x0-y0*y0;if(t0>0){t0*=t0;n0=t0*t0*(g0[0]*x0+g0[1]*y0);}
-				let t1=0.5-x1*x1-y1*y1;if(t1>0){t1*=t1;n1=t1*t1*(g1[0]*x1+g1[1]*y1);}
-				let t2=0.5-x2*x2-y2*y2;if(t2>0){t2*=t2;n2=t2*t2*(g2[0]*x2+g2[1]*y2);}
-				return 70*(n0+n1+n2);
+			n2(x, y) {
+				const F = 0.5 * (Math.sqrt(3) - 1), G = (3 - Math.sqrt(3)) / 6;
+				const s = (x + y) * F, i = Math.floor(x + s), j = Math.floor(y + s);
+				const t = (i + j) * G, x0 = x - (i - t), y0 = y - (j - t);
+				const i1 = x0 > y0 ? 1 : 0, j1 = x0 > y0 ? 0 : 1;
+				const x1 = x0 - i1 + G, y1 = y0 - j1 + G, x2 = x0 - 1 + 2 * G, y2 = y0 - 1 + 2 * G;
+				const ii = i & 255, jj = j & 255;
+				const g0 = this.g[this.p[ii + this.p[jj]] % 8], g1 = this.g[this.p[ii + i1 + this.p[jj + j1]] % 8], g2 = this.g[this.p[ii + 1 + this.p[jj + 1]] % 8];
+				let n0 = 0, n1 = 0, n2 = 0;
+				let t0 = 0.5 - x0 * x0 - y0 * y0; if (t0 > 0) { t0 *= t0; n0 = t0 * t0 * (g0[0] * x0 + g0[1] * y0); }
+				let t1 = 0.5 - x1 * x1 - y1 * y1; if (t1 > 0) { t1 *= t1; n1 = t1 * t1 * (g1[0] * x1 + g1[1] * y1); }
+				let t2 = 0.5 - x2 * x2 - y2 * y2; if (t2 > 0) { t2 *= t2; n2 = t2 * t2 * (g2[0] * x2 + g2[1] * y2); }
+				return 70 * (n0 + n1 + n2);
 			}
-			fbm(x,y,o,l,g){let v=0,a=1,f=1,m=0;for(let i=0;i<o;i++){v+=a*this.n2(x*f,y*f);m+=a;a*=g;f*=l;}return v/m;}
-			ridged(x,y,o,l,g){let v=0,a=1,f=1,m=0;for(let i=0;i<o;i++){let n=1-Math.abs(this.n2(x*f,y*f));n*=n;v+=a*n;m+=a;a*=g;f*=l;}return v/m;}
+			fbm(x, y, o, l, g) { let v = 0, a = 1, f = 1, m = 0; for (let i = 0; i < o; i++) { v += a * this.n2(x * f, y * f); m += a; a *= g; f *= l; } return v / m; }
+			ridged(x, y, o, l, g) { let v = 0, a = 1, f = 1, m = 0; for (let i = 0; i < o; i++) { let n = 1 - Math.abs(this.n2(x * f, y * f)); n *= n; v += a * n; m += a; a *= g; f *= l; } return v / m; }
 		}
 
-		const lerp=(a,b,t)=>a+(b-a)*t;
-		const lc=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
-		const pick=a=>a[Math.floor(Math.random()*a.length)];
-		const rr=(a,b)=>a+Math.random()*(b-a);
-		const cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
-		const ss=(lo,hi,t)=>{const x=cl((t-lo)/(hi-lo),0,1);return x*x*(3-2*x);};
+		const lerp = (a, b, t) => a + (b - a) * t;
+		const lc = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+		const pick = a => a[Math.floor(Math.random() * a.length)];
+		const rr = (a, b) => a + Math.random() * (b - a);
+		const cl = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+		const ss = (lo, hi, t) => { const x = cl((t - lo) / (hi - lo), 0, 1); return x * x * (3 - 2 * x); };
 
-		const oceanSets=[
-			{deep:[8,22,58],mid:[12,38,88],shallow:[22,68,118],coast:[32,92,132],name:'SAT-SURVEY'},
-			{deep:[6,18,48],mid:[10,32,75],shallow:[18,58,105],coast:[28,82,118],name:'BOREAL-CAP'},
-			{deep:[10,12,35],mid:[15,22,55],shallow:[22,38,75],coast:[32,58,88],name:'VOLC-ARC'},
-			{deep:[5,20,52],mid:[10,36,82],shallow:[20,62,112],coast:[30,88,128],name:'EQ-SCAN'},
-			{deep:[10,8,32],mid:[18,14,52],shallow:[30,24,75],coast:[42,35,90],name:'EXO-RECON'},
+		const oceanSets = [
+			{ deep: [8, 22, 58], mid: [12, 38, 88], shallow: [22, 68, 118], coast: [32, 92, 132], name: 'SAT-SURVEY' },
+			{ deep: [6, 18, 48], mid: [10, 32, 75], shallow: [18, 58, 105], coast: [28, 82, 118], name: 'BOREAL-CAP' },
+			{ deep: [10, 12, 35], mid: [15, 22, 55], shallow: [22, 38, 75], coast: [32, 58, 88], name: 'VOLC-ARC' },
+			{ deep: [5, 20, 52], mid: [10, 36, 82], shallow: [20, 62, 112], coast: [30, 88, 128], name: 'EQ-SCAN' },
+			{ deep: [10, 8, 32], mid: [18, 14, 52], shallow: [30, 24, 75], coast: [42, 35, 90], name: 'EXO-RECON' },
 		];
 
-		function desertC(d){const b=pick([[215,190,125],[200,175,110],[228,205,145],[195,168,105]]);const v=d*10;return[b[0]+v,b[1]+v,b[2]+v];}
-		function aridScrubC(d){const b=pick([[185,172,100],[172,160,88],[195,180,108]]);const v=d*8;return[b[0]+v,b[1]+v*1.05,b[2]+v*0.5];}
-		function dryGrassC(d){const b=pick([[158,152,72],[145,140,62],[168,160,80]]);const v=d*8;return[b[0]+v,b[1]+v*1.1,b[2]+v*0.4];}
-		function savannaC(d){const b=pick([[120,138,55],[110,128,48],[130,148,60]]);const v=d*7;return[b[0]+v,b[1]+v*1.2,b[2]+v*0.4];}
-		function grassC(d){const b=pick([[72,115,42],[62,105,32],[82,125,48],[55,98,28]]);const v=d*8;return[b[0]+v,b[1]+v*1.3,b[2]+v*0.4];}
-		function forestC(d){const b=pick([[28,72,22],[22,62,18],[32,82,28],[18,58,15]]);const v=d*5;return[b[0]+v*0.4,b[1]+v*1.1,b[2]+v*0.3];}
-		function denseForestC(d){const b=pick([[18,55,16],[14,48,12],[22,60,18]]);const v=d*4;return[b[0]+v*0.3,b[1]+v,b[2]+v*0.3];}
-		function jungleC(d){const b=pick([[12,52,16],[16,62,20],[8,46,12],[14,56,18]]);const v=d*3;return[b[0]+v*0.2,b[1]+v*0.9,b[2]+v*0.3];}
-		function tropicalC(d){const b=pick([[10,48,14],[14,55,18],[8,42,10]]);const v=d*3;return[b[0]+v*0.2,b[1]+v*0.85,b[2]+v*0.25];}
-		function tundraC(d){const b=pick([[128,132,112],[138,142,118],[118,125,105]]);const v=d*7;return[b[0]+v,b[1]+v,b[2]+v];}
-		function snowC(d){const b=pick([[228,232,242],[232,238,248],[222,228,238]]);const v=d*4;return[b[0]+v,b[1]+v,b[2]+v];}
-		function rockC(d){const b=pick([[118,108,92],[132,122,105],[108,98,82]]);const v=d*9;return[b[0]+v,b[1]+v,b[2]+v];}
-		function beachC(d){const b=pick([[208,198,158],[198,188,148],[215,205,165]]);const v=d*10;return[b[0]+v,b[1]+v,b[2]+v];}
+		function desertC(d) { const b = pick([[215, 190, 125], [200, 175, 110], [228, 205, 145], [195, 168, 105]]); const v = d * 10; return [b[0] + v, b[1] + v, b[2] + v]; }
+		function aridScrubC(d) { const b = pick([[185, 172, 100], [172, 160, 88], [195, 180, 108]]); const v = d * 8; return [b[0] + v, b[1] + v * 1.05, b[2] + v * 0.5]; }
+		function dryGrassC(d) { const b = pick([[158, 152, 72], [145, 140, 62], [168, 160, 80]]); const v = d * 8; return [b[0] + v, b[1] + v * 1.1, b[2] + v * 0.4]; }
+		function savannaC(d) { const b = pick([[120, 138, 55], [110, 128, 48], [130, 148, 60]]); const v = d * 7; return [b[0] + v, b[1] + v * 1.2, b[2] + v * 0.4]; }
+		function grassC(d) { const b = pick([[72, 115, 42], [62, 105, 32], [82, 125, 48], [55, 98, 28]]); const v = d * 8; return [b[0] + v, b[1] + v * 1.3, b[2] + v * 0.4]; }
+		function forestC(d) { const b = pick([[28, 72, 22], [22, 62, 18], [32, 82, 28], [18, 58, 15]]); const v = d * 5; return [b[0] + v * 0.4, b[1] + v * 1.1, b[2] + v * 0.3]; }
+		function denseForestC(d) { const b = pick([[18, 55, 16], [14, 48, 12], [22, 60, 18]]); const v = d * 4; return [b[0] + v * 0.3, b[1] + v, b[2] + v * 0.3]; }
+		function jungleC(d) { const b = pick([[12, 52, 16], [16, 62, 20], [8, 46, 12], [14, 56, 18]]); const v = d * 3; return [b[0] + v * 0.2, b[1] + v * 0.9, b[2] + v * 0.3]; }
+		function tropicalC(d) { const b = pick([[10, 48, 14], [14, 55, 18], [8, 42, 10]]); const v = d * 3; return [b[0] + v * 0.2, b[1] + v * 0.85, b[2] + v * 0.25]; }
+		function tundraC(d) { const b = pick([[128, 132, 112], [138, 142, 118], [118, 125, 105]]); const v = d * 7; return [b[0] + v, b[1] + v, b[2] + v]; }
+		function snowC(d) { const b = pick([[228, 232, 242], [232, 238, 248], [222, 228, 238]]); const v = d * 4; return [b[0] + v, b[1] + v, b[2] + v]; }
+		function rockC(d) { const b = pick([[118, 108, 92], [132, 122, 105], [108, 98, 82]]); const v = d * 9; return [b[0] + v, b[1] + v, b[2] + v]; }
+		function beachC(d) { const b = pick([[208, 198, 158], [198, 188, 148], [215, 205, 165]]); const v = d * 10; return [b[0] + v, b[1] + v, b[2] + v]; }
 
-		function biome(moist,temp,d){
-			if(temp<0.12)return lc(snowC(d),tundraC(d),temp/0.12);
-			if(temp<0.22){const t=(temp-0.12)/0.1;return moist>0.5?lc(tundraC(d),forestC(d),t*0.5):lc(tundraC(d),dryGrassC(d),t*0.6);}
-			if(temp<0.35){const t=(temp-0.22)/0.13;if(moist<0.25)return lc(dryGrassC(d),grassC(d),t*moist/0.25);if(moist<0.5)return lc(grassC(d),forestC(d),t*(moist-0.25)/0.25);return lc(forestC(d),denseForestC(d),t*(moist-0.5)/0.5);}
-			if(temp<0.52){if(moist<0.15)return lc(aridScrubC(d),dryGrassC(d),moist/0.15);if(moist<0.3)return lc(dryGrassC(d),savannaC(d),(moist-0.15)/0.15);if(moist<0.5)return lc(savannaC(d),grassC(d),(moist-0.3)/0.2);if(moist<0.7)return lc(grassC(d),forestC(d),(moist-0.5)/0.2);return lc(forestC(d),denseForestC(d),(moist-0.7)/0.3);}
-			if(temp<0.7){if(moist<0.12)return lc(desertC(d),aridScrubC(d),moist/0.12);if(moist<0.25)return lc(aridScrubC(d),dryGrassC(d),(moist-0.12)/0.13);if(moist<0.4)return lc(dryGrassC(d),savannaC(d),(moist-0.25)/0.15);if(moist<0.55)return lc(savannaC(d),grassC(d),(moist-0.4)/0.15);if(moist<0.7)return lc(grassC(d),forestC(d),(moist-0.55)/0.15);return lc(forestC(d),jungleC(d),(moist-0.7)/0.3);}
-			if(moist<0.1)return desertC(d);if(moist<0.2)return lc(desertC(d),aridScrubC(d),(moist-0.1)/0.1);if(moist<0.32)return lc(aridScrubC(d),dryGrassC(d),(moist-0.2)/0.12);if(moist<0.42)return lc(dryGrassC(d),savannaC(d),(moist-0.32)/0.1);if(moist<0.55)return lc(savannaC(d),forestC(d),(moist-0.42)/0.13);if(moist<0.7)return lc(forestC(d),jungleC(d),(moist-0.55)/0.15);return lc(jungleC(d),tropicalC(d),(moist-0.7)/0.3);
+		function biome(moist, temp, d) {
+			if (temp < 0.12) return lc(snowC(d), tundraC(d), temp / 0.12);
+			if (temp < 0.22) { const t = (temp - 0.12) / 0.1; return moist > 0.5 ? lc(tundraC(d), forestC(d), t * 0.5) : lc(tundraC(d), dryGrassC(d), t * 0.6); }
+			if (temp < 0.35) { const t = (temp - 0.22) / 0.13; if (moist < 0.25) return lc(dryGrassC(d), grassC(d), t * moist / 0.25); if (moist < 0.5) return lc(grassC(d), forestC(d), t * (moist - 0.25) / 0.25); return lc(forestC(d), denseForestC(d), t * (moist - 0.5) / 0.5); }
+			if (temp < 0.52) { if (moist < 0.15) return lc(aridScrubC(d), dryGrassC(d), moist / 0.15); if (moist < 0.3) return lc(dryGrassC(d), savannaC(d), (moist - 0.15) / 0.15); if (moist < 0.5) return lc(savannaC(d), grassC(d), (moist - 0.3) / 0.2); if (moist < 0.7) return lc(grassC(d), forestC(d), (moist - 0.5) / 0.2); return lc(forestC(d), denseForestC(d), (moist - 0.7) / 0.3); }
+			if (temp < 0.7) { if (moist < 0.12) return lc(desertC(d), aridScrubC(d), moist / 0.12); if (moist < 0.25) return lc(aridScrubC(d), dryGrassC(d), (moist - 0.12) / 0.13); if (moist < 0.4) return lc(dryGrassC(d), savannaC(d), (moist - 0.25) / 0.15); if (moist < 0.55) return lc(savannaC(d), grassC(d), (moist - 0.4) / 0.15); if (moist < 0.7) return lc(grassC(d), forestC(d), (moist - 0.55) / 0.15); return lc(forestC(d), jungleC(d), (moist - 0.7) / 0.3); }
+			if (moist < 0.1) return desertC(d); if (moist < 0.2) return lc(desertC(d), aridScrubC(d), (moist - 0.1) / 0.1); if (moist < 0.32) return lc(aridScrubC(d), dryGrassC(d), (moist - 0.2) / 0.12); if (moist < 0.42) return lc(dryGrassC(d), savannaC(d), (moist - 0.32) / 0.1); if (moist < 0.55) return lc(savannaC(d), forestC(d), (moist - 0.42) / 0.13); if (moist < 0.7) return lc(forestC(d), jungleC(d), (moist - 0.55) / 0.15); return lc(jungleC(d), tropicalC(d), (moist - 0.7) / 0.3);
 		}
 
 		function smoothstep(t) {
-		return t * t * (3 - 2 * t);
+			return t * t * (3 - 2 * t);
 		}
 
 		function surfaceWind(ln, ls) {
-		// Trade winds (0 to ~0.35)
-		let tradeStr = 0, westStr = 0, polarStr = 0;
+			// Trade winds (0 to ~0.35)
+			let tradeStr = 0, westStr = 0, polarStr = 0;
 
-		if (ln < 0.35) {
-			const t = Math.min(ln / 0.25, 1);
-			const s = Math.sin(t * Math.PI * 0.5);
-			tradeStr = Math.max(s, ln < 0.25 ? 0.25 : 0);
-		}
-
-		// Westerlies (0.2 to 0.75)
-		if (ln > 0.2 && ln < 0.75) {
-			const t = (ln - 0.33) / 0.42;
-			westStr = Math.sin(Math.max(0, t) * Math.PI);
-		}
-
-		// Polar easterlies (0.65 to 1)
-		if (ln > 0.65) {
-			const t = (ln - 0.75) / 0.25;
-			polarStr = Math.sin(Math.max(0, t) * Math.PI);
-		}
-
-		// Blend weights using smoothstep in overlap regions
-		let wTrade = 0, wWest = 0, wPolar = 0;
-
-		if (ln < 0.2) {
-			wTrade = 1;
-		} else if (ln < 0.35) {
-			const blend = smoothstep((ln - 0.2) / 0.15);
-			wTrade = 1 - blend;
-			wWest = blend;
-		} else if (ln < 0.65) {
-			wWest = 1;
-		} else if (ln < 0.75) {
-			const blend = smoothstep((ln - 0.65) / 0.1);
-			wWest = 1 - blend;
-			wPolar = blend;
-		} else {
-			wPolar = 1;
-		}
-
-		const z = -tradeStr * wTrade + westStr * 0.45 * wWest - polarStr * 0.65 * wPolar;
-		const m = -ls * tradeStr * 0.4 * wTrade + ls * westStr * 0.08 * wWest - ls * polarStr * 0.18 * wPolar;
-
-		return { zonal: z, merid: m };
-		}
-		function jetStreamWind(ln,ls){
-			const sd=Math.abs(ln-0.33),pd=Math.abs(ln-0.61);
-			const sj=Math.exp(-sd*sd/(2*0.04*0.04))*3.5;
-			const pj=Math.exp(-pd*pd/(2*0.05*0.05))*4.5;
-			return{zonal:(sj+pj)*ls,merid:ls*(Math.exp(-sd*sd/(2*0.06*0.06))*0.3+Math.exp(-pd*pd/(2*0.06*0.06))*0.4)};
-		}
-
-		function convergenceShearLow(ln){
-			const hw=0.06,peak=3.0;
-			if(ln>hw*4)return 1.0;
-			return 1.0+(peak-1.0)*Math.exp(-ln*ln/(2*hw*hw));
-		}
-		function convergenceShearHigh(ln){ return 1.0; }
-
-		function latToScreenY(absLat,hemi,gLat){return H*(0.5+(absLat*hemi-gLat)/0.35);}
-
-		function latBandVisible(minAL,maxAL,gLat){
-			for(const h of[1,-1]){
-				const y1=latToScreenY(minAL,h,gLat),y2=latToScreenY(maxAL,h,gLat);
-				if(Math.max(y1,y2)>0&&Math.min(y1,y2)<H)return true;
-			}return false;
-		}
-
-		let analysisOn=true;
-		let genCount=0,generating=false,currentSeed=0,currentPal=null,currentLat=0,currentLon=0,currentAlt=0;
-		let scanLine=0,animId=null,noiseCache={},params={},renderDone=false;
-
-		function initGeneration(){
-			if(generating&&animId){cancelAnimationFrame(animId);animId=null;}
-			generating=true;scanLine=0;
-			const seed=Math.floor(Math.random()*999999);
-			currentSeed=seed;const dim=Math.max(W,H);
-
-			noiseCache={
-				nC:new Noise(seed),nC2:new Noise(seed+50),nE:new Noise(seed+100),nM:new Noise(seed+200),
-				nT:new Noise(seed+300),nWx:new Noise(seed+400),nWy:new Noise(seed+500),nD:new Noise(seed+600),
-				nCl:new Noise(seed+700),nR1:new Noise(seed+800),nR2:new Noise(seed+850),nMt:new Noise(seed+900),
-				nIce:new Noise(seed+1000),nCo:new Noise(seed+1100),nM2:new Noise(seed+1200),nM3:new Noise(seed+1300),
-				nCl2:new Noise(seed+1400),nCl3:new Noise(seed+1500),nCl4:new Noise(seed+1600),nCl5:new Noise(seed+1700),
-				nCl6:new Noise(seed+1800),nCu:new Noise(seed+1900),nCu2:new Noise(seed+2000),nCv:new Noise(seed+2100),
-				nEd:new Noise(seed+2200),
-				nSt:new Noise(seed+2300),nSt2:new Noise(seed+2400),nSt3:new Noise(seed+2500),
-			};
-
-			const oSet=oceanSets[Math.floor(Math.random()*oceanSets.length)];
-			currentPal=oSet;
-			const altKm=rr(120,550),viewWidthKm=rr(3000,8000);
-			const scaleBarKm=Math.round(viewWidthKm*0.06/50)*50||100;
-			const gLat=rr(-0.45,0.45);
-
-			params={
-				offX:rr(-500,500),offY:rr(-500,500),viewScale:rr(8,16),contScale:rr(0.12,0.25),
-				seaLvl:rr(0.48,0.6),warpStr:rr(0.3,0.7),globalLat:gLat,tBias:rr(-0.2,0.2),
-				mtStr:rr(0.12,0.4),riverScale:rr(0.6,1.2),dim,cloudMode:'high',
-				scaleBarKm,viewWidthKm,clouds:rr(0.42,0.58),
-			};
-			params.hasIce=Math.abs(gLat)>0.25;
-			params.pxToNoise=params.viewScale/dim;
-
-			function isOceanAt(sx01,sy01){
-				const px2=sx01*W,py2=sy01*H;
-				let nx2=params.offX+(px2/dim)*params.viewScale;
-				let ny2=params.offY+(py2/dim)*params.viewScale;
-				const wx2=noiseCache.nWx.fbm(nx2*0.8,ny2*0.8,4,2,0.5)*params.warpStr;
-				const wy2=noiseCache.nWy.fbm(nx2*0.8+7.8,ny2*0.8+3.2,4,2,0.5)*params.warpStr;
-				const wnx2=nx2+wx2,wny2=ny2+wy2;
-				let cont2=noiseCache.nC.fbm(wnx2*params.contScale,wny2*params.contScale,7,2.1,0.48)*0.5+0.5;
-				cont2+=noiseCache.nC2.fbm(wnx2*params.contScale*4,wny2*params.contScale*4,4,2.2,0.45)*0.06;
-				cont2+=noiseCache.nCo.fbm(wnx2*params.contScale*12,wny2*params.contScale*12,3,2.5,0.4)*0.025;
-				return cont2<params.seaLvl+0.02;
+			if (ln < 0.35) {
+				const t = Math.min(ln / 0.25, 1);
+				const s = Math.sin(t * Math.PI * 0.5);
+				tradeStr = Math.max(s, ln < 0.25 ? 0.25 : 0);
 			}
 
-			params.cyclones=[];
-			const sMin=0.028,sMax=0.167;
-			if(latBandVisible(sMin,sMax,gLat)){
-				const numStorms=1+Math.floor(Math.random()*3);
-				for(let i=0;i<numStorms;i++){
-					const hemis=[];
-					for(const h of[1,-1]){
-						const y1=latToScreenY(sMin,h,gLat),y2=latToScreenY(sMax,h,gLat);
-						if(Math.max(y1,y2)>0&&Math.min(y1,y2)<H)hemis.push(h);
-					}
-					if(!hemis.length)continue;
-					const hemi=hemis[Math.floor(Math.random()*hemis.length)];
+			// Westerlies (0.2 to 0.75)
+			if (ln > 0.2 && ln < 0.75) {
+				const t = (ln - 0.33) / 0.42;
+				westStr = Math.sin(Math.max(0, t) * Math.PI);
+			}
 
-					let sx=-1,sy=-1,foundOcean=false;
-					for(let attempt=0;attempt<20;attempt++){
-						const sAbsLat=rr(sMin,sMax);
-						const trySy=cl(latToScreenY(sAbsLat,hemi,gLat)/H,0.02,0.98);
-						if(trySy<0.02||trySy>0.98)continue;
-						const trySx=rr(0.15,0.85);
-						if(isOceanAt(trySx,trySy)){
-							sx=trySx;sy=trySy;foundOcean=true;break;
+			// Polar easterlies (0.65 to 1)
+			if (ln > 0.65) {
+				const t = (ln - 0.75) / 0.25;
+				polarStr = Math.sin(Math.max(0, t) * Math.PI);
+			}
+
+			// Blend weights using smoothstep in overlap regions
+			let wTrade = 0, wWest = 0, wPolar = 0;
+
+			if (ln < 0.2) {
+				wTrade = 1;
+			} else if (ln < 0.35) {
+				const blend = smoothstep((ln - 0.2) / 0.15);
+				wTrade = 1 - blend;
+				wWest = blend;
+			} else if (ln < 0.65) {
+				wWest = 1;
+			} else if (ln < 0.75) {
+				const blend = smoothstep((ln - 0.65) / 0.1);
+				wWest = 1 - blend;
+				wPolar = blend;
+			} else {
+				wPolar = 1;
+			}
+
+			const z = -tradeStr * wTrade + westStr * 0.45 * wWest - polarStr * 0.65 * wPolar;
+			const m = -ls * tradeStr * 0.4 * wTrade + ls * westStr * 0.08 * wWest - ls * polarStr * 0.18 * wPolar;
+
+			return { zonal: z, merid: m };
+		}
+		function jetStreamWind(ln, ls) {
+			const sd = Math.abs(ln - 0.33), pd = Math.abs(ln - 0.61);
+			const sj = Math.exp(-sd * sd / (2 * 0.04 * 0.04)) * 3.5;
+			const pj = Math.exp(-pd * pd / (2 * 0.05 * 0.05)) * 4.5;
+			return { zonal: (sj + pj) * ls, merid: ls * (Math.exp(-sd * sd / (2 * 0.06 * 0.06)) * 0.3 + Math.exp(-pd * pd / (2 * 0.06 * 0.06)) * 0.4) };
+		}
+
+		function convergenceShearLow(ln) {
+			const hw = 0.06, peak = 3.0;
+			if (ln > hw * 4) return 1.0;
+			return 1.0 + (peak - 1.0) * Math.exp(-ln * ln / (2 * hw * hw));
+		}
+		function convergenceShearHigh(ln) { return 1.0; }
+
+		function latToScreenY(absLat, hemi, gLat) { return H * (0.5 + (absLat * hemi - gLat) / 0.35); }
+
+		function latBandVisible(minAL, maxAL, gLat) {
+			for (const h of [1, -1]) {
+				const y1 = latToScreenY(minAL, h, gLat), y2 = latToScreenY(maxAL, h, gLat);
+				if (Math.max(y1, y2) > 0 && Math.min(y1, y2) < H) return true;
+			} return false;
+		}
+
+		let analysisOn = true;
+		let genCount = 0, generating = false, currentSeed = 0, currentPal = null, currentLat = 0, currentLon = 0, currentAlt = 0;
+		let scanLine = 0, animId = null, noiseCache = {}, params = {}, renderDone = false;
+
+		function initGeneration() {
+			if (generating && animId) { cancelAnimationFrame(animId); animId = null; }
+			generating = true; scanLine = 0;
+			const seed = Math.floor(Math.random() * 999999);
+			currentSeed = seed; const dim = Math.max(W, H);
+
+			noiseCache = {
+				nC: new Noise(seed), nC2: new Noise(seed + 50), nE: new Noise(seed + 100), nM: new Noise(seed + 200),
+				nT: new Noise(seed + 300), nWx: new Noise(seed + 400), nWy: new Noise(seed + 500), nD: new Noise(seed + 600),
+				nCl: new Noise(seed + 700), nR1: new Noise(seed + 800), nR2: new Noise(seed + 850), nMt: new Noise(seed + 900),
+				nIce: new Noise(seed + 1000), nCo: new Noise(seed + 1100), nM2: new Noise(seed + 1200), nM3: new Noise(seed + 1300),
+				nCl2: new Noise(seed + 1400), nCl3: new Noise(seed + 1500), nCl4: new Noise(seed + 1600), nCl5: new Noise(seed + 1700),
+				nCl6: new Noise(seed + 1800), nCu: new Noise(seed + 1900), nCu2: new Noise(seed + 2000), nCv: new Noise(seed + 2100),
+				nEd: new Noise(seed + 2200),
+				nSt: new Noise(seed + 2300), nSt2: new Noise(seed + 2400), nSt3: new Noise(seed + 2500),
+			};
+
+			const oSet = oceanSets[Math.floor(Math.random() * oceanSets.length)];
+			currentPal = oSet;
+			const altKm = rr(120, 550), viewWidthKm = rr(3000, 8000);
+			const scaleBarKm = Math.round(viewWidthKm * 0.06 / 50) * 50 || 100;
+			const gLat = rr(-0.45, 0.45);
+
+			params = {
+				offX: rr(-500, 500), offY: rr(-500, 500), viewScale: rr(8, 16), contScale: rr(0.12, 0.25),
+				seaLvl: rr(0.48, 0.6), warpStr: rr(0.3, 0.7), globalLat: gLat, tBias: rr(-0.2, 0.2),
+				mtStr: rr(0.12, 0.4), riverScale: rr(0.6, 1.2), dim, cloudMode: 'high',
+				scaleBarKm, viewWidthKm, clouds: rr(0.42, 0.58),
+			};
+			params.hasIce = Math.abs(gLat) > 0.25;
+			params.pxToNoise = params.viewScale / dim;
+
+			function isOceanAt(sx01, sy01) {
+				const px2 = sx01 * W, py2 = sy01 * H;
+				let nx2 = params.offX + (px2 / dim) * params.viewScale;
+				let ny2 = params.offY + (py2 / dim) * params.viewScale;
+				const wx2 = noiseCache.nWx.fbm(nx2 * 0.8, ny2 * 0.8, 4, 2, 0.5) * params.warpStr;
+				const wy2 = noiseCache.nWy.fbm(nx2 * 0.8 + 7.8, ny2 * 0.8 + 3.2, 4, 2, 0.5) * params.warpStr;
+				const wnx2 = nx2 + wx2, wny2 = ny2 + wy2;
+				let cont2 = noiseCache.nC.fbm(wnx2 * params.contScale, wny2 * params.contScale, 7, 2.1, 0.48) * 0.5 + 0.5;
+				cont2 += noiseCache.nC2.fbm(wnx2 * params.contScale * 4, wny2 * params.contScale * 4, 4, 2.2, 0.45) * 0.06;
+				cont2 += noiseCache.nCo.fbm(wnx2 * params.contScale * 12, wny2 * params.contScale * 12, 3, 2.5, 0.4) * 0.025;
+				return cont2 < params.seaLvl + 0.02;
+			}
+
+			params.cyclones = [];
+			const sMin = 0.028, sMax = 0.167;
+			if (latBandVisible(sMin, sMax, gLat)) {
+				const numStorms = 1 + Math.floor(Math.random() * 3);
+				for (let i = 0; i < numStorms; i++) {
+					const hemis = [];
+					for (const h of [1, -1]) {
+						const y1 = latToScreenY(sMin, h, gLat), y2 = latToScreenY(sMax, h, gLat);
+						if (Math.max(y1, y2) > 0 && Math.min(y1, y2) < H) hemis.push(h);
+					}
+					if (!hemis.length) continue;
+					const hemi = hemis[Math.floor(Math.random() * hemis.length)];
+
+					let sx = -1, sy = -1, foundOcean = false;
+					for (let attempt = 0; attempt < 20; attempt++) {
+						const sAbsLat = rr(sMin, sMax);
+						const trySy = cl(latToScreenY(sAbsLat, hemi, gLat) / H, 0.02, 0.98);
+						if (trySy < 0.02 || trySy > 0.98) continue;
+						const trySx = rr(0.15, 0.85);
+						if (isOceanAt(trySx, trySy)) {
+							sx = trySx; sy = trySy; foundOcean = true; break;
 						}
 					}
-					if(!foundOcean)continue;
+					if (!foundOcean) continue;
 
-					const isH=Math.random()<0.4;
-					const realR=isH?rr(250,600):rr(100,250);
-					const rPx=(realR/viewWidthKm)*W;
+					const isH = Math.random() < 0.4;
+					const realR = isH ? rr(250, 600) : rr(100, 250);
+					const rPx = (realR / viewWidthKm) * W;
 
-					let tooClose=false;
-					for(const existing of params.cyclones){
-						const dx=(sx-existing.sx)*W,dy=(sy-existing.sy)*H;
-						const dist=Math.sqrt(dx*dx+dy*dy);
-						const minDist=(rPx+existing.radiusPx)*2.5;
-						if(dist<minDist){tooClose=true;break;}
+					let tooClose = false;
+					for (const existing of params.cyclones) {
+						const dx = (sx - existing.sx) * W, dy = (sy - existing.sy) * H;
+						const dist = Math.sqrt(dx * dx + dy * dy);
+						const minDist = (rPx + existing.radiusPx) * 2.5;
+						if (dist < minDist) { tooClose = true; break; }
 					}
-					if(tooClose)continue;
+					if (tooClose) continue;
 
-					const zonalDrift=rr(0.15,0.4)*(Math.random()<0.5?1:-1);
-					const polewardStr=rr(0.4,0.8);
-					const meridComp=hemi*polewardStr;
-					const ma=Math.atan2(meridComp,zonalDrift);
+					const zonalDrift = rr(0.15, 0.4) * (Math.random() < 0.5 ? 1 : -1);
+					const polewardStr = rr(0.4, 0.8);
+					const meridComp = hemi * polewardStr;
+					const ma = Math.atan2(meridComp, zonalDrift);
 
 					params.cyclones.push({
-						sx,sy,radiusPx:rPx,realRadiusKm:realR,rotation:hemi,
-						moveAngle:ma,isHurricane:isH,
-						swirlStr:isH?rr(3.0,5.0):rr(1.5,2.5),
-						armCount:isH?Math.floor(rr(3,6)):Math.floor(rr(2,4)),
-						eyeRadius:isH?rr(0.02,0.04):0,
-						noisePhase:rr(0,100),
+						sx, sy, radiusPx: rPx, realRadiusKm: realR, rotation: hemi,
+						moveAngle: ma, isHurricane: isH,
+						swirlStr: isH ? rr(3.0, 5.0) : rr(1.5, 2.5),
+						armCount: isH ? Math.floor(rr(3, 6)) : Math.floor(rr(2, 4)),
+						eyeRadius: isH ? rr(0.02, 0.04) : 0,
+						noisePhase: rr(0, 100),
 					});
 				}
 			}
 
-			params.jetStreams=[];
-			for(const hemi of[1,-1]){
-				for(const jLN of[0.33,0.61]){
-					const py=latToScreenY(jLN*0.5,hemi,gLat);
-					if(py>30&&py<H-30){
-						const jw=jetStreamWind(jLN,hemi);
-						params.jetStreams.push({y:py,zonal:jw.zonal,merid:jw.merid,label:jLN<0.5?'SUBTROPICAL JET':'POLAR JET'});
+			params.jetStreams = [];
+			for (const hemi of [1, -1]) {
+				for (const jLN of [0.33, 0.61]) {
+					const py = latToScreenY(jLN * 0.5, hemi, gLat);
+					if (py > 30 && py < H - 30) {
+						const jw = jetStreamWind(jLN, hemi);
+						params.jetStreams.push({ y: py, zonal: jw.zonal, merid: jw.merid, label: jLN < 0.5 ? 'SUBTROPICAL JET' : 'POLAR JET' });
 					}
 				}
 			}
 
-			params.cuBlurR=2.5*0.7*params.viewScale/dim;
+			params.cuBlurR = 2.5 * 0.7 * params.viewScale / dim;
 
-			currentLat=gLat*90;currentLon=rr(-180,180);currentAlt=altKm;genCount++;
-			ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
-			renderDone=false;
-			hudC.style.display='block';drawHUD();renderChunk();
+			currentLat = gLat * 90; currentLon = rr(-180, 180); currentAlt = altKm; genCount++;
+			ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+			renderDone = false;
+			hudC.style.display = 'block'; drawHUD(); renderChunk();
 		}
 
-		function getStormProximity(px,py){
-			const cycs=params.cyclones;
-			if(!cycs||!cycs.length)return 0;
-			let maxP=0;
-			for(let i=0;i<cycs.length;i++){
-				const c=cycs[i];
-				const dx=px-c.sx*W,dy=py-c.sy*H;
-				const dist=Math.sqrt(dx*dx+dy*dy);
-				const infR=c.radiusPx*3.0;
-				if(dist<infR){
-					const p=(1.0-dist/infR);
-					maxP=Math.max(maxP,p*p);
+		function getStormProximity(px, py) {
+			const cycs = params.cyclones;
+			if (!cycs || !cycs.length) return 0;
+			let maxP = 0;
+			for (let i = 0; i < cycs.length; i++) {
+				const c = cycs[i];
+				const dx = px - c.sx * W, dy = py - c.sy * H;
+				const dist = Math.sqrt(dx * dx + dy * dy);
+				const infR = c.radiusPx * 3.0;
+				if (dist < infR) {
+					const p = (1.0 - dist / infR);
+					maxP = Math.max(maxP, p * p);
 				}
 			}
 			return maxP;
 		}
 
-		function getStormWarp(px,py){
-			let swx=0,swy=0;
-			const cycs=params.cyclones;
-			if(!cycs||!cycs.length)return null;
-			const p2n=params.pxToNoise;
-			for(let i=0;i<cycs.length;i++){
-				const c=cycs[i];
-				const cxPx=c.sx*W,cyPx=c.sy*H;
-				const dx=px-cxPx,dy=py-cyPx;
-				const dist=Math.sqrt(dx*dx+dy*dy);
-				const infR=c.radiusPx*3.5;
-				if(dist>infR||dist<1)continue;
-				const nd=dist/infR;
-				const str=(1.0-nd)*(1.0-nd)*(1.0-nd);
-				const angle=Math.atan2(dy,dx);
-				const tAng=angle+c.rotation*Math.PI*0.5;
-				const mag=str*c.swirlStr*0.66*c.radiusPx*p2n;
-				const drift=str*0.36*c.radiusPx*p2n;
-				swx+=Math.cos(tAng)*mag+Math.cos(c.moveAngle)*drift;
-				swy+=Math.sin(tAng)*mag+Math.sin(c.moveAngle)*drift;
+		function getStormWarp(px, py) {
+			let swx = 0, swy = 0;
+			const cycs = params.cyclones;
+			if (!cycs || !cycs.length) return null;
+			const p2n = params.pxToNoise;
+			for (let i = 0; i < cycs.length; i++) {
+				const c = cycs[i];
+				const cxPx = c.sx * W, cyPx = c.sy * H;
+				const dx = px - cxPx, dy = py - cyPx;
+				const dist = Math.sqrt(dx * dx + dy * dy);
+				const infR = c.radiusPx * 3.5;
+				if (dist > infR || dist < 1) continue;
+				const nd = dist / infR;
+				const str = (1.0 - nd) * (1.0 - nd) * (1.0 - nd);
+				const angle = Math.atan2(dy, dx);
+				const tAng = angle + c.rotation * Math.PI * 0.5;
+				const mag = str * c.swirlStr * 0.66 * c.radiusPx * p2n;
+				const drift = str * 0.36 * c.radiusPx * p2n;
+				swx += Math.cos(tAng) * mag + Math.cos(c.moveAngle) * drift;
+				swy += Math.sin(tAng) * mag + Math.sin(c.moveAngle) * drift;
 			}
-			if(swx===0&&swy===0)return null;
-			return{x:swx,y:swy};
+			if (swx === 0 && swy === 0) return null;
+			return { x: swx, y: swy };
 		}
 
-		function stormCloud(px,py,nc){
-			let total=0;
-			const cycs=params.cyclones;
-			if(!cycs||!cycs.length)return 0;
-			for(let si=0;si<cycs.length;si++){
-				const c=cycs[si];
-				const cxPx=c.sx*W,cyPx=c.sy*H;
-				const dx=px-cxPx,dy=py-cyPx;
-				const dist=Math.sqrt(dx*dx+dy*dy);
-				const visR=c.radiusPx*1.3;
-				const wakeR=visR*1.15;
-				if(dist>wakeR)continue;
+		function stormCloud(px, py, nc) {
+			let total = 0;
+			const cycs = params.cyclones;
+			if (!cycs || !cycs.length) return 0;
+			for (let si = 0; si < cycs.length; si++) {
+				const c = cycs[si];
+				const cxPx = c.sx * W, cyPx = c.sy * H;
+				const dx = px - cxPx, dy = py - cyPx;
+				const dist = Math.sqrt(dx * dx + dy * dy);
+				const visR = c.radiusPx * 1.3;
+				const wakeR = visR * 1.15;
+				if (dist > wakeR) continue;
 
-				const nd=dist/visR;
-				const angle=Math.atan2(dy,dx);
-				const rot=c.rotation;
+				const nd = dist / visR;
+				const angle = Math.atan2(dy, dx);
+				const rot = c.rotation;
 
-				const swirlAmt=c.swirlStr*(1.0-nd*0.5)*Math.max(0,1.0-nd*0.25);
-				const sAng=angle-rot*swirlAmt;
-				const ph=c.noisePhase;
+				const swirlAmt = c.swirlStr * (1.0 - nd * 0.5) * Math.max(0, 1.0 - nd * 0.25);
+				const sAng = angle - rot * swirlAmt;
+				const ph = c.noisePhase;
 
-				const snx=Math.cos(sAng)*nd*3.0+ph;
-				const sny=Math.sin(sAng)*nd*3.0+ph+50;
+				const snx = Math.cos(sAng) * nd * 3.0 + ph;
+				const sny = Math.sin(sAng) * nd * 3.0 + ph + 50;
 
 				let core;
-				if(nd<0.35)core=1.0;
-				else{const t=(nd-0.35)/(0.85-0.35);core=Math.max(0,(1.0-t)*(1.0-t));}
+				if (nd < 0.35) core = 1.0;
+				else { const t = (nd - 0.35) / (0.85 - 0.35); core = Math.max(0, (1.0 - t) * (1.0 - t)); }
 
-				const aN=nc.nSt.fbm(snx*1.2,sny*1.2,4,2.1,0.48)*0.5+0.5;
-				const aN2=nc.nSt2.fbm(snx*0.6+20,sny*0.6,3,2.0,0.5)*0.5+0.5;
-				let armP=0;
-				for(let a=0;a<c.armCount;a++){
-					const aa=sAng+(a/c.armCount)*Math.PI*2;
-					armP=Math.max(armP,Math.sin(aa*c.armCount*0.5)*0.5+0.5);
+				const aN = nc.nSt.fbm(snx * 1.2, sny * 1.2, 4, 2.1, 0.48) * 0.5 + 0.5;
+				const aN2 = nc.nSt2.fbm(snx * 0.6 + 20, sny * 0.6, 3, 2.0, 0.5) * 0.5 + 0.5;
+				let armP = 0;
+				for (let a = 0; a < c.armCount; a++) {
+					const aa = sAng + (a / c.armCount) * Math.PI * 2;
+					armP = Math.max(armP, Math.sin(aa * c.armCount * 0.5) * 0.5 + 0.5);
 				}
-				let arms=armP*aN*aN2;
-				arms*=ss(0.1,0.35,nd)*ss(1.1,0.45,nd);
+				let arms = armP * aN * aN2;
+				arms *= ss(0.1, 0.35, nd) * ss(1.1, 0.45, nd);
 
-				const wN=nc.nSt3.fbm(snx*2.5+40,sny*2.5+40,3,2.2,0.45)*0.5+0.5;
-				let wisps=ss(0.5,0.72,wN)*ss(0.45,1.05,nd)*ss(1.2,0.65,nd)*0.55;
+				const wN = nc.nSt3.fbm(snx * 2.5 + 40, sny * 2.5 + 40, 3, 2.2, 0.45) * 0.5 + 0.5;
+				let wisps = ss(0.5, 0.72, wN) * ss(0.45, 1.05, nd) * ss(1.2, 0.65, nd) * 0.55;
 
-				let density=cl(core+arms*0.75+wisps*0.4,0,1);
+				let density = cl(core + arms * 0.75 + wisps * 0.4, 0, 1);
 
-				if(nd>0.75)density*=ss(1.08,0.75,nd);
+				if (nd > 0.75) density *= ss(1.08, 0.75, nd);
 
-				if(c.isHurricane&&c.eyeRadius>0){
-					const eR=c.eyeRadius;
-					if(nd<eR*0.9){
-						density=0;
-					}else if(nd<eR*1.8){
-						const eyeT=ss(eR*0.9,eR*1.8,nd);
-						density*=eyeT;
+				if (c.isHurricane && c.eyeRadius > 0) {
+					const eR = c.eyeRadius;
+					if (nd < eR * 0.9) {
+						density = 0;
+					} else if (nd < eR * 1.8) {
+						const eyeT = ss(eR * 0.9, eR * 1.8, nd);
+						density *= eyeT;
 					}
-					const wall=Math.exp(-Math.pow(nd-eR*1.4,2)/(2*0.02*0.02))*0.65;
-					density=cl(density+wall,0,1);
-					if(nd<eR*0.8)density=0;
+					const wall = Math.exp(-Math.pow(nd - eR * 1.4, 2) / (2 * 0.02 * 0.02)) * 0.65;
+					density = cl(density + wall, 0, 1);
+					if (nd < eR * 0.8) density = 0;
 				}
 
-				if(nd>0.35&&dist<wakeR){
-					const wAng=c.moveAngle+Math.PI;
-					let ad=angle-wAng;
-					while(ad>Math.PI)ad-=Math.PI*2;
-					while(ad<-Math.PI)ad+=Math.PI*2;
-					const wAlign=Math.exp(-ad*ad/(2*1.2*1.2));
-					const wNoise=nc.nSt.fbm(snx*0.8+60,sny*0.8+60,3,2,0.5)*0.5+0.5;
-					const wFade=ss(0.35,0.7,nd)*ss(wakeR/visR,0.85,nd);
-					density=cl(density+wAlign*wNoise*wFade*0.7,0,1);
+				if (nd > 0.35 && dist < wakeR) {
+					const wAng = c.moveAngle + Math.PI;
+					let ad = angle - wAng;
+					while (ad > Math.PI) ad -= Math.PI * 2;
+					while (ad < -Math.PI) ad += Math.PI * 2;
+					const wAlign = Math.exp(-ad * ad / (2 * 1.2 * 1.2));
+					const wNoise = nc.nSt.fbm(snx * 0.8 + 60, sny * 0.8 + 60, 3, 2, 0.5) * 0.5 + 0.5;
+					const wFade = ss(0.35, 0.7, nd) * ss(wakeR / visR, 0.85, nd);
+					density = cl(density + wAlign * wNoise * wFade * 0.7, 0, 1);
 				}
 
-				total=cl(total+density,0,1);
+				total = cl(total + density, 0, 1);
 			}
 			return total;
 		}
 
-		function blurStormRegions(){
-			const cycs=params.cyclones;
-			if(!cycs||!cycs.length)return;
-			const src=ctx.getImageData(0,0,W,H);
-			const dst=new Uint8ClampedArray(src.data);
-			const bR=3;
+		function blurStormRegions() {
+			const cycs = params.cyclones;
+			if (!cycs || !cycs.length) return;
+			const src = ctx.getImageData(0, 0, W, H);
+			const dst = new Uint8ClampedArray(src.data);
+			const bR = 3;
 
-			const kSize=bR*2+1;
-			const weights=[];
-			let wTotal=0;
-			for(let ky=-bR;ky<=bR;ky++){
-				for(let kx=-bR;kx<=bR;kx++){
-					const w=Math.exp(-(kx*kx+ky*ky)/(2*(bR*0.55)*(bR*0.55)));
-					weights.push({kx,ky,w});
-					wTotal+=w;
+			const kSize = bR * 2 + 1;
+			const weights = [];
+			let wTotal = 0;
+			for (let ky = -bR; ky <= bR; ky++) {
+				for (let kx = -bR; kx <= bR; kx++) {
+					const w = Math.exp(-(kx * kx + ky * ky) / (2 * (bR * 0.55) * (bR * 0.55)));
+					weights.push({ kx, ky, w });
+					wTotal += w;
 				}
 			}
-			for(const ww of weights)ww.w/=wTotal;
+			for (const ww of weights) ww.w /= wTotal;
 
-			for(const c of cycs){
-				const cxI=Math.round(c.sx*W),cyI=Math.round(c.sy*H);
-				const blurZone=Math.round(c.radiusPx*2.2);
-				const y0=Math.max(0,cyI-blurZone),y1=Math.min(H,cyI+blurZone);
-				const x0=Math.max(0,cxI-blurZone),x1=Math.min(W,cxI+blurZone);
+			for (const c of cycs) {
+				const cxI = Math.round(c.sx * W), cyI = Math.round(c.sy * H);
+				const blurZone = Math.round(c.radiusPx * 2.2);
+				const y0 = Math.max(0, cyI - blurZone), y1 = Math.min(H, cyI + blurZone);
+				const x0 = Math.max(0, cxI - blurZone), x1 = Math.min(W, cxI + blurZone);
 
-				for(let y=y0;y<y1;y++){
-					for(let x=x0;x<x1;x++){
-						const ddx=x-cxI,ddy=y-cyI;
-						const dist=Math.sqrt(ddx*ddx+ddy*ddy);
-						if(dist>blurZone)continue;
+				for (let y = y0; y < y1; y++) {
+					for (let x = x0; x < x1; x++) {
+						const ddx = x - cxI, ddy = y - cyI;
+						const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+						if (dist > blurZone) continue;
 
-						let rr2=0,gg=0,bb=0;
-						for(let wi=0;wi<weights.length;wi++){
-							const sx2=Math.min(W-1,Math.max(0,x+weights[wi].kx));
-							const sy2=Math.min(H-1,Math.max(0,y+weights[wi].ky));
-							const si=(sy2*W+sx2)*4;
-							rr2+=src.data[si]*weights[wi].w;
-							gg+=src.data[si+1]*weights[wi].w;
-							bb+=src.data[si+2]*weights[wi].w;
+						let rr2 = 0, gg = 0, bb = 0;
+						for (let wi = 0; wi < weights.length; wi++) {
+							const sx2 = Math.min(W - 1, Math.max(0, x + weights[wi].kx));
+							const sy2 = Math.min(H - 1, Math.max(0, y + weights[wi].ky));
+							const si = (sy2 * W + sx2) * 4;
+							rr2 += src.data[si] * weights[wi].w;
+							gg += src.data[si + 1] * weights[wi].w;
+							bb += src.data[si + 2] * weights[wi].w;
 						}
 
-						const nd=dist/blurZone;
-						const blend=cl((1.0-nd*nd)*0.75,0,1);
-						const di=(y*W+x)*4;
-						dst[di]=Math.round(src.data[di]*(1-blend)+rr2*blend);
-						dst[di+1]=Math.round(src.data[di+1]*(1-blend)+gg*blend);
-						dst[di+2]=Math.round(src.data[di+2]*(1-blend)+bb*blend);
+						const nd = dist / blurZone;
+						const blend = cl((1.0 - nd * nd) * 0.75, 0, 1);
+						const di = (y * W + x) * 4;
+						dst[di] = Math.round(src.data[di] * (1 - blend) + rr2 * blend);
+						dst[di + 1] = Math.round(src.data[di + 1] * (1 - blend) + gg * blend);
+						dst[di + 2] = Math.round(src.data[di + 2] * (1 - blend) + bb * blend);
 					}
 				}
 			}
 			src.data.set(dst);
-			ctx.putImageData(src,0,0);
+			ctx.putImageData(src, 0, 0);
 		}
 
-		function renderChunk(){
-			if(W<2||H<2){animId=requestAnimationFrame(renderChunk);return;}
-			const ROWS=6,endRow=Math.min(scanLine+ROWS,H);
-			const img=ctx.getImageData(0,scanLine,W,endRow-scanLine);
-			const px=img.data;
-			const nc=noiseCache;
-			const{offX,offY,viewScale,contScale,seaLvl,warpStr,globalLat,tBias,clouds,hasIce,mtStr,riverScale,dim,cuBlurR}=params;
-			const oSet=currentPal;
+		function renderChunk() {
+			if (W < 2 || H < 2) { animId = requestAnimationFrame(renderChunk); return; }
+			const ROWS = 6, endRow = Math.min(scanLine + ROWS, H);
+			const img = ctx.getImageData(0, scanLine, W, endRow - scanLine);
+			const px = img.data;
+			const nc = noiseCache;
+			const { offX, offY, viewScale, contScale, seaLvl, warpStr, globalLat, tBias, clouds, hasIce, mtStr, riverScale, dim, cuBlurR } = params;
+			const oSet = currentPal;
 
-			for(let y=scanLine;y<endRow;y++){
-				for(let x=0;x<W;x++){
-					const idx=((y-scanLine)*W+x)*4;
-					let nx=offX+(x/dim)*viewScale,ny=offY+(y/dim)*viewScale;
-					const wx=nc.nWx.fbm(nx*0.8,ny*0.8,4,2,0.5)*warpStr;
-					const wy=nc.nWy.fbm(nx*0.8+7.8,ny*0.8+3.2,4,2,0.5)*warpStr;
-					const wnx=nx+wx,wny=ny+wy;
+			for (let y = scanLine; y < endRow; y++) {
+				for (let x = 0; x < W; x++) {
+					const idx = ((y - scanLine) * W + x) * 4;
+					let nx = offX + (x / dim) * viewScale, ny = offY + (y / dim) * viewScale;
+					const wx = nc.nWx.fbm(nx * 0.8, ny * 0.8, 4, 2, 0.5) * warpStr;
+					const wy = nc.nWy.fbm(nx * 0.8 + 7.8, ny * 0.8 + 3.2, 4, 2, 0.5) * warpStr;
+					const wnx = nx + wx, wny = ny + wy;
 
-					let cont=nc.nC.fbm(wnx*contScale,wny*contScale,7,2.1,0.48)*0.5+0.5;
-					cont+=nc.nC2.fbm(wnx*contScale*4,wny*contScale*4,4,2.2,0.45)*0.06;
-					cont+=nc.nCo.fbm(wnx*contScale*12,wny*contScale*12,3,2.5,0.4)*0.025;
+					let cont = nc.nC.fbm(wnx * contScale, wny * contScale, 7, 2.1, 0.48) * 0.5 + 0.5;
+					cont += nc.nC2.fbm(wnx * contScale * 4, wny * contScale * 4, 4, 2.2, 0.45) * 0.06;
+					cont += nc.nCo.fbm(wnx * contScale * 12, wny * contScale * 12, 3, 2.5, 0.4) * 0.025;
 
-					let elev=nc.nE.fbm(wnx*0.5,wny*0.5,6,2,0.5)*0.5+0.5;
-					const ridge=nc.nMt.ridged(wnx*0.35+20,wny*0.35,5,2.2,0.5);
-					elev=elev*(1-mtStr)+ridge*mtStr;
-					const det=nc.nD.fbm(wnx*2,wny*2,3,2,0.5);
-					const inland=cl((cont-seaLvl)/0.3,0,1);
+					let elev = nc.nE.fbm(wnx * 0.5, wny * 0.5, 6, 2, 0.5) * 0.5 + 0.5;
+					const ridge = nc.nMt.ridged(wnx * 0.35 + 20, wny * 0.35, 5, 2.2, 0.5);
+					elev = elev * (1 - mtStr) + ridge * mtStr;
+					const det = nc.nD.fbm(wnx * 2, wny * 2, 3, 2, 0.5);
+					const inland = cl((cont - seaLvl) / 0.3, 0, 1);
 
-					let moist=nc.nM.fbm(wnx*0.25+50,wny*0.25,5,2,0.5)*0.5+0.5;
-					moist+=nc.nM2.fbm(wnx*0.6+30,wny*0.6,4,2,0.5)*0.18;
-					moist+=nc.nM3.fbm(wnx*1.5+70,wny*1.5,3,2,0.5)*0.08;
-					moist-=inland*0.3;
-					const latHere=globalLat+(y/H-0.5)*0.35;
-					const absLat=Math.abs(latHere);
-					if(absLat>0.12&&absLat<0.38)moist-=cl(1-Math.abs(absLat-0.25)/0.13,0,1)*0.18;
-					if(absLat<0.12)moist+=(1-absLat/0.12)*0.2;
-					if(inland<0.3)moist+=lerp(0.12,0,inland/0.3);
-					moist=cl(moist,0,1);
+					let moist = nc.nM.fbm(wnx * 0.25 + 50, wny * 0.25, 5, 2, 0.5) * 0.5 + 0.5;
+					moist += nc.nM2.fbm(wnx * 0.6 + 30, wny * 0.6, 4, 2, 0.5) * 0.18;
+					moist += nc.nM3.fbm(wnx * 1.5 + 70, wny * 1.5, 3, 2, 0.5) * 0.08;
+					moist -= inland * 0.3;
+					const latHere = globalLat + (y / H - 0.5) * 0.35;
+					const absLat = Math.abs(latHere);
+					if (absLat > 0.12 && absLat < 0.38) moist -= cl(1 - Math.abs(absLat - 0.25) / 0.13, 0, 1) * 0.18;
+					if (absLat < 0.12) moist += (1 - absLat / 0.12) * 0.2;
+					if (inland < 0.3) moist += lerp(0.12, 0, inland / 0.3);
+					moist = cl(moist, 0, 1);
 
-					let temp=nc.nT.fbm(wnx*0.25+80,wny*0.25,4,2,0.5)*0.3+0.5+tBias;
-					temp+=0.3*(1-absLat*2.2);
-					if(cont>=seaLvl)temp-=cl(elev-0.5,0,0.5)*0.4;
-					temp+=nc.nT.fbm(wnx*0.7+80,wny*0.7,3,2,0.5)*0.08;
-					temp=cl(temp,0,1);
+					let temp = nc.nT.fbm(wnx * 0.25 + 80, wny * 0.25, 4, 2, 0.5) * 0.3 + 0.5 + tBias;
+					temp += 0.3 * (1 - absLat * 2.2);
+					if (cont >= seaLvl) temp -= cl(elev - 0.5, 0, 0.5) * 0.4;
+					temp += nc.nT.fbm(wnx * 0.7 + 80, wny * 0.7, 3, 2, 0.5) * 0.08;
+					temp = cl(temp, 0, 1);
 
-					const isOcean=cont<seaLvl;
+					const isOcean = cont < seaLvl;
 					let c;
-					if(isOcean){
-						const depth=(seaLvl-cont)/seaLvl;
-						if(depth>0.35)c=[...oSet.deep];
-						else if(depth>0.15)c=lc(oSet.mid,oSet.deep,(depth-0.15)/0.2);
-						else if(depth>0.04)c=lc(oSet.shallow,oSet.mid,(depth-0.04)/0.11);
-						else c=lc(oSet.coast,oSet.shallow,depth/0.04);
-						const ow1=nc.nD.fbm(wnx*1.5,wny*1.5,3,2.3,0.45)*3.5;
-						const ow2=nc.nCo.fbm(wnx*0.6,wny*0.6,2,2,0.5)*2.5;
-						c=[c[0]+ow1+ow2,c[1]+ow1+ow2,c[2]+ow1*1.3+ow2*1.2];
-						if(hasIce&&absLat>0.4){const ip=ss(0.4,0.58,absLat);const iN=nc.nIce.fbm(wnx*0.8,wny*0.8,4,2,0.5)*0.5+0.5;const iA=cl(ip*1.4*(iN+0.15),0,1);if(iA>0.12){const cr=nc.nD.fbm(wnx*4,wny*4,2,2,0.5)*6;c=lc(c,[222+cr,232+cr,248+cr],ss(0.12,0.6,iA));}}
-					}else{
-						const la=(cont-seaLvl)/(1-seaLvl);
-						if(la<0.015)c=lc(beachC(det),biome(moist,temp,det),ss(0.2,1,la/0.015));
-						else if(elev>0.8)c=lc(rockC(det),snowC(det),ss(0.8,0.92,elev));
-						else if(elev>0.65)c=lc(biome(moist,temp,det),rockC(det),ss(0.65,0.8,elev));
-						else c=biome(moist,temp,det);
-						if(elev<0.7&&elev>0.05){
-							const rv1=Math.abs(nc.nR1.fbm(wnx*riverScale*0.8,wny*riverScale*0.8,6,2,0.5));
-							const rw1=lerp(0.018,0.006,cl(elev/0.7,0,1))*(1+moist*0.3);
-							const rv2=Math.abs(nc.nR2.fbm(wnx*riverScale*1.8,wny*riverScale*1.8,5,2,0.5));const rw2=rw1*0.45;
-							const rv3=Math.abs(nc.nR1.fbm(wnx*riverScale*3.5+10,wny*riverScale*3.5,4,2,0.5));const rw3=rw1*0.22;
-							let rB=0;
-							if(rv1<rw1)rB=Math.max(rB,ss(rw1,0,rv1));
-							if(rv2<rw2)rB=Math.max(rB,ss(rw2,0,rv2)*0.8);
-							if(rv3<rw3&&moist>0.3)rB=Math.max(rB,ss(rw3,0,rv3)*0.5);
-							if(rB>0){const rc=moist>0.5?[15,42,75]:[20,55,100];const rt=nc.nD.fbm(wnx*5,wny*5,2,2,0.5)*4;c=lc(c,[rc[0]+rt,rc[1]+rt,rc[2]+rt*1.2],rB*0.82);}
+					if (isOcean) {
+						const depth = (seaLvl - cont) / seaLvl;
+						if (depth > 0.35) c = [...oSet.deep];
+						else if (depth > 0.15) c = lc(oSet.mid, oSet.deep, (depth - 0.15) / 0.2);
+						else if (depth > 0.04) c = lc(oSet.shallow, oSet.mid, (depth - 0.04) / 0.11);
+						else c = lc(oSet.coast, oSet.shallow, depth / 0.04);
+						const ow1 = nc.nD.fbm(wnx * 1.5, wny * 1.5, 3, 2.3, 0.45) * 3.5;
+						const ow2 = nc.nCo.fbm(wnx * 0.6, wny * 0.6, 2, 2, 0.5) * 2.5;
+						c = [c[0] + ow1 + ow2, c[1] + ow1 + ow2, c[2] + ow1 * 1.3 + ow2 * 1.2];
+						if (hasIce && absLat > 0.4) { const ip = ss(0.4, 0.58, absLat); const iN = nc.nIce.fbm(wnx * 0.8, wny * 0.8, 4, 2, 0.5) * 0.5 + 0.5; const iA = cl(ip * 1.4 * (iN + 0.15), 0, 1); if (iA > 0.12) { const cr = nc.nD.fbm(wnx * 4, wny * 4, 2, 2, 0.5) * 6; c = lc(c, [222 + cr, 232 + cr, 248 + cr], ss(0.12, 0.6, iA)); } }
+					} else {
+						const la = (cont - seaLvl) / (1 - seaLvl);
+						if (la < 0.015) c = lc(beachC(det), biome(moist, temp, det), ss(0.2, 1, la / 0.015));
+						else if (elev > 0.8) c = lc(rockC(det), snowC(det), ss(0.8, 0.92, elev));
+						else if (elev > 0.65) c = lc(biome(moist, temp, det), rockC(det), ss(0.65, 0.8, elev));
+						else c = biome(moist, temp, det);
+						if (elev < 0.7 && elev > 0.05) {
+							const rv1 = Math.abs(nc.nR1.fbm(wnx * riverScale * 0.8, wny * riverScale * 0.8, 6, 2, 0.5));
+							const rw1 = lerp(0.018, 0.006, cl(elev / 0.7, 0, 1)) * (1 + moist * 0.3);
+							const rv2 = Math.abs(nc.nR2.fbm(wnx * riverScale * 1.8, wny * riverScale * 1.8, 5, 2, 0.5)); const rw2 = rw1 * 0.45;
+							const rv3 = Math.abs(nc.nR1.fbm(wnx * riverScale * 3.5 + 10, wny * riverScale * 3.5, 4, 2, 0.5)); const rw3 = rw1 * 0.22;
+							let rB = 0;
+							if (rv1 < rw1) rB = Math.max(rB, ss(rw1, 0, rv1));
+							if (rv2 < rw2) rB = Math.max(rB, ss(rw2, 0, rv2) * 0.8);
+							if (rv3 < rw3 && moist > 0.3) rB = Math.max(rB, ss(rw3, 0, rv3) * 0.5);
+							if (rB > 0) { const rc = moist > 0.5 ? [15, 42, 75] : [20, 55, 100]; const rt = nc.nD.fbm(wnx * 5, wny * 5, 2, 2, 0.5) * 4; c = lc(c, [rc[0] + rt, rc[1] + rt, rc[2] + rt * 1.2], rB * 0.82); }
 						}
-						if(hasIce&&absLat>0.38){const ip=ss(0.38,0.55,absLat);const iN=nc.nIce.fbm(wnx*0.6,wny*0.6,4,2,0.5)*0.5+0.5;const iA=cl(ip*1.8*(iN+0.1),0,1);if(iA>0.08){const cr=nc.nD.fbm(wnx*3,wny*3,2,2,0.5)*5;c=lc(c,[228+cr,236+cr,250+cr],ss(0.08,0.45,iA));}}
+						if (hasIce && absLat > 0.38) { const ip = ss(0.38, 0.55, absLat); const iN = nc.nIce.fbm(wnx * 0.6, wny * 0.6, 4, 2, 0.5) * 0.5 + 0.5; const iA = cl(ip * 1.8 * (iN + 0.1), 0, 1); if (iA > 0.08) { const cr = nc.nD.fbm(wnx * 3, wny * 3, 2, 2, 0.5) * 5; c = lc(c, [228 + cr, 236 + cr, 250 + cr], ss(0.08, 0.45, iA)); } }
 					}
 
-					if(clouds>0){
-						const latNorm=cl(absLat/0.5,0,1);
-						const latSign=Math.tanh(latHere*30);
-						const sW=surfaceWind(latNorm,latSign);
-						const jW=jetStreamWind(latNorm,latSign);
-						const cvSH=convergenceShearHigh(latNorm);
-						const cvTH=Math.min(cvSH,5);
-						const cvTHX=nc.nCv.fbm(wnx*0.3+100,wny*0.3+100,3,2.2,0.5)*0.5*(cvTH-1.0);
-						const cvTHY=nc.nCv.fbm(wnx*0.3+150,wny*0.3+150,3,2.2,0.5)*0.5*(cvTH-1.0);
+					if (clouds > 0) {
+						const latNorm = cl(absLat / 0.5, 0, 1);
+						const latSign = Math.tanh(latHere * 30);
+						const sW = surfaceWind(latNorm, latSign);
+						const jW = jetStreamWind(latNorm, latSign);
+						const cvSH = convergenceShearHigh(latNorm);
+						const cvTH = Math.min(cvSH, 5);
+						const cvTHX = nc.nCv.fbm(wnx * 0.3 + 100, wny * 0.3 + 100, 3, 2.2, 0.5) * 0.5 * (cvTH - 1.0);
+						const cvTHY = nc.nCv.fbm(wnx * 0.3 + 150, wny * 0.3 + 150, 3, 2.2, 0.5) * 0.5 * (cvTH - 1.0);
 
-						const shM=0.7+0.3*ss(0.25,0.75,moist);
-						const windDamp=lerp(1.0,0.7,ss(0.2,0.8,latNorm));
-						const wS=1.0;
-						const sw=nc.nCl4.fbm(wnx*0.06,wny*0.06,2,2,0.5)*0.08*shM;
-						const swY=nc.nCl5.fbm(wnx*0.06+40,wny*0.06+40,2,2,0.5)*0.04*shM;
+						const shM = 0.7 + 0.3 * ss(0.25, 0.75, moist);
+						const windDamp = lerp(1.0, 0.7, ss(0.2, 0.8, latNorm));
+						const wS = 1.0;
+						const sw = nc.nCl4.fbm(wnx * 0.06, wny * 0.06, 2, 2, 0.5) * 0.08 * shM;
+						const swY = nc.nCl5.fbm(wnx * 0.06 + 40, wny * 0.06 + 40, 2, 2, 0.5) * 0.04 * shM;
 
-						const stW=getStormWarp(x,y);
-						const swpX=stW?stW.x:0, swpY=stW?stW.y:0;
+						const stW = getStormWarp(x, y);
+						const swpX = stW ? stW.x : 0, swpY = stW ? stW.y : 0;
 
-						const baseDrift=0.3;
-						const stX=(wnx+swpX-(sW.zonal*1.8*shM*windDamp+baseDrift)+sw)*0.1;
-						const stY=(wny+swpY+sW.merid*1.4*shM*windDamp+swY)*0.1;
-						let broad=nc.nCl.fbm(stX,stY,6,2.0,0.47)*0.5+0.5;
-						let strat=ss(0.45,0.65,broad)*clouds*1.6;
-						let med=nc.nCl2.fbm(stX*2.5,stY*2.5,4,2.1,0.46)*0.5+0.5;
-						strat*=lerp(0.65,1.0,ss(0.30,0.55,med));
-						strat=cl(strat,0,1);
+						const baseDrift = 0.3;
+						const stX = (wnx + swpX - (sW.zonal * 1.8 * shM * windDamp + baseDrift) + sw) * 0.1;
+						const stY = (wny + swpY + sW.merid * 1.4 * shM * windDamp + swY) * 0.1;
+						let broad = nc.nCl.fbm(stX, stY, 6, 2.0, 0.47) * 0.5 + 0.5;
+						let strat = ss(0.45, 0.65, broad) * clouds * 1.6;
+						let med = nc.nCl2.fbm(stX * 2.5, stY * 2.5, 4, 2.1, 0.46) * 0.5 + 0.5;
+						strat *= lerp(0.65, 1.0, ss(0.30, 0.55, med));
+						strat = cl(strat, 0, 1);
 
-						const cuWS=1.2*shM;
-						const cuBX=(wnx+swpX-sW.zonal*1.4*cuWS*windDamp*wS+sw*1.3*wS)*0.7;
-						const cuBY=(wny+swpY+sW.merid*1.0*cuWS*windDamp*wS+swY*1.3*wS)*0.7;
-						let cuEnv=nc.nCl6.fbm(cuBX*0.12,cuBY*0.12,3,2,0.5)*0.5+0.5;
-						cuEnv=ss(0.36,0.56,cuEnv);
-						let cuMid=nc.nCu2.fbm(cuBX*0.4,cuBY*0.4,3,2.2,0.45)*0.5+0.5;
-						cuMid=ss(0.38,0.58,cuMid);
-						const br=cuBlurR*3.5;
-						let cuSum=0;
-						const taps=[[0,0,1],[br,0,0.8],[-br,0,0.8],[0,br,0.8],[0,-br,0.8],
-							[br*0.7,br*0.7,0.5],[-br*0.7,br*0.7,0.5],[br*0.7,-br*0.7,0.5],[-br*0.7,-br*0.7,0.5]];
-						let wSum=0;
-						for(let ti=0;ti<9;ti++){
-							const cx2=cuBX+taps[ti][0],cy2=cuBY+taps[ti][1],tw=taps[ti][2];
-							const g1=nc.nCu.n2(cx2*8.0,cy2*8.0)*0.5+0.5;
-							const g2=nc.nCu2.n2(cx2*9.5+3.7,cy2*9.5+1.2)*0.5+0.5;
-							let raw=g1*g2;
-							const soft=nc.nCu.fbm(cx2*1.8,cy2*1.8,2,2,0.5)*0.5+0.5;
-							raw=raw*0.6+soft*0.4;
-							cuSum+=ss(0.35,0.50,raw)*tw;
-							wSum+=tw;
+						const cuWS = 1.2 * shM;
+						const cuBX = (wnx + swpX - sW.zonal * 1.4 * cuWS * windDamp * wS + sw * 1.3 * wS) * 0.7;
+						const cuBY = (wny + swpY + sW.merid * 1.0 * cuWS * windDamp * wS + swY * 1.3 * wS) * 0.7;
+						let cuEnv = nc.nCl6.fbm(cuBX * 0.12, cuBY * 0.12, 3, 2, 0.5) * 0.5 + 0.5;
+						cuEnv = ss(0.36, 0.56, cuEnv);
+						let cuMid = nc.nCu2.fbm(cuBX * 0.4, cuBY * 0.4, 3, 2.2, 0.45) * 0.5 + 0.5;
+						cuMid = ss(0.38, 0.58, cuMid);
+						const br = cuBlurR * 3.5;
+						let cuSum = 0;
+						const taps = [[0, 0, 1], [br, 0, 0.8], [-br, 0, 0.8], [0, br, 0.8], [0, -br, 0.8],
+						[br * 0.7, br * 0.7, 0.5], [-br * 0.7, br * 0.7, 0.5], [br * 0.7, -br * 0.7, 0.5], [-br * 0.7, -br * 0.7, 0.5]];
+						let wSum = 0;
+						for (let ti = 0; ti < 9; ti++) {
+							const cx2 = cuBX + taps[ti][0], cy2 = cuBY + taps[ti][1], tw = taps[ti][2];
+							const g1 = nc.nCu.n2(cx2 * 8.0, cy2 * 8.0) * 0.5 + 0.5;
+							const g2 = nc.nCu2.n2(cx2 * 9.5 + 3.7, cy2 * 9.5 + 1.2) * 0.5 + 0.5;
+							let raw = g1 * g2;
+							const soft = nc.nCu.fbm(cx2 * 1.8, cy2 * 1.8, 2, 2, 0.5) * 0.5 + 0.5;
+							raw = raw * 0.6 + soft * 0.4;
+							cuSum += ss(0.35, 0.50, raw) * tw;
+							wSum += tw;
 						}
-						let cumulus=(cuSum/wSum)*cuEnv*cuMid;
-						cumulus*=ss(0.65,0.1,latNorm)*clouds*2.2;
-						cumulus=cl(cumulus,0,1);
+						let cumulus = (cuSum / wSum) * cuEnv * cuMid;
+						cumulus *= ss(0.65, 0.1, latNorm) * clouds * 2.2;
+						cumulus = cl(cumulus, 0, 1);
 
-						const jetShear=1.5;
-						const swH=nc.nCl4.fbm(wnx*0.06,wny*0.06,2,2,0.5)*0.08*Math.min(cvSH,10)*shM;
-						const swHY=nc.nCl5.fbm(wnx*0.06+40,wny*0.06+40,2,2,0.5)*0.04*Math.min(cvSH,10)*shM;
-						const edWarpX=nc.nEd.ridged(wnx*0.5,wny*0.5,5,2.2,0.5)*0.9;
-						const edWarpY=nc.nEd.ridged(wnx*0.5+30,wny*0.5+30,5,2.2,0.5)*0.9;
-						const cirSwirlX=nc.nEd.fbm(wnx*0.25+60,wny*0.25,4,2,0.5)*0.7+nc.nEd.ridged(wnx*0.8+10,wny*0.8,3,2.3,0.45)*0.4;
-						const cirSwirlY=nc.nEd.fbm(wnx*0.25+90,wny*0.25+60,4,2,0.5)*0.7+nc.nEd.ridged(wnx*0.8+40,wny*0.8+20,3,2.3,0.45)*0.4;
-						const cirX=(wnx+swpX*0.6+jW.zonal*jetShear*wS+cvTHX*0.5*wS+edWarpX+cirSwirlX+swH*0.3*wS)*0.025;
-						const cirY=(wny+swpY*0.6+jW.merid*jetShear*0.7*wS+cvTHY*0.5*wS+edWarpY+cirSwirlY+swHY*0.3*wS)*0.08;
-						let cirrus=nc.nCl3.fbm(cirX,cirY,2,2.0,0.45)*0.5+0.5;
-						cirrus=ss(0.48,0.62,cirrus)*0.14;
-						let cirrus2=nc.nCl3.fbm(cirX*0.6+10,cirY*0.6,2,2.0,0.5)*0.5+0.5;
-						cirrus+=ss(0.50,0.62,cirrus2)*0.06;
-						cirrus=cl(cirrus,0,0.3);
-						const jetProx=Math.max(
-							Math.exp(-Math.pow(latNorm-0.33,2)/(2*0.12*0.12)),
-							Math.exp(-Math.pow(latNorm-0.61,2)/(2*0.12*0.12))
+						const jetShear = 1.5;
+						const swH = nc.nCl4.fbm(wnx * 0.06, wny * 0.06, 2, 2, 0.5) * 0.08 * Math.min(cvSH, 10) * shM;
+						const swHY = nc.nCl5.fbm(wnx * 0.06 + 40, wny * 0.06 + 40, 2, 2, 0.5) * 0.04 * Math.min(cvSH, 10) * shM;
+						const edWarpX = nc.nEd.ridged(wnx * 0.5, wny * 0.5, 5, 2.2, 0.5) * 0.9;
+						const edWarpY = nc.nEd.ridged(wnx * 0.5 + 30, wny * 0.5 + 30, 5, 2.2, 0.5) * 0.9;
+						const cirSwirlX = nc.nEd.fbm(wnx * 0.25 + 60, wny * 0.25, 4, 2, 0.5) * 0.7 + nc.nEd.ridged(wnx * 0.8 + 10, wny * 0.8, 3, 2.3, 0.45) * 0.4;
+						const cirSwirlY = nc.nEd.fbm(wnx * 0.25 + 90, wny * 0.25 + 60, 4, 2, 0.5) * 0.7 + nc.nEd.ridged(wnx * 0.8 + 40, wny * 0.8 + 20, 3, 2.3, 0.45) * 0.4;
+						const cirX = (wnx + swpX * 0.6 + jW.zonal * jetShear * wS + cvTHX * 0.5 * wS + edWarpX + cirSwirlX + swH * 0.3 * wS) * 0.025;
+						const cirY = (wny + swpY * 0.6 + jW.merid * jetShear * 0.7 * wS + cvTHY * 0.5 * wS + edWarpY + cirSwirlY + swHY * 0.3 * wS) * 0.08;
+						let cirrus = nc.nCl3.fbm(cirX, cirY, 2, 2.0, 0.45) * 0.5 + 0.5;
+						cirrus = ss(0.48, 0.62, cirrus) * 0.14;
+						let cirrus2 = nc.nCl3.fbm(cirX * 0.6 + 10, cirY * 0.6, 2, 2.0, 0.5) * 0.5 + 0.5;
+						cirrus += ss(0.50, 0.62, cirrus2) * 0.06;
+						cirrus = cl(cirrus, 0, 0.3);
+						const jetProx = Math.max(
+							Math.exp(-Math.pow(latNorm - 0.33, 2) / (2 * 0.12 * 0.12)),
+							Math.exp(-Math.pow(latNorm - 0.61, 2) / (2 * 0.12 * 0.12))
 						);
-						cirrus*=lerp(1.0,1.4,jetProx);
+						cirrus *= lerp(1.0, 1.4, jetProx);
 
-						let itcz=0;
-						if(absLat<0.08){const is2=ss(0.08,0.0,absLat);const iN=nc.nCl2.fbm(wnx*0.07+100,wny*0.07,3,2,0.5)*0.5+0.5;itcz=is2*ss(0.3,0.6,iN)*0.6;}
-						let front=0;
-						if(absLat>0.3&&absLat<0.6){const fs=1-Math.abs(absLat-0.45)/0.15;const fN=nc.nCl.fbm(stX*1.5+200,stY*1.5,3,2,0.5)*0.5+0.5;front=ss(0.4,0.7,fN)*fs*0.4;}
+						let itcz = 0;
+						if (absLat < 0.08) { const is2 = ss(0.08, 0.0, absLat); const iN = nc.nCl2.fbm(wnx * 0.07 + 100, wny * 0.07, 3, 2, 0.5) * 0.5 + 0.5; itcz = is2 * ss(0.3, 0.6, iN) * 0.6; }
+						let front = 0;
+						if (absLat > 0.3 && absLat < 0.6) { const fs = 1 - Math.abs(absLat - 0.45) / 0.15; const fN = nc.nCl.fbm(stX * 1.5 + 200, stY * 1.5, 3, 2, 0.5) * 0.5 + 0.5; front = ss(0.4, 0.7, fN) * fs * 0.4; }
 
-						const stormDen=stormCloud(x,y,nc);
+						const stormDen = stormCloud(x, y, nc);
 
-						let eyeClear=1.0;
-						if(params.cyclones){
-							for(const cyc of params.cyclones){
-								if(!cyc.isHurricane||cyc.eyeRadius<=0)continue;
-								const edx=x-cyc.sx*W,edy=y-cyc.sy*H;
-								const eDist=Math.sqrt(edx*edx+edy*edy);
-								const eVisR=cyc.radiusPx*2.0;
-								const eNd=eDist/eVisR;
-								const eR=cyc.eyeRadius;
-								if(eNd<eR*0.8){
-									eyeClear=0;
-								}else if(eNd<eR*1.6){
-									eyeClear=Math.min(eyeClear,ss(eR*0.8,eR*1.6,eNd));
+						let eyeClear = 1.0;
+						if (params.cyclones) {
+							for (const cyc of params.cyclones) {
+								if (!cyc.isHurricane || cyc.eyeRadius <= 0) continue;
+								const edx = x - cyc.sx * W, edy = y - cyc.sy * H;
+								const eDist = Math.sqrt(edx * edx + edy * edy);
+								const eVisR = cyc.radiusPx * 2.0;
+								const eNd = eDist / eVisR;
+								const eR = cyc.eyeRadius;
+								if (eNd < eR * 0.8) {
+									eyeClear = 0;
+								} else if (eNd < eR * 1.6) {
+									eyeClear = Math.min(eyeClear, ss(eR * 0.8, eR * 1.6, eNd));
 								}
 							}
 						}
 
-						let lowMid=cl((strat+cumulus+itcz+front)*eyeClear+stormDen,0,1);
-						let total=cl(lowMid+cirrus*eyeClear*(1.0-lowMid*0.5),0,1);
+						let lowMid = cl((strat + cumulus + itcz + front) * eyeClear + stormDen, 0, 1);
+						let total = cl(lowMid + cirrus * eyeClear * (1.0 - lowMid * 0.5), 0, 1);
 
-						if(total>0.005){
-							let sh=nc.nCl.fbm(stX-0.004,stY-0.004,4,2.0,0.47)*0.5+0.5;
-							sh=ss(0.35,0.65,sh)*0.12*(lowMid/(total+0.001));
-							c=[c[0]*(1-sh),c[1]*(1-sh),c[2]*(1-sh)];
+						if (total > 0.005) {
+							let sh = nc.nCl.fbm(stX - 0.004, stY - 0.004, 4, 2.0, 0.47) * 0.5 + 0.5;
+							sh = ss(0.35, 0.65, sh) * 0.12 * (lowMid / (total + 0.001));
+							c = [c[0] * (1 - sh), c[1] * (1 - sh), c[2] * (1 - sh)];
 
-							const cuF=cl((cumulus+stormDen*0.7)/(total+0.001),0,1);
-							const ciF=cl(cirrus/(total+0.001),0,1);
+							const cuF = cl((cumulus + stormDen * 0.7) / (total + 0.001), 0, 1);
+							const ciF = cl(cirrus / (total + 0.001), 0, 1);
 
-							let cR=lerp(240,254,cuF*0.6);
-							let cG=lerp(242,254,cuF*0.6);
-							let cB=lerp(248,255,ciF*0.3+cuF*0.2);
+							let cR = lerp(240, 254, cuF * 0.6);
+							let cG = lerp(242, 254, cuF * 0.6);
+							let cB = lerp(248, 255, ciF * 0.3 + cuF * 0.2);
 
-							c=lc(c,[cR,cG,cB],total*0.97);
+							c = lc(c, [cR, cG, cB], total * 0.97);
 						}
 					}
 
-					const ex=(x/W-0.5)*2,ey=(y/H-0.5)*2,ed=Math.sqrt(ex*ex+ey*ey);
-					if(ed>0.88){const v=ss(0.88,1.5,ed)*0.25;c=[c[0]*(1-v),c[1]*(1-v),c[2]*(1-v)];}
-					px[idx]=cl(Math.round(c[0]),0,255);px[idx+1]=cl(Math.round(c[1]),0,255);px[idx+2]=cl(Math.round(c[2]),0,255);px[idx+3]=255;
+					const ex = (x / W - 0.5) * 2, ey = (y / H - 0.5) * 2, ed = Math.sqrt(ex * ex + ey * ey);
+					if (ed > 0.88) { const v = ss(0.88, 1.5, ed) * 0.25; c = [c[0] * (1 - v), c[1] * (1 - v), c[2] * (1 - v)]; }
+					px[idx] = cl(Math.round(c[0]), 0, 255); px[idx + 1] = cl(Math.round(c[1]), 0, 255); px[idx + 2] = cl(Math.round(c[2]), 0, 255); px[idx + 3] = 255;
 				}
 			}
-			ctx.putImageData(img,0,scanLine);
-			ctx.fillStyle='rgba(160,240,192,0.12)';ctx.fillRect(0,endRow-1,W,2);
-			ctx.fillStyle='rgba(160,240,192,0.04)';ctx.fillRect(0,endRow-3,W,4);
-			scanLine=endRow;
-			if(scanLine<H){animId=requestAnimationFrame(renderChunk);}
-			else{generating=false;animId=null;blurStormRegions();applyFilter();ctx.drawImage(filterC,0,0);phctx.drawImage(canvas,0,0);drawHUD();ctx.drawImage(hudC,0,0);hudC.style.display='none';renderDone=true;}
+			ctx.putImageData(img, 0, scanLine);
+			ctx.fillStyle = 'rgba(160,240,192,0.12)'; ctx.fillRect(0, endRow - 1, W, 2);
+			ctx.fillStyle = 'rgba(160,240,192,0.04)'; ctx.fillRect(0, endRow - 3, W, 4);
+			scanLine = endRow;
+			if (scanLine < H) { animId = requestAnimationFrame(renderChunk); }
+			else { generating = false; animId = null; blurStormRegions(); applyFilter(); ctx.drawImage(filterC, 0, 0); phctx.drawImage(canvas, 0, 0); drawHUD(); ctx.drawImage(hudC, 0, 0); hudC.style.display = 'none'; renderDone = true; }
 		}
 
-		function applyFilter(){
-			fctx.clearRect(0,0,W,H);
-			fctx.fillStyle='rgba(0,0,0,0.04)';for(let y=0;y<H;y+=2)fctx.fillRect(0,y,W,1);
-			fctx.fillStyle='rgba(0,0,0,0.025)';for(let y=0;y<H;y+=8)fctx.fillRect(0,y,W,1);
-			fctx.fillStyle='rgba(80,200,160,0.03)';fctx.fillRect(0,0,W,H);
-			const gi=fctx.createImageData(W,H);const gp=gi.data;
-			for(let i=0;i<gp.length;i+=4){const v=Math.random()*25-12;gp[i]=128+v;gp[i+1]=128+v;gp[i+2]=128+v;gp[i+3]=8;}
-			fctx.putImageData(gi,0,0);
-			const vg=fctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.max(W,H)*0.75);
-			vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(0.7,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,5,15,0.4)');
-			fctx.fillStyle=vg;fctx.fillRect(0,0,W,H);
+		function applyFilter() {
+			fctx.clearRect(0, 0, W, H);
+			fctx.fillStyle = 'rgba(0,0,0,0.04)'; for (let y = 0; y < H; y += 2)fctx.fillRect(0, y, W, 1);
+			fctx.fillStyle = 'rgba(0,0,0,0.025)'; for (let y = 0; y < H; y += 8)fctx.fillRect(0, y, W, 1);
+			fctx.fillStyle = 'rgba(80,200,160,0.03)'; fctx.fillRect(0, 0, W, H);
+			const gi = fctx.createImageData(W, H); const gp = gi.data;
+			for (let i = 0; i < gp.length; i += 4) { const v = Math.random() * 25 - 12; gp[i] = 128 + v; gp[i + 1] = 128 + v; gp[i + 2] = 128 + v; gp[i + 3] = 8; }
+			fctx.putImageData(gi, 0, 0);
+			const vg = fctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.75);
+			vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(0.7, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,5,15,0.4)');
+			fctx.fillStyle = vg; fctx.fillRect(0, 0, W, H);
 		}
 
-		function drawHUD(){
-			hctx.clearRect(0,0,W,H);
-			const a='rgba(160,240,192,',w='rgba(255,255,255,';
-			const mg=22,bl=55,tp=12;
+		function drawHUD() {
+			hctx.clearRect(0, 0, W, H);
+			const a = 'rgba(160,240,192,', w = 'rgba(255,255,255,';
+			const mg = 22, bl = 55, tp = 12;
 
-			hctx.lineWidth=2;hctx.lineCap='square';hctx.strokeStyle=a+'0.7)';
-			hctx.beginPath();hctx.moveTo(mg,mg+bl);hctx.lineTo(mg,mg);hctx.lineTo(mg+bl,mg);hctx.stroke();
-			hctx.beginPath();hctx.moveTo(W-mg-bl,mg);hctx.lineTo(W-mg,mg);hctx.lineTo(W-mg,mg+bl);hctx.stroke();
-			hctx.beginPath();hctx.moveTo(mg,H-mg-bl);hctx.lineTo(mg,H-mg);hctx.lineTo(mg+bl,H-mg);hctx.stroke();
-			hctx.beginPath();hctx.moveTo(W-mg-bl,H-mg);hctx.lineTo(W-mg,H-mg);hctx.lineTo(W-mg,H-mg-bl);hctx.stroke();
+			hctx.lineWidth = 2; hctx.lineCap = 'square'; hctx.strokeStyle = a + '0.7)';
+			hctx.beginPath(); hctx.moveTo(mg, mg + bl); hctx.lineTo(mg, mg); hctx.lineTo(mg + bl, mg); hctx.stroke();
+			hctx.beginPath(); hctx.moveTo(W - mg - bl, mg); hctx.lineTo(W - mg, mg); hctx.lineTo(W - mg, mg + bl); hctx.stroke();
+			hctx.beginPath(); hctx.moveTo(mg, H - mg - bl); hctx.lineTo(mg, H - mg); hctx.lineTo(mg + bl, H - mg); hctx.stroke();
+			hctx.beginPath(); hctx.moveTo(W - mg - bl, H - mg); hctx.lineTo(W - mg, H - mg); hctx.lineTo(W - mg, H - mg - bl); hctx.stroke();
 
-			const cx=W/2,cy=H/2;
-			hctx.strokeStyle=a+'0.5)';hctx.lineWidth=1.5;
-			hctx.beginPath();hctx.moveTo(cx-28,cy);hctx.lineTo(cx-8,cy);hctx.moveTo(cx+8,cy);hctx.lineTo(cx+28,cy);hctx.moveTo(cx,cy-28);hctx.lineTo(cx,cy-8);hctx.moveTo(cx,cy+8);hctx.lineTo(cx,cy+28);hctx.stroke();
-			hctx.fillStyle=a+'0.5)';hctx.beginPath();hctx.arc(cx,cy,2,0,Math.PI*2);hctx.fill();
+			const cx = W / 2, cy = H / 2;
+			hctx.strokeStyle = a + '0.5)'; hctx.lineWidth = 1.5;
+			hctx.beginPath(); hctx.moveTo(cx - 28, cy); hctx.lineTo(cx - 8, cy); hctx.moveTo(cx + 8, cy); hctx.lineTo(cx + 28, cy); hctx.moveTo(cx, cy - 28); hctx.lineTo(cx, cy - 8); hctx.moveTo(cx, cy + 8); hctx.lineTo(cx, cy + 28); hctx.stroke();
+			hctx.fillStyle = a + '0.5)'; hctx.beginPath(); hctx.arc(cx, cy, 2, 0, Math.PI * 2); hctx.fill();
 
-			const tlX=mg+tp,tlY=mg+tp+12;
-			hctx.font='bold 13px Courier New';hctx.textAlign='left';hctx.fillStyle=a+'0.95)';
-			hctx.fillText(`GΞNΞSIS ${currentPal?currentPal.name:'---'}`,tlX,tlY);
-			hctx.font='12px Courier New';hctx.fillStyle=a+'0.8)';
-			hctx.fillText(`SAT-${currentSeed.toString(16).toUpperCase().slice(0,6)}`,tlX,tlY+18);
-			hctx.fillStyle=w+'0.8)';hctx.fillText(`SPECIMEN #${String(genCount).padStart(4,'0')}`,tlX,tlY+34);
+			const tlX = mg + tp, tlY = mg + tp + 12;
+			hctx.font = 'bold 13px Courier New'; hctx.textAlign = 'left'; hctx.fillStyle = a + '0.95)';
+			hctx.fillText(`GΞNΞSIS ${currentPal ? currentPal.name : '---'}`, tlX, tlY);
+			hctx.font = '12px Courier New'; hctx.fillStyle = a + '0.8)';
+			hctx.fillText(`SAT-${currentSeed.toString(16).toUpperCase().slice(0, 6)}`, tlX, tlY + 18);
+			hctx.fillStyle = w + '0.8)'; hctx.fillText(`SPECIMEN #${String(genCount).padStart(4, '0')}`, tlX, tlY + 34);
 
-			const trX=W-mg-tp;hctx.textAlign='right';hctx.font='bold 13px Courier New';hctx.fillStyle=a+'0.95)';
-			hctx.fillText(`${Math.abs(currentLat).toFixed(3)}°${currentLat>=0?'N':'S'}  ${Math.abs(currentLon).toFixed(3)}°${currentLon>=0?'E':'W'}`,trX,mg+tp+12);
-			hctx.font='12px Courier New';hctx.fillStyle=w+'0.8)';hctx.fillText(`ALT ${currentAlt.toFixed(0)}km`,trX,mg+tp+30);
-			hctx.fillStyle='rgba(255,50,50,0.7)';hctx.beginPath();hctx.arc(W-mg-tp,mg+tp+46,4,0,Math.PI*2);hctx.fill();
-			hctx.font='bold 11px Courier New';hctx.fillText('REC',W-mg-tp-14,mg+tp+50);
+			const trX = W - mg - tp; hctx.textAlign = 'right'; hctx.font = 'bold 13px Courier New'; hctx.fillStyle = a + '0.95)';
+			hctx.fillText(`${Math.abs(currentLat).toFixed(3)}°${currentLat >= 0 ? 'N' : 'S'}  ${Math.abs(currentLon).toFixed(3)}°${currentLon >= 0 ? 'E' : 'W'}`, trX, mg + tp + 12);
+			hctx.font = '12px Courier New'; hctx.fillStyle = w + '0.8)'; hctx.fillText(`ALT ${currentAlt.toFixed(0)}km`, trX, mg + tp + 30);
+			hctx.fillStyle = 'rgba(255,50,50,0.7)'; hctx.beginPath(); hctx.arc(W - mg - tp, mg + tp + 46, 4, 0, Math.PI * 2); hctx.fill();
+			hctx.font = 'bold 11px Courier New'; hctx.fillText('REC', W - mg - tp - 14, mg + tp + 50);
 
-			hctx.textAlign='left';const blX=mg+tp,blY=H-mg-tp-8;
-			hctx.font='12px Courier New';hctx.fillStyle=w+'0.8)';
-			hctx.fillText(`UTC ${new Date().toISOString().slice(0,19)}Z`,blX,blY-16);
-			hctx.fillStyle=a+'0.95)';hctx.fillText(`FRM ${Math.floor(Math.random()*99999).toString().padStart(5,'0')}  ${(Math.random()*2+0.5).toFixed(2)} Mb/s`,blX,blY);
+			hctx.textAlign = 'left'; const blX = mg + tp, blY = H - mg - tp - 8;
+			hctx.font = '12px Courier New'; hctx.fillStyle = w + '0.8)';
+			hctx.fillText(`UTC ${new Date().toISOString().slice(0, 19)}Z`, blX, blY - 16);
+			hctx.fillStyle = a + '0.95)'; hctx.fillText(`FRM ${Math.floor(Math.random() * 99999).toString().padStart(5, '0')}  ${(Math.random() * 2 + 0.5).toFixed(2)} Mb/s`, blX, blY);
 
-			hctx.textAlign='right';const brX=W-mg-tp,brY=H-mg-tp-8;
-			hctx.font='12px Courier New';hctx.fillStyle=w+'0.8)';hctx.fillText(`RES ${rr(2,12).toFixed(1)}m/px`,brX,brY-16);
-			hctx.fillStyle=a+'0.95)';hctx.fillText(`BAND: ${pick(['TRUE COLOR','NIR','ENHANCED VIS','SWIR','THERMAL IR'])}`,brX,brY);
+			hctx.textAlign = 'right'; const brX = W - mg - tp, brY = H - mg - tp - 8;
+			hctx.font = '12px Courier New'; hctx.fillStyle = w + '0.8)'; hctx.fillText(`RES ${rr(2, 12).toFixed(1)}m/px`, brX, brY - 16);
+			hctx.fillStyle = a + '0.95)'; hctx.fillText(`BAND: ${pick(['TRUE COLOR', 'NIR', 'ENHANCED VIS', 'SWIR', 'THERMAL IR'])}`, brX, brY);
 
-			hctx.strokeStyle=a+'0.8)';hctx.lineWidth=1.5;
-			const sbX=W-mg-10,sbY=H/2+50;
-			hctx.beginPath();hctx.moveTo(sbX-60,sbY);hctx.lineTo(sbX,sbY);hctx.stroke();
-			hctx.beginPath();hctx.moveTo(sbX-60,sbY-4);hctx.lineTo(sbX-60,sbY+4);hctx.stroke();
-			hctx.beginPath();hctx.moveTo(sbX,sbY-4);hctx.lineTo(sbX,sbY+4);hctx.stroke();
-			hctx.textAlign='center';hctx.font='10px Courier New';hctx.fillStyle=a+'0.8)';
-			hctx.fillText(`${params.scaleBarKm}km`,sbX-30,sbY-8);
+			hctx.strokeStyle = a + '0.8)'; hctx.lineWidth = 1.5;
+			const sbX = W - mg - 10, sbY = H / 2 + 50;
+			hctx.beginPath(); hctx.moveTo(sbX - 60, sbY); hctx.lineTo(sbX, sbY); hctx.stroke();
+			hctx.beginPath(); hctx.moveTo(sbX - 60, sbY - 4); hctx.lineTo(sbX - 60, sbY + 4); hctx.stroke();
+			hctx.beginPath(); hctx.moveTo(sbX, sbY - 4); hctx.lineTo(sbX, sbY + 4); hctx.stroke();
+			hctx.textAlign = 'center'; hctx.font = '10px Courier New'; hctx.fillStyle = a + '0.8)';
+			hctx.fillText(`${params.scaleBarKm}km`, sbX - 30, sbY - 8);
 
 			/* ===== ANALYSIS OVERLAY (togglable) ===== */
-			if(analysisOn){
-				const gLat=params.globalLat,diagX=W-mg-85,diagW=60;
-				const sr=Math.floor(H/30);
-				for(let ri=0;ri<sr;ri++){
-					const iy=Math.floor(H*(ri+0.5)/sr);
-					if(iy<mg+20||iy>H-mg-20)continue;
-					const lH=gLat+(iy/H-0.5)*0.35,aL=Math.abs(lH),ln=cl(aL/0.5,0,1),ls=lH>=0?1:-1;
-					const wind=surfaceWind(ln,ls);
-					let label='';if(aL<0.04)label='ITCZ';else if(ln<0.33)label='TRADES';else if(ln<0.75)label='WESTERLIES';else label='POLAR E';
-					const sc=13,ax=wind.zonal*sc,ay=-wind.merid*sc,al=Math.sqrt(ax*ax+ay*ay);
-					const bx=diagX+diagW/2;
-					if(al>2){
-						hctx.strokeStyle=a+'0.6)';hctx.lineWidth=1.2;
-						hctx.beginPath();hctx.moveTo(bx-ax*0.5,iy-ay*0.5);hctx.lineTo(bx+ax*0.5,iy+ay*0.5);hctx.stroke();
-						const ha=Math.atan2(ay,ax),tx=bx+ax*0.5,ty=iy+ay*0.5;
-						hctx.beginPath();hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha-0.5)*4,ty-Math.sin(ha-0.5)*4);
-						hctx.moveTo(tx,ty);hctx.lineTo(tx-Math.cos(ha+0.5)*4,ty-Math.sin(ha+0.5)*4);hctx.stroke();
+			if (analysisOn) {
+				const gLat = params.globalLat, diagX = W - mg - 85, diagW = 60;
+				const sr = Math.floor(H / 30);
+				for (let ri = 0; ri < sr; ri++) {
+					const iy = Math.floor(H * (ri + 0.5) / sr);
+					if (iy < mg + 20 || iy > H - mg - 20) continue;
+					const lH = gLat + (iy / H - 0.5) * 0.35, aL = Math.abs(lH), ln = cl(aL / 0.5, 0, 1), ls = lH >= 0 ? 1 : -1;
+					const wind = surfaceWind(ln, ls);
+					let label = ''; if (aL < 0.04) label = 'ITCZ'; else if (ln < 0.33) label = 'TRADES'; else if (ln < 0.75) label = 'WESTERLIES'; else label = 'POLAR E';
+					const sc = 13, ax = wind.zonal * sc, ay = -wind.merid * sc, al = Math.sqrt(ax * ax + ay * ay);
+					const bx = diagX + diagW / 2;
+					if (al > 2) {
+						hctx.strokeStyle = a + '0.6)'; hctx.lineWidth = 1.2;
+						hctx.beginPath(); hctx.moveTo(bx - ax * 0.5, iy - ay * 0.5); hctx.lineTo(bx + ax * 0.5, iy + ay * 0.5); hctx.stroke();
+						const ha = Math.atan2(ay, ax), tx = bx + ax * 0.5, ty = iy + ay * 0.5;
+						hctx.beginPath(); hctx.moveTo(tx, ty); hctx.lineTo(tx - Math.cos(ha - 0.5) * 4, ty - Math.sin(ha - 0.5) * 4);
+						hctx.moveTo(tx, ty); hctx.lineTo(tx - Math.cos(ha + 0.5) * 4, ty - Math.sin(ha + 0.5) * 4); hctx.stroke();
 					}
-					hctx.fillStyle=a+'0.6)';hctx.textAlign='right';hctx.font='9px Courier New';
-					hctx.fillText(label,bx-al*0.5-6,iy+3);
+					hctx.fillStyle = a + '0.6)'; hctx.textAlign = 'right'; hctx.font = '9px Courier New';
+					hctx.fillText(label, bx - al * 0.5 - 6, iy + 3);
 				}
 
-				if(params.jetStreams){
-					for(const js of params.jetStreams){
-						const jy=js.y,dir=js.zonal>0?1:-1;
-						const sX=dir>0?mg+60:W-mg-60,eX=dir>0?W-mg-100:mg+100,mX=(sX+eX)/2;
-						const cY=js.merid*25;
-						hctx.strokeStyle='rgba(120,180,255,0.45)';hctx.lineWidth=2.5;hctx.setLineDash([10,6]);
-						hctx.beginPath();hctx.moveTo(sX,jy);hctx.quadraticCurveTo(mX,jy+cY,eX,jy);hctx.stroke();
+				if (params.jetStreams) {
+					for (const js of params.jetStreams) {
+						const jy = js.y, dir = js.zonal > 0 ? 1 : -1;
+						const sX = dir > 0 ? mg + 60 : W - mg - 60, eX = dir > 0 ? W - mg - 100 : mg + 100, mX = (sX + eX) / 2;
+						const cY = js.merid * 25;
+						hctx.strokeStyle = 'rgba(120,180,255,0.45)'; hctx.lineWidth = 2.5; hctx.setLineDash([10, 6]);
+						hctx.beginPath(); hctx.moveTo(sX, jy); hctx.quadraticCurveTo(mX, jy + cY, eX, jy); hctx.stroke();
 						hctx.setLineDash([]);
-						const ha=Math.atan2(cY*0.3,eX-mX);
-						hctx.strokeStyle='rgba(120,180,255,0.65)';hctx.lineWidth=2.5;
-						hctx.beginPath();hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha-0.35)*16,jy-Math.sin(ha-0.35)*16);
-						hctx.moveTo(eX,jy);hctx.lineTo(eX-Math.cos(ha+0.35)*16,jy-Math.sin(ha+0.35)*16);hctx.stroke();
-						hctx.fillStyle='rgba(120,180,255,0.7)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
-						hctx.fillText(js.label,mX,jy-10);
+						const ha = Math.atan2(cY * 0.3, eX - mX);
+						hctx.strokeStyle = 'rgba(120,180,255,0.65)'; hctx.lineWidth = 2.5;
+						hctx.beginPath(); hctx.moveTo(eX, jy); hctx.lineTo(eX - Math.cos(ha - 0.35) * 16, jy - Math.sin(ha - 0.35) * 16);
+						hctx.moveTo(eX, jy); hctx.lineTo(eX - Math.cos(ha + 0.35) * 16, jy - Math.sin(ha + 0.35) * 16); hctx.stroke();
+						hctx.fillStyle = 'rgba(120,180,255,0.7)'; hctx.font = 'bold 11px Courier New'; hctx.textAlign = 'center';
+						hctx.fillText(js.label, mX, jy - 10);
 					}
 				}
 
-				hctx.setLineDash([2,6]);hctx.strokeStyle=a+'0.2)';hctx.lineWidth=1;
-				for(const hemi of[1,-1])for(const bL of[0.33*0.5,0.75*0.5]){
-					const py=latToScreenY(bL,hemi,gLat);
-					if(py>mg+10&&py<H-mg-10){hctx.beginPath();hctx.moveTo(mg,py);hctx.lineTo(W-mg,py);hctx.stroke();}
+				hctx.setLineDash([2, 6]); hctx.strokeStyle = a + '0.2)'; hctx.lineWidth = 1;
+				for (const hemi of [1, -1]) for (const bL of [0.33 * 0.5, 0.75 * 0.5]) {
+					const py = latToScreenY(bL, hemi, gLat);
+					if (py > mg + 10 && py < H - mg - 10) { hctx.beginPath(); hctx.moveTo(mg, py); hctx.lineTo(W - mg, py); hctx.stroke(); }
 				}
-				const eqY=latToScreenY(0,1,gLat);
-				if(eqY>mg&&eqY<H-mg){
-					hctx.strokeStyle='rgba(255,180,60,0.55)';hctx.setLineDash([8,4]);hctx.lineWidth=1.5;
-					hctx.beginPath();hctx.moveTo(mg,eqY);hctx.lineTo(W-mg,eqY);hctx.stroke();
-					hctx.fillStyle='rgba(255,180,60,0.75)';hctx.font='bold 10px Courier New';hctx.textAlign='left';
-					hctx.fillText('ITCZ / EQUATOR',mg+tp,eqY-6);
+				const eqY = latToScreenY(0, 1, gLat);
+				if (eqY > mg && eqY < H - mg) {
+					hctx.strokeStyle = 'rgba(255,180,60,0.55)'; hctx.setLineDash([8, 4]); hctx.lineWidth = 1.5;
+					hctx.beginPath(); hctx.moveTo(mg, eqY); hctx.lineTo(W - mg, eqY); hctx.stroke();
+					hctx.fillStyle = 'rgba(255,180,60,0.75)'; hctx.font = 'bold 10px Courier New'; hctx.textAlign = 'left';
+					hctx.fillText('ITCZ / EQUATOR', mg + tp, eqY - 6);
 				}
 				hctx.setLineDash([]);
 
-				if(params.cyclones){
-					for(const cyc of params.cyclones){
-						const sx=cyc.sx*W,sy=cyc.sy*H,rP=cyc.radiusPx;
-						hctx.strokeStyle='rgba(255,60,60,0.8)';hctx.lineWidth=2;hctx.setLineDash([6,4]);
-						hctx.beginPath();hctx.arc(sx,sy,rP,0,Math.PI*2);hctx.stroke();
-						if(cyc.isHurricane){hctx.beginPath();hctx.arc(sx,sy,rP*cyc.eyeRadius*2.4,0,Math.PI*2);hctx.stroke();}
-						hctx.setLineDash([]);hctx.strokeStyle='rgba(255,120,60,0.9)';hctx.lineWidth=2;
-						const aL=rP*0.6,ax=sx+Math.cos(cyc.moveAngle)*aL,ay=sy+Math.sin(cyc.moveAngle)*aL;
-						hctx.beginPath();hctx.moveTo(sx,sy);hctx.lineTo(ax,ay);hctx.stroke();
-						const ha=cyc.moveAngle;
-						hctx.beginPath();hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha-0.4)*10,ay-Math.sin(ha-0.4)*10);
-						hctx.moveTo(ax,ay);hctx.lineTo(ax-Math.cos(ha+0.4)*10,ay-Math.sin(ha+0.4)*10);hctx.stroke();
-						const deg=((cyc.moveAngle*180/Math.PI)+360)%360;
-						const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-						const compass=dirs[Math.round(deg/22.5)%16];
-						hctx.fillStyle='rgba(255,60,60,0.85)';hctx.font='bold 11px Courier New';hctx.textAlign='center';
-						hctx.fillText(cyc.isHurricane?'HURRICANE':'TROP STORM',sx,sy-rP-18);
-						hctx.font='10px Courier New';hctx.fillStyle='rgba(255,120,60,0.8)';
-						hctx.fillText(`R:${cyc.realRadiusKm.toFixed(0)}km  MOV ${compass}`,sx,sy-rP-6);
-						hctx.fillStyle='rgba(255,60,60,0.5)';hctx.font='9px Courier New';
-						hctx.fillText(cyc.rotation>0?'CCW':'CW',sx,sy+rP+14);
+				if (params.cyclones) {
+					for (const cyc of params.cyclones) {
+						const sx = cyc.sx * W, sy = cyc.sy * H, rP = cyc.radiusPx;
+						hctx.strokeStyle = 'rgba(255,60,60,0.8)'; hctx.lineWidth = 2; hctx.setLineDash([6, 4]);
+						hctx.beginPath(); hctx.arc(sx, sy, rP, 0, Math.PI * 2); hctx.stroke();
+						if (cyc.isHurricane) { hctx.beginPath(); hctx.arc(sx, sy, rP * cyc.eyeRadius * 2.4, 0, Math.PI * 2); hctx.stroke(); }
+						hctx.setLineDash([]); hctx.strokeStyle = 'rgba(255,120,60,0.9)'; hctx.lineWidth = 2;
+						const aL = rP * 0.6, ax = sx + Math.cos(cyc.moveAngle) * aL, ay = sy + Math.sin(cyc.moveAngle) * aL;
+						hctx.beginPath(); hctx.moveTo(sx, sy); hctx.lineTo(ax, ay); hctx.stroke();
+						const ha = cyc.moveAngle;
+						hctx.beginPath(); hctx.moveTo(ax, ay); hctx.lineTo(ax - Math.cos(ha - 0.4) * 10, ay - Math.sin(ha - 0.4) * 10);
+						hctx.moveTo(ax, ay); hctx.lineTo(ax - Math.cos(ha + 0.4) * 10, ay - Math.sin(ha + 0.4) * 10); hctx.stroke();
+						const deg = ((cyc.moveAngle * 180 / Math.PI) + 360) % 360;
+						const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+						const compass = dirs[Math.round(deg / 22.5) % 16];
+						hctx.fillStyle = 'rgba(255,60,60,0.85)'; hctx.font = 'bold 11px Courier New'; hctx.textAlign = 'center';
+						hctx.fillText(cyc.isHurricane ? 'HURRICANE' : 'TROP STORM', sx, sy - rP - 18);
+						hctx.font = '10px Courier New'; hctx.fillStyle = 'rgba(255,120,60,0.8)';
+						hctx.fillText(`R:${cyc.realRadiusKm.toFixed(0)}km  MOV ${compass}`, sx, sy - rP - 6);
+						hctx.fillStyle = 'rgba(255,60,60,0.5)'; hctx.font = '9px Courier New';
+						hctx.fillText(cyc.rotation > 0 ? 'CCW' : 'CW', sx, sy + rP + 14);
 					}
 					hctx.setLineDash([]);
 				}
@@ -811,22 +872,23 @@
 		}
 
 		initGeneration();
-		window.addEventListener('resize',()=>{resize();initGeneration();});
-		canvas.addEventListener('click',()=>{initGeneration();});
-		document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();initGeneration();}});
-		document.getElementById('analysis-toggle').addEventListener('click',e=>{
+		window.addEventListener('resize', () => { resize(); initGeneration(); });
+		canvas.addEventListener('click', () => { initGeneration(); });
+		document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); initGeneration(); } });
+		document.getElementById('analysis-toggle').addEventListener('click', e => {
 			e.stopPropagation();
-			analysisOn=!analysisOn;
-			e.currentTarget.textContent=analysisOn?'analysis: on':'analysis: off';
-			if(renderDone){
-				ctx.drawImage(preHudC,0,0);
+			analysisOn = !analysisOn;
+			e.currentTarget.textContent = analysisOn ? 'analysis: on' : 'analysis: off';
+			if (renderDone) {
+				ctx.drawImage(preHudC, 0, 0);
 				drawHUD();
-				ctx.drawImage(hudC,0,0);
-				hudC.style.display='none';
-			}else{
+				ctx.drawImage(hudC, 0, 0);
+				hudC.style.display = 'none';
+			} else {
 				drawHUD();
 			}
 		});
 	</script>
 </body>
+
 </html>
