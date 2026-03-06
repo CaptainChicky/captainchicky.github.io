@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sequence Analysis Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --sidebar-w: 240px;
+  --bg: #0e1117;
+  --bg-sidebar: #161b22;
+  --bg-card: #1c2129;
+  --bg-input: #0d1117;
+  --border: #30363d;
+  --border-focus: #58a6ff;
+  --text: #e6edf3;
+  --text-dim: #8b949e;
+  --text-muted: #6e7681;
+  --accent: #58a6ff;
+  --accent-dim: #1f6feb;
+  --green: #3fb950;
+  --orange: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --font-sans: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 8px;
+  --radius-sm: 5px;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-sans); }
+body { display: flex; overflow: hidden; }
+
+/* ── Sidebar ───────────────────────────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  height: 100vh; overflow-y: auto;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header h1 {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.sidebar-header .logo {
+  font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.02em;
+  text-transform: none; margin-bottom: 2px;
+}
+.sidebar-cat {
+  padding: 16px 16px 6px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px; margin: 1px 8px; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 13.5px; font-weight: 500;
+  color: var(--text-dim); transition: all 0.15s;
+  text-decoration: none; position: relative;
+}
+.sidebar-item:hover { background: rgba(88,166,255,0.08); color: var(--text); }
+.sidebar-item.active {
+  background: rgba(88,166,255,0.12); color: var(--accent);
+}
+.sidebar-item.active::before {
+  content: ""; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 3px; border-radius: 0 3px 3px 0; background: var(--accent);
+}
+.sidebar-item .icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.sidebar-item.disabled { opacity: 0.35; pointer-events: none; }
+.sidebar-item .badge {
+  margin-left: auto; font-size: 9.5px; padding: 1px 6px;
+  border-radius: 10px; background: var(--border); color: var(--text-muted);
+  font-weight: 600; letter-spacing: 0.02em;
+}
+
+/* ── Main Area ─────────────────────────────────────────────────────────────── */
+#main {
+  flex: 1; height: 100vh; overflow-y: auto;
+  padding: 32px 40px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.tool-page { display: none; max-width: 960px; }
+.tool-page.active { display: block; }
+
+.tool-title {
+  font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px;
+}
+.tool-desc {
+  font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5;
+}
+
+/* ── Form Elements ─────────────────────────────────────────────────────────── */
+label.field-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--text-dim); margin-bottom: 6px;
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+textarea, input[type="text"], input[type="number"] {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg-input); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-family: var(--font-mono); font-size: 13px;
+  resize: vertical; transition: border-color 0.15s;
+  line-height: 1.55;
+}
+textarea:focus, input:focus, select:focus {
+  outline: none; border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
+}
+textarea { min-height: 140px; }
+select {
+  padding: 8px 12px; background: var(--bg-input); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font-sans); font-size: 13px;
+  cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 30px;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
+.btn {
+  padding: 9px 20px; border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em;
+}
+.btn-primary { background: var(--accent-dim); color: #fff; }
+.btn-primary:hover { background: var(--accent); }
+.btn-secondary { background: var(--bg-card); color: var(--text-dim); border: 1px solid var(--border); }
+.btn-secondary:hover { color: var(--text); border-color: var(--text-dim); }
+.btn-copy { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+.btn-copy:hover { color: var(--green); border-color: var(--green); }
+
+.option-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 14px; flex-wrap: wrap;
+}
+.option-row label { font-size: 13px; color: var(--text-dim); text-transform: none; letter-spacing: 0; }
+
+/* ── Results Panel ─────────────────────────────────────────────────────────── */
+.result-panel {
+  margin-top: 28px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--bg-card); overflow: hidden;
+  display: none;
+}
+.result-panel.visible { display: block; animation: fadeSlide 0.25s ease; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.result-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+}
+.result-header h3 { font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.result-body { padding: 16px; }
+.result-body pre {
+  font-family: var(--font-mono); font-size: 12.5px;
+  line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  color: var(--text); margin: 0;
+}
+.result-stats {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px; font-family: var(--font-mono);
+}
+.stat-item { color: var(--text-dim); }
+.stat-item span { color: var(--text); font-weight: 600; }
+.stat-gc span { color: var(--green); }
+.stat-at span { color: var(--orange); }
+.stat-len span { color: var(--accent); }
+
+/* ── Welcome / Home ────────────────────────────────────────────────────────── */
+.welcome { max-width: 600px; }
+.welcome h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; }
+.welcome p { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+.tool-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.tool-card {
+  padding: 16px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--bg-card);
+  cursor: pointer; transition: all 0.15s;
+}
+.tool-card:hover { border-color: var(--accent); background: rgba(88,166,255,0.05); }
+.tool-card.disabled { opacity: 0.35; pointer-events: none; }
+.tool-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.tool-card p { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  :root { --sidebar-w: 52px; }
+  .sidebar-header h1, .sidebar-header .logo, .sidebar-cat, .sidebar-item span:not(.icon), .sidebar-item .badge { display: none; }
+  .sidebar-item { justify-content: center; padding: 10px; margin: 1px 4px; }
+  .sidebar-item .icon { font-size: 18px; width: auto; }
+  #main { padding: 20px; }
+  .tool-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR                                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">SeqToolkit</div>
+    <h1>Analysis Suite</h1>
+  </div>
+
+  <div class="sidebar-cat">Sequence Conversion</div>
+  <a class="sidebar-item active" data-tool="reverse-complement">
+    <span class="icon">⇄</span> <span>Reverse Complement</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">⟶</span> <span>Translate DNA</span>
+    <span class="badge">Soon</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">↩</span> <span>Back Translate</span>
+    <span class="badge">Soon</span>
+  </a>
+
+  <div class="sidebar-cat">Sequence Analysis</div>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">◎</span> <span>GC Content</span>
+    <span class="badge">Soon</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">🔍</span> <span>ORF Finder</span>
+    <span class="badge">Soon</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">📊</span> <span>Codon Usage</span>
+    <span class="badge">Soon</span>
+  </a>
+
+  <div class="sidebar-cat">Pattern Tools</div>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">✂</span> <span>Restriction Sites</span>
+    <span class="badge">Soon</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">⬡</span> <span>Motif Search</span>
+    <span class="badge">Soon</span>
+  </a>
+
+  <div class="sidebar-cat">Utilities</div>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">🎲</span> <span>Random Sequence</span>
+    <span class="badge">Soon</span>
+  </a>
+  <a class="sidebar-item disabled" data-tool="">
+    <span class="icon">🔀</span> <span>Shuffle Sequence</span>
+    <span class="badge">Soon</span>
+  </a>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                               -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<main id="main">
+
+  <!-- ── Reverse Complement ─────────────────────────────────────────────── -->
+  <section id="tool-reverse-complement" class="tool-page active">
+    <h2 class="tool-title">Reverse Complement</h2>
+    <p class="tool-desc">
+      Convert a DNA sequence into its reverse, complement, or reverse-complement counterpart.
+      Useful for working with ORFs on the reverse strand. Accepts raw or FASTA format.
+    </p>
+
+    <label class="field-label" for="rc-input">Input Sequence</label>
+    <textarea id="rc-input" spellcheck="false" placeholder="Paste raw or FASTA sequence…">>Sample sequence
+GGGGaaaaaaaatttatatat</textarea>
+
+    <div class="option-row">
+      <label for="rc-mode">Operation:</label>
+      <select id="rc-mode">
+        <option value="rc" selected>Reverse Complement</option>
+        <option value="r">Reverse</option>
+        <option value="c">Complement</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="rc-submit">Run</button>
+      <button class="btn btn-secondary" id="rc-clear">Clear</button>
+    </div>
+
+    <div class="result-panel" id="rc-result">
+      <div class="result-stats" id="rc-stats"></div>
+      <div class="result-header">
+        <h3>Output</h3>
+        <button class="btn btn-copy" id="rc-copy" title="Copy to clipboard">Copy</button>
+      </div>
+      <div class="result-body"><pre id="rc-output"></pre></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS                                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<script src="common.js"></script>
+<script>
+(function() {
+  "use strict";
+
+  // ── Sidebar navigation ──────────────────────────────────────────────────
+  const sidebarItems = document.querySelectorAll(".sidebar-item[data-tool]");
+  sidebarItems.forEach(item => {
+    item.addEventListener("click", function(e) {
+      e.preventDefault();
+      const toolId = this.dataset.tool;
+      if (!toolId) return;
+      // toggle sidebar active
+      sidebarItems.forEach(i => i.classList.remove("active"));
+      this.classList.add("active");
+      // toggle tool pages
+      document.querySelectorAll(".tool-page").forEach(p => p.classList.remove("active"));
+      const page = document.getElementById("tool-" + toolId);
+      if (page) page.classList.add("active");
+    });
+  });
+
+  // ── Reverse Complement Tool ─────────────────────────────────────────────
+  const rcInput  = document.getElementById("rc-input");
+  const rcMode   = document.getElementById("rc-mode");
+  const rcResult = document.getElementById("rc-result");
+  const rcStats  = document.getElementById("rc-stats");
+  const rcOutput = document.getElementById("rc-output");
+
+  document.getElementById("rc-submit").addEventListener("click", function() {
+    const raw = rcInput.value.trim();
+    if (!raw) return;
+
+    const parsed = parseFasta(raw);
+    const dna = filterDnaSaveCase(parsed.sequence);
+
+    if (!dna.length) {
+      rcOutput.textContent = "No valid DNA characters found.";
+      rcResult.classList.add("visible");
+      rcStats.innerHTML = "";
+      return;
+    }
+
+    if (!verifyDna(parsed.sequence)) {
+      // still proceed but note it
+    }
+
+    // compute
+    let result;
+    switch (rcMode.value) {
+      case "rc": result = reverseComplement(dna); break;
+      case "r":  result = reverseStr(dna); break;
+      case "c":  result = complement(dna); break;
+    }
+
+    // stats
+    const stats = seqStats(dna);
+    let title = parsed.title ? `"${parsed.title}"` : "";
+    rcStats.innerHTML =
+      `<span class="stat-item stat-len">Length: <span>${stats.len.toLocaleString()} bp</span></span>` +
+      (title ? `<span class="stat-item">Title: <span>${title}</span></span>` : "") +
+      `<span class="stat-item">A: <span>${stats.a}</span></span>` +
+      `<span class="stat-item">T: <span>${stats.t}</span></span>` +
+      `<span class="stat-item">G: <span>${stats.g}</span></span>` +
+      `<span class="stat-item">C: <span>${stats.c}</span></span>` +
+      `<span class="stat-item stat-gc">GC: <span>${stats.gc}%</span></span>`;
+
+    rcOutput.textContent = formatSeq(result, 60);
+    rcResult.classList.add("visible");
+  });
+
+  document.getElementById("rc-clear").addEventListener("click", function() {
+    rcInput.value = "";
+    rcResult.classList.remove("visible");
+    rcInput.focus();
+  });
+
+  document.getElementById("rc-copy").addEventListener("click", function() {
+    const text = rcOutput.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      this.textContent = "Copied!";
+      setTimeout(() => { this.textContent = "Copy"; }, 1500);
+    });
+  });
+
+  // ── Keyboard shortcut: Ctrl+Enter to run ────────────────────────────────
+  document.addEventListener("keydown", function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      const activePage = document.querySelector(".tool-page.active");
+      if (activePage) {
+        const btn = activePage.querySelector(".btn-primary");
+        if (btn) btn.click();
+      }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
