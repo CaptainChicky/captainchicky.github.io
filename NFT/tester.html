@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmic Galaxy</title>
+<style>
+*{margin:0;padding:0;overflow:hidden}
+body{background:#000;cursor:crosshair}
+canvas{display:block}
+#ui{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.45);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;text-align:center;pointer-events:none;letter-spacing:2px;text-transform:uppercase}
+#mode{position:fixed;top:20px;right:20px;color:rgba(255,255,255,0.4);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;letter-spacing:1px;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui">click & drag to warp · scroll to change gravity · 1-4 palettes · space for burst</div>
+<div id="mode"></div>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d',{alpha:false});
+let W,H,mx=0,my=0,mDown=false,gravity=0.15,paletteIdx=0,tick=0;
+
+const palettes=[
+  {name:'Nebula',colors:[[255,0,110],[131,56,236],[58,134,255],[0,245,212],[254,228,64]]},
+  {name:'Solar Flare',colors:[[255,72,0],[255,96,0],[255,133,0],[255,170,0],[255,208,0]]},
+  {name:'Deep Ocean',colors:[[0,119,182],[0,180,216],[144,224,239],[202,240,248],[72,202,228]]},
+  {name:'Aurora',colors:[[45,225,252],[19,232,160],[154,252,45],[252,247,94],[252,45,240]]}
+];
+
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight;mx=W/2;my=H/2;buildSprites()}
+addEventListener('resize',resize);
+
+// Pre-render particle glow sprites per color — eliminates per-frame radial gradients
+const spriteSize=32, sprites=[];
+function buildSprites(){
+  sprites.length=0;
+  for(let p=0;p<palettes.length;p++){
+    sprites[p]=[];
+    for(let i=0;i<5;i++){
+      const s=document.createElement('canvas');
+      s.width=s.height=spriteSize;
+      const x=s.getContext('2d');
+      const [r,g,b]=palettes[p].colors[i];
+      const gr=x.createRadialGradient(spriteSize/2,spriteSize/2,0,spriteSize/2,spriteSize/2,spriteSize/2);
+      gr.addColorStop(0,`rgba(${r},${g},${b},1)`);
+      gr.addColorStop(0.3,`rgba(${r},${g},${b},0.4)`);
+      gr.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      x.fillStyle=gr;
+      x.fillRect(0,0,spriteSize,spriteSize);
+      sprites[p].push(s);
+    }
+  }
+}
+
+const N=2000;
+// SoA layout for cache-friendly iteration
+const px=new Float32Array(N),py=new Float32Array(N);
+const vx=new Float32Array(N),vy=new Float32Array(N);
+const life=new Float32Array(N),decay=new Float32Array(N);
+const size=new Float32Array(N),ci=new Uint8Array(N);
+const orb=new Float32Array(N),mass=new Float32Array(N);
+
+function initParticle(i,burst){
+  if(burst){
+    px[i]=mx;py[i]=my;
+    const a=Math.random()*6.2832,s=Math.random()*8+2;
+    vx[i]=Math.cos(a)*s;vy[i]=Math.sin(a)*s;
+  }else{
+    px[i]=Math.random()*W;py[i]=Math.random()*H;
+    vx[i]=(Math.random()-0.5);vy[i]=(Math.random()-0.5);
+  }
+  life[i]=1;decay[i]=Math.random()*0.003+0.001;
+  size[i]=Math.random()*2+0.8;
+  ci[i]=Math.floor(Math.random()*5);
+  orb[i]=(Math.random()-0.5)*0.02;
+  mass[i]=Math.random()*0.5+0.5;
+}
+for(let i=0;i<N;i++)initParticle(i,false);
+
+let count=N;
+
+function render(){
+  tick++;
+  // Fade with full-canvas fill (no compositing tricks)
+  ctx.fillStyle='rgba(0,0,0,0.1)';
+  ctx.fillRect(0,0,W,H);
+
+  // Central glow (one gradient, cheap)
+  const [cr,cg,cb]=palettes[paletteIdx].colors[0];
+  const rad=mDown?300:150;
+  const grd=ctx.createRadialGradient(mx,my,0,mx,my,rad);
+  grd.addColorStop(0,`rgba(${cr},${cg},${cb},${mDown?0.12:0.04})`);
+  grd.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=grd;
+  ctx.fillRect(mx-rad,my-rad,rad*2,rad*2);
+
+  const grav=gravity, md=mDown, curMx=mx, curMy=my;
+  const sp=sprites[paletteIdx];
+
+  // Batch update + draw with sprite blitting
+  ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<count;i++){
+    const dx=curMx-px[i], dy=curMy-py[i];
+    const dist=Math.sqrt(dx*dx+dy*dy)+1;
+    let force=grav*mass[i]/(dist*0.08);
+    if(md)force*=4;
+
+    const invD=1/dist;
+    vx[i]+=(dx*invD*force)+(-dy*invD*orb[i]*2);
+    vy[i]+=(dy*invD*force)+(dx*invD*orb[i]*2);
+    vx[i]*=0.995; vy[i]*=0.995;
+    px[i]+=vx[i]; py[i]+=vy[i];
+    life[i]-=decay[i];
+
+    if(px[i]<-50)px[i]=W+50;
+    else if(px[i]>W+50)px[i]=-50;
+    if(py[i]<-50)py[i]=H+50;
+    else if(py[i]>H+50)py[i]=-50;
+
+    if(life[i]<=0){initParticle(i,false);continue;}
+
+    const s=size[i]*life[i];
+    const drawSize=s*spriteSize*0.35;
+    ctx.globalAlpha=life[i]*0.85;
+    ctx.drawImage(sp[ci[i]],px[i]-drawSize*0.5,py[i]-drawSize*0.5,drawSize,drawSize);
+  }
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+
+  requestAnimationFrame(render);
+}
+
+addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+addEventListener('touchmove',e=>{e.preventDefault();mx=e.touches[0].clientX;my=e.touches[0].clientY},{passive:false});
+addEventListener('mousedown',()=>mDown=true);
+addEventListener('mouseup',()=>mDown=false);
+addEventListener('touchstart',e=>{mDown=true;mx=e.touches[0].clientX;my=e.touches[0].clientY});
+addEventListener('touchend',()=>mDown=false);
+
+addEventListener('wheel',e=>{
+  gravity+=e.deltaY>0?-0.03:0.03;
+  gravity=Math.max(-0.5,Math.min(0.8,gravity));
+  document.getElementById('mode').textContent=`Gravity: ${gravity.toFixed(2)}`;
+  clearTimeout(window._gt);window._gt=setTimeout(()=>document.getElementById('mode').textContent='',1500);
+});
+
+addEventListener('keydown',e=>{
+  if(e.key>='1'&&e.key<='4'){
+    paletteIdx=parseInt(e.key)-1;
+    document.getElementById('mode').textContent=palettes[paletteIdx].name;
+    clearTimeout(window._pt);window._pt=setTimeout(()=>document.getElementById('mode').textContent='',1500);
+  }
+  if(e.key===' '){
+    e.preventDefault();
+    const extra=Math.min(120,N-count);
+    for(let i=0;i<extra;i++){count++;initParticle(count-1,true);}
+    // Also repurpose some existing dead particles
+    for(let i=0;i<count&&i<80;i++){if(life[i]<0.2)initParticle(i,true);}
+  }
+});
+
+resize();
+render();
+</script>
+</body>
+</html>
