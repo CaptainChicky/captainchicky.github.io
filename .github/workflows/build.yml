@@ -66,6 +66,7 @@ jobs:
             Zip-Bomb/
             plant-generator/
             Tools/
+            biochem/
           sparse-checkout-cone-mode: false
           # By setting cone mode to false, I can specify specific files to include during sparse checkout
           # this means I will specify all root dir files (including the Gemfile and yaml file)

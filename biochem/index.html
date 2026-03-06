@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biochemistry Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0c0c0c;
+    --surface: #141414;
+    --card: #181818;
+    --border: #2a2a2a;
+    --border-hover: #3a3a3a;
+    --gold: #e8c547;
+    --gold-dim: #e8c54730;
+    --gold-glow: #e8c54718;
+    --text: #ddd8cc;
+    --text-dim: #8a8575;
+    --text-faint: #5a5548;
+    /* topic accent colors */
+    --enzymes: #e8c547;
+    --metabolism: #5dbe8a;
+    --proteins: #6aaddb;
+    --nucleic: #d47ed0;
+    --lipids: #e0845e;
+    --signaling: #7b8ff0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans Pro', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- Grain overlay ---- */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    padding: 80px 32px 60px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 500px;
+    background: radial-gradient(ellipse, var(--gold-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.1s forwards;
+  }
+
+  .hero-rule span {
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .hero-rule .diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 56px);
+    color: var(--gold);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.25s forwards;
+  }
+
+  .hero .tagline {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(15px, 2.2vw, 19px);
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.55s forwards;
+  }
+
+  /* ---- Section headings ---- */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 960px;
+    margin: 0 auto 20px;
+    padding: 0 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .section-label h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .section-label .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ---- Card grid ---- */
+  .grid {
+    max-width: 960px;
+    margin: 0 auto 52px;
+    padding: 0 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* ---- Card ---- */
+  .card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 24px 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--gold));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--card-accent, var(--gold));
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-tag .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--card-accent, var(--gold));
+  }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+
+  .card:hover h3 { color: var(--gold); }
+
+  .card p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    flex: 1;
+  }
+
+  .card-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-topics {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .topic-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--gold-dim);
+    color: var(--gold);
+  }
+
+  .card-arrow {
+    font-size: 18px;
+    color: var(--text-faint);
+    transition: color 0.3s, transform 0.3s;
+  }
+
+  .card:hover .card-arrow {
+    color: var(--gold);
+    transform: translateX(3px);
+  }
+
+  .card.placeholder {
+    border-style: dashed;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .card.placeholder h3 { color: var(--text-dim); }
+  .card.placeholder:hover h3 { color: var(--text-dim); }
+  .card.placeholder:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .card.placeholder::before { display: none; }
+
+  .coming-soon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    background: #1e1e1e;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* ---- Footer ---- */
+  footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 28px 48px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---- Animations ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* stagger cards */
+  .card:nth-child(1) { animation-delay: 0.6s; }
+  .card:nth-child(2) { animation-delay: 0.72s; }
+  .card:nth-child(3) { animation-delay: 0.84s; }
+  .card:nth-child(4) { animation-delay: 0.96s; }
+  .card:nth-child(5) { animation-delay: 1.08s; }
+  .card:nth-child(6) { animation-delay: 1.2s; }
+  .card:nth-child(7) { animation-delay: 1.32s; }
+  .card:nth-child(8) { animation-delay: 1.44s; }
+
+  .section-label:nth-of-type(1) { animation-delay: 0.5s; }
+  .section-label:nth-of-type(2) { animation-delay: 0.9s; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 56px 20px 40px; }
+    .grid { padding: 0 16px; }
+    .section-label { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ======== Hero ======== -->
+  <header class="hero">
+    <div class="hero-rule">
+      <span></span><div class="diamond"></div><span></span>
+    </div>
+    <h1>Biochemistry Reference</h1>
+    <p class="tagline">Equations, mechanisms, and derivations from first principles</p>
+    <p class="meta">Personal study notes &amp; visual references</p>
+  </header>
+
+  <!-- ======== Completed ======== -->
+  <div class="section-label">
+    <h2>Writeups</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Enzyme Inhibitors (LIVE) -->
+    <a href="./enzyme-inhibition/" class="card" style="--card-accent: var(--enzymes);">
+      <div class="card-tag"><div class="dot"></div>Enzymes</div>
+      <h3>Enzyme Inhibitor Organizer</h3>
+      <p>Comparative reference for all reversible inhibitor types. Binding sites, kinetic effects, Michaelis-Menten and Lineweaver-Burk derivations, plus a full derivation of the master equation from first principles.</p>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-pill">Km / Vmax</span>
+          <span class="topic-pill">Lineweaver-Burk</span>
+          <span class="topic-pill">α / α'</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Ligand Binding & Transport (LIVE) -->
+    <a href="./binding/" class="card" style="--card-accent: var(--proteins);">
+      <div class="card-tag"><div class="dot"></div>Binding &amp; Transport</div>
+      <h3>Ligand Binding &amp; Transport Energetics</h3>
+      <p>Binding equilibria, fractional saturation, Mb vs. Hb curves, cooperativity, Hill equation derivation, allosteric effectors, and membrane transport ΔG equations with worked examples.</p>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-pill">θ / Kd</span>
+          <span class="topic-pill">Hill Plots</span>
+          <span class="topic-pill">ΔG Transport</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Thermo & Protein Structure (LIVE) -->
+    <a href="./thermo/" class="card" style="--card-accent: var(--lipids);">
+      <div class="card-tag"><div class="dot"></div>Thermodynamics &amp; Structure</div>
+      <h3>Thermodynamics &amp; Protein Structure Math</h3>
+      <p>Gibbs free energy, ΔG°' and Keq, reaction quotient, Henderson-Hasselbalch with net charge calculations, Ramachandran geometry, and α-helix propensity ΔΔG analysis.</p>
+      <div class="card-footer">
+        <div class="card-topics">
+          <span class="topic-pill">ΔG / Keq</span>
+          <span class="topic-pill">pKa / Charge</span>
+          <span class="topic-pill">φ / ψ Angles</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Placeholder: Glycolysis -->
+    <div class="card placeholder" style="--card-accent: var(--metabolism);">
+      <div class="card-tag"><div class="dot"></div>Metabolism</div>
+      <h3>Glycolysis Pathway</h3>
+      <p>Ten-step breakdown of glucose, regulation points, energy accounting, and connections to gluconeogenesis.</p>
+      <div class="card-footer">
+        <span class="coming-soon">Coming soon</span>
+        <span class="card-arrow" style="opacity:0;"></span>
+      </div>
+    </div>
+
+    <!-- Placeholder: TCA Cycle -->
+    <div class="card placeholder" style="--card-accent: var(--metabolism);">
+      <div class="card-tag"><div class="dot"></div>Metabolism</div>
+      <h3>TCA Cycle &amp; Electron Transport</h3>
+      <p>Citric acid cycle intermediates, regulation, NADH/FADH2 yield, and oxidative phosphorylation coupling.</p>
+      <div class="card-footer">
+        <span class="coming-soon">Coming soon</span>
+        <span class="card-arrow" style="opacity:0;"></span>
+      </div>
+    </div>
+
+    <!-- Placeholder: Amino Acids -->
+    <div class="card placeholder" style="--card-accent: var(--proteins);">
+      <div class="card-tag"><div class="dot"></div>Proteins</div>
+      <h3>Amino Acid Properties</h3>
+      <p>Side chain chemistry, pKa values, titration curves, and how structure maps to protein folding behavior.</p>
+      <div class="card-footer">
+        <span class="coming-soon">Coming soon</span>
+        <span class="card-arrow" style="opacity:0;"></span>
+      </div>
+    </div>
+
+    <!-- Placeholder: DNA/RNA -->
+    <div class="card placeholder" style="--card-accent: var(--nucleic);">
+      <div class="card-tag"><div class="dot"></div>Nucleic Acids</div>
+      <h3>DNA Replication &amp; Repair</h3>
+      <p>Replication machinery, proofreading, mismatch repair, and common damage/repair pathways.</p>
+      <div class="card-footer">
+        <span class="coming-soon">Coming soon</span>
+        <span class="card-arrow" style="opacity:0;"></span>
+      </div>
+    </div>
+
+    <!-- Placeholder: Lipids -->
+    <div class="card placeholder" style="--card-accent: var(--lipids);">
+      <div class="card-tag"><div class="dot"></div>Lipids</div>
+      <h3>Membrane Structure &amp; Lipid Metabolism</h3>
+      <p>Fatty acid synthesis vs. β-oxidation, membrane fluidity, cholesterol regulation, and lipid signaling.</p>
+      <div class="card-footer">
+        <span class="coming-soon">Coming soon</span>
+        <span class="card-arrow" style="opacity:0;"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======== Footer ======== -->
+  <footer>
+    <p>Personal biochemistry reference collection</p>
+  </footer>
+
+</body>
+</html>

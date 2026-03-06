@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thermodynamics &amp; Protein Structure Math</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  startup: { typeset: true }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+Pro:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f0f0f; --card: #1a1a1a; --accent: #e8c547; --accent-dim: #e8c54740;
+    --text: #e0dcd0; --dim: #999; --border: #333; --highlight: #2a2520;
+    --green: #5dbe8a; --blue: #6aaddb; --red: #e85d5d; --purple: #d47ed0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', sans-serif; padding: 36px 24px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--dim); font-size: 14px; line-height: 1.5; margin-bottom: 28px; }
+  a.back { color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; display: inline-block; margin-bottom: 20px; transition: opacity 0.2s; }
+  a.back:hover { opacity: 0.7; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+  .card h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--accent); font-weight: 700; margin: 0 0 4px; }
+  .card .card-sub { color: var(--dim); font-size: 13px; font-style: italic; margin-bottom: 16px; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
+  .full-span { grid-column: 1 / -1; }
+  .label { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .value { font-size: 14px; line-height: 1.55; margin-bottom: 10px; }
+  .why { color: var(--dim); font-size: 12.5px; line-height: 1.55; margin-top: 4px; padding-left: 10px; border-left: 2px solid var(--accent-dim); }
+  .divider { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 10px; }
+
+  .summary-table { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+  .summary-table table { width: 100%; border-collapse: collapse; }
+  .summary-table th { padding: 10px 12px; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; background: #151515; border-bottom: 1px solid var(--border); }
+  .summary-table td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+  .deriv { background: #111; border-radius: 8px; padding: 16px 20px; margin: 10px 0; font-size: 13.5px; line-height: 1.75; overflow-x: auto; }
+  .deriv .step-note { color: var(--dim); font-size: 12.5px; display: block; margin-bottom: 2px; }
+  .deriv .step-eq { margin: 6px 0; padding-left: 12px; }
+  .deriv .step-result { color: var(--accent); font-weight: 600; }
+
+  .boxed-eq { border: 1px solid var(--accent-dim); background: #161210; border-radius: 8px; padding: 14px 20px; margin: 12px 0; font-size: 15px; text-align: center; overflow-x: auto; }
+
+  .insight { margin-top: 4px; padding: 14px 18px; background: var(--highlight); border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--dim); line-height: 1.6; }
+  .insight strong { color: var(--accent); }
+
+  .deriv-btn { margin-top: 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--accent); padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; transition: background 0.2s; }
+  .deriv-btn:hover { background: var(--highlight); }
+  .deriv-btn.open { background: var(--highlight); }
+  .deriv-box { margin-top: 14px; display: none; }
+  .deriv-box.open { display: block; }
+
+  .example { background: #131816; border: 1px solid #1e332a; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .example .ex-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); margin-bottom: 8px; }
+  .example .ex-body { font-size: 13.5px; line-height: 1.65; }
+
+  @media (max-width: 700px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" class="back">← Back to index</a>
+  <h1>Thermodynamics &amp; Protein Structure Math</h1>
+  <p class="subtitle">
+    Gibbs free energy, equilibrium, reaction quotient, Henderson-Hasselbalch, Ramachandran geometry, and helix propensity calculations. Full derivations from first principles.
+  </p>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 1: GIBBS FREE ENERGY                               -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>1. Gibbs Free Energy</h2>
+    <div class="card-sub">The master equation for spontaneity</div>
+
+    <div class="label">Definition</div>
+    <div class="value">
+      The Gibbs free energy change $\Delta G$ tells you whether a process happens spontaneously at constant temperature and pressure:
+    </div>
+    <div class="boxed-eq">
+      $$\Delta G = \Delta H - T\Delta S$$
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">$\Delta H$ (enthalpy change)</div>
+        <div class="value">Heat absorbed or released. $\Delta H < 0$ is exothermic (releases heat, favorable).</div>
+      </div>
+      <div>
+        <div class="label">$\Delta S$ (entropy change)</div>
+        <div class="value">Change in disorder. $\Delta S > 0$ means more disorder (favorable, since $-T\Delta S$ becomes negative).</div>
+      </div>
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Derive from the second law of thermodynamics</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note"><span class="step-result">Starting point: the second law</span></span>
+        <span class="step-note">For any spontaneous process, the total entropy of the universe must increase:</span>
+        <div class="step-eq">$\Delta S_{universe} = \Delta S_{system} + \Delta S_{surroundings} > 0$</div>
+
+        <span class="step-note">At constant pressure, the heat released by the system is absorbed by the surroundings:</span>
+        <div class="step-eq">$q_{surroundings} = -q_{system} = -\Delta H_{system}$</div>
+
+        <span class="step-note">The entropy change of the surroundings (which acts as a large thermal reservoir at temperature $T$) is:</span>
+        <div class="step-eq">$\Delta S_{surroundings} = \dfrac{q_{surroundings}}{T} = \dfrac{-\Delta H_{system}}{T}$</div>
+
+        <span class="step-note">Substitute back into the second law:</span>
+        <div class="step-eq">$\Delta S_{universe} = \Delta S_{system} + \dfrac{-\Delta H_{system}}{T} > 0$</div>
+
+        <span class="step-note">Multiply both sides by $-T$ (this flips the inequality):</span>
+        <div class="step-eq">$-T\Delta S_{universe} = \Delta H_{system} - T\Delta S_{system} < 0$</div>
+
+        <span class="step-note">Define $\Delta G \equiv \Delta H_{system} - T\Delta S_{system}$. Then the criterion for spontaneity becomes:</span>
+      </div>
+      <div class="boxed-eq">
+        $$\Delta G < 0 \implies \text{spontaneous} \qquad \Delta G > 0 \implies \text{non-spontaneous} \qquad \Delta G = 0 \implies \text{equilibrium}$$
+      </div>
+      <div class="why">
+        Gibbs free energy packages the second law into a single system-only quantity. You no longer need to track the surroundings. $\Delta G$ encodes both the enthalpy preference (are bonds stronger?) and the entropy preference (is disorder increasing?) into one number.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Spontaneity analysis</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr><th>$\Delta H$</th><th>$\Delta S$</th><th>$\Delta G = \Delta H - T\Delta S$</th><th>Spontaneous?</th></tr></thead>
+        <tbody>
+          <tr><td>$-$ (exo)</td><td>$+$ (more disorder)</td><td>Always $-$</td><td>Always (at all $T$)</td></tr>
+          <tr><td>$+$ (endo)</td><td>$-$ (less disorder)</td><td>Always $+$</td><td>Never (at any $T$)</td></tr>
+          <tr><td>$-$ (exo)</td><td>$-$ (less disorder)</td><td>Depends on $T$</td><td>At low $T$ (enthalpy wins)</td></tr>
+          <tr><td>$+$ (endo)</td><td>$+$ (more disorder)</td><td>Depends on $T$</td><td>At high $T$ (entropy wins)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Example: Temperature-dependent spontaneity</div>
+      <div class="ex-body">
+        A reaction has $\Delta H = -16.1$ kJ/mol and $\Delta S = -21.8$ J/(mol·K). This is the "exothermic but order-increasing" case (row 3). At what temperature does it switch from spontaneous to non-spontaneous?
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <span class="step-note">Set $\Delta G = 0$ and solve for $T$:</span>
+          <div class="step-eq">$0 = \Delta H - T\Delta S$</div>
+          <div class="step-eq">$T = \dfrac{\Delta H}{\Delta S} = \dfrac{-16.1\text{ kJ/mol}}{-0.0218\text{ kJ/(mol·K)}} = 738.5\text{ K}$</div>
+          <span class="step-note">Watch the unit conversion: $-21.8$ J/(mol·K) $= -0.0218$ kJ/(mol·K).</span>
+          <span class="step-note">Below 738.5 K: $|T\Delta S|$ is small, enthalpy term dominates, <span class="step-result">$\Delta G < 0$ (spontaneous)</span>.</span>
+          <span class="step-note">Above 738.5 K: $|T\Delta S|$ grows large, entropy penalty dominates, <span class="step-result">$\Delta G > 0$ (non-spontaneous)</span>.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 2: STANDARD FREE ENERGY & Keq                     -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>2. Standard Free Energy &amp; Equilibrium</h2>
+    <div class="card-sub">Connecting $\Delta G°'$ to $K_{eq}$ and the reaction quotient $Q$</div>
+
+    <div class="label">Two different $\Delta G$'s</div>
+    <div class="grid2">
+      <div>
+        <div class="label">$\Delta G°'$ (standard)</div>
+        <div class="value">Free energy change when all reactants and products are at their standard-state concentrations (1 M each, pH 7, 25°C). A fixed property of the reaction.</div>
+      </div>
+      <div>
+        <div class="label">$\Delta G$ (actual)</div>
+        <div class="value">Free energy change under the actual concentrations in the cell right now. This is what determines direction. Depends on both $\Delta G°'$ and the current concentration ratio.</div>
+      </div>
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Full derivation of $\Delta G = \Delta G°' + RT\ln Q$</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note"><span class="step-result">Setup:</span> Consider the reaction $A \rightleftharpoons B$</span>
+        <span class="step-note">The chemical potential of species $A$ at concentration $[A]$ is:</span>
+        <div class="step-eq">$\mu_A = \mu_A^\circ + RT\ln[A]$</div>
+        <span class="step-note">Similarly for $B$:</span>
+        <div class="step-eq">$\mu_B = \mu_B^\circ + RT\ln[B]$</div>
+
+        <span class="step-note">The free energy change for converting one mole of $A$ into $B$ at these concentrations is:</span>
+        <div class="step-eq">$\Delta G = \mu_B - \mu_A$</div>
+        <div class="step-eq">$= (\mu_B^\circ + RT\ln[B]) - (\mu_A^\circ + RT\ln[A])$</div>
+        <div class="step-eq">$= (\mu_B^\circ - \mu_A^\circ) + RT(\ln[B] - \ln[A])$</div>
+
+        <span class="step-note">The first term $(\mu_B^\circ - \mu_A^\circ)$ is the free energy change when both species are at standard concentration. By definition, this is $\Delta G°'$:</span>
+        <div class="step-eq">$\Delta G°' = \mu_B^\circ - \mu_A^\circ$</div>
+
+        <span class="step-note">The second term uses the log quotient rule:</span>
+        <div class="step-eq">$RT(\ln[B] - \ln[A]) = RT\ln\!\left(\dfrac{[B]}{[A]}\right) = RT\ln Q$</div>
+
+        <span class="step-note">where $Q = [B]/[A]$ is the <span class="step-result">reaction quotient</span> (the mass action ratio at the current concentrations).</span>
+        <span class="step-note">Combining:</span>
+      </div>
+      <div class="boxed-eq">
+        $$\Delta G = \Delta G°' + RT\ln Q$$
+      </div>
+      <div class="why">
+        For a general reaction $aA + bB \rightleftharpoons cC + dD$, the reaction quotient is $Q = \dfrac{[C]^c[D]^d}{[A]^a[B]^b}$. The derivation is identical but uses the stoichiometric sum of chemical potentials.
+      </div>
+
+      <div class="deriv" style="margin-top:14px;">
+        <span class="step-note"><span class="step-result">Now derive $\Delta G°' = -RT\ln K_{eq}$</span></span>
+        <span class="step-note">At equilibrium, $\Delta G = 0$ (no net driving force in either direction). Also, $Q = K_{eq}$ at equilibrium. Substitute both into the master equation:</span>
+        <div class="step-eq">$0 = \Delta G°' + RT\ln K_{eq}$</div>
+        <span class="step-note">Solve for $\Delta G°'$:</span>
+      </div>
+      <div class="boxed-eq">
+        $$\Delta G°' = -RT\ln K_{eq}$$
+      </div>
+      <div class="why">
+        This is not a separate equation. It is the master equation $\Delta G = \Delta G°' + RT\ln Q$ evaluated at the special case of equilibrium ($\Delta G = 0$, $Q = K_{eq}$). Every problem involving $K_{eq}$ and $\Delta G°'$ comes from this one relationship.
+      </div>
+
+      <div class="deriv" style="margin-top:14px;">
+        <span class="step-note"><span class="step-result">Substituting back: the most useful form</span></span>
+        <span class="step-note">Replace $\Delta G°'$ with $-RT\ln K_{eq}$ in the master equation:</span>
+        <div class="step-eq">$\Delta G = -RT\ln K_{eq} + RT\ln Q = RT\ln\!\left(\dfrac{Q}{K_{eq}}\right)$</div>
+      </div>
+      <div class="boxed-eq">
+        $$\Delta G = RT\ln\!\left(\frac{Q}{K_{eq}}\right)$$
+      </div>
+      <div class="why">
+        This form makes the physics crystal clear. If $Q < K_{eq}$: the system has "too much" reactant relative to equilibrium, $\Delta G < 0$, reaction goes forward. If $Q > K_{eq}$: "too much" product, $\Delta G > 0$, reaction goes backward. If $Q = K_{eq}$: equilibrium, $\Delta G = 0$.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Worked examples</div>
+
+    <div class="example">
+      <div class="ex-title">Example 1: $\Delta G°'$ from $K_{eq}$</div>
+      <div class="ex-body">
+        The reaction $A \rightleftharpoons B$ has $K_{eq} = 10$. Find $\Delta G°'$ at 25°C.
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <div class="step-eq">$\Delta G°' = -RT\ln K_{eq}$</div>
+          <div class="step-eq">$= -(8.314 \times 10^{-3})(298)\ln(10)$</div>
+          <div class="step-eq">$= -(2.478)(2.303)$</div>
+          <div class="step-eq"><span class="step-result">$\Delta G°' = -5.7$ kJ/mol</span></div>
+          <span class="step-note">Negative: at standard concentrations the forward reaction is favored, which makes sense since $K_{eq} > 1$ (products favored at equilibrium).</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Example 2: Actual $\Delta G$ at cellular concentrations</div>
+      <div class="ex-body">
+        Same reaction ($K_{eq} = 10$), but now $[A] = 0.9$ mM and $[B] = 0.1$ mM. $T = 37°C = 310$ K.
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <span class="step-note">First find $\Delta G°'$ at 310 K:</span>
+          <div class="step-eq">$\Delta G°' = -(8.314 \times 10^{-3})(310)\ln(10) = -(2.577)(2.303) = -5.935$ kJ/mol</div>
+          <span class="step-note">Compute $Q$:</span>
+          <div class="step-eq">$Q = \dfrac{[B]}{[A]} = \dfrac{0.1}{0.9} = 0.111$</div>
+          <span class="step-note">Apply the master equation:</span>
+          <div class="step-eq">$\Delta G = \Delta G°' + RT\ln Q$</div>
+          <div class="step-eq">$= -5.935 + (2.577)\ln(0.111)$</div>
+          <div class="step-eq">$= -5.935 + (2.577)(-2.198)$</div>
+          <div class="step-eq">$= -5.935 + (-5.664)$</div>
+          <div class="step-eq"><span class="step-result">$\Delta G = -11.6$ kJ/mol</span></div>
+          <span class="step-note">Even more negative than $\Delta G°'$! The low $Q$ (mostly reactant $A$) means the system is far from equilibrium, strongly favoring $A \to B$.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:12px;">
+      <strong>Key point:</strong> $\Delta G°'$ is a fixed property of the reaction (only depends on $K_{eq}$ and $T$). $\Delta G$ is a snapshot of the current state (depends on actual concentrations via $Q$). A reaction with a <em>positive</em> $\Delta G°'$ can still proceed forward if the concentrations are far enough from equilibrium that $RT\ln Q$ is sufficiently negative.
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 3: HENDERSON-HASSELBALCH & CHARGE                  -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>3. Henderson-Hasselbalch &amp; Net Charge</h2>
+    <div class="card-sub">Predicting protonation states and peptide charge from pH and pKa</div>
+
+    <div class="label">The acid dissociation equilibrium</div>
+    <div class="value">
+      A weak acid $HA$ dissociates in water:
+      $$HA \rightleftharpoons A^- + H^+$$
+    </div>
+    <div class="deriv">
+      <span class="step-note">The equilibrium expression is:</span>
+      <div class="step-eq">$K_a = \dfrac{[A^-][H^+]}{[HA]}$</div>
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Full derivation of the Henderson-Hasselbalch equation</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note">Start from the $K_a$ expression:</span>
+        <div class="step-eq">$K_a = \dfrac{[A^-][H^+]}{[HA]}$</div>
+
+        <span class="step-note">Take the negative $\log_{10}$ of both sides:</span>
+        <div class="step-eq">$-\log K_a = -\log\!\left(\dfrac{[A^-][H^+]}{[HA]}\right)$</div>
+
+        <span class="step-note">The left side is $pK_a$ by definition. Expand the right side using log rules:</span>
+        <div class="step-eq">$pK_a = -\log[H^+] - \log\!\left(\dfrac{[A^-]}{[HA]}\right)$</div>
+
+        <span class="step-note">Recognize that $-\log[H^+] = pH$:</span>
+        <div class="step-eq">$pK_a = pH - \log\!\left(\dfrac{[A^-]}{[HA]}\right)$</div>
+
+        <span class="step-note">Rearrange to solve for $pH$:</span>
+      </div>
+      <div class="boxed-eq">
+        $$pH = pK_a + \log\!\left(\frac{[A^-]}{[HA]}\right)$$
+      </div>
+      <div class="why">
+        When $pH = pK_a$: the log term is 0, so $[A^-] = [HA]$. Exactly half is protonated. When $pH > pK_a$ (by 1 or more units): the deprotonated form $A^-$ dominates. When $pH < pK_a$ (by 1 or more units): the protonated form $HA$ dominates.
+      </div>
+
+      <div class="deriv" style="margin-top:14px;">
+        <span class="step-note"><span class="step-result">Deriving the fraction protonated</span></span>
+        <span class="step-note">From $K_a = [A^-][H^+]/[HA]$, solve for the ratio:</span>
+        <div class="step-eq">$\dfrac{[A^-]}{[HA]} = \dfrac{K_a}{[H^+]} = 10^{pH - pK_a}$</div>
+
+        <span class="step-note">Let $f_{HA}$ be the fraction protonated and $f_{A^-}$ the fraction deprotonated. Since $f_{HA} + f_{A^-} = 1$:</span>
+        <div class="step-eq">$f_{A^-} = \dfrac{[A^-]}{[HA] + [A^-]} = \dfrac{10^{pH - pK_a}}{1 + 10^{pH - pK_a}}$</div>
+        <div class="step-eq">$f_{HA} = \dfrac{1}{1 + 10^{pH - pK_a}}$</div>
+      </div>
+      <div class="why">
+        These fractions let you compute the exact charge contribution from any ionizable group at any pH, not just the "dominant species" shortcut. For exam-level problems where $pH$ is far from $pK_a$ (more than ~2 units away), the dominant-species shortcut works fine.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">The shortcut rule for charge states</div>
+    <div class="deriv">
+      <span class="step-note"><span class="step-result">For acidic groups</span> (COOH, Asp, Glu, Cys, Tyr):</span>
+      <span class="step-note">Protonated form = neutral ($HA$). Deprotonated form = negative ($A^-$).</span>
+      <div class="step-eq">$pH < pK_a$: protonated → charge $= 0$</div>
+      <div class="step-eq">$pH > pK_a$: deprotonated → charge $= -1$</div>
+
+      <span class="step-note" style="margin-top:10px;"><span class="step-result">For basic groups</span> (NH₃⁺ at N-terminus, Lys, Arg, His):</span>
+      <span class="step-note">Protonated form = positive ($BH^+$). Deprotonated form = neutral ($B$).</span>
+      <div class="step-eq">$pH < pK_a$: protonated → charge $= +1$</div>
+      <div class="step-eq">$pH > pK_a$: deprotonated → charge $= 0$</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Standard pKa values</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr><th>Group</th><th>$pK_a$</th><th>Type</th><th>Protonated charge</th><th>Deprotonated charge</th></tr></thead>
+        <tbody>
+          <tr><td>α-COOH (C-term)</td><td>~2.0</td><td>Acidic</td><td>0</td><td>$-1$</td></tr>
+          <tr><td>Asp (D) side chain</td><td>~3.65</td><td>Acidic</td><td>0</td><td>$-1$</td></tr>
+          <tr><td>Glu (E) side chain</td><td>~4.25</td><td>Acidic</td><td>0</td><td>$-1$</td></tr>
+          <tr><td>His (H) side chain</td><td>~6.0</td><td>Basic</td><td>$+1$</td><td>0</td></tr>
+          <tr><td>α-NH₃⁺ (N-term)</td><td>~8.0</td><td>Basic</td><td>$+1$</td><td>0</td></tr>
+          <tr><td>Cys (C) side chain</td><td>~8.18</td><td>Acidic</td><td>0</td><td>$-1$</td></tr>
+          <tr><td>Tyr (Y) side chain</td><td>~10.07</td><td>Acidic</td><td>0</td><td>$-1$</td></tr>
+          <tr><td>Lys (K) side chain</td><td>~10.53</td><td>Basic</td><td>$+1$</td><td>0</td></tr>
+          <tr><td>Arg (R) side chain</td><td>~12.48</td><td>Basic</td><td>$+1$</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Worked example: net charge of KYENH</div>
+    <div class="example">
+      <div class="ex-title">Net charge at pH 7</div>
+      <div class="ex-body">
+        Peptide: Lys-Tyr-Glu-Asn-His. Ionizable groups:
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <span class="step-note">Walk through each ionizable group, comparing pH 7 to its $pK_a$:</span>
+          <div class="step-eq">α-NH₃⁺ (N-term): $pK_a \approx 8.0$, $pH < pK_a$ → protonated → $+1$</div>
+          <div class="step-eq">Lys side chain: $pK_a \approx 10.53$, $pH < pK_a$ → protonated → $+1$</div>
+          <div class="step-eq">Tyr side chain: $pK_a \approx 10.07$, $pH < pK_a$ → protonated → $0$</div>
+          <div class="step-eq">Glu side chain: $pK_a \approx 4.25$, $pH > pK_a$ → deprotonated → $-1$</div>
+          <div class="step-eq">Asn side chain: not ionizable → $0$</div>
+          <div class="step-eq">His side chain: $pK_a \approx 6.0$, $pH > pK_a$ → deprotonated → $0$</div>
+          <div class="step-eq">α-COO⁻ (C-term): $pK_a \approx 2.0$, $pH > pK_a$ → deprotonated → $-1$</div>
+          <span class="step-note">Sum: $(+1) + (+1) + (0) + (-1) + (0) + (0) + (-1)$</span>
+          <div class="step-eq"><span class="step-result">Net charge at pH 7 = 0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Net charge at pH 11</div>
+      <div class="ex-body">
+        Same peptide, higher pH. Re-evaluate each group:
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <div class="step-eq">α-NH₃⁺: $pK_a \approx 8.0$, $pH > pK_a$ → deprotonated → $0$</div>
+          <div class="step-eq">Lys: $pK_a \approx 10.53$, $pH > pK_a$ → deprotonated → $0$</div>
+          <div class="step-eq">Tyr: $pK_a \approx 10.07$, $pH > pK_a$ → deprotonated → $-1$</div>
+          <div class="step-eq">Glu: $pK_a \approx 4.25$, $pH > pK_a$ → deprotonated → $-1$</div>
+          <div class="step-eq">Asn: not ionizable → $0$</div>
+          <div class="step-eq">His: $pK_a \approx 6.0$, $pH > pK_a$ → deprotonated → $0$</div>
+          <div class="step-eq">α-COO⁻: $pK_a \approx 2.0$, $pH > pK_a$ → deprotonated → $-1$</div>
+          <span class="step-note">Sum: $(0) + (0) + (-1) + (-1) + (0) + (0) + (-1)$</span>
+          <div class="step-eq"><span class="step-result">Net charge at pH 11 = $-3$</span></div>
+          <span class="step-note">At high pH, most basic groups have lost their protons (no longer positive), and all acidic groups are deprotonated (all negative).</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 4: RAMACHANDRAN ANGLES                             -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2>4. Ramachandran Geometry</h2>
+        <div class="card-sub">Backbone torsion angles and allowed conformations</div>
+      </div>
+      <canvas id="plot-rama" style="border-radius:8px;"></canvas>
+    </div>
+
+    <div class="label">Defining $\phi$ and $\psi$</div>
+    <div class="value">
+      The peptide bond ($C$-$N$) is planar and rigid (partial double-bond character, no free rotation). But the bonds flanking each $C_\alpha$ <em>can</em> rotate. These two rotations define the backbone conformation of each residue:
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">$\phi$ (phi)</div>
+        <div class="value">
+          Rotation about the $N$-$C_\alpha$ bond. Defined as the dihedral angle $C_{i-1}$-$N$-$C_\alpha$-$C$.
+        </div>
+      </div>
+      <div>
+        <div class="label">$\psi$ (psi)</div>
+        <div class="value">
+          Rotation about the $C_\alpha$-$C$ bond. Defined as the dihedral angle $N$-$C_\alpha$-$C$-$N_{i+1}$.
+        </div>
+      </div>
+    </div>
+
+    <div class="why">Both angles range from $-180°$ to $+180°$. Most combinations cause steric clashes between backbone atoms or between the backbone and the side chain. A Ramachandran plot maps $\phi$ (x-axis) vs. $\psi$ (y-axis) and highlights the sterically allowed regions.</div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Why certain $\phi$/$\psi$ combinations are forbidden</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note"><span class="step-result">The steric clash argument</span></span>
+        <span class="step-note">Each atom has a van der Waals radius. If two non-bonded atoms are forced closer than the sum of their radii, the potential energy spikes (Lennard-Jones repulsion). The calculation is:</span>
+        <div class="step-eq">$d_{ij}(\phi, \psi) < r_i^{vdW} + r_j^{vdW} \implies$ steric clash $\implies$ that $(\phi, \psi)$ is forbidden</div>
+        <span class="step-note">For each $(\phi, \psi)$ pair, compute the 3D coordinates of every backbone (and $C_\beta$) atom using the rigid peptide plane geometry + the two torsion angles. Then check all pairwise distances.</span>
+
+        <span class="step-note" style="margin-top:10px;"><span class="step-result">Allowed regions for most amino acids:</span></span>
+        <div class="step-eq">$\alpha$-helix: $\phi \approx -57°$, $\psi \approx -47°$</div>
+        <div class="step-eq">$\beta$-sheet: $\phi \approx -120°$ to $-140°$, $\psi \approx +110°$ to $+135°$</div>
+        <div class="step-eq">Left-handed helix: $\phi \approx +60°$, $\psi \approx +45°$ (rare, sterically strained for L-amino acids)</div>
+
+        <span class="step-note" style="margin-top:10px;"><span class="step-result">Why glycine is special:</span></span>
+        <span class="step-note">Glycine has no side chain (R = H). The $C_\beta$ atom causes most of the steric clashes in other amino acids. Without it, glycine can access $\phi$/$\psi$ regions that are forbidden for everything else (nearly the entire plot is allowed).</span>
+
+        <span class="step-note" style="margin-top:10px;"><span class="step-result">Why proline is special:</span></span>
+        <span class="step-note">Proline's side chain is covalently bonded back to the backbone nitrogen, forming a five-membered ring. This locks $\phi$ to approximately $-63°$ (very little rotational freedom). Proline is confined to a narrow vertical strip on the Ramachandran plot and is incompatible with the interior of an $\alpha$-helix (it lacks the backbone $N$-$H$ needed for the $i \to i+4$ hydrogen bond).</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">$\alpha$-helix geometry</div>
+    <div class="deriv">
+      <span class="step-note"><span class="step-result">Key parameters:</span></span>
+      <div class="step-eq">Residues per turn: $3.6$</div>
+      <div class="step-eq">Rise per residue: $1.5$ Å → Pitch (rise per turn): $3.6 \times 1.5 = 5.4$ Å</div>
+      <div class="step-eq">Hydrogen bond pattern: $C{=}O$ of residue $i$ bonds to $N{-}H$ of residue $i+4$</div>
+      <div class="step-eq">$\phi = -57°$, $\psi = -47°$ (right-handed helix)</div>
+    </div>
+    <div class="why">
+      The $i$ to $i+4$ spacing means that for a peptide segment like residues 1-2-3-4-5-6-7, the $C{=}O$ of residue 3 forms a hydrogen bond with the $N{-}H$ of residue 7 (three residues ahead in sequence, four peptide bonds apart).
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 5: HELIX PROPENSITY ΔΔG                            -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>5. Helix Propensity ($\Delta\Delta G°$)</h2>
+    <div class="card-sub">Predicting $\alpha$-helix stability from sequence</div>
+
+    <div class="label">What $\Delta\Delta G°$ measures</div>
+    <div class="value">
+      $\Delta\Delta G°$ for a given amino acid is the <em>additional</em> free energy cost (relative to alanine) required for that residue to adopt the $\alpha$-helical conformation. Alanine is the reference ($\Delta\Delta G° = 0$) because it has the highest intrinsic helix propensity among the common amino acids.
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Formal definition and how to use it</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note"><span class="step-result">Formal definition:</span></span>
+        <span class="step-note">For each amino acid $X$, measure the equilibrium between coil and helix for a host peptide with $X$ at a guest site:</span>
+        <div class="step-eq">$K_{helix}^X = \dfrac{[\text{helix}]}{[\text{coil}]}$ for amino acid $X$</div>
+        <div class="step-eq">$\Delta G°_{helix}^X = -RT\ln K_{helix}^X$</div>
+
+        <span class="step-note">The $\Delta\Delta G°$ is defined relative to alanine:</span>
+        <div class="step-eq">$\Delta\Delta G°_X = \Delta G°_{helix}^X - \Delta G°_{helix}^{Ala}$</div>
+        <div class="step-eq">$= -RT\ln K_{helix}^X - (-RT\ln K_{helix}^{Ala})$</div>
+        <div class="step-eq">$= -RT\ln\!\left(\dfrac{K_{helix}^X}{K_{helix}^{Ala}}\right)$</div>
+
+        <span class="step-note">If $\Delta\Delta G° > 0$: residue $X$ is <em>worse</em> at forming helix than Ala (less favorable).</span>
+        <span class="step-note">If $\Delta\Delta G° = 0$: equivalent to Ala (strong helix former).</span>
+
+        <span class="step-note" style="margin-top:12px;"><span class="step-result">Comparing two peptides:</span></span>
+        <span class="step-note">To estimate which peptide is more likely to form a helix, sum the $\Delta\Delta G°$ values for all residues:</span>
+        <div class="step-eq">$\Sigma\Delta\Delta G°_{peptide} = \displaystyle\sum_{i=1}^{n} \Delta\Delta G°_{residue\,i}$</div>
+        <span class="step-note">Lower total = easier to form helix = more likely to be helical.</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Some representative values</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr><th>Residue</th><th>$\Delta\Delta G°$ (kJ/mol)</th><th>Helix propensity</th></tr></thead>
+        <tbody>
+          <tr><td>Ala (A)</td><td>0</td><td>Best (reference)</td></tr>
+          <tr><td>Leu (L), Met (M)</td><td>~0.6</td><td>High</td></tr>
+          <tr><td>Lys (K), Arg (R)</td><td>~1.1</td><td>Moderate</td></tr>
+          <tr><td>Ser (S), Asn (N)</td><td>~2.4 – 2.8</td><td>Low</td></tr>
+          <tr><td>Val (V), Ile (I)</td><td>~2.5 – 2.8</td><td>Low (β-branching)</td></tr>
+          <tr><td>Gly (G)</td><td>~4.6</td><td>Very low (too flexible)</td></tr>
+          <tr><td>Pro (P)</td><td>~13.0</td><td>Helix breaker (locked $\phi$, no N-H)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Example: Comparing two peptides</div>
+      <div class="ex-body">
+        Peptide A: LKAENDEAARAMSEA. Peptide B: CRAGGFPWDQPGTSN.
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <span class="step-note">Peptide A is rich in Ala ($\Delta\Delta G° = 0$), Leu ($0.6$), Glu ($1.3$), with no Gly or Pro.</span>
+          <span class="step-note">Peptide B contains two Pro ($13.0$ each) and three Gly ($4.6$ each), which alone contribute $2(13.0) + 3(4.6) = 39.8$ kJ/mol.</span>
+          <span class="step-note"><span class="step-result">Peptide A has a much lower total $\Sigma\Delta\Delta G°$, so it is far more likely to form an $\alpha$-helix.</span></span>
+          <span class="step-note">This matches intuition: Pro is a helix breaker (rigid ring, no N-H donor) and Gly is too conformationally flexible to maintain the precise $\phi/\psi$ angles required.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  EQUATION REFERENCE                                         -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>Equation Reference</h2>
+    <div class="card-sub">All key equations in one place</div>
+    <div class="summary-table">
+      <table>
+        <thead><tr><th>Name</th><th>Equation</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>Gibbs free energy</td><td>$\Delta G = \Delta H - T\Delta S$</td><td>Spontaneity from enthalpy and entropy</td></tr>
+          <tr><td>Standard free energy</td><td>$\Delta G°' = -RT\ln K_{eq}$</td><td>Relating equilibrium constant to free energy</td></tr>
+          <tr><td>Actual free energy</td><td>$\Delta G = \Delta G°' + RT\ln Q$</td><td>Free energy at non-standard concentrations</td></tr>
+          <tr><td>Combined form</td><td>$\Delta G = RT\ln(Q/K_{eq})$</td><td>Quick check: which direction will the reaction go?</td></tr>
+          <tr><td>Henderson-Hasselbalch</td><td>$pH = pK_a + \log\!\left(\dfrac{[A^-]}{[HA]}\right)$</td><td>Protonation state / buffer pH</td></tr>
+          <tr><td>Fraction protonated</td><td>$f_{HA} = \dfrac{1}{1 + 10^{pH - pK_a}}$</td><td>Exact charge at any pH</td></tr>
+          <tr><td>Helix propensity sum</td><td>$\Sigma\Delta\Delta G° = \sum_i \Delta\Delta G°_i$</td><td>Comparing helix-forming tendency of peptides</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- =========================================================== -->
+<!--  RAMACHANDRAN PLOT                                           -->
+<!-- =========================================================== -->
+<script>
+function drawRamaPlot() {
+  const canvas = document.getElementById('plot-rama');
+  const W = 300, H = 300;
+  const ctx = canvas.getContext('2d');
+  canvas.width = W * 2; canvas.height = H * 2;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(2, 2);
+
+  const pad = { l: 38, r: 12, t: 12, b: 32 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+
+  // bg
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.roundRect(0, 0, W, H, 8); ctx.fill();
+
+  const sx = phi => pad.l + ((phi + 180) / 360) * pw;
+  const sy = psi => pad.t + ((180 - psi) / 360) * ph;
+
+  // grid
+  ctx.strokeStyle = '#1e1e1e'; ctx.lineWidth = 0.5;
+  [-180, -90, 0, 90, 180].forEach(v => {
+    ctx.beginPath(); ctx.moveTo(sx(v), pad.t); ctx.lineTo(sx(v), H - pad.b); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l, sy(v)); ctx.lineTo(W - pad.r, sy(v)); ctx.stroke();
+  });
+
+  // axes
+  ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, sy(0)); ctx.lineTo(W - pad.r, sy(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(0), pad.t); ctx.lineTo(sx(0), H - pad.b); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = '#666'; ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('φ (°)', (pad.l + W - pad.r) / 2, H - 6);
+  [-180, -90, 0, 90, 180].forEach(v => {
+    ctx.fillText(v.toString(), sx(v), H - pad.b + 14);
+  });
+  ctx.save();
+  ctx.translate(10, (pad.t + H - pad.b) / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('ψ (°)', 0, 0);
+  ctx.restore();
+  ctx.textAlign = 'right';
+  [-180, -90, 0, 90, 180].forEach(v => {
+    ctx.fillText(v.toString(), pad.l - 5, sy(v) + 3);
+  });
+
+  // Draw allowed regions as filled blobs
+  function drawRegion(phiC, psiC, rPhi, rPsi, color, label) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(sx(phiC), sy(psiC), (rPhi / 360) * pw, (rPsi / 360) * ph, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // label
+    ctx.fillStyle = '#ddd'; ctx.font = 'bold 9px JetBrains Mono, monospace'; ctx.textAlign = 'center';
+    ctx.fillText(label, sx(phiC), sy(psiC) + 3);
+  }
+
+  // β-sheet region (upper left)
+  drawRegion(-120, 135, 45, 35, 'rgba(106,173,219,0.25)', 'β');
+  // α-helix region (lower left)
+  drawRegion(-57, -47, 35, 35, 'rgba(232,197,71,0.3)', 'α');
+  // Left-handed helix (upper right, small)
+  drawRegion(57, 47, 25, 25, 'rgba(212,126,208,0.2)', 'αL');
+
+  // Mark specific points
+  ctx.fillStyle = '#e8c547';
+  ctx.beginPath(); ctx.arc(sx(-57), sy(-47), 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#6aaddb';
+  ctx.beginPath(); ctx.arc(sx(-120), sy(+135), 3, 0, Math.PI * 2); ctx.fill();
+
+  // legend
+  ctx.font = '8px Source Sans Pro, sans-serif'; ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(232,197,71,0.5)'; ctx.fillRect(W - 90, pad.t + 6, 10, 10);
+  ctx.fillStyle = '#aaa'; ctx.fillText('α-helix', W - 76, pad.t + 15);
+  ctx.fillStyle = 'rgba(106,173,219,0.4)'; ctx.fillRect(W - 90, pad.t + 20, 10, 10);
+  ctx.fillStyle = '#aaa'; ctx.fillText('β-sheet', W - 76, pad.t + 29);
+  ctx.fillStyle = 'rgba(212,126,208,0.3)'; ctx.fillRect(W - 90, pad.t + 34, 10, 10);
+  ctx.fillStyle = '#aaa'; ctx.fillText('αL (rare)', W - 76, pad.t + 43);
+}
+
+function toggleDeriv(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.innerHTML = open ? '▾ Hide derivation' : btn.innerHTML.replace('▾ Hide derivation', '▸ Show full derivation');
+  if (!open) {
+    btn.innerHTML = btn.getAttribute('data-closed') || '▸ Show full derivation';
+  } else {
+    if (!btn.getAttribute('data-closed')) btn.setAttribute('data-closed', btn.innerHTML.replace('▾', '▸'));
+    btn.innerHTML = '▾ Hide derivation';
+  }
+  if (open && window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([box]);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  drawRamaPlot();
+  // store original button labels
+  document.querySelectorAll('.deriv-btn').forEach(btn => {
+    btn.setAttribute('data-closed', btn.innerHTML);
+  });
+});
+</script>
+</body>
+</html>

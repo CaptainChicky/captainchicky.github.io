@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enzyme Inhibitor Organizer</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  startup: { typeset: true }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+Pro:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f0f0f; --card: #1a1a1a; --accent: #e8c547; --accent-dim: #e8c54740;
+    --text: #e0dcd0; --dim: #999; --uninhib: #6ec8e4; --inhib: #e85d5d;
+    --border: #333; --highlight: #2a2520;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', sans-serif; padding: 36px 24px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--dim); font-size: 14px; line-height: 1.5; margin-bottom: 28px; }
+  .legend-line { display: inline-block; width: 20px; height: 2px; vertical-align: middle; margin-right: 4px; }
+  .legend-solid { background: var(--uninhib); }
+  .legend-dash { background: repeating-linear-gradient(90deg, var(--inhib) 0 6px, transparent 6px 9px); }
+  .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); vertical-align: middle; margin-right: 4px; }
+
+  /* Summary Table */
+  .summary-table { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 28px; }
+  .summary-table table { width: 100%; border-collapse: collapse; }
+  .summary-table th { padding: 10px 12px; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; background: #151515; border-bottom: 1px solid var(--border); }
+  .summary-table td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .summary-table tr:nth-child(even) td { background: #141414; }
+  .summary-table td:first-child { font-weight: 600; color: var(--accent); }
+
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; flex-wrap: wrap; gap: 16px; }
+  .card h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--accent); font-weight: 700; margin: 0; }
+  .card .card-subtitle { color: var(--dim); font-size: 13px; font-style: italic; margin-top: 2px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
+  .full-span { grid-column: 1 / -1; }
+  .label { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .value { font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
+  .why { color: var(--dim); font-size: 12.5px; line-height: 1.55; margin-top: 4px; padding-left: 10px; border-left: 2px solid var(--accent-dim); }
+  .math-row { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .divider { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px; }
+  .graph-note { font-size: 13px; font-style: italic; }
+
+  /* Derivation toggle */
+  .deriv-btn { margin-top: 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--accent); padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; transition: background 0.2s; }
+  .deriv-btn:hover { background: var(--highlight); }
+  .deriv-btn.open { background: var(--highlight); }
+  .deriv-box { margin-top: 14px; display: none; }
+  .deriv-box.open { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .deriv-eq { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+  .deriv-work { background: #111; font-size: 13px; padding: 14px 16px; border-radius: 6px; line-height: 1.75; overflow-x: auto; }
+  .deriv-work .step-note { color: var(--dim); font-size: 12px; margin-bottom: 4px; display: block; }
+  .deriv-work .step-eq { margin: 6px 0; padding-left: 12px; }
+  .deriv-work .step-result { color: var(--accent); font-weight: 600; margin-top: 8px; }
+
+  /* Bottom insight */
+  .insight { margin-top: 16px; padding: 16px 20px; background: var(--highlight); border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--dim); line-height: 1.6; }
+  .insight strong { color: var(--accent); }
+
+  /* Full derivation section */
+  .full-deriv { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px 28px; margin-top: 28px; }
+  .full-deriv h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--accent); margin-bottom: 6px; }
+  .full-deriv .fd-subtitle { color: var(--dim); font-size: 13px; margin-bottom: 22px; font-style: italic; }
+  .fd-section { margin-bottom: 22px; }
+  .fd-section h3 { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 10px; }
+  .fd-text { font-size: 13.5px; line-height: 1.7; margin-bottom: 8px; }
+  .fd-eq { margin: 10px 0; padding: 10px 16px; background: #111; border-radius: 6px; font-size: 14px; line-height: 1.8; overflow-x: auto; }
+  .fd-note { color: var(--dim); font-size: 12.5px; line-height: 1.55; padding-left: 10px; border-left: 2px solid var(--accent-dim); margin: 8px 0; }
+  .fd-arrow { color: var(--accent); font-weight: 600; }
+  .rxn-scheme { background: #111; border-radius: 8px; padding: 16px 20px; margin: 12px 0; text-align: center; font-size: 15px; line-height: 2; overflow-x: auto; }
+
+  @media (max-width: 700px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .deriv-box.open { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Enzyme Inhibitor Organizer</h1>
+  <p class="subtitle">
+    Comparative reference for reversible inhibitor types: binding, kinetic effects, equations &amp; Lineweaver-Burk plots.<br>
+    <span class="legend-line legend-solid"></span> uninhibited &nbsp;
+    <span class="legend-line legend-dash"></span> + inhibitor &nbsp;
+    <span class="legend-dot"></span> intersection point
+  </p>
+
+  <!-- ============ SUMMARY TABLE ============ -->
+  <div class="summary-table">
+    <table>
+      <thead><tr>
+        <th>Type</th><th>Binds to</th><th>$K_m$</th><th>$V_{max}$</th><th>L-B Signature</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Competitive</td><td>Free E only</td><td>↑ $(\alpha K_m)$</td><td>No change</td><td>Same y-int, steeper slope</td></tr>
+        <tr><td>Uncompetitive</td><td>ES only</td><td>↓ $(K_m/\alpha')$</td><td>↓ $(V_{max}/\alpha')$</td><td>Parallel lines (same slope)</td></tr>
+        <tr><td>Mixed $(K_i' > K_i)$</td><td>Both (prefers E)</td><td>↑ $(\alpha K_m / \alpha')$</td><td>↓ $(V_{max}/\alpha')$</td><td>Intersect above x-axis</td></tr>
+        <tr><td>Mixed $(K_i > K_i')$</td><td>Both (prefers ES)</td><td>↓ $(\alpha K_m / \alpha')$</td><td>↓ $(V_{max}/\alpha')$</td><td>Intersect below x-axis</td></tr>
+        <tr><td>Noncompetitive</td><td>Both (equal)</td><td>No change</td><td>↓ $(V_{max}/\alpha)$</td><td>Intersect ON x-axis</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ CARDS (built by JS) ============ -->
+  <div id="cards"></div>
+
+  <div class="insight">
+    <strong>Key insight:</strong> Every reversible inhibitor uses one master equation:
+    $v_0 = \dfrac{V_{max}[S]}{\alpha K_m + \alpha'[S]}$. The <em>only</em> difference between types is which
+    $\alpha$ values equal 1 vs. &gt;1, and their relative sizes.
+    Competitive: $\alpha' = 1$. Uncompetitive: $\alpha = 1$. Mixed/Noncompetitive: both &gt; 1.
+    Noncompetitive is just the special case where $\alpha = \alpha'$, so $V_{max}/\alpha' = V_{max}/\alpha$: they are the <em>same thing</em>.
+  </div>
+
+  <!-- ============ FULL DERIVATION ============ -->
+  <div class="full-deriv" id="full-derivation">
+    <h2>Full Derivation from First Principles</h2>
+    <div class="fd-subtitle">Deriving the general mixed-inhibition rate equation without simplifying $\alpha$ or $\alpha'$</div>
+
+    <div class="fd-section">
+      <h3>Step 1: Define the reaction scheme</h3>
+      <div class="fd-text">
+        Consider an enzyme $E$ that binds substrate $S$ to form an enzyme-substrate complex $ES$, which then breaks down to release product $P$ and regenerate free enzyme. A reversible inhibitor $I$ can bind to free enzyme (forming $EI$) and/or to the enzyme-substrate complex (forming $ESI$). Neither $EI$ nor $ESI$ produces product.
+      </div>
+      <div class="rxn-scheme">
+        $E + S \underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}} ES \overset{k_2}{\longrightarrow} E + P$
+        <br>
+        $E + I \underset{k_{-3}}{\overset{k_3}{\rightleftharpoons}} EI \qquad\qquad ES + I \underset{k_{-4}}{\overset{k_4}{\rightleftharpoons}} ESI$
+      </div>
+      <div class="fd-note">
+        We assume rapid equilibrium: the binding/unbinding steps are fast relative to catalysis ($k_2$), so the complexes $EI$ and $ESI$ are in true thermodynamic equilibrium. We also assume the steady-state approximation for $ES$ (its concentration does not change appreciably over time).
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 2: Define equilibrium dissociation constants</h3>
+      <div class="fd-text">From the equilibrium assumption, we define three dissociation constants:</div>
+      <div class="fd-eq">
+        $$K_m = \frac{k_{-1} + k_2}{k_1} \approx \frac{[E][S]}{[ES]} \quad \text{(Michaelis constant, from steady-state on } ES\text{)}$$
+        $$K_i = \frac{[E][I]}{[EI]} \quad \text{(inhibitor dissociation from free enzyme)}$$
+        $$K_i' = \frac{[ES][I]}{[ESI]} \quad \text{(inhibitor dissociation from ES complex)}$$
+      </div>
+      <div class="fd-note">
+        A smaller $K_i$ means tighter binding. If $K_i &lt; K_i'$, the inhibitor has higher affinity for $E$ than for $ES$, and vice versa.
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 3: Write the enzyme conservation equation</h3>
+      <div class="fd-text">
+        The total enzyme concentration $[E]_T$ is distributed across all four species:
+      </div>
+      <div class="fd-eq">
+        $$[E]_T = [E] + [ES] + [EI] + [ESI]$$
+      </div>
+      <div class="fd-text">
+        Now express each species in terms of $[E]$ and measurable concentrations. From the equilibrium definitions:
+      </div>
+      <div class="fd-eq">
+        $$[ES] = \frac{[E][S]}{K_m}$$
+        $$[EI] = \frac{[E][I]}{K_i}$$
+        $$[ESI] = \frac{[ES][I]}{K_i'} = \frac{[E][S][I]}{K_m K_i'}$$
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 4: Substitute into the conservation equation</h3>
+      <div class="fd-eq">
+        $$[E]_T = [E] + \frac{[E][S]}{K_m} + \frac{[E][I]}{K_i} + \frac{[E][S][I]}{K_m K_i'}$$
+      </div>
+      <div class="fd-text">Factor out $[E]$:</div>
+      <div class="fd-eq">
+        $$[E]_T = [E]\!\left(1 + \frac{[S]}{K_m} + \frac{[I]}{K_i} + \frac{[S][I]}{K_m K_i'}\right)$$
+      </div>
+      <div class="fd-text">Group the terms strategically to separate the substrate-dependent and substrate-independent parts:</div>
+      <div class="fd-eq">
+        $$[E]_T = [E]\!\left[\left(1 + \frac{[I]}{K_i}\right) + \frac{[S]}{K_m}\!\left(1 + \frac{[I]}{K_i'}\right)\right]$$
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 5: Define $\alpha$ and $\alpha'$</h3>
+      <div class="fd-text">To keep things clean, define two dimensionless grouping factors:</div>
+      <div class="fd-eq">
+        $$\alpha = 1 + \frac{[I]}{K_i} \qquad \alpha' = 1 + \frac{[I]}{K_i'}$$
+      </div>
+      <div class="fd-text">So the conservation equation becomes:</div>
+      <div class="fd-eq">
+        $$[E]_T = [E]\!\left(\alpha + \frac{\alpha'[S]}{K_m}\right)$$
+      </div>
+      <div class="fd-text">Solve for $[E]$:</div>
+      <div class="fd-eq">
+        $$[E] = \frac{[E]_T}{\alpha + \dfrac{\alpha'[S]}{K_m}} = \frac{[E]_T \cdot K_m}{\alpha K_m + \alpha'[S]}$$
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 6: Write the rate equation</h3>
+      <div class="fd-text">
+        The reaction rate is determined only by the productive $ES$ complex breaking down:
+      </div>
+      <div class="fd-eq">
+        $$v_0 = k_2[ES] = k_2 \cdot \frac{[E][S]}{K_m}$$
+      </div>
+      <div class="fd-text">Substitute the expression for $[E]$ from Step 5:</div>
+      <div class="fd-eq">
+        $$v_0 = k_2 \cdot \frac{[S]}{K_m} \cdot \frac{[E]_T \cdot K_m}{\alpha K_m + \alpha'[S]}$$
+      </div>
+      <div class="fd-text">The $K_m$ terms cancel:</div>
+      <div class="fd-eq">
+        $$v_0 = \frac{k_2[E]_T[S]}{\alpha K_m + \alpha'[S]}$$
+      </div>
+      <div class="fd-text">
+        Recognize that $k_2[E]_T = V_{max}$ (the maximum rate when all enzyme is saturated with substrate and no inhibitor is present):
+      </div>
+      <div class="fd-eq" style="border: 1px solid var(--accent-dim); background: #161210;">
+        $$\boxed{v_0 = \frac{V_{max}[S]}{\alpha K_m + \alpha'[S]}}$$
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 7: Fully expanded form (no $\alpha$ shorthand)</h3>
+      <div class="fd-text">Substituting back the definitions of $\alpha$ and $\alpha'$:</div>
+      <div class="fd-eq" style="border: 1px solid var(--accent-dim); background: #161210;">
+        $$v_0 = \frac{V_{max}[S]}{\left(1 + \dfrac{[I]}{K_i}\right)K_m + \left(1 + \dfrac{[I]}{K_i'}\right)[S]}$$
+      </div>
+      <div class="fd-text">Expanding the denominator fully:</div>
+      <div class="fd-eq">
+        $$v_0 = \frac{V_{max}[S]}{K_m + \dfrac{[I]\,K_m}{K_i} + [S] + \dfrac{[I][S]}{K_i'}}$$
+      </div>
+      <div class="fd-note">
+        This is the most general form. Each inhibitor type just removes terms. Competitive: $K_i' \to \infty$, so $\frac{[I][S]}{K_i'} \to 0$. Uncompetitive: $K_i \to \infty$, so $\frac{[I]K_m}{K_i} \to 0$. Noncompetitive: $K_i = K_i'$, so the two inhibitor terms combine symmetrically.
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 8: Lineweaver-Burk form</h3>
+      <div class="fd-text">Take the reciprocal of both sides of the master equation:</div>
+      <div class="fd-eq">
+        $$\frac{1}{v_0} = \frac{\alpha K_m + \alpha'[S]}{V_{max}[S]} = \frac{\alpha K_m}{V_{max}} \cdot \frac{1}{[S]} + \frac{\alpha'}{V_{max}}$$
+      </div>
+      <div class="fd-text">This is in the form $y = mx + b$ where $y = 1/v_0$ and $x = 1/[S]$:</div>
+      <div class="fd-eq">
+        $$\text{Slope} = \frac{\alpha K_m}{V_{max}} = \frac{K_m}{V_{max}}\!\left(1 + \frac{[I]}{K_i}\right) \qquad \text{Y-intercept} = \frac{\alpha'}{V_{max}} = \frac{1}{V_{max}}\!\left(1 + \frac{[I]}{K_i'}\right)$$
+      </div>
+      <div class="fd-note">
+        Competitive: only slope changes (same y-intercept). Uncompetitive: only y-intercept changes (same slope, parallel lines). Mixed: both change. Noncompetitive: both change by the same factor (lines cross on the x-axis).
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <h3>Step 9: Finding the Lineweaver-Burk intersection point</h3>
+      <div class="fd-text">
+        Set the uninhibited L-B equation equal to the inhibited one and solve for $x = 1/[S]$:
+      </div>
+      <div class="fd-eq">
+        $$\frac{K_m}{V_{max}} \cdot x + \frac{1}{V_{max}} = \frac{\alpha K_m}{V_{max}} \cdot x + \frac{\alpha'}{V_{max}}$$
+      </div>
+      <div class="fd-text">Cancel $1/V_{max}$ and solve:</div>
+      <div class="fd-eq">
+        $$K_m \cdot x + 1 = \alpha K_m \cdot x + \alpha'$$
+        $$K_m \cdot x\,(1 - \alpha) = \alpha' - 1$$
+        $$x^* = \frac{\alpha' - 1}{K_m(1 - \alpha)} = -\frac{1}{K_m}\cdot\frac{\alpha' - 1}{\alpha - 1}$$
+      </div>
+      <div class="fd-text">Substitute back to find $y^*$:</div>
+      <div class="fd-eq">
+        $$y^* = \frac{1}{V_{max}}\!\left(1 - \frac{\alpha' - 1}{\alpha - 1}\right) = \frac{1}{V_{max}}\cdot\frac{\alpha - \alpha'}{\alpha - 1}$$
+      </div>
+      <div class="fd-note">
+        If $\alpha &gt; \alpha'$ (prefers E, competitive lean): $y^* &gt; 0$, intersection above x-axis.<br>
+        If $\alpha &lt; \alpha'$ (prefers ES, uncompetitive lean): $y^* &lt; 0$, intersection below x-axis.<br>
+        If $\alpha = \alpha'$ (noncompetitive): $y^* = 0$, intersection exactly on x-axis at $x = -1/K_m$.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = { uninhib: '#6ec8e4', inhib: '#e85d5d', accent: '#e8c547' };
+
+const data = [
+  {
+    id: 'competitive', title: 'Competitive',
+    bindsAt: 'Active site, directly competes with substrate for the same binding pocket',
+    bindsTo: 'Free enzyme (E) only, cannot bind once substrate is already in the active site',
+    ki: '$K_i = \\dfrac{[E][I]}{[EI]}$',
+    alphaNote: '$\\alpha = 1 + \\dfrac{[I]}{K_i}, \\quad \\alpha\' = 1$',
+    vmax: 'No change: $V_{max}^{app} = V_{max}$',
+    vmaxWhy: 'At saturating [S], substrate outcompetes the inhibitor completely. Every enzyme molecule eventually binds substrate, so the maximum rate is unchanged. You can always "wash out" a competitive inhibitor by flooding with substrate.',
+    km: 'Increases: $K_m^{app} = \\alpha K_m$',
+    kmWhy: 'The inhibitor is hogging some active sites, so you need more substrate to fill half the enzyme population. The apparent affinity for substrate drops (higher K_m). The increase is proportional to α.',
+    mmEq: '$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + [S]}$',
+    mmWork: `<span class="step-note">Start with the general mixed equation:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha'[S]}$</div>
+<span class="step-note">Competitive inhibitor does NOT bind ES, so $\\alpha' = 1$:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + [S]}$</div>
+<span class="step-note">As $[S] \\to \\infty$, the denominator $\\approx [S]$, so $v_0 \\to V_{max}$ (unchanged).</span>`,
+    lbEq: '$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{1}{V_{max}}$',
+    lbWork: `<span class="step-note">Invert the Michaelis-Menten equation:</span>
+<div class="step-eq">$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m + [S]}{V_{max}[S]} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{1}{V_{max}}$</div>
+<span class="step-note">Reading off:</span>
+<div class="step-eq">$\\text{Slope} = \\dfrac{\\alpha K_m}{V_{max}}$ <span class="step-result">(INCREASES)</span></div>
+<div class="step-eq">$\\text{Y-int} = \\dfrac{1}{V_{max}}$ <span class="step-result">(SAME)</span></div>
+<span class="step-note">Lines share the same y-intercept. Inhibited line is steeper. X-intercept moves right (closer to 0).</span>`,
+    graphType: 'competitive',
+    graphNote: 'Same y-intercept (1/V_max unchanged). Slope increases. X-intercept shifts right toward zero, reflecting the increased apparent K_m.'
+  },
+  {
+    id: 'uncompetitive', title: 'Uncompetitive',
+    bindsAt: 'Allosteric site, only accessible after substrate binds (conformation change exposes it)',
+    bindsTo: 'ES complex only, cannot bind free enzyme',
+    ki: '$K_i\' = \\dfrac{[ES][I]}{[ESI]}$',
+    alphaNote: '$\\alpha = 1, \\quad \\alpha\' = 1 + \\dfrac{[I]}{K_i\'}$',
+    vmax: 'Decreases: $V_{max}^{app} = \\dfrac{V_{max}}{\\alpha\'}$',
+    vmaxWhy: 'The inhibitor traps ES complexes into dead-end ESI. Even at saturating [S], a fraction of enzyme is locked as ESI and can never turn over product. More substrate actually makes it worse: more ES means more targets for the inhibitor.',
+    km: 'Decreases: $K_m^{app} = \\dfrac{K_m}{\\alpha\'}$',
+    kmWhy: 'By pulling ES into ESI, the inhibitor drains ES from the equilibrium E ⇌ ES. By Le Chatelier\'s principle, the equilibrium shifts right: the enzyme appears to bind substrate more tightly. You reach half-V_max(app) at a lower [S]. Both V_max and K_m drop by the same factor α\'.',
+    mmEq: '$v_0 = \\dfrac{V_{max}[S]}{K_m + \\alpha\'[S]}$',
+    mmWork: `<span class="step-note">Start with the general mixed equation:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha'[S]}$</div>
+<span class="step-note">Uncompetitive does NOT bind free E, so $\\alpha = 1$:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{K_m + \\alpha'[S]}$</div>
+<span class="step-note">Divide numerator and denominator by $\\alpha'$:</span>
+<div class="step-eq">$v_0 = \\dfrac{(V_{max}/\\alpha')[S]}{(K_m/\\alpha') + [S]}$</div>
+<span class="step-note">So apparent $V_{max} = V_{max}/\\alpha'$ and apparent $K_m = K_m/\\alpha'$. Both drop by the same factor.</span>`,
+    lbEq: '$\\dfrac{1}{v_0} = \\dfrac{K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha\'}{V_{max}}$',
+    lbWork: `<span class="step-note">Invert:</span>
+<div class="step-eq">$\\dfrac{1}{v_0} = \\dfrac{K_m + \\alpha'[S]}{V_{max}[S]} = \\dfrac{K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha'}{V_{max}}$</div>
+<span class="step-note">Reading off:</span>
+<div class="step-eq">$\\text{Slope} = \\dfrac{K_m}{V_{max}}$ <span class="step-result">(SAME as uninhibited)</span></div>
+<div class="step-eq">$\\text{Y-int} = \\dfrac{\\alpha'}{V_{max}}$ <span class="step-result">(INCREASES)</span></div>
+<span class="step-note">Parallel lines (the hallmark of uncompetitive inhibition). Inhibited line shifts straight up.</span>`,
+    graphType: 'uncompetitive',
+    graphNote: 'Parallel lines: identical slope, but the inhibited line shifts up (higher y-intercept = lower V_max). X-intercept moves further left, reflecting decreased apparent K_m.'
+  },
+  {
+    id: 'mixed-ki-prime-gt-ki', title: "Mixed ($K_i' > K_i$)", subtitle: 'Inhibitor prefers free enzyme, leans competitive',
+    bindsAt: 'Allosteric site (not the active site)',
+    bindsTo: 'Both free E and ES complex, but binds E more tightly (lower $K_i$ = higher affinity for E)',
+    ki: '$K_i = \\dfrac{[E][I]}{[EI]}, \\quad K_i\' = \\dfrac{[ES][I]}{[ESI]}, \\quad K_i\' > K_i$',
+    alphaNote: '$\\alpha = 1 + \\dfrac{[I]}{K_i}, \\quad \\alpha\' = 1 + \\dfrac{[I]}{K_i\'} \\quad \\Rightarrow \\quad \\alpha > \\alpha\'$ (smaller $K_i$ gives bigger $\\alpha$)',
+    vmax: 'Decreases: $V_{max}^{app} = \\dfrac{V_{max}}{\\alpha\'}$',
+    vmaxWhy: 'Even though the inhibitor prefers free E, it still binds ES to some extent. The ESI dead-end complex reduces the pool of productive ES. V_max drops by factor α\'.',
+    km: 'Increases: $K_m^{app} = \\dfrac{\\alpha}{\\alpha\'} K_m \\quad (\\alpha/\\alpha\' > 1)$',
+    kmWhy: 'The inhibitor pulls harder on free E than on ES, effectively competing with substrate for the enzyme. You need more substrate to overcome this pull and reach half-V_max(app). This "competitive lean" raises the apparent K_m.',
+    mmEq: '$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha\'[S]}$',
+    mmWork: `<span class="step-note">This is the full general mixed equation:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha'[S]}$</div>
+<span class="step-note">with $\\alpha = 1 + [I]/K_i$ and $\\alpha' = 1 + [I]/K_i'$</span>
+<div class="step-eq">Since $K_i < K_i'$: $\\quad \\alpha > \\alpha' > 1$</div>
+<span class="step-note">Both terms in the denominator grow, but $\\alpha K_m$ grows faster (competitive lean).</span>`,
+    lbEq: '$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha\'}{V_{max}}$',
+    lbWork: `<span class="step-note">Invert:</span>
+<div class="step-eq">$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha'}{V_{max}}$</div>
+<span class="step-note">Reading off:</span>
+<div class="step-eq">$\\text{Slope} = \\dfrac{\\alpha K_m}{V_{max}}$ <span class="step-result">(INCREASES a lot)</span></div>
+<div class="step-eq">$\\text{Y-int} = \\dfrac{\\alpha'}{V_{max}}$ <span class="step-result">(INCREASES a little)</span></div>
+<span class="step-note">Set uninhibited = inhibited and solve for the intersection:</span>
+<div class="step-eq">$x^* = -\\dfrac{\\alpha' - 1}{(\\alpha - 1)K_m}, \\quad y^* = \\dfrac{1}{V_{max}} \\cdot \\dfrac{\\alpha - \\alpha'}{\\alpha - 1}$</div>
+<span class="step-note">Since $\\alpha > \\alpha'$, $y^* > 0$. Intersection is left of y-axis, <span class="step-result">ABOVE x-axis</span>.</span>`,
+    graphType: 'mixed-ki-prime-gt-ki',
+    graphNote: 'Lines intersect to the left of the y-axis and ABOVE the x-axis (quadrant II). Both slope and y-intercept increase, but slope increases more (competitive lean).'
+  },
+  {
+    id: 'mixed-ki-gt-ki-prime', title: "Mixed ($K_i > K_i'$)", subtitle: 'Inhibitor prefers ES complex, leans uncompetitive',
+    bindsAt: 'Allosteric site (not the active site)',
+    bindsTo: 'Both free E and ES complex, but binds ES more tightly (lower $K_i\'$ = higher affinity for ES)',
+    ki: '$K_i = \\dfrac{[E][I]}{[EI]}, \\quad K_i\' = \\dfrac{[ES][I]}{[ESI]}, \\quad K_i > K_i\'$',
+    alphaNote: '$\\alpha = 1 + \\dfrac{[I]}{K_i}, \\quad \\alpha\' = 1 + \\dfrac{[I]}{K_i\'} \\quad \\Rightarrow \\quad \\alpha\' > \\alpha$ (smaller $K_i\'$ gives bigger $\\alpha\'$)',
+    vmax: 'Decreases: $V_{max}^{app} = \\dfrac{V_{max}}{\\alpha\'}$',
+    vmaxWhy: 'The inhibitor strongly targets ES, trapping a large fraction into dead-end ESI. V_max drops substantially, more so than the $K_i\' > K_i$ case because α\' is larger here.',
+    km: 'Decreases: $K_m^{app} = \\dfrac{\\alpha}{\\alpha\'} K_m \\quad (\\alpha/\\alpha\' < 1)$',
+    kmWhy: 'The inhibitor pulls harder on ES than on free E, draining ES and shifting the E ⇌ ES equilibrium to the right (Le Chatelier). The enzyme appears to bind substrate more tightly. This "uncompetitive lean" lowers apparent K_m.',
+    mmEq: '$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha\'[S]}$',
+    mmWork: `<span class="step-note">Same general mixed equation:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha'[S]}$</div>
+<span class="step-note">Here $\\alpha' > \\alpha$ because $K_i' < K_i$.</span>
+<div class="step-eq">The $\\alpha'[S]$ term dominates more than the $\\alpha K_m$ term (uncompetitive lean).</div>`,
+    lbEq: '$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha\'}{V_{max}}$',
+    lbWork: `<span class="step-note">Invert:</span>
+<div class="step-eq">$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha'}{V_{max}}$</div>
+<span class="step-note">Reading off:</span>
+<div class="step-eq">$\\text{Slope} = \\dfrac{\\alpha K_m}{V_{max}}$ <span class="step-result">(INCREASES a little)</span></div>
+<div class="step-eq">$\\text{Y-int} = \\dfrac{\\alpha'}{V_{max}}$ <span class="step-result">(INCREASES a lot)</span></div>
+<span class="step-note">Same intersection algebra as before, but now $\\alpha' > \\alpha$:</span>
+<div class="step-eq">$y^* = \\dfrac{1}{V_{max}} \\cdot \\dfrac{\\alpha - \\alpha'}{\\alpha - 1} < 0$</div>
+<span class="step-note">Intersection is left of y-axis, <span class="step-result">BELOW x-axis</span>.</span>`,
+    graphType: 'mixed-ki-gt-ki-prime',
+    graphNote: 'Lines intersect to the left of the y-axis and BELOW the x-axis (quadrant III). Y-intercept increases more than slope (uncompetitive lean).'
+  },
+  {
+    id: 'noncompetitive', title: 'Noncompetitive ($K_i = K_i\'$)', subtitle: 'Special case of mixed: equal affinity for E and ES',
+    bindsAt: 'Allosteric site (not the active site)',
+    bindsTo: 'Both free E and ES complex with exactly equal affinity',
+    ki: '$K_i = K_i\' \\quad \\Rightarrow \\quad \\alpha = \\alpha\'$',
+    alphaNote: '$\\alpha = \\alpha\' = 1 + \\dfrac{[I]}{K_i}$',
+    vmax: 'Decreases: $V_{max}^{app} = \\dfrac{V_{max}}{\\alpha}$',
+    vmaxWhy: 'The inhibitor removes a fixed fraction of total enzyme from the catalytic cycle. Whether it\'s free E or ES, it binds equally. At any [S], that same fraction is inactive.',
+    km: 'No change: $K_m^{app} = \\dfrac{\\alpha}{\\alpha\'} K_m = K_m$',
+    kmWhy: 'This is the elegant part. Because the inhibitor has no preference between E and ES, it doesn\'t shift the E ⇌ ES equilibrium in either direction. It\'s as if you simply removed some enzyme molecules from solution. The remaining ones behave identically with the same K_m. The α factors cancel perfectly.',
+    mmEq: '$v_0 = \\dfrac{(V_{max}/\\alpha)[S]}{K_m + [S]}$',
+    mmWork: `<span class="step-note">Start with the general mixed equation with $\\alpha = \\alpha'$:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha K_m + \\alpha[S]}$</div>
+<span class="step-note">Factor out $\\alpha$ from the denominator:</span>
+<div class="step-eq">$v_0 = \\dfrac{V_{max}[S]}{\\alpha(K_m + [S])} = \\dfrac{(V_{max}/\\alpha)[S]}{K_m + [S]}$</div>
+<span class="step-note">This is the standard Michaelis-Menten equation with $V_{max}$ replaced by $V_{max}/\\alpha$. $K_m$ is completely unchanged!</span>`,
+    lbEq: '$\\dfrac{1}{v_0} = \\dfrac{\\alpha K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{\\alpha}{V_{max}}$',
+    lbWork: `<span class="step-note">Invert:</span>
+<div class="step-eq">$\\dfrac{1}{v_0} = \\alpha \\left[\\dfrac{K_m}{V_{max}} \\cdot \\dfrac{1}{[S]} + \\dfrac{1}{V_{max}}\\right]$</div>
+<span class="step-note">Both slope and y-intercept scale by the same factor $\\alpha$:</span>
+<div class="step-eq">$\\text{Slope} = \\dfrac{\\alpha K_m}{V_{max}}$ <span class="step-result">(scales by α)</span></div>
+<div class="step-eq">$\\text{Y-int} = \\dfrac{\\alpha}{V_{max}}$ <span class="step-result">(scales by α)</span></div>
+<span class="step-note">Set equal to uninhibited and solve:</span>
+<div class="step-eq">$x^* = -\\dfrac{1}{K_m}, \\quad y^* = 0$</div>
+<span class="step-note">Lines intersect exactly <span class="step-result">ON the x-axis</span> at $x = -1/K_m$: the classic hallmark!</span>`,
+    graphType: 'noncompetitive',
+    graphNote: 'Lines intersect exactly ON the x-axis at $x = -1/K_m$. The x-intercept is unchanged (K_m unchanged). Both slope and y-intercept increase by the same factor α.'
+  }
+];
+
+// -------- LB Plot Drawing --------
+function drawLBPlot(canvas, type) {
+  const ctx = canvas.getContext('2d');
+  const W = 320, H = 220;
+  canvas.width = W * 2; canvas.height = H * 2;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(2, 2);
+
+  const pad = { l: 45, r: 15, t: 15, b: 35 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+
+  const Km = 2, Vm = 10;
+  const slopeU = Km / Vm, yintU = 1 / Vm;
+  let slopeI, yintI;
+  const a = 2.2, ap = 1.6; // alpha, alpha'
+
+  // For mixed-ki-gt-ki-prime, swap a and ap so alpha' > alpha
+  let aEff, apEff;
+  switch (type) {
+    case 'competitive':
+      slopeI = (a * Km) / Vm; yintI = 1 / Vm; break;
+    case 'uncompetitive':
+      slopeI = Km / Vm; yintI = ap / Vm; break;
+    case 'mixed-ki-prime-gt-ki':
+      slopeI = (a * Km) / Vm; yintI = ap / Vm; break;
+    case 'mixed-ki-gt-ki-prime':
+      // alpha' > alpha: use a=1.4 (small), ap=2.5 (large) so intersection is clearly visible
+      aEff = 1.6; apEff = 2.0;
+      slopeI = (aEff * Km) / Vm; yintI = apEff / Vm; break;
+    case 'noncompetitive':
+      slopeI = (a * Km) / Vm; yintI = a / Vm; break;
+  }
+
+  // Wider x-range for mixed-ki-gt-ki-prime so intersection is visible
+  let xMin = -0.8, xMax = 1.5;
+  if (type === 'mixed-ki-gt-ki-prime') {
+    xMin = -1.4;
+  }
+
+  const yVals = [slopeU * xMin + yintU, slopeU * xMax + yintU, slopeI * xMin + yintI, slopeI * xMax + yintI];
+  const yMin = Math.min(-0.06, ...yVals) - 0.02;
+  const yMax = Math.max(...yVals) + 0.04;
+
+  const sx = x => pad.l + ((x - xMin) / (xMax - xMin)) * pw;
+  const sy = y => pad.t + ((yMax - y) / (yMax - yMin)) * ph;
+
+  // bg
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, W, H, 8);
+  ctx.fill();
+
+  // axes
+  ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, sy(0)); ctx.lineTo(W - pad.r, sy(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(0), pad.t); ctx.lineTo(sx(0), H - pad.b); ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = '#888'; ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'end'; ctx.fillText('1/[S]', W - pad.r, sy(0) - 5);
+  ctx.textAlign = 'start'; ctx.fillText('1/v₀', sx(0) + 5, pad.t + 10);
+
+  // draw line function
+  function drawLine(slope, yint, color, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dash);
+    ctx.beginPath();
+    ctx.moveTo(sx(xMin), sy(slope * xMin + yint));
+    ctx.lineTo(sx(xMax), sy(slope * xMax + yint));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  drawLine(slopeU, yintU, COLORS.uninhib, []);
+  drawLine(slopeI, yintI, COLORS.inhib, [6, 3]);
+
+  // y-intercept dots
+  ctx.fillStyle = COLORS.uninhib;
+  ctx.beginPath(); ctx.arc(sx(0), sy(yintU), 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = COLORS.inhib;
+  ctx.beginPath(); ctx.arc(sx(0), sy(yintI), 4, 0, Math.PI * 2); ctx.fill();
+
+  // intersection dot for non-parallel types
+  if (type !== 'uncompetitive') {
+    if (Math.abs(slopeU - slopeI) > 0.001) {
+      const ix = (yintI - yintU) / (slopeU - slopeI);
+      const iy = slopeU * ix + yintU;
+      if (ix >= xMin && ix <= xMax && iy >= yMin && iy <= yMax) {
+        ctx.fillStyle = COLORS.accent; ctx.strokeStyle = '#000'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(sx(ix), sy(iy), 4.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+    }
+  }
+
+  // legend
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = COLORS.uninhib; ctx.beginPath(); ctx.moveTo(W - 125, pad.t + 10); ctx.lineTo(W - 100, pad.t + 10); ctx.stroke();
+  ctx.fillStyle = COLORS.uninhib; ctx.font = '9px Source Sans Pro, sans-serif'; ctx.textAlign = 'start';
+  ctx.fillText('No inhibitor', W - 95, pad.t + 13);
+
+  ctx.strokeStyle = COLORS.inhib; ctx.setLineDash([6, 3]); ctx.beginPath(); ctx.moveTo(W - 125, pad.t + 26); ctx.lineTo(W - 100, pad.t + 26); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = COLORS.inhib; ctx.fillText('+ Inhibitor', W - 95, pad.t + 29);
+}
+
+// -------- Build Cards --------
+function buildCards() {
+  const container = document.getElementById('cards');
+  data.forEach((d, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const derivId = 'deriv-' + idx;
+    const btnId = 'btn-' + idx;
+    card.innerHTML = `
+      <div class="card-header">
+        <div>
+          <h2>${d.title}</h2>
+          ${d.subtitle ? `<div class="card-subtitle">${d.subtitle}</div>` : ''}
+        </div>
+        <canvas id="plot-${idx}" style="border-radius:8px;"></canvas>
+      </div>
+      <div class="grid2">
+        <div><div class="label">Binds at</div><div class="value">${d.bindsAt}</div></div>
+        <div><div class="label">Binds to</div><div class="value">${d.bindsTo}</div></div>
+        <div class="full-span"><div class="label">Dissociation constant(s)</div><div class="value math-row">${d.ki}</div><div class="value math-row" style="color:var(--dim);font-size:12px;">${d.alphaNote}</div></div>
+        <div>
+          <div class="label">$V_{max}$ effect</div><div class="value">${d.vmax}</div>
+          <div class="why">${d.vmaxWhy}</div>
+        </div>
+        <div>
+          <div class="label">$K_m$ effect</div><div class="value">${d.km}</div>
+          <div class="why">${d.kmWhy}</div>
+        </div>
+      </div>
+      <div class="divider">
+        <div class="label">Lineweaver-Burk signature</div>
+        <div class="graph-note">${d.graphNote}</div>
+      </div>
+      <button class="deriv-btn" id="${btnId}" onclick="toggleDeriv('${derivId}','${btnId}')">▸ Show M-M &amp; L-B derivations</button>
+      <div class="deriv-box" id="${derivId}">
+        <div>
+          <div class="label">Michaelis-Menten equation</div>
+          <div class="deriv-eq">${d.mmEq}</div>
+          <div class="deriv-work">${d.mmWork}</div>
+        </div>
+        <div>
+          <div class="label">Lineweaver-Burk equation</div>
+          <div class="deriv-eq">${d.lbEq}</div>
+          <div class="deriv-work">${d.lbWork}</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    // draw plot after DOM insertion
+    setTimeout(() => drawLBPlot(document.getElementById('plot-' + idx), d.graphType), 0);
+  });
+
+  // re-typeset MathJax after cards are built
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise();
+  }
+}
+
+function toggleDeriv(divId, btnId) {
+  const el = document.getElementById(divId);
+  const btn = document.getElementById(btnId);
+  const open = el.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.innerHTML = open ? '▾ Hide derivations' : '▸ Show M-M &amp; L-B derivations';
+  if (open && window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([el]);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', buildCards);
+</script>
+</body>
+</html>

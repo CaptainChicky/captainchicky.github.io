@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ligand Binding &amp; Transport Energetics</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  startup: { typeset: true }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+Pro:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f0f0f; --card: #1a1a1a; --accent: #e8c547; --accent-dim: #e8c54740;
+    --text: #e0dcd0; --dim: #999; --border: #333; --highlight: #2a2520;
+    --mb: #6ec8e4; --hb: #e85d5d; --shifted: #d47ed0; --green: #5dbe8a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', sans-serif; padding: 36px 24px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--dim); font-size: 14px; line-height: 1.5; margin-bottom: 28px; }
+  a.back { color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; display: inline-block; margin-bottom: 20px; transition: opacity 0.2s; }
+  a.back:hover { opacity: 0.7; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 6px; font-size: 13px; color: var(--dim); }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .leg-line { width: 18px; height: 2px; }
+  .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+  .card h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--accent); font-weight: 700; margin: 0 0 4px; }
+  .card .card-sub { color: var(--dim); font-size: 13px; font-style: italic; margin-bottom: 16px; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
+  .full-span { grid-column: 1 / -1; }
+  .label { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .value { font-size: 14px; line-height: 1.55; margin-bottom: 10px; }
+  .why { color: var(--dim); font-size: 12.5px; line-height: 1.55; margin-top: 4px; padding-left: 10px; border-left: 2px solid var(--accent-dim); }
+  .divider { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 10px; }
+
+  /* Summary Table */
+  .summary-table { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+  .summary-table table { width: 100%; border-collapse: collapse; }
+  .summary-table th { padding: 10px 12px; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; text-align: left; background: #151515; border-bottom: 1px solid var(--border); }
+  .summary-table td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+  /* Derivation sections */
+  .deriv { background: #111; border-radius: 8px; padding: 16px 20px; margin: 10px 0; font-size: 13.5px; line-height: 1.75; overflow-x: auto; }
+  .deriv .step-note { color: var(--dim); font-size: 12.5px; display: block; margin-bottom: 2px; }
+  .deriv .step-eq { margin: 6px 0; padding-left: 12px; }
+  .deriv .step-result { color: var(--accent); font-weight: 600; }
+
+  /* Boxed equation */
+  .boxed-eq { border: 1px solid var(--accent-dim); background: #161210; border-radius: 8px; padding: 14px 20px; margin: 12px 0; font-size: 15px; text-align: center; overflow-x: auto; }
+
+  /* Insight box */
+  .insight { margin-top: 4px; padding: 14px 18px; background: var(--highlight); border-radius: 8px; border: 1px solid var(--border); font-size: 13px; color: var(--dim); line-height: 1.6; }
+  .insight strong { color: var(--accent); }
+
+  /* Toggle button */
+  .deriv-btn { margin-top: 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--accent); padding: 8px 16px; cursor: pointer; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; transition: background 0.2s; }
+  .deriv-btn:hover { background: var(--highlight); }
+  .deriv-btn.open { background: var(--highlight); }
+  .deriv-box { margin-top: 14px; display: none; }
+  .deriv-box.open { display: block; }
+
+  /* Example box */
+  .example { background: #131816; border: 1px solid #1e332a; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .example .ex-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); margin-bottom: 8px; }
+  .example .ex-body { font-size: 13.5px; line-height: 1.65; }
+
+  @media (max-width: 700px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../" class="back">← Back to index</a>
+  <h1>Ligand Binding &amp; Transport Energetics</h1>
+  <p class="subtitle">
+    Binding equilibria, fractional saturation, cooperativity, Hill analysis, allosteric regulation, and membrane transport thermodynamics.<br>
+    <span class="legend">
+      <span class="legend-item"><span class="leg-line" style="background:var(--mb);"></span> Myoglobin</span>
+      <span class="legend-item"><span class="leg-line" style="background:var(--hb);"></span> Hemoglobin</span>
+      <span class="legend-item"><span class="leg-line" style="background:var(--shifted);background:repeating-linear-gradient(90deg,var(--shifted) 0 5px,transparent 5px 8px);"></span> Shifted curve</span>
+    </span>
+  </p>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 1: BINDING FUNDAMENTALS                            -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>1. Ligand Binding Fundamentals</h2>
+    <div class="card-sub">Reversible binding, dissociation constant, and fractional saturation</div>
+
+    <div class="label">The binding equilibrium</div>
+    <div class="value">
+      A protein $P$ binds a ligand $L$ reversibly to form the complex $PL$:
+    </div>
+    <div class="boxed-eq">
+      $$P + L \underset{k_{off}}{\overset{k_{on}}{\rightleftharpoons}} PL$$
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">Association constant</div>
+        <div class="value">
+          $K_a = \dfrac{[PL]}{[P][L]}$
+        </div>
+        <div class="why">Measures affinity. Larger $K_a$ = tighter binding.</div>
+      </div>
+      <div>
+        <div class="label">Dissociation constant</div>
+        <div class="value">
+          $K_d = \dfrac{[P][L]}{[PL]} = \dfrac{1}{K_a}$
+        </div>
+        <div class="why">Has units of concentration. Smaller $K_d$ = tighter binding. Typical biological $K_d$ values range from picomolar to millimolar.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Fractional saturation ($\theta$)</div>
+    <div class="value">
+      $\theta$ is the fraction of binding sites that are occupied:
+      $\quad \theta = \dfrac{[PL]}{[PL] + [P]} = \dfrac{\text{occupied sites}}{\text{total sites}}$
+    </div>
+    <div class="why">$\theta$ ranges from 0 (nothing bound) to 1 (fully saturated). For oxygen-binding proteins, $\theta$ is often written as $Y_{O_2}$.</div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Derive θ = [L] / (K_d + [L])</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note">Start from the definition of $\theta$:</span>
+        <div class="step-eq">$\theta = \dfrac{[PL]}{[PL] + [P]}$</div>
+
+        <span class="step-note">From the equilibrium, solve for $[PL]$:</span>
+        <div class="step-eq">$K_d = \dfrac{[P][L]}{[PL]} \quad \Longrightarrow \quad [PL] = \dfrac{[P][L]}{K_d}$</div>
+
+        <span class="step-note">Substitute into the $\theta$ expression:</span>
+        <div class="step-eq">$\theta = \dfrac{[P][L]/K_d}{[P][L]/K_d + [P]}$</div>
+
+        <span class="step-note">Factor out $[P]$ from numerator and denominator (it cancels):</span>
+        <div class="step-eq">$\theta = \dfrac{[L]/K_d}{[L]/K_d + 1} = \dfrac{[L]}{[L] + K_d}$</div>
+
+        <span class="step-note"><span class="step-result">Result:</span></span>
+      </div>
+      <div class="boxed-eq">
+        $$\theta = \frac{[L]}{[L] + K_d}$$
+      </div>
+      <div class="insight">
+        <strong>Physical meaning of $K_d$:</strong> Set $\theta = 0.5$ (half-saturation). Then $0.5 = [L]/([L] + K_d)$, which gives $[L] = K_d$. So $K_d$ is the ligand concentration at which half the binding sites are occupied. For oxygen binding proteins, this is called the $P_{50}$: the partial pressure of $O_2$ at half-saturation.
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 2: MYOGLOBIN vs HEMOGLOBIN                        -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2>2. Myoglobin vs. Hemoglobin Binding</h2>
+        <div class="card-sub">Hyperbolic vs. sigmoidal curves and why it matters for O₂ transport</div>
+      </div>
+      <canvas id="plot-binding" style="border-radius:8px;"></canvas>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">Myoglobin (hyperbolic)</div>
+        <div class="value">
+          Single subunit, one O₂ binding site. Follows the simple binding equation:
+          $\theta = \dfrac{pO_2}{pO_2 + P_{50}}$
+        </div>
+        <div class="why">Very high affinity ($P_{50} \approx 0.3$ kPa). Binds O₂ tightly at almost any physiological $pO_2$. Great for <em>storing</em> O₂ in muscle, but terrible for <em>transporting</em> it, because it barely releases O₂ even when tissue $pO_2$ drops.</div>
+      </div>
+      <div>
+        <div class="label">Hemoglobin (sigmoidal)</div>
+        <div class="value">
+          Four subunits ($\alpha_2\beta_2$), four O₂ binding sites. Displays cooperative binding:
+          $\theta = \dfrac{[L]^{n_H}}{[L]^{n_H} + K_d^{n_H}}$
+        </div>
+        <div class="why">Moderate affinity ($P_{50} \approx 3.5$ kPa). The sigmoidal shape means Hb loads efficiently in the lungs ($pO_2 \approx 13$ kPa) and unloads efficiently in tissues ($pO_2 \approx 4$ kPa). The steep middle section is the "functional range" where small $pO_2$ changes cause large $\theta$ changes.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="insight">
+      <strong>Why myoglobin can't transport:</strong> At lung $pO_2$ (13 kPa) Mb is ~98% saturated. At resting tissue $pO_2$ (4 kPa) it's still ~93% saturated. That's only ~5% release. Hemoglobin goes from ~98% to ~70%, releasing ~28% of its O₂, more than five times as much.
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 3: COOPERATIVITY & T/R STATES                     -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>3. Cooperativity &amp; T/R State Transition</h2>
+    <div class="card-sub">How binding at one subunit influences the others</div>
+
+    <div class="label">Two-state model</div>
+    <div class="value">
+      Hemoglobin exists in equilibrium between two quaternary conformations:
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">T-state (tense)</div>
+        <div class="value">Low O₂ affinity. Stabilized by ionic interactions (salt bridges) at subunit interfaces. Predominant when deoxy.</div>
+      </div>
+      <div>
+        <div class="label">R-state (relaxed)</div>
+        <div class="value">High O₂ affinity. Subunit interfaces rearranged. Predominant when oxygenated.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Mechanism of cooperativity</div>
+    <div class="value">
+      When O₂ binds to a heme iron:
+    </div>
+    <div class="deriv">
+      <span class="step-note">1. $\text{Fe}^{2+}$ moves into the plane of the porphyrin ring</span>
+      <span class="step-note">2. The proximal histidine (His F8) is pulled with it</span>
+      <span class="step-note">3. The F-helix shifts position</span>
+      <span class="step-note">4. Non-covalent contacts at subunit interfaces rearrange</span>
+      <span class="step-note">5. Neighboring subunits are nudged toward the R-state, increasing <em>their</em> O₂ affinity</span>
+    </div>
+    <div class="why">
+      The result: the first O₂ binds with the lowest affinity, and each subsequent O₂ binds more easily. The last O₂ binds with roughly 100x higher affinity than the first. This is <strong>positive cooperativity</strong>.
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Allostery terminology</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr>
+          <th>Term</th><th>Meaning</th><th>Example</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Homotropic</td><td>The ligand itself acts as the effector (binding at one site affects binding of the same ligand at another site)</td><td>O₂ on Hb</td></tr>
+          <tr><td>Heterotropic</td><td>A different molecule (not the ligand) binds at a secondary site and affects ligand binding at the primary site</td><td>2,3-BPG, H⁺, CO₂</td></tr>
+          <tr><td>Positive</td><td>Effector binding increases affinity at the other site(s)</td><td>O₂ on Hb (positive homotropic)</td></tr>
+          <tr><td>Negative</td><td>Effector binding decreases affinity at the other site(s)</td><td>2,3-BPG on Hb (negative heterotropic)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 4: HILL EQUATION                                   -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2>4. The Hill Equation &amp; Hill Plots</h2>
+        <div class="card-sub">Quantifying cooperativity</div>
+      </div>
+      <canvas id="plot-hill" style="border-radius:8px;"></canvas>
+    </div>
+
+    <div class="label">Setup</div>
+    <div class="value">
+      For a protein with $n$ identical binding sites that all fill simultaneously (a simplification), the binding equilibrium is:
+      $$P + nL \rightleftharpoons PL_n$$
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Full derivation of the Hill equation</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note">Write the equilibrium expression for the "all-or-nothing" binding model:</span>
+        <div class="step-eq">$K_d = \dfrac{[P][L]^n}{[PL_n]} \quad \Longrightarrow \quad [PL_n] = \dfrac{[P][L]^n}{K_d}$</div>
+
+        <span class="step-note">Fractional saturation (only two species: free $P$ and fully-bound $PL_n$):</span>
+        <div class="step-eq">$\theta = \dfrac{[PL_n]}{[P] + [PL_n]}$</div>
+
+        <span class="step-note">Substitute in $[PL_n]$:</span>
+        <div class="step-eq">$\theta = \dfrac{[P][L]^n / K_d}{[P] + [P][L]^n / K_d}$</div>
+
+        <span class="step-note">Cancel $[P]$:</span>
+        <div class="step-eq">$\theta = \dfrac{[L]^n / K_d}{1 + [L]^n / K_d} = \dfrac{[L]^n}{[L]^n + K_d}$</div>
+
+        <span class="step-note"><span class="step-result">Hill equation:</span></span>
+      </div>
+      <div class="boxed-eq">
+        $$\theta = \frac{[L]^{n_H}}{[L]^{n_H} + K_d^{n_H}}$$
+      </div>
+      <div class="why" style="margin-top:8px;">
+        We replace $n$ with $n_H$ (the Hill coefficient) because real proteins don't have truly all-or-nothing binding. $n_H$ is an empirical measure of cooperativity, not the literal number of binding sites. Equivalently, $K_d$ can be written as $K_{0.5}^{n_H}$ where $K_{0.5}$ (or $P_{50}$) is the ligand concentration at half-saturation.
+      </div>
+
+      <div class="deriv" style="margin-top:14px;">
+        <span class="step-note">Now rearrange to get the Hill plot form. Start from:</span>
+        <div class="step-eq">$\theta = \dfrac{[L]^{n_H}}{[L]^{n_H} + K_d^{n_H}}$</div>
+
+        <span class="step-note">Compute $\dfrac{\theta}{1 - \theta}$:</span>
+        <div class="step-eq">$1 - \theta = \dfrac{K_d^{n_H}}{[L]^{n_H} + K_d^{n_H}}$</div>
+        <div class="step-eq">$\dfrac{\theta}{1-\theta} = \dfrac{[L]^{n_H}}{K_d^{n_H}}$</div>
+
+        <span class="step-note">Take $\log$ of both sides:</span>
+        <div class="step-eq">$\log\!\left(\dfrac{\theta}{1-\theta}\right) = n_H \log[L] - n_H \log K_d$</div>
+
+        <span class="step-note"><span class="step-result">Hill plot equation ($y = mx + b$):</span></span>
+      </div>
+      <div class="boxed-eq">
+        $$\log\!\left(\frac{\theta}{1-\theta}\right) = n_H \log[L] - n_H \log K_{0.5}$$
+      </div>
+      <div class="why" style="margin-top:8px;">
+        Plot $\log(\theta/(1-\theta))$ on the y-axis vs. $\log[L]$ on the x-axis. The slope in the transition region (around $\theta = 0.5$) gives $n_H$. When $\theta = 0.5$, $\log(\theta/(1-\theta)) = 0$, so the x-intercept gives $\log K_{0.5}$ (which is $\log P_{50}$ for oxygen).
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Interpreting the Hill coefficient</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr><th>$n_H$</th><th>Meaning</th><th>Curve shape</th></tr></thead>
+        <tbody>
+          <tr><td>$n_H = 1$</td><td>No cooperativity (independent sites)</td><td>Hyperbolic (like myoglobin)</td></tr>
+          <tr><td>$n_H > 1$</td><td>Positive cooperativity (binding helps binding)</td><td>Sigmoidal (like hemoglobin, $n_H \approx 2.8$)</td></tr>
+          <tr><td>$n_H < 1$</td><td>Negative cooperativity (binding hinders binding)</td><td>Flatter than hyperbolic</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight" style="margin-top:12px;">
+      <strong>Important:</strong> $n_H$ is always $\leq n$ (the actual number of binding sites). Hemoglobin has 4 binding sites but $n_H \approx 2.8$, because binding is cooperative but not perfectly all-or-nothing. $n_H = n$ would mean infinite cooperativity.
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 5: ALLOSTERIC EFFECTORS                            -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2>5. Allosteric Effectors of Hemoglobin</h2>
+        <div class="card-sub">How temperature, pH, CO₂, and 2,3-BPG shift the O₂ binding curve</div>
+      </div>
+      <canvas id="plot-shift" style="border-radius:8px;"></canvas>
+    </div>
+
+    <div class="value">
+      All four effectors below stabilize the T-state and are <strong>negative heterotropic allosteric effectors</strong>. They right-shift the O₂ binding curve (increase $P_{50}$, decrease affinity), promoting O₂ release to tissues.
+    </div>
+
+    <div class="summary-table" style="margin-top:12px;">
+      <table>
+        <thead><tr>
+          <th>Effector</th><th>Change</th><th>Effect on Hb</th><th>Mechanism</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>Temperature</td>
+            <td>↑</td>
+            <td>Right shift (↓ affinity)</td>
+            <td>Higher thermal energy weakens non-covalent interactions that stabilize the R-state. T-state becomes favored.</td>
+          </tr>
+          <tr>
+            <td>H⁺ (pH)</td>
+            <td>↓ pH (more H⁺)</td>
+            <td>Right shift (↓ affinity)</td>
+            <td>Protons bind to His residues at subunit interfaces, forming additional salt bridges that stabilize the T-state. This is the <strong>Bohr effect</strong>.</td>
+          </tr>
+          <tr>
+            <td>CO₂</td>
+            <td>↑</td>
+            <td>Right shift (↓ affinity)</td>
+            <td>Two mechanisms: (1) CO₂ reacts with N-termini to form carbamate groups, adding ionic interactions that stabilize T-state. (2) CO₂ + H₂O → HCO₃⁻ + H⁺ (via carbonic anhydrase), contributing to the Bohr effect.</td>
+          </tr>
+          <tr>
+            <td>2,3-BPG</td>
+            <td>↑</td>
+            <td>Right shift (↓ affinity)</td>
+            <td>2,3-BPG (a glycolysis byproduct) binds in the central cavity between β subunits, forming cross-links that stabilize the T-state. The cavity is only large enough in the T conformation.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+    <div class="insight">
+      <strong>Putting it together:</strong> Rapidly metabolizing tissues release heat, produce CO₂, generate acid, and make 2,3-BPG. All four simultaneously right-shift the Hb curve, forcing O₂ release exactly where it's needed most. In the lungs, the reverse conditions (cool air, low CO₂, higher pH) left-shift the curve back, promoting O₂ loading.
+    </div>
+
+    <div class="divider" style="margin-top:14px;"></div>
+    <div class="label">Special case: Fetal hemoglobin ($\alpha_2\gamma_2$)</div>
+    <div class="value">
+      Fetal Hb (HbF) has $\gamma$ subunits instead of $\beta$. The key mutation is H143S in the $\gamma$ chain: serine cannot form the same ionic interaction with 2,3-BPG that histidine can. Result: HbF binds 2,3-BPG more weakly, so it has higher O₂ affinity than adult HbA. This lets the fetus pull O₂ from maternal blood across the placenta.
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  SECTION 6: TRANSPORT ENERGETICS                            -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>6. Energetics of Membrane Transport</h2>
+    <div class="card-sub">Free energy of moving solutes across a membrane</div>
+
+    <div class="label">The thermodynamic question</div>
+    <div class="value">
+      Moving a solute from concentration $C_1$ (starting side) to $C_2$ (destination side) across a membrane: what is $\Delta G$?
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="label">Uncharged solute</div>
+        <div class="boxed-eq" style="text-align:center;">
+          $$\Delta G = RT\ln\!\left(\frac{C_2}{C_1}\right)$$
+        </div>
+      </div>
+      <div>
+        <div class="label">Charged solute (ion)</div>
+        <div class="boxed-eq" style="text-align:center;">
+          $$\Delta G = RT\ln\!\left(\frac{C_2}{C_1}\right) + ZF\Delta V$$
+        </div>
+      </div>
+    </div>
+
+    <button class="deriv-btn" onclick="toggleDeriv(this)">▸ Full derivation from chemical potential</button>
+    <div class="deriv-box">
+      <div class="deriv">
+        <span class="step-note"><span class="step-result">Part A: Uncharged solute</span></span>
+        <span class="step-note">The chemical potential of a solute at concentration $C$ is:</span>
+        <div class="step-eq">$\mu = \mu^\circ + RT\ln C$</div>
+
+        <span class="step-note">where $\mu^\circ$ is the standard chemical potential, $R = 8.314 \times 10^{-3}$ kJ/(mol·K), and $T$ is temperature in Kelvin.</span>
+
+        <span class="step-note">The free energy change for moving one mole from side 1 ($C_1$) to side 2 ($C_2$) is:</span>
+        <div class="step-eq">$\Delta G = \mu_2 - \mu_1 = (\mu^\circ + RT\ln C_2) - (\mu^\circ + RT\ln C_1)$</div>
+
+        <span class="step-note">The $\mu^\circ$ terms cancel (same solute, same standard state):</span>
+        <div class="step-eq">$\Delta G = RT\ln C_2 - RT\ln C_1 = RT\ln\!\left(\dfrac{C_2}{C_1}\right)$</div>
+
+        <span class="step-note">If $C_2 < C_1$ (moving down the gradient): $\ln(C_2/C_1) < 0$, so $\Delta G < 0$ (spontaneous). This is <span class="step-result">passive transport</span>.</span>
+        <span class="step-note">If $C_2 > C_1$ (moving against the gradient): $\ln(C_2/C_1) > 0$, so $\Delta G > 0$ (not spontaneous). This is <span class="step-result">active transport</span>.</span>
+      </div>
+
+      <div class="deriv" style="margin-top:14px;">
+        <span class="step-note"><span class="step-result">Part B: Charged solute (ion)</span></span>
+        <span class="step-note">For an ion, the chemical potential includes an electrical work term. The electrochemical potential is:</span>
+        <div class="step-eq">$\tilde{\mu} = \mu^\circ + RT\ln C + ZF\psi$</div>
+
+        <span class="step-note">where $Z$ = ion charge, $F = 96.5$ kJ/(V·mol) (Faraday's constant), and $\psi$ = electrical potential at that location.</span>
+
+        <span class="step-note">The free energy change is:</span>
+        <div class="step-eq">$\Delta G = \tilde{\mu}_2 - \tilde{\mu}_1$</div>
+        <div class="step-eq">$= (\mu^\circ + RT\ln C_2 + ZF\psi_2) - (\mu^\circ + RT\ln C_1 + ZF\psi_1)$</div>
+
+        <span class="step-note">Simplify ($\mu^\circ$ cancels, define $\Delta V = \psi_2 - \psi_1$):</span>
+        <div class="step-eq">$\Delta G = RT\ln\!\left(\dfrac{C_2}{C_1}\right) + ZF\Delta V$</div>
+
+        <span class="step-note">The first term is the <span class="step-result">concentration gradient</span> contribution. The second term is the <span class="step-result">electrical gradient</span> (membrane potential) contribution. Together they form the <span class="step-result">electrochemical gradient</span>.</span>
+      </div>
+
+      <div class="insight" style="margin-top:12px;">
+        <strong>Sign convention:</strong> $C_1$ = starting concentration, $C_2$ = destination concentration. $\Delta V$ = potential at destination minus potential at start. For a cell with interior at $-60$ mV relative to outside, if you're transporting from outside to inside: $\Delta V = -60\text{ mV} = -0.060\text{ V}$.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Constants</div>
+    <div class="summary-table" style="margin-top:8px;">
+      <table>
+        <thead><tr><th>Symbol</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>$R$</td><td>$8.314 \times 10^{-3}$ kJ/(mol·K)</td><td>Gas constant</td></tr>
+          <tr><td>$T$</td><td>310 K (physiological) or 298 K (standard)</td><td>Absolute temperature</td></tr>
+          <tr><td>$F$</td><td>96.5 kJ/(V·mol)</td><td>Faraday's constant (charge per mole of electrons)</td></tr>
+          <tr><td>$Z$</td><td>+1, +2, -1, etc.</td><td>Ion charge (sign matters!)</td></tr>
+          <tr><td>$\Delta V$</td><td>Typically $-0.060$ V for a resting cell</td><td>Membrane potential (inside minus outside)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+    <div class="label">Worked examples</div>
+
+    <div class="example">
+      <div class="ex-title">Example 1: Uncharged solute, against gradient</div>
+      <div class="ex-body">
+        Transport an uncharged molecule from 5 mM outside to 150 mM inside at 25°C (298 K).
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <div class="step-eq">$\Delta G = RT\ln\!\left(\dfrac{C_2}{C_1}\right) = (8.314 \times 10^{-3})(298)\ln\!\left(\dfrac{150}{5}\right)$</div>
+          <div class="step-eq">$= 2.478 \times \ln(30) = 2.478 \times 3.401$</div>
+          <div class="step-eq"><span class="step-result">$\Delta G = +8.43$ kJ/mol</span></div>
+          <span class="step-note">$\Delta G > 0$: this is active transport (requires energy input).</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Example 2: Cation (+1) across membrane potential</div>
+      <div class="ex-body">
+        Same concentrations (5 mM → 150 mM), but now the solute is an ion with $Z = +1$ and $\Delta V = -0.060$ V (interior negative). $T = 298$ K.
+        <div class="deriv" style="margin-top:8px; margin-bottom:0;">
+          <span class="step-note">Concentration term (same as before):</span>
+          <div class="step-eq">$RT\ln\!\left(\dfrac{C_2}{C_1}\right) = +8.43\text{ kJ/mol}$</div>
+          <span class="step-note">Electrical term:</span>
+          <div class="step-eq">$ZF\Delta V = (+1)(96.5)(-0.060) = -5.79\text{ kJ/mol}$</div>
+          <span class="step-note">Total:</span>
+          <div class="step-eq"><span class="step-result">$\Delta G = 8.43 + (-5.79) = +2.64$ kJ/mol</span></div>
+          <span class="step-note">Still positive (active transport), but the membrane potential partially favors entry of the cation, making it less costly.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="ex-title">Example 3: What if the ion were $Z = -1$ instead?</div>
+      <div class="ex-body">
+        <div class="deriv" style="margin-top:4px; margin-bottom:0;">
+          <span class="step-note">The concentration term is unchanged: $+8.43$ kJ/mol</span>
+          <span class="step-note">Electrical term flips sign:</span>
+          <div class="step-eq">$ZF\Delta V = (-1)(96.5)(-0.060) = +5.79\text{ kJ/mol}$</div>
+          <div class="step-eq"><span class="step-result">$\Delta G = 8.43 + 5.79 = +14.22$ kJ/mol</span></div>
+          <span class="step-note">Much less favorable. The negative charge is being pushed <em>away</em> from the negative interior. Both the concentration gradient and the electrical gradient oppose this transport.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="insight">
+      <strong>Decision rule:</strong> $\Delta G < 0$ → passive (spontaneous, no energy needed). $\Delta G > 0$ → active (requires energy input, e.g. ATP hydrolysis). The sign of $ZF\Delta V$ can either help or hurt, depending on whether the ion charge and membrane potential are working together or against each other.
+    </div>
+  </div>
+
+  <!-- =========================================================== -->
+  <!--  BOTTOM EQUATION SUMMARY                                    -->
+  <!-- =========================================================== -->
+  <div class="card">
+    <h2>Equation Reference</h2>
+    <div class="card-sub">All key equations in one place</div>
+    <div class="summary-table">
+      <table>
+        <thead><tr><th>Name</th><th>Equation</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>Dissociation constant</td><td>$K_d = \dfrac{[P][L]}{[PL]}$</td><td>Defining binding affinity</td></tr>
+          <tr><td>Fractional saturation</td><td>$\theta = \dfrac{[L]}{[L] + K_d}$</td><td>Simple (non-cooperative) binding curve</td></tr>
+          <tr><td>Hill equation</td><td>$\theta = \dfrac{[L]^{n_H}}{[L]^{n_H} + K_{0.5}^{n_H}}$</td><td>Cooperative binding curve</td></tr>
+          <tr><td>Hill plot</td><td>$\log\!\left(\dfrac{\theta}{1-\theta}\right) = n_H\log[L] - n_H\log K_{0.5}$</td><td>Determining $n_H$ and $P_{50}$ graphically</td></tr>
+          <tr><td>$\Delta G$ (uncharged)</td><td>$\Delta G = RT\ln\!\left(\dfrac{C_2}{C_1}\right)$</td><td>Uncharged solute crossing a membrane</td></tr>
+          <tr><td>$\Delta G$ (charged)</td><td>$\Delta G = RT\ln\!\left(\dfrac{C_2}{C_1}\right) + ZF\Delta V$</td><td>Ion crossing a membrane with potential</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- =========================================================== -->
+<!--  PLOTS                                                       -->
+<!-- =========================================================== -->
+<script>
+const C = { mb: '#6ec8e4', hb: '#e85d5d', shifted: '#d47ed0', accent: '#e8c547', grid: '#222', ax: '#555', dim: '#666' };
+
+/* ---- Shared drawing helpers ---- */
+function initCanvas(canvas, W, H) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = W * 2; canvas.height = H * 2;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(2, 2);
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.roundRect(0, 0, W, H, 8); ctx.fill();
+  return ctx;
+}
+
+function drawAxes(ctx, W, H, pad, xLabel, yLabel) {
+  ctx.strokeStyle = C.ax; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H - pad.b); ctx.stroke();
+  ctx.fillStyle = C.dim; ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center'; ctx.fillText(xLabel, (pad.l + W - pad.r) / 2, H - 6);
+  ctx.save(); ctx.translate(12, (pad.t + H - pad.b) / 2); ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center'; ctx.fillText(yLabel, 0, 0); ctx.restore();
+}
+
+function drawLegend(ctx, W, pad, items) {
+  let y = pad.t + 10;
+  items.forEach(([color, dash, label]) => {
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dash);
+    ctx.beginPath(); ctx.moveTo(W - 120, y); ctx.lineTo(W - 98, y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = color; ctx.font = '9px Source Sans Pro, sans-serif'; ctx.textAlign = 'start';
+    ctx.fillText(label, W - 93, y + 3);
+    y += 15;
+  });
+}
+
+/* ---- Plot 1: Mb vs Hb binding curves ---- */
+function drawBindingPlot() {
+  const canvas = document.getElementById('plot-binding');
+  const W = 320, H = 220, pad = { l: 45, r: 15, t: 15, b: 32 };
+  const ctx = initCanvas(canvas, W, H);
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  drawAxes(ctx, W, H, pad, 'pO₂ (kPa)', 'θ');
+
+  const sx = x => pad.l + (x / 14) * pw;
+  const sy = y => pad.t + (1 - y) * ph;
+
+  // grid lines for θ
+  [0.25, 0.5, 0.75, 1.0].forEach(v => {
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(pad.l, sy(v)); ctx.lineTo(W - pad.r, sy(v)); ctx.stroke();
+    ctx.fillStyle = '#444'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(2), pad.l - 5, sy(v) + 3);
+  });
+
+  // Mb: hyperbolic, P50 = 0.3 kPa
+  function mb(pO2) { return pO2 / (pO2 + 0.3); }
+  // Hb: Hill with nH=2.8, P50=3.5
+  function hb(pO2) { return Math.pow(pO2, 2.8) / (Math.pow(pO2, 2.8) + Math.pow(3.5, 2.8)); }
+
+  // draw curves
+  function plotCurve(fn, color, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash);
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = (i / 200) * 14;
+      const px = sx(x), py = sy(fn(x));
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  plotCurve(mb, C.mb, []);
+  plotCurve(hb, C.hb, []);
+
+  // P50 markers
+  ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+  // Hb P50
+  ctx.strokeStyle = C.hb + '80';
+  ctx.beginPath(); ctx.moveTo(sx(3.5), sy(0)); ctx.lineTo(sx(3.5), sy(0.5)); ctx.lineTo(sx(0), sy(0.5)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = C.accent;
+  ctx.beginPath(); ctx.arc(sx(3.5), sy(0.5), 3.5, 0, Math.PI * 2); ctx.fill();
+
+  // label
+  ctx.fillStyle = C.dim; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'left';
+  ctx.fillText('P₅₀', sx(3.8), sy(0.48));
+
+  drawLegend(ctx, W, pad, [[C.mb, [], 'Myoglobin'], [C.hb, [], 'Hemoglobin']]);
+}
+
+/* ---- Plot 2: Hill plot ---- */
+function drawHillPlot() {
+  const canvas = document.getElementById('plot-hill');
+  const W = 320, H = 220, pad = { l: 50, r: 15, t: 15, b: 32 };
+  const ctx = initCanvas(canvas, W, H);
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  drawAxes(ctx, W, H, pad, 'log [L]', 'log(θ/(1-θ))');
+
+  const xMin = -1.2, xMax = 2, yMin = -3, yMax = 3;
+  const sx = x => pad.l + ((x - xMin) / (xMax - xMin)) * pw;
+  const sy = y => pad.t + ((yMax - y) / (yMax - yMin)) * ph;
+
+  // zero line
+  ctx.strokeStyle = C.grid; ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, sy(0)); ctx.lineTo(W - pad.r, sy(0)); ctx.stroke();
+
+  // nH = 1 (Mb)
+  function hillY_mb(logL) { const L = Math.pow(10, logL); const th = L / (L + 0.3); if (th <= 0 || th >= 1) return null; return Math.log10(th / (1 - th)); }
+  // nH = 2.8 (Hb)
+  function hillY_hb(logL) { const L = Math.pow(10, logL); const th = Math.pow(L, 2.8) / (Math.pow(L, 2.8) + Math.pow(3.5, 2.8)); if (th <= 0.001 || th >= 0.999) return null; return Math.log10(th / (1 - th)); }
+
+  function plotHill(fn, color, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash);
+    ctx.beginPath(); let started = false;
+    for (let i = 0; i <= 300; i++) {
+      const logL = xMin + (i / 300) * (xMax - xMin);
+      const y = fn(logL);
+      if (y === null || y < yMin || y > yMax) { started = false; continue; }
+      const px = sx(logL), py = sy(y);
+      if (!started) { ctx.moveTo(px, py); started = true; } else { ctx.lineTo(px, py); }
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  plotHill(hillY_mb, C.mb, []);
+  plotHill(hillY_hb, C.hb, []);
+
+  // slope labels
+  ctx.fillStyle = C.mb; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'left';
+  ctx.fillText('nH = 1', sx(1.1), sy(hillY_mb(1.0)) - 6);
+  ctx.fillStyle = C.hb;
+  ctx.fillText('nH ≈ 2.8', sx(0.75), sy(hillY_hb(0.65)) - 6);
+
+  // θ=0.5 reference
+  ctx.fillStyle = C.accent;
+  ctx.beginPath(); ctx.arc(sx(Math.log10(3.5)), sy(0), 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = C.dim; ctx.font = '8px JetBrains Mono'; ctx.textAlign = 'left';
+  ctx.fillText('θ=0.5', sx(Math.log10(3.5)) + 6, sy(0) + 3);
+
+  drawLegend(ctx, W, pad, [[C.mb, [], 'Mb (nH=1)'], [C.hb, [], 'Hb (nH≈2.8)']]);
+}
+
+/* ---- Plot 3: Right-shifted curve ---- */
+function drawShiftPlot() {
+  const canvas = document.getElementById('plot-shift');
+  const W = 320, H = 220, pad = { l: 45, r: 15, t: 15, b: 32 };
+  const ctx = initCanvas(canvas, W, H);
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  drawAxes(ctx, W, H, pad, 'pO₂ (kPa)', 'θ');
+
+  const sx = x => pad.l + (x / 14) * pw;
+  const sy = y => pad.t + (1 - y) * ph;
+
+  [0.25, 0.5, 0.75, 1.0].forEach(v => {
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(pad.l, sy(v)); ctx.lineTo(W - pad.r, sy(v)); ctx.stroke();
+  });
+
+  function hb(pO2, p50) { return Math.pow(pO2, 2.8) / (Math.pow(pO2, 2.8) + Math.pow(p50, 2.8)); }
+
+  function plotCurve(p50, color, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.setLineDash(dash);
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const x = (i / 200) * 14;
+      const px = sx(x), py = sy(hb(x, p50));
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  plotCurve(3.5, C.hb, []);
+  plotCurve(5.5, C.shifted, [6, 3]);
+
+  // arrow showing right shift
+  const arrY = sy(0.5);
+  ctx.strokeStyle = C.accent; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(sx(3.5) + 4, arrY); ctx.lineTo(sx(5.5) - 4, arrY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx(5.5) - 8, arrY - 4); ctx.lineTo(sx(5.5) - 3, arrY); ctx.lineTo(sx(5.5) - 8, arrY + 4); ctx.stroke();
+
+  ctx.fillStyle = C.dim; ctx.font = '8px JetBrains Mono'; ctx.textAlign = 'center';
+  ctx.fillText('↑T, ↓pH, ↑CO₂, ↑BPG', sx(7.5), arrY - 8);
+
+  drawLegend(ctx, W, pad, [[C.hb, [], 'Normal Hb'], [C.shifted, [6, 3], 'Right-shifted']]);
+}
+
+/* ---- Toggle derivation ---- */
+function toggleDeriv(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  btn.innerHTML = open ? '▾ Hide derivation' : '▸ Show full derivation';
+  if (open && window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([box]);
+  }
+}
+
+/* ---- Init ---- */
+document.addEventListener('DOMContentLoaded', () => {
+  drawBindingPlot();
+  drawHillPlot();
+  drawShiftPlot();
+});
+</script>
+</body>
+</html>
