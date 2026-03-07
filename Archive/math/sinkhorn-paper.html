@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closed Form of a Generalized Sinkhorn Limit</title>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    packages: {'[+]': ['cancel', 'ams', 'boldsymbol', 'color']},
+    macros: {
+      iff: '\\Longleftrightarrow',
+      Sink: '\\operatorname{Sink}',
+      diag: '\\operatorname{diag}',
+      BR: '\\operatorname{BR}'
+    },
+    tags: 'ams'
+  },
+  loader: { load: ['[tex]/cancel', '[tex]/boldsymbol', '[tex]/color'] },
+  chtml: {
+    scale: 1.04,
+    matchFontHeight: false
+  },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.body.classList.add('math-ready');
+      });
+    }
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@700;800&display=swap');
+
+  :root {
+    --bg: #0e0e11;
+    --bg-raised: #141418;
+    --bg-surface: #1a1a20;
+    --fg: #ccc9c0;
+    --fg-bright: #eae8e1;
+    --fg-muted: #7a7872;
+    --fg-dim: #55534d;
+    --accent: #c49a6c;
+    --accent-dim: #8b6d4a;
+    --accent-glow: rgba(196,154,108,0.08);
+    --theorem-accent: #5b8fd4;
+    --theorem-bg: rgba(91,143,212,0.06);
+    --def-accent: #e07030;
+    --def-bg: rgba(224,112,48,0.06);
+    --border: #2a2a32;
+    --border-light: #33333d;
+    --page-max: 95%;  
+    --cite-color: #7eaad4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.82;
+    font-size: 18px;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.math-ready { opacity: 1; }
+  @keyframes forceShow { to { opacity: 1; } }
+  body { animation: forceShow 0s 3.5s forwards; }
+
+  .page {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 4rem 10px 6rem;
+  }
+
+  /* ── Title ── */
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 1px;
+    background: var(--accent);
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--fg-bright);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 0.2rem;
+  }
+
+  /* ── Abstract ── */
+  .abstract {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem 1.8rem;
+    margin: 2rem 0 3rem;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--fg);
+  }
+  .abstract-title {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--fg-bright);
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Sections ── */
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--fg-bright);
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--fg-bright);
+    margin-top: 2.2rem;
+    margin-bottom: 0.8rem;
+  }
+  .subsection-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--fg-dim);
+    margin-right: 0.5rem;
+  }
+
+  p { margin-bottom: 1rem; }
+  strong { color: var(--fg-bright); font-weight: 600; }
+  em { font-style: italic; }
+
+  /* ── Environments ── */
+  .env {
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .env-title {
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    display: block;
+    font-size: 1rem;
+  }
+  .env p:last-child { margin-bottom: 0; }
+
+  .theorem {
+    background: var(--theorem-bg);
+    border-left: 2px solid var(--theorem-accent);
+  }
+  .theorem .env-title { color: var(--theorem-accent); }
+
+  .definition {
+    background: var(--def-bg);
+    border-left: 2px solid var(--def-accent);
+  }
+  .definition .env-title { color: var(--def-accent); }
+
+  .proof {
+    margin: 0.5rem 0 0.8rem 0;
+    padding-left: 0;
+  }
+  .proof-head {
+    font-style: italic;
+    color: var(--fg-muted);
+  }
+  .qed {
+    text-align: right;
+    color: var(--fg-muted);
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  /* ── Lists ── */
+  ul, ol {
+    margin: 0.6rem 0 1.2rem 1.5rem;
+  }
+  ul { list-style: none; padding-left: 1.4rem; }
+  ul li { position: relative; padding-left: 0.3rem; margin-bottom: 0.3rem; }
+  ul li::before {
+    content: '\2014';
+    position: absolute;
+    left: -1.4rem;
+    color: var(--accent-dim);
+    font-weight: 300;
+  }
+  ol li { margin-bottom: 0.3rem; }
+  ol li::marker { color: var(--accent-dim); }
+
+  /* ── Math ── */
+  mjx-container[display="true"] {
+    margin: 1.3rem 0 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.2rem 0;
+    color: var(--fg-bright);
+  }
+
+  /* ── Key result box ── */
+  .key-result {
+    border: 1px solid var(--accent-dim);
+    background: var(--accent-glow);
+    border-radius: 4px;
+    padding: 1rem 1.4rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+
+  /* ── Table ── */
+  table {
+    margin: 1.5rem auto;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  th, td {
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--border-light);
+    text-align: center;
+  }
+  th {
+    background: var(--bg-raised);
+    color: var(--fg-bright);
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+  }
+  td { color: var(--fg); }
+
+  /* ── Citations (Wikipedia style) ── */
+  .cite {
+    font-size: 0.7em;
+    vertical-align: super;
+    line-height: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .cite a {
+    color: var(--cite-color);
+    text-decoration: none;
+    padding: 0 1px;
+  }
+  .cite a:hover { text-decoration: underline; }
+
+  /* ── References section ── */
+  .references {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .references h2 { margin-top: 0; }
+  .ref-list {
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: var(--fg-muted);
+    counter-reset: ref;
+    list-style: none;
+    padding-left: 0;
+  }
+  .ref-list li {
+    counter-increment: ref;
+    padding-left: 2.5rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  .ref-list li::before {
+    content: '[' counter(ref) ']';
+    position: absolute;
+    left: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85em;
+    color: var(--cite-color);
+  }
+
+  /* ── Divider ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin: 3rem 0 2rem;
+    color: var(--fg-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Equation tags ── */
+  .eq-tag {
+    float: right;
+    color: var(--fg-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .page { padding: 2.5rem 10px 4rem; }
+    header h1 { font-size: 1.5rem; }
+    .env { padding: 1rem; }
+    table { font-size: 0.85rem; }
+    th, td { padding: 0.35rem 0.7rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════ TITLE ══════════════ -->
+<header>
+  <h1>Closed Form of a Generalized<br>Sinkhorn Limit</h1>
+</header>
+
+<!-- ══════════════ ABSTRACT ══════════════ -->
+<div class="abstract">
+  <div class="abstract-title">Abstract</div>
+  <p>The Kruithof iterative scaling process, which adjusts matrices to meet target row and column sums, is a longstanding problem that lacks a general closed form for its limit. While Nathanson derived the closed form for the Sinkhorn limit of $2\times 2$ matrices when target row and column sums are 1, and recent work by Rowland and Wu has advanced understanding of Sinkhorn limits for $3\times 3$, and general $n\times m$ matrices through polynomials, a "generalized Sinkhorn limit" (i.e. the original "Kruithof limit", with arbitrary target sums) remains elusive. Here, we derive the closed form for the generalized Sinkhorn limit of $2\times 2$ matrices, and discuss how this approach can be extended to larger matrices. More significantly, we prove that for any positive $n \times m$ matrix and positive target row and column sums, each entry in the generalized Sinkhorn limit is algebraic over the input data with degree at most $\binom{n+m-2}{n-1}$.</p>
+</div>
+
+<!-- ══════════════ 1. INTRODUCTION ══════════════ -->
+<span class="section-num">Section 1</span>
+<h2 id="s1">Introduction</h2>
+
+<h3 id="s1.1"><span class="subsection-num">1.1</span> Background</h3>
+
+<p>Iterative scaling procedures for matrices have a long history in mathematics and statistics. A notable example is the Sinkhorn-Knopp algorithm, introduced by Sinkhorn in 1964,<span class="cite"><a href="#ref1">[1]</a><a href="#ref2">[2]</a></span> which iteratively scales the rows and columns of a positive square matrix to produce a doubly stochastic matrix, not dissimilar to the iterative proportional fitting procedure in statistics. Sinkhorn showed that for any positive square matrix $A$, this iterative process converges to a unique doubly stochastic matrix $S$, known as the Sinkhorn limit of $A$, which can be expressed as $S = \operatorname{Sink}(A) = D_1 A D_2$ where $D_{1,2}$ are positive diagonal matrices, unique up to a scalar multiple. In a subsequent 1966 paper,<span class="cite"><a href="#ref3">[3]</a></span> Sinkhorn extended this result, showing that a single diagonal scaling of the form $DAD$, where $A$ is a positive square matrix and $D$ is a positive diagonal matrix, unique up to a scalar multiple, suffices to produce a singly row or column stochastic matrix.</p>
+
+<p>The structure of Sinkhorn limits are now well understood for small matrices, including a closed form of the $2\times 2$ case due to Nathanson,<span class="cite"><a href="#ref4">[4]</a></span></p>
+
+$$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \iff \operatorname{Sink}(A) = \frac{1}{\sqrt{ad} + \sqrt{bc}} \begin{bmatrix} \sqrt{ad} & \sqrt{bc} \\ \sqrt{bc} & \sqrt{ad} \end{bmatrix}$$
+
+<p>and recent work by Rowland and Wu has extended these insights to larger matrices.<span class="cite"><a href="#ref5">[5]</a></span> In particular, they derive the algebraic structure of the Sinkhorn limit for general $3\times 3$ matrices using Gröbner bases, proving that each entry is an algebraic number of degree at most 6. Furthermore, they develop a conjectural framework for the Sinkhorn limits of general square $n\times n$, and later, rectangular $n\times m$ matrices, characterizing the entries as roots of polynomials with degree at most $\binom{m+n-2}{n-1}$, whose coefficients are structured as linear combinations of products of matrix minors.</p>
+
+<p>This procedure can be viewed as a special case of a more general scaling method, often referred to as the Kruithof scaling process,<span class="cite"><a href="#ref6">[6]</a></span> originally introduced in 1937 to model and adjust traffic flows in telephone networks. The goal here was to adjust a general rectangular $n\times m$ matrix to meet prescribed row and column sums, not necessarily equal to $1$. Unlike the Sinkhorn-Knopp case, this "Kruithof limit", or hereinafter <em>generalized Sinkhorn limit</em> lacks a closed form for the limiting matrix, even in small cases. While Sinkhorn showed that the limit exists and is unique,<span class="cite"><a href="#ref7">[7]</a></span> and Franklin and Lorenz implicitly demonstrate its continuity among other impressive general results,<span class="cite"><a href="#ref8">[8]</a></span> much, if not all, of remaining theoretical focus has been on the simpler setting of scaling to the doubly stochastic matrix.</p>
+
+<p>Here, we derive the closed form for the generalized Sinkhorn limits of $2\times 2$ matrices with arbitrary positive target row and column sums. Building on earlier results by Sinkhorn, Franklin and Lorenz, Nathanson, Rowland and Wu, &amp;c., who primarily address the doubly stochastic case, our approach extends these ideas to the arbitrary scaling setting as originally envisioned by Kruithof. Although this is tractable for $2\times 2$ matrices, we find that the algebra quickly becomes unwieldy in larger cases, making explicit formulas for larger matrices likely impractical.</p>
+
+<h3 id="s1.2"><span class="subsection-num">1.2</span> Observations</h3>
+
+<p>Despite the apparent simplicity of scaling a matrix to meet prescribed row and column sums, the exact values of the entries of Sinkhorn limits or generalized Sinkhorn limits remain remarkably opaque, even in small cases. This difficulty reflects the general unwieldiness of matrix operations and, for instance, their interaction with spectral properties. In operator theory and matrix analysis, it is well known that even basic operations like matrix addition or multiplication can obscure or completely alter eigenstructure. For example, for matrices $A$ and $B$, while the nonzero eigenvalues of matrix products $AB$ and $BA$ coincide up to multiplicity, there is no general formula that relates the eigenvalues of $A+B$ to those of $A$ and $B$ individually. Generally, in finite dimensions, matrix behavior resists clean decomposition. As a result, even when scaling a matrix iteratively, one may encounter nontrivial dynamics that make the algebraic characterization of the limit matrix highly nonobvious.<span class="cite"><a href="#ref9">[9]</a></span> The work of Rowland and Wu reinforces this notion through their analysis of Sinkhorn limits, highlighting the nontrivial polynomial structure underlying even small matrices.</p>
+
+
+<!-- ══════════════ 2. CALCULATION ══════════════ -->
+<span class="section-num">Section 2</span>
+<h2 id="s2">Calculation</h2>
+
+<h3 id="s2.1"><span class="subsection-num">2.1</span> Setup</h3>
+
+<p>Let $A\in \mathbb R^{n\times m}_{>0}$ be a positive $n\times m$ rectangular matrix. Denote $S = \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)$ to be the generalized Sinkhorn limit of $A$ with target row and column sums $\vec{R}\in \mathbb R^{n}_{>0}$ and $\vec{C}\in \mathbb R^{m}_{>0}$ defined respectively as</p>
+
+$$\vec{R} = S\vec{1}_m = \begin{bmatrix} R_1 \\ R_2 \\ \vdots \\ R_n \end{bmatrix}, \quad \vec{C} = S^\top \vec{1}_n = \begin{bmatrix} C_1 \\ C_2 \\ \vdots \\ C_m \end{bmatrix}$$
+
+<p>for $\vec{1}_i$ being a column vector of $i$ ones. Sinkhorn showed that like the Sinkhorn limit, the generalized Sinkhorn limit can be equivalently written as the product of three matrices $\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)=D_1 AD_2$ for positive diagonal matrices $D_{1,2}$, unique up to a scalar multiple.<span class="cite"><a href="#ref7">[7]</a></span></p>
+
+<p>This means that over successive iterations, the scaling factors applied to each row and column converge, with row and column scalings approaching fixed values $r_i$ and $c_j$ respectively. We observe that $D_1$ can be interpreted as scaling factors $r_i$ for the corresponding $i$th row of $A$, and $D_2$ being scaling factors $c_j$ for the corresponding $j$th column of $A$,</p>
+
+$$D_1 A D_2 = \begin{bmatrix} r_1 & 0 & \cdots & 0 \\ 0 & r_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & r_n \end{bmatrix} \begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1m} \\ a_{21} & a_{22} & \cdots & a_{2m} \\ \vdots & \vdots & \ddots & \vdots \\ a_{n1} & a_{n2} & \cdots & a_{nm} \end{bmatrix} \begin{bmatrix} c_1 & 0 & \cdots & 0 \\ 0 & c_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & c_m \end{bmatrix} = \begin{bmatrix} r_1 a_{11} c_1 & \cdots & r_1 a_{1m} c_m \\ \vdots & \ddots & \vdots \\ r_n a_{n1} c_1 & \cdots & r_n a_{nm} c_m \end{bmatrix}$$
+
+<p>Effectively, the generalized Sinkhorn limit converges to a matrix where each entry $a_{ij}$ is transformed into $r_i a_{ij} c_j$. Formally, we can say that</p>
+
+<div class="env definition" id="def-2.1.1">
+  <span class="env-title">Definition 2.1.1 (Generalized Sinkhorn Limit):</span>
+  <p>Let $A \in \mathbb{R}^{n \times m}_{>0}$ be a positive $n\times m$ rectangular matrix, and let target row and column sums be $\vec{R} \in \mathbb{R}^n_{>0}$ and $\vec{C} \in \mathbb{R}^m_{>0}$, respectively.</p>
+  <p>The <em>generalized Sinkhorn limit</em> $S$ of $A$, denoted $\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)$, is given by $S = D_1 A D_2$, where $D_1 = \operatorname{diag}(r_1, \dots, r_n)$ and $D_2 = \operatorname{diag}(c_1, \dots, c_m)$ are positive diagonal matrices such that $S \vec{1}_m = \vec{R}$ and $S^\top \vec{1}_n = \vec{C}$. When $\vec{R}=\vec{C}=\vec{1}$, we recover the regular Sinkhorn limit $\operatorname{Sink}\left(A\,\middle|\, \vec{1},\vec{1}\right)=\operatorname{Sink}(A)$.</p>
+</div>
+
+<p>Let $S = \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)$ be given by</p>
+
+$$S = \begin{bmatrix} s_{11} & s_{12} & \cdots & s_{1m} \\ s_{21} & s_{22} & \cdots & s_{2m} \\ \vdots & \vdots & \ddots & \vdots \\ s_{n1} & s_{n2} & \cdots & s_{nm} \end{bmatrix} = \begin{bmatrix} r_1 a_{11} c_1 & r_1 a_{12} c_2 & \cdots & r_1 a_{1m} c_m \\ r_2 a_{21} c_1 & r_2 a_{22} c_2 & \cdots & r_2 a_{2m} c_m \\ \vdots & \vdots & \ddots & \vdots \\ r_n a_{n1} c_1 & r_n a_{n2} c_2 & \cdots & r_n a_{nm} c_m \end{bmatrix} = D_1 A D_2$$
+
+<p>This matrix equation $S=D_1 AD_2$ for $i = 1, 2, \dots, n$ and $j = 1, 2, \dots, m$ gives rise to a set of $n\cdot m$ nonlinear equations,</p>
+
+$$s_{ij} = r_i a_{ij} c_j \tag{2.1.1}$$
+
+<p>Additionally, by definition, $\vec{R} = S\vec{1}_m$ and $\vec{C} = S^\top \vec{1}_n$ yield an additional $n+m$ linear equations, where for $i=1,2,\dots,n$ and $j=1,2,\dots,m$,</p>
+
+$$\sum_{j=1}^m s_{ij} = R_i, \quad \sum_{i=1}^n s_{ij} = C_j \tag{2.1.2}$$
+
+<p>Corresponding equations of (2.1.1) can be substituted into (2.1.2), and again for $i=1,2,\dots,n$ and $j=1,2,\dots,m$, this leads to $n+m$ nonlinear equations of the form</p>
+
+$$\sum_{j=1}^m r_i a_{ij} c_j = R_i, \quad \sum_{i=1}^n r_i a_{ij} c_j = C_j \tag{2.1.3}$$
+
+<p>where we are to solve for $r_i$ and $c_j$ in terms of $a_{ij}$, $R_i$, and $C_j$, yielding the closed form of $s_{ij}$ we seek via (2.1.1).</p>
+
+<p>Here, we note two things. First, a solution only exists when the consistency condition $\operatorname{sum}(\vec{R}) = \operatorname{sum}(\vec{C})$ is met, or else the resulting matrix $S$ does not exist. Second, as mentioned prior, Sinkhorn showed that the fact $\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)=D_1 AD_2$ for positive diagonal matrices $D_{1,2}$ is unique <em>only up to a scalar multiple</em>. This is because system (2.1.3) is homogeneous in degree 1 for both $r_i$ and $c_j$, or to wit, invariant under the transformation</p>
+
+$$r_i \mapsto \lambda r_i, \quad c_j \mapsto \lambda^{-1}c_j, \quad \forall\, \lambda \in \mathbb R_{>0}$$
+
+<p>Indeed, we can see how</p>
+
+$$\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right) = D_1 AD_2 = (\lambda D_1)A(\lambda^{-1}D_2) \iff s_{ij} = r_i a_{ij}c_j = (\lambda r_i)a_{ij}(\lambda^{-1}c_j)$$
+
+<p>This is effectively a gauge symmetry of system (2.1.3) under the multiplicative group $\mathbb R_{>0}$, and a gauge freedom of the solution set $r_i$, $c_j$. We can thus either</p>
+
+<ol>
+  <li>solve for all other variables in terms of some arbitrarily chosen $r_i$ or $c_j$, or</li>
+  <li>apply a gauge fix, such as designating some arbitrarily chosen $r_i$ or $c_j$ to be a positive real number, ideally as $1$, and solving for all other variables with this gauge fix.</li>
+</ol>
+
+<p>Method 2 is typically the easier and more optimal method, as it reduces a lot of algebra.</p>
+
+<p>One last thing to note is that the generalized Sinkhorn limit is symmetric under transposition, and the limits for $n\times m$ matrices are mathematically equivalent to $m\times n$ matrices, shown as follows.</p>
+
+<div class="env theorem" id="prop-2.1.1">
+  <span class="env-title">Proposition 2.1.1 (Generalized Sinkhorn Limit Transpose Invariance):</span>
+  <p>Let $A \in \mathbb{R}^{n \times m}_{>0}$ be a positive $n\times m$ rectangular matrix, and let target row and column sums be $\vec{R} \in \mathbb{R}^n_{>0}$ and $\vec{C} \in \mathbb{R}^m_{>0}$, respectively. Let $S = \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right) = D_1 A D_2$ be the generalized Sinkhorn limit of $A$, where $D_1 = \operatorname{diag}(r_1, \dots, r_n)$ and $D_2 = \operatorname{diag}(c_1, \dots, c_m)$ are positive diagonal matrices such that $S \vec{1}_m = \vec{R}$ and $S^\top \vec{1}_n = \vec{C}$.</p>
+  <p>Then, the transposed matrix $A^\top \in \mathbb{R}^{m \times n}_{>0}$ with target row sums $\vec{C}$ and column sums $\vec{R}$ has generalized Sinkhorn limit $\operatorname{Sink}\left(A^\top\,\middle|\, \vec{C},\vec{R}\right) = \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)^\top = S^\top$.</p>
+
+  <div class="proof">
+    <span class="proof-head">Proof:</span> We note $A^\top$ is a $m\times n$ matrix, where $n\mapsto m$, $m\mapsto n$. Expanding both sides of the proposed equality gives us by definition
+
+    $$\begin{aligned}
+    \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)^\top &= \operatorname{Sink}\left(A^\top\,\middle|\, \vec{C},\vec{R}\right) \\
+    (D_1 A D_2)^\top &= D_x A^\top D_y \\
+    D_2 A^\top D_1 &= D_x A^\top D_y
+    \end{aligned}$$
+
+    <p>for some unknown $D_{x,y}$. To prove the equality, it suffices to show that for the generalized Sinkhorn limit of $A^\top$, if target row sums are $\vec{C}$ and column sums $\vec{R}$ (swapped compared to $\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)$, basically), then $D_{x,y} = D_{2,1}$.</p>
+
+    <p>From definition, for $\operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right)$, row sums are given by $(D_1 AD_2)\vec{1}_m = \vec{R}$ and column sums are given by $(D_2 A^\top D_1)\vec{1}_n = \vec{C}$. For the generalized Sinkhorn limit of $A^\top$, its row sums are given by $(D_x A^\top D_y)\vec{1}_n$, and column sums are given by $(D_x A^\top D_y)^\top \vec{1}_m = (D_y A D_x)\vec{1}_m$. When row sums are $(D_x A^\top D_y)\vec{1}_n = \vec{C}$ and column sums are $(D_y A D_x)\vec{1}_m = \vec{R}$, we observe $D_{x,y} = D_{2,1}$.</p>
+    <div class="qed">QED ■</div>
+  </div>
+</div>
+
+
+<h3 id="s2.2"><span class="subsection-num">2.2</span> Trivial Cases</h3>
+
+<p>In general, when $A$ is $1\times n$ $\forall n\in\mathbb Z^+$, then the generalized Sinkhorn limit of $A$ is trivial. We can see as follows.</p>
+
+<p>From system (2.1.3), a $1\times n$ matrix gives</p>
+
+$$\begin{cases}
+r_1 a_{11}c_1 + r_1 a_{12}c_2 + \dots + r_1 a_{1n}c_n = R_1 \\
+r_1 a_{11}c_1 = C_1 \\
+r_1 a_{12}c_2 = C_2 \\
+\quad\vdots \\
+r_1 a_{1n}c_n = C_n
+\end{cases}$$
+
+<p>Fix $r_1 = 1$. $R_1 = \displaystyle\sum_{n\ge 1} C_n$ from consistency. We have $c_j = \dfrac{C_j}{a_{1j}}$ $\forall j\in\mathbb Z^+$ immediately. Therefore,</p>
+
+<div class="env theorem" id="thm-2.2.1">
+  <span class="env-title">Theorem 2.2.1 (Generalized Sinkhorn Limit of $1\times n$ Matrix):</span>
+  <p>Let $A = \begin{bmatrix} a_{11} & a_{12} & \dots & a_{1n} \end{bmatrix}$ be a positive $1\times n$ matrix. Then the generalized Sinkhorn limit of $A$ with target row and column sums of $\vec{R} = \begin{bmatrix} R_1 \end{bmatrix} \in \mathbb{R}_{>0}$ and $\vec{C} = \begin{bmatrix} C_1 \\ C_2 \\ \vdots \\ C_n \end{bmatrix} \in \mathbb{R}^n_{>0}$, respectively, is given by</p>
+
+  $$\operatorname{Sink}\left(\begin{bmatrix} a_{11} & a_{12} & \dots & a_{1n} \end{bmatrix} \,\middle|\, \begin{bmatrix} R_1 \end{bmatrix}, \begin{bmatrix} C_1 \\ C_2 \\ \vdots \\ C_n \end{bmatrix}\right) = \begin{bmatrix} C_1 & C_2 & \dots & C_n \end{bmatrix}$$
+
+  <div class="proof">
+    <span class="proof-head">Proof:</span> Just jiggle it a bit and the proof should pop out.
+    <div class="qed">QED ■</div>
+  </div>
+</div>
+
+<p>We note that for $n\times 1$ matrices, the generalized Sinkhorn limit follows trivially from <a href="#prop-2.1.1" style="color:var(--cite-color)">Proposition 2.1.1</a>.</p>
+
+
+<h3 id="s2.3"><span class="subsection-num">2.3</span> $2\times 2$ Matrix</h3>
+
+<p>Let $A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix}$ be a positive $2\times 2$ matrix. System (2.1.3) gives</p>
+
+$$\begin{cases}
+r_1 a_{11} c_1 + r_1 a_{12} c_2 = R_1 \\
+r_2 a_{21} c_1 + r_2 a_{22} c_2 = R_2 \\
+r_1 a_{11} c_1 + r_2 a_{21} c_1 = C_1 \\
+r_1 a_{12} c_2 + r_2 a_{22} c_2 = C_2
+\end{cases}$$
+
+<p>Fix $c_2 = 1$. We thus have</p>
+
+$$\{f_1,\, f_2,\, f_3,\, f_4\} = \begin{cases}
+r_1 a_{11} c_1 + r_1 a_{12} - R_1 \\
+r_2 a_{21} c_1 + r_2 a_{22} - R_2 \\
+r_1 a_{11} c_1 + r_2 a_{21} c_1 - C_1 \\
+r_1 a_{12} + r_2 a_{22} - C_2
+\end{cases} = 0$$
+
+<p>This is a set $\mathcal P = \{f_1, f_2, f_3, f_4\}$ of $4$ highly nontrivial quadratic equations in the polynomial ring $\mathbb R[r_1, r_2, c_1]$. Solving them directly is highly difficult, and even Mathematica's <code>Reduce</code> doesn't output a very nice solution.</p>
+
+<p>However, recall that $\mathcal P$ is a generating set for the ideal $I = \langle f_1, f_2, f_3, f_4\rangle \subset \mathbb R[r_1, r_2, c_1]$. For some lexicographic ordering (like $r_1, r_2, c_1$), computing the Gröbner basis $G$ of $I$ gives a much nicer set of polynomials defining the same zero locus as $\mathcal P$, and such $G$ is easily computed in Mathematica.</p>
+
+<p>Furthermore, the choice of lexicographic ordering for the $2\times 2$ case is thankfully not important, as the polynomials are highly symmetric (as is in general for square matrices). This is not the case for a general rectangular matrix, and manual testing may be needed to determine not only the most optimal ordering, but also the most optimal gauge fix.</p>
+
+<p>The computed $G$ contains $8$ polynomials,</p>
+
+$$G = \begin{cases}
+-C_1 - C_2 + R_1 + R_2 \\
+-a_{12}a_{22}C_1 - a_{12}a_{21}c_1 C_1 + a_{11}a_{22}c_1 C_2 + a_{11}a_{21}c_1^2 C_2 + a_{12}a_{21}c_1 R_2 - a_{11}a_{22}c_1 R_2 \\
+a_{12}a_{21}C_1 - a_{11}a_{21}c_1 C_2 + a_{12}a_{21}a_{22}r_2 - a_{11}a_{22}^2 r_2 - a_{12}a_{21}R_2 + a_{11}a_{22}R_2 \\
+a_{22}r_2 + a_{21}c_1 r_2 - R_2 \\
+a_{12}C_1 - a_{11}c_1 C_2 + a_{12}a_{22}r_2 + a_{11}a_{22}c_1 r_2 - a_{12}R_2 \\
+-C_2 + a_{12}r_1 + a_{22}r_2 \\
+-C_1 + a_{11}c_1 r_1 - a_{22}r_2 + R_2 \\
+a_{21}C_1 r_2 + a_{11}a_{22}r_1 r_2 + a_{21}a_{22}r_2^2 - a_{11}r_1 R_2 - a_{21}r_2 R_2
+\end{cases} = 0$$
+
+<p>Notice that the first polynomial $-C_1 - C_2 + R_1 + R_2 = 0$ is the consistency condition.</p>
+
+<p>Since we computed $G$ in some lexicographic ordering, solving by starting from the very last polynomial $a_{21}C_1 r_2 + a_{11}a_{22}r_1 r_2 + a_{21}a_{22}r_2^2 - a_{11}r_1 R_2 - a_{21}r_2 R_2 = 0$ is typically easiest. We solve for $r_1$, giving us</p>
+
+$$r_1 = \frac{a_{21}r_2}{a_{11}}\left(\frac{C_1}{R_2 - a_{22}r_2} - 1\right) \tag{2.3.1}$$
+
+<p>Then moving onto the second-to-last (7th) polynomial, we can substitute in our value of $r_1$ and solve for $c_1$, giving</p>
+
+$$c_1 = \frac{R_2 - a_{22}r_2}{a_{21}r_2} \tag{2.3.2}$$
+
+<p>Moving onto the 6th polynomial, we substitute and solve for $r_2$, yielding two solutions</p>
+
+$$r_2 = \frac{a_{11}a_{22}(C_2+R_2) + a_{12}a_{21}(C_1-R_2) \mp \sqrt{(a_{11}a_{22}(C_2+R_2)+a_{12}a_{21}(C_1-R_2))^2 + 4a_{11}a_{22}C_2 R_2(a_{12}a_{21}-a_{11}a_{22})}}{2a_{22}(a_{11}a_{22}-a_{12}a_{21})}$$
+
+<p>One of these results is extraneous as it will be negative for some particular choice of positive matrix $A$, so we can plug test matrices until we're able to isolate the extraneous solution. Using the matrix $A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$ and scaling to the regular Sinkhorn limit, we find that for the first (minus square root) result, $r_2 \approx 0.11$, and for the second (plus square root) result, $r_2 \approx -1.11$, and thus must be extraneous.</p>
+
+<p>Hence we have</p>
+
+$$r_2 = \frac{a_{11}a_{22}(C_2+R_2) + a_{12}a_{21}(C_1-R_2) - \sqrt{(a_{11}a_{22}(C_2+R_2)+a_{12}a_{21}(C_1-R_2))^2 + 4a_{11}a_{22}C_2 R_2(a_{12}a_{21}-a_{11}a_{22})}}{2a_{22}(a_{11}a_{22}-a_{12}a_{21})} \tag{2.3.3}$$
+
+<p>With these results, we solve for $s_{ij}$ and obtain</p>
+
+<div class="env theorem" id="thm-2.3.1">
+  <span class="env-title">Theorem 2.3.1 (Generalized Sinkhorn Limit of Nonsingular $2\times 2$ Matrix):</span>
+  <p>Let $A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix}$ be a positive <em>nonsingular</em> $2\times 2$ matrix. Then the generalized Sinkhorn limit $S$ of $A$ with target row and column sums of $\vec{R} = \begin{bmatrix} R_1 \\ R_2 \end{bmatrix} \in \mathbb{R}^2_{>0}$ and $\vec{C} = \begin{bmatrix} C_1 \\ C_2 \end{bmatrix} \in \mathbb{R}^2_{>0}$, respectively, is given by</p>
+
+  $$\begin{aligned} S &= \operatorname{Sink}\left(\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} \,\middle|\, \begin{bmatrix} R_1 \\ R_2 \end{bmatrix}, \begin{bmatrix} C_1 \\ C_2 \end{bmatrix}\right) \\[8pt] &= \begin{bmatrix} \dfrac{\alpha(R_2 - 2C_1 - C_2) + \beta(-R_2 + C_1) + \sqrt{\Delta}}{-2\det(A)} & \dfrac{\alpha(R_2 - C_2) + \beta(-R_2 + C_1 + 2C_2) - \sqrt{\Delta}}{-2\det(A)} \\[12pt] \dfrac{\alpha(-R_2 + C_2) + \beta(R_2 + C_1) - \sqrt{\Delta}}{-2\det(A)} & \dfrac{\alpha(-R_2 - C_2) + \beta(R_2 - C_1) + \sqrt{\Delta}}{-2\det(A)} \end{bmatrix} \end{aligned}$$
+
+  <p>where $\Delta = (\alpha(C_2+R_2)+\beta(C_1-R_2))^2 - 4\alpha C_2 R_2 \det(A)$, $\alpha = a_{11}a_{22}$, and $\beta = a_{12}a_{21}$.</p>
+
+  <div class="proof">
+    <span class="proof-head">Proof:</span> Prior in this section.
+    <div class="qed">QED ■</div>
+  </div>
+</div>
+
+<p>As expected, when $\vec{C}=\vec{R}=\vec{1}_2$, we recover Nathanson's $2\times 2$ Sinkhorn limit formula.</p>
+
+<p>However, notice that in <a href="#thm-2.3.1" style="color:var(--cite-color)">Theorem 2.3.1</a>, $A$ must be nonsingular due to the $\det(A)$ in the denominator. We can further show that when $A$ is singular, the limit of the formula to $A$ gives the generalized Sinkhorn limit of $A$.</p>
+
+<div class="env theorem" id="cor-2.3.1">
+  <span class="env-title">Corollary 2.3.1 (Generalized Sinkhorn Limit of Singular $2\times 2$ Matrix):</span>
+  <p>Let $A_0 = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix}$ be a positive singular matrix (where $\det(A_0)=0$). WLOG choose $a_{12}$ to be a continuous function such that $A(\varepsilon) = \begin{bmatrix} a_{11} & a_{12}(\varepsilon) \\ a_{21} & a_{22} \end{bmatrix} \in \mathbb R^{2\times 2}_{>0}$ for $\varepsilon > 0$ is a family of positive nonsingular matrices where $\displaystyle\lim_{\varepsilon\to 0}a_{12}(\varepsilon) = a_{12}$, $\displaystyle\lim_{\varepsilon\to 0}A(\varepsilon) = A_0$, and $\displaystyle\lim_{\varepsilon\to 0}\det(A(\varepsilon)) = 0$.</p>
+
+  <p>Let target row and column sums be $\vec{R} = \begin{bmatrix} R_1 \\ R_2 \end{bmatrix} \in \mathbb{R}^2_{>0}$ and $\vec{C} = \begin{bmatrix} C_1 \\ C_2 \end{bmatrix} \in \mathbb{R}^2_{>0}$, respectively. Then, the analytical continuation of the formula in <a href="#thm-2.3.1" style="color:var(--cite-color)">Theorem 2.3.1</a> for singular $A_0$ is given by</p>
+
+  $$\begin{aligned}
+  S &= \operatorname{Sink}\left(A_0\,\middle|\,\vec{R},\vec{C}\right) \\
+  &= \lim_{\varepsilon\to 0} S(\varepsilon) \\
+  &= \begin{bmatrix} C_1 - \dfrac{C_1 R_2}{C_1+C_2} & C_2 - \dfrac{C_2 R_2}{C_1+C_2} \\[10pt] \dfrac{C_1 R_2}{C_1+C_2} & \dfrac{C_2 R_2}{C_1+C_2} \end{bmatrix}
+  \end{aligned}$$
+
+  <p>where $\Delta = (\alpha(C_2+R_2)+\beta(\varepsilon)(C_1-R_2))^2 - 4\alpha C_2 R_2\det(A(\varepsilon))$, $\alpha = a_{11}a_{22}$, and $\beta(\varepsilon) = a_{12}(\varepsilon)a_{21}$. The formula in the third line was computed via L'Hôpital's rule.</p>
+
+  <div class="proof">
+    <span class="proof-head">Proof:</span> For $\Delta = (\alpha(C_2+R_2)+\beta(\varepsilon)(C_1-R_2))^2 - 4\alpha C_2 R_2\det(A(\varepsilon))$, $\alpha = a_{11}a_{22}$, and $\beta(\varepsilon) = a_{12}(\varepsilon)a_{21}$, let
+
+    $$S(\varepsilon) = \begin{bmatrix} \dfrac{\alpha(R_2 - 2C_1 - C_2) + \beta(\varepsilon)(-R_2+C_1) + \sqrt{\Delta}}{-2\det(A(\varepsilon))} & \dfrac{\alpha(R_2-C_2) + \beta(\varepsilon)(-R_2+C_1+2C_2) - \sqrt{\Delta}}{-2\det(A(\varepsilon))} \\[10pt] \dfrac{\alpha(-R_2+C_2) + \beta(\varepsilon)(R_2+C_1) - \sqrt{\Delta}}{-2\det(A(\varepsilon))} & \dfrac{\alpha(-R_2-C_2) + \beta(\varepsilon)(R_2-C_1) + \sqrt{\Delta}}{-2\det(A(\varepsilon))} \end{bmatrix}$$
+
+    <p>We know that $\forall\varepsilon > 0$, $S(\varepsilon) = \operatorname{Sink}\left(A(\varepsilon)\,\middle|\,\vec{R},\vec{C}\right)$ by <a href="#thm-2.3.1" style="color:var(--cite-color)">Theorem 2.3.1</a>. We also know that $\operatorname{Sink}$ is a continuous function due to Franklin and Lorenz,<span class="cite"><a href="#ref8">[8]</a></span> meaning</p>
+
+    $$\operatorname{Sink}\left(\lim_{\varepsilon\to 0}A(\varepsilon)\,\middle|\,\vec{R},\vec{C}\right) = \lim_{\varepsilon\to 0}\operatorname{Sink}\left(A(\varepsilon)\,\middle|\,\vec{R},\vec{C}\right)$$
+
+    <p>Therefore, $\operatorname{Sink}\left(A_0\,\middle|\,\vec{R},\vec{C}\right) = \displaystyle\lim_{\varepsilon\to 0}S(\varepsilon)$.</p>
+    <div class="qed">QED ■</div>
+  </div>
+</div>
+
+<p>Notice that for singular matrices, the generalized Sinkhorn limit depends only on target row and column sums, and not the initial values of the starting matrix. This is expected, because when a matrix is singular, only proportion information is preserved between entries, and the unique solution is dictated only by the external constraints.</p>
+
+<p>We can hence say that in the context of, say, information theory, when the starting matrix is singular, the generalized Sinkhorn limit gives rise to the maximum entropy solution (a matrix that satisfies the marginal constraints but has no extra "shape" imposed by the initial values).</p>
+
+<p>Also I'm... just not gonna bother with $2\times 3$ its way too messy bruh.</p>
+
+
+<!-- ══════════════ 3. CONCLUSION ══════════════ -->
+<span class="section-num">Section 3</span>
+<h2 id="s3">Conclusion</h2>
+
+<h3 id="s3.1"><span class="subsection-num">3.1</span> Results</h3>
+
+<p>Through <a href="#thm-2.2.1" style="color:var(--cite-color)">Theorem 2.2.1</a> and <a href="#thm-2.3.1" style="color:var(--cite-color)">2.3.1</a>, we have obtained the closed form of the generalized Sinkhorn limit of $1\times n$ and $2\times 2$ matrices. Using the same strategy of utilizing Gröbner bases, the closed form of all variables $c_{1,2,3}$ and $r_2$ (in this exact lexicographic order) of $2\times 3$ matrices after fixing $r_1=1$ were also computed, though the general closed form matrix was not. Unsurprisingly, the closed form of $r_2$ is, for the lack of better words, beyond disgusting, and very large.</p>
+
+<p>Furthermore, the simplification process seems highly nontrivial and I am unsure if my result is the fully simplified form. On a machine with 64 GB of RAM, <code>FullSimplify</code> of the overall expression with assumptions uses <em><strong>all</strong></em> of the RAM, and stalls after 6–12 hours of running <strong><em>without producing output</em></strong>. My result hence has only been run through <code>Simplify</code> with assumptions, and through <code>FullSimplify</code> with assumptions on parts of the expression. For those curious, it is included in the attached Mathematica <code>.nb</code> file.</p>
+
+<p>A Gröbner basis was also computed for $2\times 4$ matrices, but due to arbitrary choice in gauge fixing (fixing $r_n$ typically gives best results), lexicographic ordering of variables (ordering $r_n$ last seems to give best results), and choice of Gröbner polynomial ordering to solve in (pure trial-and-error), the most optimal path towards a solution is difficult to elucidate, and manual testing probably cannot find said path. As the computation of the Gröbner basis follows directly from <a href="#s2.3" style="color:var(--cite-color)">section 2.3</a>, it is omitted. Attempts to solve the system was done through trial-and-error, and thus incredibly messy, without structure, and unrecorded (with many solutions well exceeding 10 MB in size).</p>
+
+<p>However, overall, we managed to "compute" generalized Sinkhorn limits for several small matrices, <em>in the sense</em> that we expressed all variables $r_i$, $c_j$ in terms of each other and the constants $a_{ij}, R_i, C_j$, even if not in fully simplified form. The last variable to be solved for is algebraic over the field generated by $a_{ij}, R_i, C_j$ with degree consistent with the binomial pattern $\binom{n+m-2}{n-1}$, and is summarized below.</p>
+
+<table>
+  <thead>
+    <tr><th>Matrix Size</th><th>Variables</th><th>Degree</th><th>$\binom{n+m-2}{n-1}$</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>$1\times n$</td><td>$n+1$</td><td>$1$</td><td>$1$</td></tr>
+    <tr><td>$2\times 2$</td><td>$4$</td><td>$2$</td><td>$2$</td></tr>
+    <tr><td>$2\times 3$</td><td>$5$</td><td>$3$</td><td>$3$</td></tr>
+    <tr><td>$2\times 4$</td><td>$6$</td><td>$4$</td><td>$4$</td></tr>
+  </tbody>
+</table>
+
+<p>The degree of the last solved variable also matches the degree of all other variables, since they are all rational functions of each other. This follows from the fact that when computing a Gröbner basis of a $0$ dimensional ideal, all variables belong to the same algebraic extension over some base field. Thus, all entries of a generalized Sinkhorn limit (and by extension, Sinkhorn limits) being combinations of said variables must be algebraic with degree of the last solved variable. This is conjectured by Rowland and Wu in their "Conjecture 33",<span class="cite"><a href="#ref5">[5]</a></span> which we now formalize and prove.</p>
+
+<div class="env theorem" id="thm-3.1.1">
+  <span class="env-title">Theorem 3.1.1 (Algebraic Degree of the Generalized Sinkhorn Limit):</span>
+  <p>Let $A \in \mathbb{R}^{n \times m}_{>0}$ be a positive $n\times m$ rectangular matrix $\forall m,n\in\mathbb Z^+$, and let target row and column sums be $\vec{R} \in \mathbb{R}^n_{>0}$ and $\vec{C} \in \mathbb{R}^m_{>0}$, respectively. Let $S = \operatorname{Sink}\left(A\,\middle|\, \vec{R},\vec{C}\right) = D_1 A D_2$ be the generalized Sinkhorn limit of $A$, where $D_1 = \operatorname{diag}(r_1, \dots, r_n)$ and $D_2 = \operatorname{diag}(c_1, \dots, c_m)$ are positive diagonal matrices such that $S \vec{1}_m = \vec{R}$ and $S^\top \vec{1}_n = \vec{C}$.</p>
+
+  <p>Then, every element $s_{ij}\in S$ is algebraic over the field $\mathbb Q(A, \vec{R}, \vec{C})$ with degree at most $\binom{n+m-2}{n-1}$.</p>
+
+  <div class="proof">
+    <span class="proof-head">Proof:</span> We begin by reinterpreting the problem in projective space, showing that the entries of the limit correspond to points on the intersection of a Segre variety cone and a projective linear subspace. By computing the degree of this intersection, we bound the algebraic degree of each entry of the limit.
+
+    <p>Since $D_{1,2}$ are diagonal matrices, interpreted as row and column scaling, it is equivalent to</p>
+
+    $$D_1 A D_2 = (\vec{v}_1 \vec{v}_2^\top)\odot A = V \odot A$$
+
+    <p>where $\odot$ is the element-wise product, and $V = \vec{v}_1 \vec{v}_2^\top$ so that $S = V \odot A$. Each element of $V$ is $v_{ij} = r_i c_j$, and since $(\vec{v}_1 \vec{v}_2^\top) = \vec{v}_1 \otimes \vec{v}_2$ is an outer product, $V$ is rank 1 (all $2\times 2$ minors are null) by construction. Rewriting and homogenizing system (2.1.3) with parameter $t$ yields</p>
+
+    $$\left(\sum_{j=1}^m a_{ij}\, v_{ij}\right) - R_i\, t = 0, \quad \left(\sum_{i=1}^n a_{ij}\, v_{ij}\right) - C_j\, t = 0$$
+
+    <p>These are $n+m$ equations of the new $nm+1$ variables $v_{ij}, t$ whose solutions are equivalence classes $[V : t] \in \mathbb P^{nm}$. However due to the consistency condition, only $n+m-1$ equations are independent.</p>
+
+    <p>Now recall that a Segre embedding $\sigma : \mathbb P^n \times \mathbb P^m \to \mathbb P^{(n+1)(m+1)-1}$ is given by</p>
+
+    $$\begin{aligned}
+    \sigma &: ([X_0 : X_1 : \dots : X_n], [Y_0 : Y_1 : \dots : Y_m]) \mapsto [X_0 Y_0 : X_0 Y_1 : \dots : X_i Y_j : \dots : X_n Y_m] \\
+    \sigma &: ([X],[Y]) \mapsto [XY]
+    \end{aligned}$$
+
+    <p>where we take a pair of equivalence classes in smaller projective spaces and embed them into a larger one. Defining new variables $Z_{ij} = X_i Y_j$ and rewriting the output of a Segre embedding into matrix form, we have</p>
+
+    $$[XY] = [Z] = \begin{bmatrix} Z_{00} & Z_{01} & \dots & Z_{0m} \\ Z_{10} & Z_{11} & \dots & Z_{1m} \\ \vdots & \vdots & \ddots & \vdots \\ Z_{n0} & Z_{n1} & \dots & Z_{nm} \end{bmatrix} = \begin{bmatrix} X_0 \\ X_1 \\ \vdots \\ X_n \end{bmatrix} \begin{bmatrix} Y_0 & Y_1 & \dots & Y_m \end{bmatrix}$$
+
+    <p>The image $\Sigma_{n,m} \subset \mathbb P^{(n+1)(m+1)-1}$ of this embedding is called the Segre variety, and consists of all such equivalence classes of matrices $[Z]$. A natural embedding of the Segre variety into $\mathbb P^{((n+1)(m+1)-1)+1} = \mathbb P^{(n+1)(m+1)}$ is the projective cone $C(\Sigma_{n,m})$ over the variety, which consists of all $[Z : \lambda]$ for $[Z] \in \Sigma_{n,m}$. Obviously, the cone has dimension $\dim(\Sigma_{n,m})+1 = n+m+1$.</p>
+
+    <p>Notice how solutions $[V : t] \in \mathbb P^{nm}$ to our homogenized system lie on the projective cone of some Segre variety $C(\Sigma_{n-1,m-1}) \in \mathbb P^{nm}$. In particular, we have $n+m-1$ independent equations defining a projective linear subspace $L \subset \mathbb P^{nm}$ of codimension $n+m-1$, to which solutions $[V : t]$ are given by the scheme defined by intersection $H = C(\Sigma_{n-1,m-1}) \cap L$. This scheme $H$ has dimension</p>
+
+    $$\begin{aligned}
+    \dim(H) &= \dim(C(\Sigma_{n-1,m-1})) + \dim(L) - \dim(\mathbb P^{nm}) \\
+    &= (n+m-1) + ((nm) - (n+m-1)) - nm = 0
+    \end{aligned}$$
+
+    <p>as expected. The degree of a Segre variety is defined as the number of intersection points with a linear subspace of complementary codimension in a general position. Moreover, the projective cone has the same degree as the variety, meaning for our variety we have<span class="cite"><a href="#ref10">[10]</a><a href="#ref11">[11]</a></span></p>
+
+    $$\deg(C(\Sigma_{n-1,m-1})) = \deg(\Sigma_{n-1,m-1}) = \binom{(n-1)+(m-1)}{n-1} = \binom{n+m-2}{n-1}$$
+
+    <p>When the subspace is not in a general position, accounting multiplicity returns the same result.</p>
+
+    <p>Now, as an example, let $J = \Sigma_{n,m} \cap \mathcal L \in \overline{K}$ be a 0 dimensional scheme defined over base field $K$, with scheme-theoretic points $P_1, \dots, P_r$ all lying in some common finite extension $K(P)$. Recall that the total number of points $r$ in $J$ with multiplicity, $\deg(J)$, limits how many independent algebraic conditions can be imposed on $P_i$, and thus, bounds the degree of field extension $K(P)/K$. In other words,<span class="cite"><a href="#ref12">[12]</a></span></p>
+
+    $$[K(P) : K] \le \deg(J) = \deg(\Sigma_{n,m}) = \binom{n+m}{n}$$
+
+    <p>In our case, for solutions $[V : t] \in H = C(\Sigma_{n-1,m-1}) \cap L$, our base field is $K = \mathbb Q(A, \vec{R}, \vec{C})$ by design. Then, because the cone doesn't change key projective properties (e.g. the Hilbert polynomial, degree, &amp;c.), the degree of the field extension generated by entries $v_{ij} \in V$ is bounded by</p>
+
+    $$[K(V) : K] \le \binom{n+m-2}{n-1}$$
+    <div class="qed">QED ■</div>
+  </div>
+</div>
+
+
+<h3 id="s3.2"><span class="subsection-num">3.2</span> Discussion</h3>
+
+<p>The closed form for the trivial $1\times n$ matrices (and transpose, but this shouldn't need to be said) could be possibly implemented in algorithms as a branch condition to skip computation of these trivial cases, but given that numerical iterative methods are quite efficient even when implemented in "slow" languages like Python, it is unlikely that this implementation will offer much benefits.</p>
+
+<p>The closed form for $2\times 2$ matrices derived here serves as a useful pedagogical example, but is impractical for computational purposes. Numerical iterative methods scale matrices much more efficiently than evaluating a complex symbolic formula involving square roots, divisions, and multiplications repeated for each matrix entry. From a computational perspective, the existence of a formula does not outweigh the simplicity and speed of numerical algorithms, <em>especially</em> for larger matrices when a formula might not even exist. Thus, the value of the closed form lies more in its theoretical clarity than in its numerical applicability.</p>
+
+<p>We note that once a Gröbner basis is found, we can always solve polynomials and substitute variables within the Gröbner basis until we arrive at a single univariate polynomial. Then, this polynomial is solved which can be back-substituted into every other variable, and thus obtain a formula for the generalized Sinkhorn limit.</p>
+
+<p>As of 2025, clean closed forms of univariate quintics exist in terms of the well understood Bring radical $\operatorname{BR}$, Jacobi theta $\vartheta_n$, or ${}_4F_3$ hypergeometrics, via the Tschirnhaus transformation. For the sextic, a series solution over ${}_2F_1$ exists, with potential to transform into a Kampé de Fériet ${}^{p+q}F_{r+s}$ representation.<span class="cite"><a href="#ref13">[13]</a></span> For the septic and octic, series solutions over Appell $F_1$ and Lauricella $F_D^{(3)}$, respectively, exist.<span class="cite"><a href="#ref14">[14]</a><a href="#ref15">[15]</a></span> This suggests that</p>
+
+<ol>
+  <li>there exists a closed form (probably with egregiously large algebraic terms) of the generalized Sinkhorn limit for all matrices of the form $1\times n$, $2\times 2$, $2\times 3$, $2\times 4$, and $2\times 5$.</li>
+  <li>there exists a series representation (again in probably egregiously large algebraic terms) of the generalized Sinkhorn limit of all matrices of the form $2\times 6$, $2\times 7$, $2\times 8$, and $3\times 3$.</li>
+</ol>
+
+<p>For larger matrices, we suggest that the more abstract, polynomial-based framework investigated by Rowland and Wu offer a more viable direction for understanding generalized Sinkhorn limits. Of course, computationally, none of these formulations are practical and a numerical approach is best.</p>
+
+<p>Additionally, in the proof of <a href="#thm-3.1.1" style="color:var(--cite-color)">Theorem 3.1.1</a>, it was remarked that "when the subspace is not in a general position, accounting multiplicity returns the same result". Given that $A$, $\vec{R}$, and $\vec{C}$ are all arbitrary positive matrices and vectors, it is likely that some values of them denote some $L$ in a non-general position. Counting multiplicity hides this case, so if we don't account for multiplicity, this seems to suggest that the degree of $V$ is less than the bound. I theorize that this occurs when a matrix is singular, but my brain is absolutely too cooked to flesh this idea out. And I have no clue how $\vec{R}$ or $\vec{C}$ come into play.</p>
+
+
+<!-- ══════════════ REFERENCES ══════════════ -->
+<div class="references">
+  <h2>References</h2>
+  <ol class="ref-list">
+    <li id="ref1">R. Sinkhorn, "A relationship between arbitrary positive matrices and doubly stochastic matrices," <em>Ann. Math. Statist.</em>, vol. 35, no. 2, pp. 876–879, 1964.</li>
+    <li id="ref2">R. Sinkhorn and P. Knopp, "Concerning nonnegative matrices and doubly stochastic matrices," <em>Pacific J. Math.</em>, vol. 21, no. 2, pp. 343–348, 1967.</li>
+    <li id="ref3">R. Sinkhorn, "A relationship between arbitrary positive matrices and stochastic matrices," <em>Canadian J. Math.</em>, vol. 18, pp. 303–306, 1966.</li>
+    <li id="ref4">M. B. Nathanson, "The Sinkhorn limit of a $2\times 2$ matrix," 2019.</li>
+    <li id="ref5">E. Rowland and D. Wu, "Sinkhorn limits in finitely many steps," 2024.</li>
+    <li id="ref6">J. Kruithof, "Telefoonverkeersrekening," <em>De Ingenieur</em>, vol. 52, no. 8, pp. E15–E25, 1937.</li>
+    <li id="ref7">R. Sinkhorn, "Diagonal equivalence to matrices with prescribed row and column sums," <em>Amer. Math. Monthly</em>, vol. 74, no. 4, pp. 402–405, 1967.</li>
+    <li id="ref8">J. Franklin and J. Lorenz, "On the scaling of multidimensional matrices," <em>Linear Algebra Appl.</em>, vol. 114–115, pp. 717–735, 1989.</li>
+    <li id="ref9">Discussion on nontrivial dynamics of iterative matrix scaling. See various forum discussions.</li>
+    <li id="ref10">J. Harris, <em>Algebraic Geometry: A First Course</em>, Springer-Verlag, 1992.</li>
+    <li id="ref11">MathOverflow, "Degree of a Segre variety," MO-179422.</li>
+    <li id="ref12">Mathematics Stack Exchange, "Field extension degree bounded by scheme degree," MSE-3210719.</li>
+    <li id="ref13">Mathematics Stack Exchange, "Closed form of the sextic via hypergeometrics," MSE-4728274.</li>
+    <li id="ref14">Mathematics Stack Exchange, "Series solutions for septic and octic polynomials," MSE-4728991.</li>
+    <li id="ref15">MathOverflow, "Solutions of polynomial equations via multivariate hypergeometrics," MO-450112.</li>
+  </ol>
+</div>
+
+</div>
+</body>
+</html>

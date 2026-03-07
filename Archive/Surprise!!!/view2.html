@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise Countdown</title>
+
+    <!-- fonts -->
+    <style>
+        /* latin */
+        @font-face {
+            font-family: 'DM Mono';
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(./media/fonts/LatinDMMono300.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    
+        /* latin */
+        @font-face {
+            font-family: 'DM Mono';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(./media/fonts/LatinDMMono400.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    
+        /* latin */
+        @font-face {
+            font-family: 'Instrument Serif';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(./media/fonts/LatinInstrumentSerif400.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    
+        /* latin */
+        @font-face {
+            font-family: 'Instrument Serif';
+            font-style: italic;
+            font-weight: 400;
+            font-display: swap;
+            src: url(./media/fonts/LatinInstrumentSerifItalic400.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    
+        /* latin */
+        @font-face {
+            font-family: 'Manrope';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(./media/fonts/LatinManropeVariable.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    
+        /* latin */
+        @font-face {
+            font-family: 'Manrope';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(./media/fonts/LatinManropeVariable.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    </style>
+
+    <link rel="stylesheet" href="./media/main2.css">
+    
+    <script>history.replaceState(null, '', './');</script>
+</head>
+
+<body>
+    <!-- Background ambient glows -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Countdown container -->
+    <div id="countdown-container">
+        <div class="header anim-in anim-in-d1">
+            <div class="header-decoration">
+                <div class="header-line"></div>
+                <span class="header-tag">Incoming</span>
+            </div>
+            <h1>Something <em>mysterious</em><br>is on its way</h1>
+        </div>
+
+        <div class="date-time-card anim-in anim-in-d2">
+            <div class="meta-label">Right Now</div>
+            <div class="date-time-value" id="current-datetime">Loading...</div>
+        </div>
+
+        <div class="countdown-section anim-in anim-in-d3">
+            <div class="countdown-label">Arrives In</div>
+            <div class="countdown-display" id="countdownDisplay">--:--:--</div>
+            <div class="pulse-dot"></div>
+        </div>
+
+        <div class="release-card anim-in anim-in-d4">
+            <div class="meta-label">Reveal Time</div>
+            <div class="release-value" id="release-datetime">Calculating...</div>
+        </div>
+    </div>
+
+    <!-- Surprise container -->
+    <div id="surprise-container">
+        <div class="image-frame">
+            <img id="surprise-image" src="" alt="Surprise!">
+        </div>
+        <div id="surprise-text">Surprise</div>
+        <div id="refresh-hint">Enjoy your surprise</div>
+
+        <!-- Eye for special surprise -->
+        <div class="eye-ambient-glow"></div>
+        <div class="screen-flicker" id="screenFlicker"></div>
+        <div class="eye-container">
+            <svg width="0" height="0">
+                <defs>
+                    <clipPath id="eyeShape">
+                        <path d="M 300,55
+                                 C 350,55 400,60 440,75
+                                 C 480,90 510,105 540,120
+                                 C 560,130 575,135 585,137
+                                 C 590,138 590,138 590,138
+                                 C 585,139 575,141 560,146
+                                 C 540,156 510,171 480,186
+                                 C 450,201 400,215 350,224
+                                 C 290,232 260,223 230,216
+                                 C 180,201 140,186 100,168
+                                 C 80,160 60,146 40,141
+                                 C 25,139 30,138 30,138
+                                 C 30,138 30,138 35,137
+                                 C 45,135 60,130 80,120
+                                 C 110,105 140,90 180,75
+                                 C 220,60 250,55 300,55
+                                 Z" />
+                    </clipPath>
+                </defs>
+            </svg>
+
+            <div class="eye">
+                <div class="eye-outline">
+                    <div class="sclera"></div>
+
+                    <!-- Bloodshot veins -->
+                    <div class="sclera-veins">
+                        <div class="vein vein-1"></div>
+                        <div class="vein vein-2"></div>
+                        <div class="vein vein-3"></div>
+                        <div class="vein vein-4"></div>
+                        <div class="vein vein-5"></div>
+                        <div class="vein vein-6"></div>
+                        <div class="vein vein-7"></div>
+                        <div class="vein vein-8"></div>
+                    </div>
+
+                    <div class="iris-container">
+                        <div class="iris">
+                            <!-- Slow rotation wrapper -->
+                            <div class="iris-spin">
+                                <div class="red-blob blob-1"></div>
+                                <div class="red-blob blob-2"></div>
+                                <div class="red-blob blob-3"></div>
+                                <div class="red-blob blob-4"></div>
+                                <div class="red-blob blob-5"></div>
+
+                                <div class="concentric-ring ring-1"></div>
+                                <div class="concentric-ring ring-2"></div>
+                                <div class="concentric-ring ring-3"></div>
+                                <div class="concentric-ring ring-4"></div>
+                                <div class="concentric-ring ring-5"></div>
+
+                                <div class="iris-pupil-ring"></div>
+                            </div>
+
+                            <div class="pupil">
+                                <div class="pupil-center"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="eyelid eyelid-top"></div>
+                    <div class="eyelid eyelid-bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti library -->
+    <script src="./media/confetti.js"></script>
+
+    <script>
+        // ============================================
+        // Configuration
+        // ============================================
+
+        const SURPRISE_IMAGES = [
+            './media/img/1.avif',  './media/img/2.avif',
+            './media/img/3.avif',  './media/img/4.avif',
+            './media/img/5.avif',  './media/img/6.avif',
+            './media/img/7.avif',  './media/img/8.avif',
+            './media/img/9.avif',  './media/img/10.avif',
+            './media/img/11.avif', './media/img/12.avif',
+            './media/img/13.avif', './media/img/14.avif',
+            './media/img/15.avif', './media/img/16.avif',
+            './media/img/17.avif', './media/img/18.avif',
+            './media/img/19.avif', './media/img/20.avif'
+        ];
+
+        const MIN_COUNTDOWN = 60;
+        const MAX_COUNTDOWN = 900;
+
+        // ============================================
+        // Ambient Floating Particles
+        // ============================================
+
+        // ============================================
+        // Surprise Counter Management
+        // ============================================
+
+        function getSurpriseCounter() {
+            const counter = localStorage.getItem("surprise_counter");
+            return counter ? parseInt(counter) : 0;
+        }
+
+        function incrementSurpriseCounter() {
+            let counter = getSurpriseCounter() + 1;
+            if (counter > 3) counter = 0;
+            localStorage.setItem("surprise_counter", counter);
+            return counter;
+        }
+
+        function isSpecialSurprise() {
+            return getSurpriseCounter() === 3;
+        }
+
+        // ============================================
+        // Eye Animation Functions
+        // ============================================
+
+        let blinkInterval, jitterInterval, oscillateInterval;
+
+        function startEyeAnimation() {
+            document.body.style.cursor = 'none';
+
+            document.addEventListener('click', async () => {
+                if (!document.fullscreenElement) {
+                    try { await document.documentElement.requestFullscreen(); }
+                    catch (err) { console.error('Fullscreen error:', err); }
+                }
+            });
+
+            window.addEventListener('beforeunload', (e) => {
+                e.preventDefault();
+                e.returnValue = '';
+            });
+
+            document.addEventListener("contextmenu", e => e.preventDefault());
+            document.addEventListener("keydown", e => {
+                if (e.key === "F12" ||
+                    (e.ctrlKey && e.shiftKey && ["I","J","C"].includes(e.key)) ||
+                    (e.ctrlKey && e.key === "U")) {
+                    e.preventDefault();
+                }
+            });
+
+            const eyeOutline = document.querySelector('.eye-outline');
+            randomizeRingAngles();
+            randomizeBlobPositions();
+            eyeOutline.classList.add('eye-opening');
+
+            setTimeout(() => {
+                scheduleNextBlink();
+                startJittering();
+                startOscillation();
+                startCreepyBehaviors();
+            }, 100);
+
+            setTimeout(() => {
+                eyeOutline.classList.remove('eye-opening');
+            }, 1200);
+        }
+
+        function randomizeRingAngles() {
+            document.querySelectorAll('.concentric-ring').forEach(ring => {
+                ring.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
+            });
+        }
+
+        function randomizeBlobPositions() {
+            const irisRadius = 70;
+            document.querySelectorAll('.red-blob').forEach(blob => {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * irisRadius * 0.7;
+                blob.style.left = `${50 + (Math.cos(angle) * distance / irisRadius * 50)}%`;
+                blob.style.top = `${50 + (Math.sin(angle) * distance / irisRadius * 50)}%`;
+                blob.style.transform = `rotate(${Math.random() * 360}deg)`;
+            });
+        }
+
+        function scheduleNextBlink() {
+            const delay = 500 + (Math.sqrt(Math.random()) * 9500);
+            blinkInterval = setTimeout(() => {
+                blinkEye();
+                scheduleNextBlink();
+            }, delay);
+        }
+
+        function blinkEye() {
+            const eo = document.querySelector('.eye-outline');
+            eo.classList.add('eye-blinking');
+            setTimeout(() => eo.classList.remove('eye-blinking'), 400);
+        }
+
+        // --- Enhanced jittering with snap-looks and freeze moments ---
+        let isSnapping = false;
+        let isFrozen = false;
+
+        function startJittering() {
+            const ic = document.querySelector('.iris-container');
+
+            function jitter() {
+                if (isFrozen) {
+                    jitterInterval = setTimeout(jitter, 50);
+                    return;
+                }
+
+                if (isSnapping) {
+                    jitterInterval = setTimeout(jitter, 50);
+                    return;
+                }
+
+                // Normal jitter with occasional micro-tremor bursts
+                const tremor = Math.random() < 0.08; // 8% chance of tremor burst
+                const range = tremor ? 8 : 1; // tremors are tiny rapid shakes
+                const iterations = tremor ? 6 : 1;
+
+                function doJitter(i) {
+                    if (i >= iterations) {
+                        const ox = (Math.random() - 0.5) * 45;
+                        const oy = (Math.random() - 0.5) * 30;
+                        ic.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px))`;
+                        const nextJitter = 100 + Math.random() * 300;
+                        jitterInterval = setTimeout(jitter, nextJitter);
+                        return;
+                    }
+                    const tx = (Math.random() - 0.5) * range;
+                    const ty = (Math.random() - 0.5) * range;
+                    ic.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`;
+                    setTimeout(() => doJitter(i + 1), 30);
+                }
+
+                doJitter(0);
+            }
+
+            jitter();
+        }
+
+        function startOscillation() {
+            const iris = document.querySelector('.iris');
+            const pupil = document.querySelector('.pupil');
+            const rings = document.querySelectorAll('.concentric-ring');
+            let growing = true, currentScale = 1;
+            const minSize = 0.80, maxSize = 1.20;
+
+            function oscillate() {
+                if (isFrozen) return;
+
+                currentScale += growing ? 0.05 : -0.05;
+                if (currentScale >= maxSize) growing = false;
+                if (currentScale <= minSize) growing = true;
+
+                iris.style.width = (140 * currentScale) + 'px';
+                iris.style.height = (140 * currentScale) + 'px';
+                pupil.style.width = (45 * currentScale) + 'px';
+                pupil.style.height = (45 * currentScale) + 'px';
+                rings.forEach((ring, i) => {
+                    const base = [200, 224, 260, 274, 300][i];
+                    ring.style.width = (base * currentScale) + 'px';
+                    ring.style.height = (base * currentScale) + 'px';
+                });
+            }
+            oscillateInterval = setInterval(oscillate, 50);
+        }
+
+        // --- Creepy behaviors: snap-looks, freezes, screen flashes ---
+        function startCreepyBehaviors() {
+            const ic = document.querySelector('.iris-container');
+            const flicker = document.getElementById('screenFlicker');
+
+            // Snap-look: eye suddenly locks onto a direction
+            function scheduleSnapLook() {
+                const delay = 4000 + Math.random() * 12000;
+                setTimeout(() => {
+                    if (isFrozen) { scheduleSnapLook(); return; }
+                    isSnapping = true;
+
+                    // Snap to an extreme position fast
+                    const snapX = (Math.random() - 0.5) * 70;
+                    const snapY = (Math.random() - 0.5) * 40;
+                    ic.style.transition = 'transform 0.06s ease-out';
+                    ic.style.transform = `translate(calc(-50% + ${snapX}px), calc(-50% + ${snapY}px))`;
+
+                    // Hold the stare
+                    const holdTime = 800 + Math.random() * 2000;
+                    setTimeout(() => {
+                        ic.style.transition = 'transform 0.1s ease-out';
+                        isSnapping = false;
+                    }, holdTime);
+
+                    scheduleSnapLook();
+                }, delay);
+            }
+
+            // Freeze: everything stops, then snaps back — like it noticed you
+            function scheduleFreeze() {
+                const delay = 10000 + Math.random() * 20000;
+                setTimeout(() => {
+                    isFrozen = true;
+
+                    // Flash the screen
+                    flicker.classList.add('flash');
+                    setTimeout(() => flicker.classList.remove('flash'), 150);
+
+                    // Hold freeze
+                    const freezeTime = 1500 + Math.random() * 2500;
+                    setTimeout(() => {
+                        isFrozen = false;
+                        // Rapid micro-tremor on unfreeze
+                        isSnapping = true;
+                        let shakes = 0;
+                        const shakeInterval = setInterval(() => {
+                            const sx = (Math.random() - 0.5) * 12;
+                            const sy = (Math.random() - 0.5) * 8;
+                            ic.style.transform = `translate(calc(-50% + ${sx}px), calc(-50% + ${sy}px))`;
+                            shakes++;
+                            if (shakes > 8) {
+                                clearInterval(shakeInterval);
+                                isSnapping = false;
+                            }
+                        }, 30);
+                    }, freezeTime);
+
+                    scheduleFreeze();
+                }, delay);
+            }
+
+            // Occasional screen flicker (independent of freeze)
+            function scheduleFlicker() {
+                const delay = 6000 + Math.random() * 15000;
+                setTimeout(() => {
+                    flicker.classList.add('flash');
+                    setTimeout(() => flicker.classList.remove('flash'), 150);
+                    // Sometimes double-flicker
+                    if (Math.random() < 0.3) {
+                        setTimeout(() => {
+                            flicker.classList.add('flash');
+                            setTimeout(() => flicker.classList.remove('flash'), 100);
+                        }, 200);
+                    }
+                    scheduleFlicker();
+                }, delay);
+            }
+
+            scheduleSnapLook();
+            scheduleFreeze();
+            scheduleFlicker();
+        }
+
+        // ============================================
+        // Date/Time Functions
+        // ============================================
+
+        function getFormattedDateTime(includeSeconds = false) {
+            const now = new Date();
+            const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+            const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+            let h = now.getHours();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            const m = String(now.getMinutes()).padStart(2, '0');
+            let t = `${h}:${m} ${ampm}`;
+            if (includeSeconds) t = `${h}:${m}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`;
+
+            return `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} at ${t}`;
+        }
+
+        // ============================================
+        // Countdown Logic
+        // ============================================
+
+        let remainingSeconds, releaseTimestamp, countdownInterval;
+
+        function initializeCountdown() {
+            const stored = localStorage.getItem("countdown_remaining");
+            if (stored && parseInt(stored) > 0) {
+                remainingSeconds = parseInt(stored);
+            } else {
+                remainingSeconds = Math.floor((Math.random() ** 2) * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN;
+                localStorage.setItem("countdown_remaining", remainingSeconds);
+            }
+            releaseTimestamp = Date.now() + (remainingSeconds * 1000);
+            updateCountdownDisplay();
+            updateReleaseDateTime();
+        }
+
+        function updateCountdownDisplay() {
+            const h = String(Math.floor(remainingSeconds / 3600)).padStart(2, '0');
+            const m = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, '0');
+            const s = String(remainingSeconds % 60).padStart(2, '0');
+            document.getElementById('countdownDisplay').textContent = `${h}:${m}:${s}`;
+        }
+
+        function updateReleaseDateTime() {
+            const d = new Date(releaseTimestamp);
+            const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+            const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+            let h = d.getHours();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+
+            document.getElementById('release-datetime').textContent =
+                `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} at ${h}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')} ${ampm}`;
+        }
+
+        function countdown() {
+            if (remainingSeconds === 0) {
+                clearInterval(countdownInterval);
+                localStorage.setItem("countdown_remaining",
+                    Math.floor(Math.random() * (MAX_COUNTDOWN - MIN_COUNTDOWN + 1)) + MIN_COUNTDOWN);
+                showSurprise();
+            } else {
+                remainingSeconds--;
+                localStorage.setItem("countdown_remaining", remainingSeconds);
+                updateCountdownDisplay();
+                releaseTimestamp = Date.now() + (remainingSeconds * 1000);
+                updateReleaseDateTime();
+            }
+        }
+
+        // ============================================
+        // Surprise Reveal
+        // ============================================
+
+        function showSurprise() {
+            incrementSurpriseCounter();
+            document.getElementById('countdown-container').style.display = 'none';
+            const sc = document.getElementById('surprise-container');
+            sc.classList.add('active');
+
+            if (isSpecialSurprise()) {
+                sc.classList.add('special-surprise');
+                startEyeAnimation();
+            } else {
+                const idx = Math.floor((Math.random() ** 2) * SURPRISE_IMAGES.length);
+                document.getElementById('surprise-image').src = SURPRISE_IMAGES[idx];
+
+                // Reveal image frame with delay
+                setTimeout(() => {
+                    document.querySelector('.image-frame').classList.add('revealed');
+                }, 200);
+
+                triggerOriginalConfetti();
+                triggerSideConfetti();
+                setTimeout(() => triggerFireEffect(), 500);
+            }
+        }
+
+        function triggerOriginalConfetti() {
+            const duration = 7000;
+            const end = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+            const rr = (a, b) => Math.random() * (b - a) + a;
+
+            const iv = setInterval(() => {
+                const left = end - Date.now();
+                if (left <= 0) return clearInterval(iv);
+                const pc = 100 * (left / duration);
+                confetti({ ...defaults, particleCount: pc, origin: { x: rr(0.1,0.3), y: Math.random()-0.2 } });
+                confetti({ ...defaults, particleCount: pc, origin: { x: rr(0.7,0.9), y: Math.random()-0.2 } });
+            }, 250);
+        }
+
+        function triggerSideConfetti() {
+            const end = Date.now() + 3000;
+            function go() {
+                confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, zIndex: 9999 });
+                confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, zIndex: 9999 });
+                if (Date.now() < end) requestAnimationFrame(go);
+            }
+            go();
+        }
+
+        function triggerFireEffect() {
+            const cx = window.innerWidth / 2, cy = window.innerHeight / 2 - 100;
+            for (let i = 0; i < 400; i++) {
+                setTimeout(() => createFireParticle(cx, cy), i * 8);
+            }
+        }
+
+        function createFireParticle(cx, cy) {
+            const p = document.createElement('div');
+            p.className = 'fire-particle';
+            const angle = Math.random() * Math.PI * 2;
+            const sr = 150 + Math.random() * 50;
+            const sx = cx + Math.cos(angle) * sr;
+            const sy = cy + Math.sin(angle) * sr;
+            const dist = 200 + Math.random() * 600;
+            const ex = cx + Math.cos(angle) * dist;
+            const ey = cy + Math.sin(angle) * dist;
+            const sz = 8 + Math.random() * 35;
+
+            Object.assign(p.style, {
+                width: sz+'px', height: sz+'px', borderRadius: '50%',
+                opacity: '1', left: sx+'px', top: sy+'px'
+            });
+
+            const colors = ['#ff0000','#ff4500','#ff6347','#ff8c00','#ffa500','#ffd700','#ffff00'];
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            p.style.background = `radial-gradient(circle, ${c}, ${c}80)`;
+            p.style.boxShadow = `0 0 ${sz*2}px ${c}`;
+
+            document.body.appendChild(p);
+            const dur = 1200 + Math.random() * 1500;
+            p.offsetHeight;
+            p.style.transition = `all ${dur}ms ease-out`;
+            p.style.transform = `translate(${ex-sx}px, ${ey-sy}px) scale(0)`;
+            p.style.opacity = '0';
+            setTimeout(() => { if (p.parentNode) p.remove(); }, dur + 100);
+        }
+
+        // ============================================
+        // Update Current Date/Time
+        // ============================================
+
+        function updateCurrentDateTime() {
+            document.getElementById('current-datetime').textContent = getFormattedDateTime(true);
+        }
+
+        // ============================================
+        // Sparkles
+        // ============================================
+
+        function createSparkles() {
+            const c = document.getElementById('countdown-container');
+            for (let i = 0; i < 8; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.animationDelay = Math.random() * 3 + 's';
+                c.appendChild(s);
+            }
+        }
+
+        // ============================================
+        // Initialize
+        // ============================================
+
+        // ============================================
+        // Ambient Glow Movement (random, wrapping)
+        // ============================================
+
+        function initGlowMovement() {
+            const glows = document.querySelectorAll('.bg-glow');
+            const state = [];
+
+            glows.forEach((el, i) => {
+                const size = parseFloat(window.getComputedStyle(el).width);
+                // Start at random positions
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                // Random velocity (pixels per frame at 60fps)
+                const speed = 0.3 + Math.random() * 0.5;
+                const angle = Math.random() * Math.PI * 2;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+
+                state.push({ el, x, y, vx, vy, size, pulsePeriod: 6000 + Math.random() * 8000, pulseOffset: Math.random() * 10000 });
+
+                el.style.left = '0px';
+                el.style.top = '0px';
+            });
+
+            // Occasionally nudge direction randomly
+            setInterval(() => {
+                for (const s of state) {
+                    s.vx += (Math.random() - 0.5) * 0.3;
+                    s.vy += (Math.random() - 0.5) * 0.3;
+                    // Clamp speed
+                    const spd = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+                    const maxSpd = 1.2;
+                    const minSpd = 0.2;
+                    if (spd > maxSpd) { s.vx *= maxSpd/spd; s.vy *= maxSpd/spd; }
+                    if (spd < minSpd) { s.vx *= minSpd/spd; s.vy *= minSpd/spd; }
+                }
+            }, 2000);
+
+            function animate() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+
+                for (const s of state) {
+                    s.x += s.vx;
+                    s.y += s.vy;
+
+                    // Wrap around (account for blob size + blur)
+                    const margin = s.size * 0.5 + 80;
+                    if (s.x > vw + margin) s.x = -margin;
+                    if (s.x < -margin) s.x = vw + margin;
+                    if (s.y > vh + margin) s.y = -margin;
+                    if (s.y < -margin) s.y = vh + margin;
+
+                    // Pulse scale
+                    const now = performance.now();
+                    const pulseProgress = Math.sin(((now + s.pulseOffset) % s.pulsePeriod) / s.pulsePeriod * Math.PI * 2);
+                    const scale = 1 + pulseProgress * 0.2; // oscillates 0.8 to 1.2
+                    const opacity = 0.7 + pulseProgress * 0.15; // oscillates 0.55 to 0.85
+
+                    const tx = s.x - s.size / 2;
+                    const ty = s.y - s.size / 2;
+                    s.el.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+                    s.el.style.opacity = opacity;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        initGlowMovement();
+        initializeCountdown();
+        updateCurrentDateTime();
+        createSparkles();
+        setInterval(updateCurrentDateTime, 1000);
+        countdownInterval = setInterval(countdown, 1000);
+    </script>
+</body>
+
+</html>

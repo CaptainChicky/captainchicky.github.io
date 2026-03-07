@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ODE Notes</title>
+
+<!-- MathJax 3 via jsdelivr CDN -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    packages: {'[+]': ['cancel', 'ams', 'boldsymbol']},
+    macros: {
+      iff: '\\Longleftrightarrow'
+    }
+  },
+  loader: { load: ['[tex]/cancel', '[tex]/boldsymbol'] },
+  chtml: {
+    scale: 1.06,
+    matchFontHeight: false
+  },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.body.classList.add('math-ready');
+      });
+    }
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0e11;
+    --bg-raised: #16161b;
+    --fg: #d4d2cb;
+    --fg-bright: #eae8e1;
+    --fg-muted: #7a7872;
+    --accent: #c49a6c;
+    --accent-dim: #8b6d4a;
+    --accent-glow: rgba(196, 154, 108, 0.08);
+    --border: #2a2a32;
+    --border-light: #33333d;
+    --page-max: 720px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', 'Georgia', serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.82;
+    font-size: 18.5px;
+    font-weight: 400;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.math-ready { opacity: 1; }
+
+  /* fallback: show after 3s even if mathjax fails to load */
+  @keyframes forceShow { to { opacity: 1; } }
+  body { animation: forceShow 0s 3s forwards; }
+
+  .page {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  /* ── Header ── */
+  header {
+    margin-bottom: 4rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 80px;
+    height: 1px;
+    background: var(--accent);
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--fg-bright);
+    letter-spacing: -0.025em;
+    line-height: 1.3;
+    margin-bottom: 0.35rem;
+  }
+  header .sub {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Prose ── */
+  p {
+    margin-bottom: 1.1rem;
+    color: var(--fg);
+  }
+
+  strong { color: var(--fg-bright); font-weight: 600; }
+  em { font-style: italic; color: var(--fg-bright); }
+
+  /* ── Section dividers ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin: 3.5rem 0 2.5rem;
+    color: var(--fg-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Lists ── */
+  ul {
+    margin: 0.6rem 0 1.2rem 0;
+    padding-left: 1.4rem;
+    list-style: none;
+  }
+  ul li {
+    margin-bottom: 0.35rem;
+    position: relative;
+    padding-left: 0.3rem;
+  }
+  ul li::before {
+    content: '\2014';
+    position: absolute;
+    left: -1.4rem;
+    color: var(--accent-dim);
+    font-weight: 300;
+  }
+
+  /* ── Math display ── */
+  mjx-container[display="true"] {
+    margin: 1.4rem 0 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.3rem 0;
+    color: var(--fg-bright);
+  }
+
+  /* ── Boxed key result ── */
+  .key-result {
+    border: 1px solid var(--accent-dim);
+    background: var(--accent-glow);
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.8rem 0;
+    text-align: center;
+  }
+  .key-result .caption {
+    font-size: 0.82rem;
+    color: var(--fg-muted);
+    font-style: italic;
+    margin-top: 0.3rem;
+  }
+
+  /* ── Page break ornament ── */
+  .page-break {
+    text-align: center;
+    margin: 3.5rem 0;
+    color: var(--border-light);
+    font-size: 0.9rem;
+    letter-spacing: 1em;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Warning/cannot callout ── */
+  .warn {
+    border-left: 2px solid #b05050;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--fg);
+  }
+  .warn strong { color: #d4846a; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    body { font-size: 16.5px; }
+    .page { padding: 2.5rem 1.2rem 4rem; }
+    header h1 { font-size: 1.55rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>Eliminating First-Order Terms<br>in Second-Order ODEs</h1>
+  <div class="sub">& recovering indefinite integrals from definite forms</div>
+</header>
+
+<!-- ═══════════ PART 1 ═══════════ -->
+
+<p>Given a differential equation of the following form,</p>
+
+$$y''(x) + y'(x)\, f(x) + y(x)\, g(x) + h(x) = 0$$
+
+<p>for sufficiently "non-exotic" functions $f, g$, and $h$, we seek to kill the first order $y'(x)$ term because without it, the resulting equation</p>
+
+<ul>
+  <li>Lets you immediately guess solutions like $e^{rx}$, sines, cosines, exponentials, or hyperbolic functions.</li>
+  <li>Often allows factorization of the operator.</li>
+  <li>Makes the equation self-adjoint.</li>
+</ul>
+
+<p>Furthermore, when the equation is self-adjoint</p>
+
+<ul>
+  <li>Solutions can often be chosen to be orthogonal (like Fourier series or Legendre polynomials).</li>
+  <li>You get nice variational principles (solutions minimize energy functionals).</li>
+  <li>The eigenvalues are real (so oscillations don't grow or decay unless physically intended).</li>
+  <li>Sturm–Liouville theory applies, giving completeness and orthogonality of solutions.</li>
+</ul>
+
+<div class="divider">the substitution</div>
+
+<p>We can try to remove the first order term by making the substitution $y(x) \mapsto u(x)$ where for some $v(x)$,</p>
+
+$$\begin{aligned}
+y &= vu \\
+y' &= v'u + vu' \\
+y'' &= v''u + 2u'v' + vu''
+\end{aligned}$$
+
+<p>Substituting this into the original equation yields</p>
+
+$$\begin{aligned}
+v''u + 2u'v' + vu'' + (v'u + vu')f + vug + h &= 0 \\
+vu'' + (2v' + vf)\,u' + (v'' + v'f + vg)\,u + h &= 0
+\end{aligned}$$
+
+<p>Getting rid of the first order term simply means</p>
+
+$$2v' + vf = 0 \;\;\iff\;\; \int\frac{v'\,\text{d}x}{v} = \int -\frac{f}{2}\,\text{d}x \;\;\iff\;\; v = \exp\!\left(\int -\frac{f}{2}\,\text{d}x\right)$$
+
+<p>Hence, the substitution</p>
+
+<div class="key-result">
+$$y(x) = \exp\!\left(\int \frac{-f(x)}{2}\,\text{d}x\right)\, u(x)$$
+<div class="caption">integration constant chosen as $0$</div>
+</div>
+
+<p>will eliminate the first order term.</p>
+
+<p>Thus $y''(x) + y'(x)\,f(x) + y(x)\,g(x) + h(x) = 0$ under $y(x) = \exp\!\left(\displaystyle\int \frac{-f(x)}{2}\,\text{d}x\right) u(x)$ transforms into</p>
+
+$$\begin{aligned}
+u'' + \frac{v'' + v'f + vg}{v}\,u + \frac{h}{v} &= 0 \\[6pt]
+u'' + \left(-\frac{f'}{2} - \frac{1}{4}f^2 + g\right)u + \frac{h}{\exp\!\left(\displaystyle\int \frac{-f}{2}\,\text{d}x\right)} &= 0
+\end{aligned}$$
+
+<p>An example is given by $x^2 y''(x) + xy'(x) + (x^2 - \nu^2)y(x) = 0$ where $f = \frac{1}{x}$, $g = \frac{x^2 - \nu^2}{x^2}$, $h = 0$, such that $y = \frac{1}{\sqrt{x}}\,u$ gives us</p>
+
+$$u'' + \left(-\frac{\nu^2}{x^2} + \frac{1}{4x^2} + 1\right)u = 0$$
+
+<p>When $\nu = \frac{1}{2}$, we get $u'' + u = 0$, which becomes trivial to solve.</p>
+
+
+<!-- ═══════════ PAGE BREAK ═══════════ -->
+<div class="page-break">···</div>
+
+
+<!-- ═══════════ PART 2 ═══════════ -->
+
+<p>We have some function of 2 or more variables $f$. WLOG let it be a function of just 2 variables $f(t, a)$. Given that the integral converges, if we have a function defined with definite integrals as such</p>
+
+$$A(x, a) = \int_x^k f(t, a)\,\text{d}t$$
+
+<p>for some presumably positive constant $k$ (such as $\infty$) we can adapt it to define the indefinite integral.</p>
+
+<p>Let</p>
+
+$$\int f(t, a)\,\text{d}t = F(t, a) + C(a)$$
+
+<p>where $F(t, a)$ is the main antiderivative, and $C(a)$ is a "constant" with respect to $t$ (when differentiated w.r.t. $t$, $C(a)$ disappears). We know that</p>
+
+$$\begin{aligned}
+\int_x^k f(t, a)\,\text{d}t = A(x, a) &= F(k, a) - F(x, a) \\
+\implies F(x, a) &= F(k, a) - A(x, a) \\
+&= G(a) - A(x, a)
+\end{aligned}$$
+
+<p>We define $F(k, a) = G(a)$ since we are plugging in (or taking the limit) a value $x = k$ into $F(x, a)$, reducing the number of variables to just 1 ($a$ in this case).</p>
+
+<p>Substituting this result back into the indefinite integral, we have</p>
+
+$$\int f(t, a)\,\text{d}t = G(a) - A(t, a) + C(a)$$
+
+<p>Let $C(a) = G(a) + c$, where $c$ is an actual constant (like a numerical value, not a function of any variable). Then</p>
+
+<div class="key-result">
+$$\int f(t, a)\,\text{d}t = -A(t, a) + c$$
+</div>
+
+<p>Note that this works for any function $A$ that is defined with a definite integral <strong>such that one of its inputs/variable is a bound of that integral</strong>. In this case, $x$ was that variable.</p>
+
+<div class="divider">examples</div>
+
+<p>Two examples include the incomplete gamma function</p>
+
+$$\int_x^\infty t^{s-1}e^{-t}\,\text{d}t = \Gamma(s, x) \;\;\iff\;\; \int t^{s-1}e^{-t}\,\text{d}t = -\Gamma(s, t) + C$$
+
+<p>and the inverse Weierstrass elliptic $\wp$ function</p>
+
+$$\int_\infty^z \frac{\text{d}t}{\sqrt{4t^3 - g_2 t - g_3}} = \wp^{-1}(z;\,g_2, g_3) \;\;\iff\;\; \int \frac{\text{d}t}{\sqrt{4t^3 - g_2 t - g_3}} = \wp^{-1}(t;\,g_2, g_3) + C$$
+
+<div class="warn">
+<p>This <strong>cannot</strong> work with, say</p>
+
+$$\int_0^\infty \frac{1}{\pi}\cos\!\left(\frac{t^3}{3} + xt\right)\text{d}t = \operatorname{Ai}(x)$$
+
+<p>because there is no variable in the bounds, so the constant canceling trick will not work since we can't even substitute the definite integral manipulation into the indefinite integral.</p>
+</div>
+
+</div>
+</body>
+</html>
