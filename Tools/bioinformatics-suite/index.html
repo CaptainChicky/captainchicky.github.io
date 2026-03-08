@@ -203,6 +203,32 @@ select {
 .tool-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
 .tool-card p { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
 
+/* ── Translation Frames ─────────────────────────────────────────────────────── */
+.frame-block { border-bottom: 1px solid var(--border); }
+.frame-block:last-child { border-bottom: none; }
+.frame-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; cursor: pointer;
+  background: rgba(255,255,255,0.02);
+  transition: background 0.15s;
+}
+.frame-header:hover { background: rgba(88,166,255,0.06); }
+.frame-label { font-size: 12.5px; font-weight: 600; color: var(--accent); font-family: var(--font-mono); }
+.frame-meta { font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono); }
+.frame-body {
+  padding: 10px 16px 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  line-height: 1.7; white-space: pre-wrap; word-break: break-all;
+  color: var(--text-dim);
+}
+.frame-body .orf { color: #ff6b6b; font-weight: 600; }
+.frame-body .met { color: #3fb950; font-weight: 700; }
+.frame-body .stop { color: #f85149; font-weight: 700; }
+.frame-body .nuc-line {
+  color: var(--text-muted); font-size: 11px; display: block;
+  letter-spacing: 0.02em;
+}
+
 /* ── Responsive ────────────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
   :root { --sidebar-w: 52px; }
@@ -229,9 +255,8 @@ select {
   <a class="sidebar-item active" data-tool="reverse-complement">
     <span class="icon">⇄</span> <span>Reverse Complement</span>
   </a>
-  <a class="sidebar-item disabled" data-tool="">
+  <a class="sidebar-item" data-tool="translate">
     <span class="icon">⟶</span> <span>Translate DNA</span>
-    <span class="badge">Soon</span>
   </a>
   <a class="sidebar-item disabled" data-tool="">
     <span class="icon">↩</span> <span>Back Translate</span>
@@ -239,9 +264,8 @@ select {
   </a>
 
   <div class="sidebar-cat">Sequence Analysis</div>
-  <a class="sidebar-item disabled" data-tool="">
+  <a class="sidebar-item" data-tool="gc-content">
     <span class="icon">◎</span> <span>GC Content</span>
-    <span class="badge">Soon</span>
   </a>
   <a class="sidebar-item disabled" data-tool="">
     <span class="icon">🔍</span> <span>ORF Finder</span>
@@ -263,13 +287,11 @@ select {
   </a>
 
   <div class="sidebar-cat">Utilities</div>
-  <a class="sidebar-item disabled" data-tool="">
+  <a class="sidebar-item" data-tool="random-seq">
     <span class="icon">🎲</span> <span>Random Sequence</span>
-    <span class="badge">Soon</span>
   </a>
-  <a class="sidebar-item disabled" data-tool="">
+  <a class="sidebar-item" data-tool="shuffle-seq">
     <span class="icon">🔀</span> <span>Shuffle Sequence</span>
-    <span class="badge">Soon</span>
   </a>
 </nav>
 
@@ -311,6 +333,126 @@ GGGGaaaaaaaatttatatat</textarea>
         <button class="btn btn-copy" id="rc-copy" title="Copy to clipboard">Copy</button>
       </div>
       <div class="result-body"><pre id="rc-output"></pre></div>
+    </div>
+  </section>
+
+  <!-- ── Translate DNA ────────────────────────────────────────────────── -->
+  <section id="tool-translate" class="tool-page">
+    <h2 class="tool-title">Translate DNA</h2>
+    <p class="tool-desc">
+      Translate a DNA sequence in all six reading frames. Open reading frames (Met → Stop) are
+      highlighted. Click any frame header to copy its protein sequence.
+    </p>
+
+    <label class="field-label" for="tr-input">Input Sequence</label>
+    <textarea id="tr-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence…">>Example
+ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
+
+    <div class="option-row">
+      <label for="tr-table">Genetic code:</label>
+      <select id="tr-table"></select>
+    </div>
+    <div class="option-row">
+      <label for="tr-format">Output format:</label>
+      <select id="tr-format">
+        <option value="compact" selected>Compact (M, *, no spaces)</option>
+        <option value="verbose">Verbose (Met, Stop, spaces)</option>
+        <option value="nuc">Compact + nucleotide sequence</option>
+        <option value="nuc-verbose">Verbose + nucleotide sequence</option>
+      </select>
+      <label for="tr-minorf">Min ORF length (aa):</label>
+      <input type="number" id="tr-minorf" value="10" min="1" max="9999" style="width:80px">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="tr-submit">Translate</button>
+      <button class="btn btn-secondary" id="tr-clear">Clear</button>
+    </div>
+
+    <div class="result-panel" id="tr-result">
+      <div class="result-stats" id="tr-stats"></div>
+      <div id="tr-frames"></div>
+    </div>
+  </section>
+
+  <!-- ── GC Content ───────────────────────────────────────────────────── -->
+  <section id="tool-gc-content" class="tool-page">
+    <h2 class="tool-title">GC Content</h2>
+    <p class="tool-desc">
+      Calculate the nucleotide composition and GC/AT content of a DNA sequence.
+    </p>
+
+    <label class="field-label" for="gc-input">Input Sequence</label>
+    <textarea id="gc-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence…"></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="gc-submit">Analyze</button>
+      <button class="btn btn-secondary" id="gc-clear">Clear</button>
+    </div>
+
+    <div class="result-panel" id="gc-result">
+      <div class="result-stats" id="gc-stats"></div>
+      <div class="result-header">
+        <h3>Composition</h3>
+      </div>
+      <div class="result-body" id="gc-body"></div>
+    </div>
+  </section>
+
+  <!-- ── Random Sequence ──────────────────────────────────────────────── -->
+  <section id="tool-random-seq" class="tool-page">
+    <h2 class="tool-title">Random Sequence</h2>
+    <p class="tool-desc">
+      Generate a random DNA or protein sequence of a given length.
+    </p>
+
+    <div class="option-row" style="margin-top:0">
+      <label for="rs-type">Type:</label>
+      <select id="rs-type">
+        <option value="dna" selected>DNA</option>
+        <option value="protein">Protein</option>
+      </select>
+      <label for="rs-length">Length:</label>
+      <input type="number" id="rs-length" value="200" min="1" max="100000" style="width:120px">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="rs-submit">Generate</button>
+    </div>
+
+    <div class="result-panel" id="rs-result">
+      <div class="result-stats" id="rs-stats"></div>
+      <div class="result-header">
+        <h3>Output</h3>
+        <button class="btn btn-copy" id="rs-copy">Copy</button>
+      </div>
+      <div class="result-body"><pre id="rs-output"></pre></div>
+    </div>
+  </section>
+
+  <!-- ── Shuffle Sequence ─────────────────────────────────────────────── -->
+  <section id="tool-shuffle-seq" class="tool-page">
+    <h2 class="tool-title">Shuffle Sequence</h2>
+    <p class="tool-desc">
+      Randomly shuffle a DNA or protein sequence while preserving its composition.
+      Useful for generating null-model sequences for statistical comparisons.
+    </p>
+
+    <label class="field-label" for="sh-input">Input Sequence</label>
+    <textarea id="sh-input" spellcheck="false" placeholder="Paste raw or FASTA sequence…"></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="sh-submit">Shuffle</button>
+      <button class="btn btn-secondary" id="sh-clear">Clear</button>
+    </div>
+
+    <div class="result-panel" id="sh-result">
+      <div class="result-stats" id="sh-stats"></div>
+      <div class="result-header">
+        <h3>Shuffled Sequence</h3>
+        <button class="btn btn-copy" id="sh-copy">Copy</button>
+      </div>
+      <div class="result-body"><pre id="sh-output"></pre></div>
     </div>
   </section>
 
@@ -404,16 +546,294 @@ GGGGaaaaaaaatttatatat</textarea>
     });
   });
 
-  // ── Keyboard shortcut: Ctrl+Enter to run ────────────────────────────────
-  document.addEventListener("keydown", function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-      const activePage = document.querySelector(".tool-page.active");
-      if (activePage) {
-        const btn = activePage.querySelector(".btn-primary");
-        if (btn) btn.click();
-      }
+  // ── Helper: copy button wiring ──────────────────────────────────────────
+  function wireCopy(btnId, sourceId) {
+    document.getElementById(btnId).addEventListener("click", function() {
+      var btn = this;
+      var text = document.getElementById(sourceId).textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = "Copied!";
+        setTimeout(function(){ btn.textContent = "Copy"; }, 1500);
+      });
+    });
+  }
+
+  // ── Translate DNA Tool ──────────────────────────────────────────────────
+  (function() {
+    var input    = document.getElementById("tr-input");
+    var result   = document.getElementById("tr-result");
+    var stats    = document.getElementById("tr-stats");
+    var framesEl = document.getElementById("tr-frames");
+    var tableSel = document.getElementById("tr-table");
+
+    // Populate genetic code dropdown
+    var tableIds = Object.keys(GENETIC_CODES).sort(function(a,b){ return parseInt(a)-parseInt(b); });
+    for (var t = 0; t < tableIds.length; t++) {
+      var id = tableIds[t];
+      var opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id + " — " + GENETIC_CODES[id].name;
+      if (id === "1") opt.selected = true;
+      tableSel.appendChild(opt);
     }
-  });
+
+    // Verbose amino acid names
+    var AA_NAMES = {
+      "A":"Ala","R":"Arg","N":"Asn","D":"Asp","C":"Cys","E":"Glu","Q":"Gln",
+      "G":"Gly","H":"His","I":"Ile","L":"Leu","K":"Lys","M":"Met","F":"Phe",
+      "P":"Pro","S":"Ser","T":"Thr","W":"Trp","Y":"Tyr","V":"Val","*":"Stop","X":"Xaa"
+    };
+
+    function renderFrame(frameData, fmt, minOrf) {
+      var cd = frameData.codonData;
+      var orfs = findOrfs(cd, minOrf);
+      var verbose = (fmt === "verbose" || fmt === "nuc-verbose");
+      var showNuc = (fmt === "nuc" || fmt === "nuc-verbose");
+
+      // Build set of indices inside ORFs
+      var inOrf = {};
+      for (var o = 0; o < orfs.length; o++) {
+        for (var idx = orfs[o].start; idx <= orfs[o].end; idx++) inOrf[idx] = true;
+      }
+
+      var html = '<div class="frame-block">';
+      html += '<div class="frame-header" title="Click to copy protein sequence" data-protein="' +
+        cd.map(function(c){return c.aa;}).join("") + '">';
+      html += '<span class="frame-label">' + frameData.label + '</span>';
+      html += '<span class="frame-meta">' + cd.length + ' aa · ' + orfs.length + ' ORF' + (orfs.length !== 1 ? 's' : '') + '</span>';
+      html += '</div>';
+      html += '<div class="frame-body">';
+
+      // Protein line
+      var parts = [];
+      for (var i = 0; i < cd.length; i++) {
+        var aa = cd[i].aa;
+        var display = verbose ? (AA_NAMES[aa] || aa) : aa;
+        var cls = "";
+        if (aa === "M" && inOrf[i]) cls = "met";
+        else if (aa === "*") cls = "stop";
+        else if (inOrf[i]) cls = "orf";
+
+        if (cls) {
+          parts.push('<span class="' + cls + '">' + display + '</span>');
+        } else {
+          parts.push(display);
+        }
+      }
+      html += parts.join(verbose ? " " : "");
+
+      // Nucleotide line
+      if (showNuc) {
+        var nucParts = [];
+        for (var i = 0; i < cd.length; i++) {
+          var codon = cd[i].codon;
+          if (verbose) codon = codon + (codon.length < 3 ? " " : "");
+          var cls = "";
+          if (cd[i].aa === "M" && inOrf[i]) cls = "met";
+          else if (cd[i].aa === "*") cls = "stop";
+          else if (inOrf[i]) cls = "orf";
+          if (cls) {
+            nucParts.push('<span class="' + cls + '">' + codon + '</span>');
+          } else {
+            nucParts.push(codon);
+          }
+        }
+        html += '<span class="nuc-line">' + nucParts.join(verbose ? " " : "") + '</span>';
+      }
+
+      html += '</div></div>';
+      return html;
+    }
+
+    document.getElementById("tr-submit").addEventListener("click", function() {
+      var raw = input.value.trim();
+      if (!raw) return;
+      var parsed = parseFasta(raw);
+      var dna = filterDnaSaveCase(parsed.sequence);
+      if (!dna.length) {
+        framesEl.innerHTML = '<div class="result-body"><pre>No valid DNA characters found.</pre></div>';
+        result.classList.add("visible");
+        stats.innerHTML = "";
+        return;
+      }
+
+      var tableId = tableSel.value;
+      var geneticCode = GENETIC_CODES[tableId].code;
+      var fmt = document.getElementById("tr-format").value;
+      var minOrf = parseInt(document.getElementById("tr-minorf").value) || 1;
+
+      var frames = translateAllFrames(dna, geneticCode);
+
+      // Stats
+      var s = seqStats(dna);
+      var totalOrfs = 0;
+      for (var i = 0; i < frames.length; i++) totalOrfs += frames[i].orfs.length;
+      stats.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+        '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
+        '<span class="stat-item">Table: <span>' + tableId + '</span></span>' +
+        '<span class="stat-item">ORFs (≥' + minOrf + ' aa): <span>' + totalOrfs + '</span></span>';
+
+      // Render all 6 frames
+      var html = "";
+      for (var i = 0; i < frames.length; i++) {
+        html += renderFrame(frames[i], fmt, minOrf);
+      }
+      framesEl.innerHTML = html;
+
+      // Click-to-copy on frame headers
+      var headers = framesEl.querySelectorAll(".frame-header");
+      for (var i = 0; i < headers.length; i++) {
+        headers[i].addEventListener("click", function() {
+          var protein = this.getAttribute("data-protein");
+          var el = this;
+          navigator.clipboard.writeText(protein).then(function() {
+            var meta = el.querySelector(".frame-meta");
+            var orig = meta.textContent;
+            meta.textContent = "Copied!";
+            setTimeout(function(){ meta.textContent = orig; }, 1200);
+          });
+        });
+      }
+
+      result.classList.add("visible");
+    });
+
+    document.getElementById("tr-clear").addEventListener("click", function() {
+      input.value = ""; result.classList.remove("visible"); input.focus();
+    });
+  })();
+
+  // ── GC Content Tool ─────────────────────────────────────────────────────
+  (function() {
+    var input  = document.getElementById("gc-input");
+    var result = document.getElementById("gc-result");
+    var statsEl = document.getElementById("gc-stats");
+    var body   = document.getElementById("gc-body");
+
+    document.getElementById("gc-submit").addEventListener("click", function() {
+      var raw = input.value.trim();
+      if (!raw) return;
+      var parsed = parseFasta(raw);
+      var dna = filterDnaSaveCase(parsed.sequence);
+      if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+      var s = seqStats(dna);
+      var title = parsed.title ? '"' + parsed.title + '"' : "";
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+        (title ? '<span class="stat-item">Title: <span>' + title + '</span></span>' : "");
+
+      // bar chart style breakdown
+      var maxCount = Math.max(s.a, s.t, s.g, s.c);
+      function bar(label, count, color) {
+        var pct = s.len > 0 ? (count / s.len * 100).toFixed(1) : "0.0";
+        var w = maxCount > 0 ? (count / maxCount * 100) : 0;
+        return '<div style="margin-bottom:10px">' +
+          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">' +
+            '<span style="font-weight:600">' + label + '</span>' +
+            '<span style="color:var(--text-dim)">' + count.toLocaleString() + ' (' + pct + '%)</span>' +
+          '</div>' +
+          '<div style="height:8px;background:var(--bg-input);border-radius:4px;overflow:hidden">' +
+            '<div style="height:100%;width:' + w + '%;background:' + color + ';border-radius:4px;transition:width 0.3s"></div>' +
+          '</div></div>';
+      }
+
+      body.innerHTML =
+        bar("Adenine (A)", s.a, "var(--accent)") +
+        bar("Thymine (T)", s.t, "var(--orange)") +
+        bar("Guanine (G)", s.g, "var(--green)") +
+        bar("Cytosine (C)", s.c, "var(--purple)") +
+        (s.n > 0 ? bar("Other (N)", s.n, "var(--text-muted)") : "") +
+        '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:28px;font-size:14px">' +
+          '<div><span style="color:var(--text-dim)">GC Content:</span> <span style="color:var(--green);font-weight:700;font-size:18px">' + s.gc + '%</span></div>' +
+          '<div><span style="color:var(--text-dim)">AT Content:</span> <span style="color:var(--orange);font-weight:700;font-size:18px">' + s.at + '%</span></div>' +
+        '</div>';
+
+      result.classList.add("visible");
+    });
+
+    document.getElementById("gc-clear").addEventListener("click", function() {
+      input.value = ""; result.classList.remove("visible"); input.focus();
+    });
+  })();
+
+  // ── Random Sequence Tool ────────────────────────────────────────────────
+  (function() {
+    var result = document.getElementById("rs-result");
+    var stats  = document.getElementById("rs-stats");
+    var output = document.getElementById("rs-output");
+    var DNA_BASES = "GATC".split("");
+    var AA_CHARS  = "ACDEFGHIKLMNPQRSTVWY".split("");
+
+    document.getElementById("rs-submit").addEventListener("click", function() {
+      var type = document.getElementById("rs-type").value;
+      var len  = parseInt(document.getElementById("rs-length").value) || 0;
+      if (len < 1 || len > 100000) { output.textContent = "Length must be 1–100,000."; result.classList.add("visible"); stats.innerHTML = ""; return; }
+
+      var components = type === "dna" ? DNA_BASES : AA_CHARS;
+      var seq = randomSeq(components, len);
+
+      if (type === "dna") {
+        var s = seqStats(seq);
+        stats.innerHTML =
+          '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+          '<span class="stat-item">A: <span>' + s.a + '</span></span>' +
+          '<span class="stat-item">T: <span>' + s.t + '</span></span>' +
+          '<span class="stat-item">G: <span>' + s.g + '</span></span>' +
+          '<span class="stat-item">C: <span>' + s.c + '</span></span>' +
+          '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
+      } else {
+        stats.innerHTML =
+          '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' aa</span></span>' +
+          '<span class="stat-item">Type: <span>Protein</span></span>';
+      }
+
+      output.textContent = formatSeq(seq, 60);
+      result.classList.add("visible");
+    });
+    wireCopy("rs-copy", "rs-output");
+  })();
+
+  // ── Shuffle Sequence Tool ───────────────────────────────────────────────
+  (function() {
+    var input  = document.getElementById("sh-input");
+    var result = document.getElementById("sh-result");
+    var stats  = document.getElementById("sh-stats");
+    var output = document.getElementById("sh-output");
+
+    document.getElementById("sh-submit").addEventListener("click", function() {
+      var raw = input.value.trim();
+      if (!raw) return;
+      var parsed = parseFasta(raw);
+      // try DNA first, fall back to protein
+      var isDna = verifyDna(parsed.sequence);
+      var seq = isDna ? filterDnaSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
+      if (!seq.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); stats.innerHTML = ""; return; }
+
+      var shuffled = shuffleSeq(seq);
+
+      if (isDna) {
+        var s = seqStats(seq);
+        stats.innerHTML =
+          '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+          '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
+          '<span class="stat-item">Type: <span>DNA</span></span>';
+      } else {
+        stats.innerHTML =
+          '<span class="stat-item stat-len">Length: <span>' + seq.length.toLocaleString() + ' aa</span></span>' +
+          '<span class="stat-item">Type: <span>Protein</span></span>';
+      }
+
+      output.textContent = formatSeq(shuffled, 60);
+      result.classList.add("visible");
+    });
+
+    document.getElementById("sh-clear").addEventListener("click", function() {
+      input.value = ""; result.classList.remove("visible"); input.focus();
+    });
+    wireCopy("sh-copy", "sh-output");
+  })();
 
 })();
 </script>

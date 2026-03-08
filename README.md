@@ -10,7 +10,6 @@ The projects are folders from the root directory.
 ## Maybe Finished...?
 
 - `/Space/` - Main page finished but generally speaking the specific pages are not done.
-- `/random/Surprise!!!/` - Page is done (redirects from `/popups/` if there is nothing else to redirect to). Path however is dubious, maybe I'll figure out a better location for this.
 
 ## Unfinished Projects
 
@@ -18,6 +17,18 @@ The projects are folders from the root directory.
 - `/random/captcha-test/` - I need to actually properly implement the animation and popups lol.
 - `/Clouds/` - I need to restructure the site and make it more practical. Then, I can do the writeup.
 - `/writeups/Zip-Bomb/` - I need to actually relearn everything and finish this. This will take a while.
+- `/writeups/biochem/` - lol, lmao even
+- `/Tools/bioinformatics-suite/` - to be finished
+
+## Minor things
+
+these are finished btw
+
+- `/random/fuckery/` - console testing and js obfuscation testing, main page looks like a console.
+- `/random/mosaic/` - shards of a broken window.
+- `/random/Surprise!!!/` - Page is done (redirects from `/popups/` if there is nothing else to redirect to).
+- `/random/particles-and-gravity.html` - random showcase js of particles and shit
+- `/Tools/SVGEditor.html` - used to edit the eye thing on "Surprise!!!", but in general can be used for html svg editing.
 
 # To-Do & Things to Note
 

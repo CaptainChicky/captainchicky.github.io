@@ -4,7 +4,7 @@
 
 "use strict";
 
-// ── Complement map (single lookup, handles IUPAC ambiguity codes) ────────────
+// ── Complement map (handles IUPAC ambiguity codes) ───────────────────────────
 const COMP_MAP = Object.freeze({
   G:"C", A:"T", T:"A", C:"G", N:"N",
   g:"c", a:"t", t:"a", c:"g", n:"n",
@@ -19,9 +19,7 @@ const COMP_MAP = Object.freeze({
 
 function complement(seq) {
   let out = "";
-  for (let i = 0; i < seq.length; i++) {
-    out += COMP_MAP[seq[i]] || seq[i];
-  }
+  for (let i = 0; i < seq.length; i++) out += COMP_MAP[seq[i]] || seq[i];
   return out;
 }
 
@@ -37,17 +35,10 @@ function reverseComplement(seq) {
 
 // ── Filters ──────────────────────────────────────────────────────────────────
 
-const RE_NON_DNA        = /[^GATCNgatcn]/g;
-const RE_NON_DNA_IUPAC  = /[^GATCNURYKMSWBDHVgatcnurykmswbdhv]/g;
-const RE_NON_PROTEIN    = /[^ACDEFGHIKLMNPQRSTVWYZacdefghiklmnpqrstvwyz*]/g;
-const RE_WHITESPACE_NUM = /[\s\d]/g;
-
-function filterDna(seq)          { return seq.replace(RE_NON_DNA, "").toLowerCase(); }
-function filterDnaSaveCase(seq)  { return seq.replace(RE_NON_DNA, ""); }
-function filterDnaIupac(seq)     { return seq.replace(RE_NON_DNA_IUPAC, ""); }
-function filterDnaLight(seq)     { return seq.replace(RE_WHITESPACE_NUM, "").toLowerCase(); }
-function filterProtein(seq)      { return seq.replace(RE_NON_PROTEIN, "").toUpperCase(); }
-function filterProteinSaveCase(s){ return s.replace(RE_NON_PROTEIN, ""); }
+function filterDna(seq)          { return seq.replace(/[^GATCNgatcn]/g, "").toLowerCase(); }
+function filterDnaSaveCase(seq)  { return seq.replace(/[^GATCNgatcn]/g, ""); }
+function filterProtein(seq)      { return seq.replace(/[^ACDEFGHIKLMNPQRSTVWYZacdefghiklmnpqrstvwyz*]/g, "").toUpperCase(); }
+function filterProteinSaveCase(s){ return s.replace(/[^ACDEFGHIKLMNPQRSTVWYZacdefghiklmnpqrstvwyz*]/g, ""); }
 
 // ── FASTA parsing ────────────────────────────────────────────────────────────
 
@@ -59,17 +50,6 @@ function parseFasta(raw) {
   }
   const sequence = raw.replace(/^>.*$/gm, "").trim();
   return { title, sequence };
-}
-
-// legacy aliases
-function removeFastaTitleDna(seq) {
-  const p = parseFasta(seq);
-  window._lastFastaTitle = p.title;
-  return p.sequence;
-}
-
-function removeFastaTitleProtein(seq) {
-  return removeFastaTitleDna(seq); // same logic
 }
 
 // ── Validation ───────────────────────────────────────────────────────────────
@@ -122,7 +102,6 @@ function formatSeqNumbered(seq, width, groupSize) {
   for (let i = 0; i < seq.length; i += width) {
     const chunk = seq.slice(i, i + width);
     const num = String(i + 1).padStart(8, " ");
-    // insert spaces every groupSize chars
     let grouped = "";
     for (let j = 0; j < chunk.length; j += groupSize) {
       grouped += (j > 0 ? " " : "") + chunk.slice(j, j + groupSize);
@@ -132,7 +111,7 @@ function formatSeqNumbered(seq, width, groupSize) {
   return lines.join("\n");
 }
 
-// ── Translation helpers ──────────────────────────────────────────────────────
+// ── Translation & Genetic Codes ───────────────────────────────────────────────
 
 const STANDARD_CODE = {
   "TTT":"F","TTC":"F","TTA":"L","TTG":"L",
@@ -153,19 +132,112 @@ const STANDARD_CODE = {
   "GGT":"G","GGC":"G","GGA":"G","GGG":"G"
 };
 
+// Build alternate codes from standard + diffs
+function _makeCode(diffs) {
+  var code = {};
+  for (var k in STANDARD_CODE) code[k] = STANDARD_CODE[k];
+  for (var k in diffs) code[k] = diffs[k];
+  return code;
+}
+
+var GENETIC_CODES = {
+  "1":  { name: "Standard", code: STANDARD_CODE },
+  "2":  { name: "Vertebrate Mitochondrial", code: _makeCode({"TGA":"W","AGA":"*","AGG":"*","ATA":"M"}) },
+  "3":  { name: "Yeast Mitochondrial", code: _makeCode({"TGA":"W","CTT":"T","CTC":"T","CTA":"T","CTG":"T","ATA":"M"}) },
+  "4":  { name: "Mold/Protozoan/Coelenterate Mito & Mycoplasma", code: _makeCode({"TGA":"W"}) },
+  "5":  { name: "Invertebrate Mitochondrial", code: _makeCode({"TGA":"W","AGA":"S","AGG":"S","ATA":"M"}) },
+  "6":  { name: "Ciliate/Dasycladacean/Hexamita Nuclear", code: _makeCode({"TAA":"Q","TAG":"Q"}) },
+  "9":  { name: "Echinoderm/Flatworm Mitochondrial", code: _makeCode({"TGA":"W","AGA":"S","AGG":"S","AAA":"N"}) },
+  "10": { name: "Euplotid Nuclear", code: _makeCode({"TGA":"C"}) },
+  "11": { name: "Bacterial/Archaeal/Plant Plastid", code: STANDARD_CODE },
+  "12": { name: "Alternative Yeast Nuclear", code: _makeCode({"CTG":"S"}) },
+  "13": { name: "Ascidian Mitochondrial", code: _makeCode({"TGA":"W","AGA":"G","AGG":"G","ATA":"M"}) },
+  "14": { name: "Alternative Flatworm Mitochondrial", code: _makeCode({"TGA":"W","AGA":"S","AGG":"S","AAA":"N","TAA":"Y"}) },
+  "15": { name: "Blepharisma Nuclear", code: _makeCode({"TAG":"Q"}) },
+  "16": { name: "Chlorophycean Mitochondrial", code: _makeCode({"TAG":"L"}) },
+  "21": { name: "Trematode Mitochondrial", code: _makeCode({"TGA":"W","ATA":"M","AGA":"S","AGG":"S","AAA":"N"}) },
+  "22": { name: "Scenedesmus obliquus Mitochondrial", code: _makeCode({"TCA":"*","TAG":"L"}) },
+  "23": { name: "Thraustochytrium Mitochondrial", code: _makeCode({"TTA":"*"}) },
+  "24": { name: "Rhabdopleuridae Mitochondrial", code: _makeCode({"TGA":"W","AGA":"S","AGG":"K"}) },
+  "25": { name: "Candidate Division SR1/Gracilibacteria", code: _makeCode({"TGA":"G"}) },
+  "26": { name: "Pachysolen tannophilus Nuclear", code: _makeCode({"CTG":"A"}) },
+  "27": { name: "Karyorelict Nuclear", code: _makeCode({"TAA":"Q","TAG":"Q","TGA":"W"}) },
+  "28": { name: "Condylostoma Nuclear", code: _makeCode({"TAA":"Q","TAG":"Q","TGA":"W"}) },
+  "29": { name: "Mesodinium Nuclear", code: _makeCode({"TAA":"Y","TAG":"Y"}) },
+  "30": { name: "Peritrich Nuclear", code: _makeCode({"TAA":"E","TAG":"E"}) },
+  "31": { name: "Blastocrithidia Nuclear", code: _makeCode({"TGA":"W","TAA":"E","TAG":"E"}) },
+  "32": { name: "Balanophoraceae Plastid", code: _makeCode({"TAG":"W"}) },
+  "33": { name: "Cephalodiscidae Mitochondrial", code: _makeCode({"TAA":"Y","TGA":"W","AGA":"S","AGG":"K"}) }
+};
+
 function translate(dnaSeq, frame, geneticCode) {
   frame = frame || 0;
   geneticCode = geneticCode || STANDARD_CODE;
-  let protein = "";
-  const upper = dnaSeq.toUpperCase().replace(/U/g, "T");
-  for (let i = frame; i <= upper.length - 3; i += 3) {
-    const codon = upper.slice(i, i + 3);
+  var protein = "";
+  var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
+  for (var i = frame; i <= upper.length - 3; i += 3) {
+    var codon = upper.slice(i, i + 3);
     protein += geneticCode[codon] || "X";
   }
   return protein;
 }
 
-// ── Alignment helpers ────────────────────────────────────────────────────────
+// Translate and return per-codon data for ORF highlighting
+function translateDetailed(dnaSeq, frame, geneticCode) {
+  geneticCode = geneticCode || STANDARD_CODE;
+  var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
+  var codons = [];
+  for (var i = frame; i <= upper.length - 3; i += 3) {
+    var codon = upper.slice(i, i + 3);
+    var aa = geneticCode[codon] || "X";
+    codons.push({ codon: dnaSeq.slice(i, i + 3), aa: aa, pos: i });
+  }
+  return codons;
+}
+
+// Find ORFs: runs of amino acids from M to * (inclusive)
+function findOrfs(codonData, minLength) {
+  minLength = minLength || 1;
+  var orfs = [];
+  var start = -1;
+  for (var i = 0; i < codonData.length; i++) {
+    if (codonData[i].aa === "M" && start === -1) {
+      start = i;
+    } else if (codonData[i].aa === "*" && start !== -1) {
+      var len = i - start + 1;
+      if (len >= minLength) {
+        orfs.push({ start: start, end: i, length: len });
+      }
+      start = -1;
+    }
+  }
+  return orfs;
+}
+
+// Translate all 6 frames, return array of { label, codonData, orfs }
+function translateAllFrames(dnaSeq, geneticCode) {
+  var results = [];
+  var rc = reverseComplement(dnaSeq);
+  for (var f = 0; f < 3; f++) {
+    var cd = translateDetailed(dnaSeq, f, geneticCode);
+    results.push({
+      label: "5'→3' Frame " + (f + 1),
+      codonData: cd,
+      orfs: findOrfs(cd)
+    });
+  }
+  for (var f = 0; f < 3; f++) {
+    var cd = translateDetailed(rc, f, geneticCode);
+    results.push({
+      label: "3'→5' Frame " + (f + 1),
+      codonData: cd,
+      orfs: findOrfs(cd)
+    });
+  }
+  return results;
+}
+
+// ── Alignment ────────────────────────────────────────────────────────────────
 
 function parseAlignment(text) {
   const blocks = text.split(/^>/gm).filter(Boolean);
@@ -186,56 +258,7 @@ function checkAlign(titles, sequences) {
   return true;
 }
 
-// ── Regex/restriction enzyme helpers ─────────────────────────────────────────
-
-function complementExp(expr) {
-  const body = expr.match(/\/(.+)\//);
-  const flags = expr.match(/[a-z]+$/);
-  if (!body) return expr;
-  let s = body[1];
-  s = s.replace(/[GATCgatc]/g, ch => COMP_MAP[ch] || ch);
-  return "/" + s + "/" + (flags ? flags[0] : "");
-}
-
-function reverseExp(expr) {
-  const m = expr.match(/^\/(.+)\/([a-z]*)$/);
-  if (!m) return expr;
-  let body = m[1];
-  const flags = m[2];
-  // reverse while swapping brackets
-  let rev = "";
-  for (let i = body.length - 1; i >= 0; i--) {
-    const ch = body[i];
-    if (ch === "[") rev += "]";
-    else if (ch === "]") rev += "[";
-    else rev += ch;
-  }
-  return "/" + rev + "/" + flags;
-}
-
-function palinCheck(expr) {
-  const normal = toMinimum(expr);
-  const rc = complementExp(reverseExp(normal));
-  return normal === rc;
-}
-
-function toMinimum(expr) {
-  // Normalise bracket contents to canonical order: g, a, t, c, n
-  return expr.replace(/\[([^\]]+)\]/g, (_, inner) => {
-    const order = "gatcn";
-    let sorted = "";
-    for (const ch of order) {
-      if (inner.toLowerCase().includes(ch)) sorted += ch;
-    }
-    return "[" + sorted + "]";
-  });
-}
-
-function handleN(expr) {
-  return expr.replace(/\[gatc\]/g, "[gatcn]");
-}
-
-// ── Shuffle ──────────────────────────────────────────────────────────────────
+// ── Shuffle & Random ─────────────────────────────────────────────────────────
 
 function shuffleSeq(seq) {
   const arr = seq.split("");
@@ -245,8 +268,6 @@ function shuffleSeq(seq) {
   }
   return arr.join("");
 }
-
-// ── Random sequence ──────────────────────────────────────────────────────────
 
 function randomSeq(components, length) {
   let seq = "";
