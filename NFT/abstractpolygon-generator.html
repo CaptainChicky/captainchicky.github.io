@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #fff;
+			font: 13px monospace;
+			background: rgba(0, 0, 0, 0.5);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to regenerate</div>
+	<script>
+		const c = document.getElementById('c');
+		const ctx = c.getContext('2d');
+
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return a + Math.random() * (b - a) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+		function hsl(h, s, l, a) { return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a ?? 1})`; }
+
+		function polygon(cx, cy, r, sides, rotation) {
+			const pts = [];
+			for (let i = 0; i < sides; i++) {
+				const a = rotation + (Math.PI * 2 * i) / sides;
+				pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+			}
+			return pts;
+		}
+
+		function drawPoly(pts) {
+			ctx.beginPath();
+			ctx.moveTo(pts[0].x, pts[0].y);
+			for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+			ctx.closePath();
+		}
+
+		function subdivideRect(x, y, w, h, depth, maxDepth, results) {
+			if (depth >= maxDepth || Math.random() < 0.25) {
+				results.push({ x, y, w, h });
+				return;
+			}
+			const horizontal = Math.random() > 0.5;
+			const split = rr(0.3, 0.7);
+			if (horizontal) {
+				const sy = h * split;
+				subdivideRect(x, y, w, sy, depth + 1, maxDepth, results);
+				subdivideRect(x, y + sy, w, h - sy, depth + 1, maxDepth, results);
+			} else {
+				const sx = w * split;
+				subdivideRect(x, y, sx, h, depth + 1, maxDepth, results);
+				subdivideRect(x + sx, y, w - sx, h, depth + 1, maxDepth, results);
+			}
+		}
+
+		function generate() {
+			const W = c.width, H = c.height, dim = Math.min(W, H);
+
+			const baseHue = rr(0, 360);
+			const accent = baseHue + pick([140, 160, 180, 200]) * pick([1, -1]);
+			const mid = baseHue + rr(40, 80);
+			const bgLit = ri(2, 8);
+
+			// bg
+			ctx.fillStyle = hsl(baseHue, ri(15, 35), bgLit);
+			ctx.fillRect(0, 0, W, H);
+
+			// grain
+			const img = ctx.getImageData(0, 0, W, H);
+			const d = img.data;
+			for (let i = 0; i < d.length; i += 4) {
+				const n = (Math.random() - 0.5) * 14;
+				d[i] += n; d[i + 1] += n; d[i + 2] += n;
+			}
+			ctx.putImageData(img, 0, 0);
+
+			// nebula washes
+			ctx.save();
+			ctx.globalCompositeOperation = 'screen';
+			for (let i = 0; i < ri(2, 5); i++) {
+				const x = rr(0, W), y = rr(0, H), r = dim * rr(0.25, 0.6);
+				const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+				g.addColorStop(0, hsl(baseHue + i * 45, 45, 30, rr(0.04, 0.1)));
+				g.addColorStop(1, 'transparent');
+				ctx.fillStyle = g;
+				ctx.fillRect(0, 0, W, H);
+			}
+			ctx.restore();
+
+			const elements = [];
+
+			// recursive subdivision grid
+			if (Math.random() > 0.2) {
+				const rects = [];
+				const ox = rr(W * 0.05, W * 0.3), oy = rr(H * 0.05, H * 0.3);
+				const gw = rr(W * 0.3, W * 0.6), gh = rr(H * 0.3, H * 0.6);
+				subdivideRect(ox, oy, gw, gh, 0, ri(3, 6), rects);
+				for (const r of rects) {
+					elements.push({
+						z: 1, draw: () => {
+							const style = Math.random();
+							const gap = 2;
+							if (style < 0.35) {
+								ctx.fillStyle = hsl(baseHue + rr(-20, 50), ri(30, 65), ri(20, 45), rr(0.1, 0.4));
+								ctx.fillRect(r.x + gap, r.y + gap, r.w - gap * 2, r.h - gap * 2);
+							} else if (style < 0.6) {
+								ctx.strokeStyle = hsl(mid + rr(-20, 20), ri(40, 70), ri(40, 65), rr(0.25, 0.6));
+								ctx.lineWidth = rr(0.5, 2);
+								ctx.strokeRect(r.x + gap, r.y + gap, r.w - gap * 2, r.h - gap * 2);
+							} else if (style < 0.8) {
+								// diagonal fill
+								ctx.save();
+								ctx.beginPath();
+								ctx.rect(r.x + gap, r.y + gap, r.w - gap * 2, r.h - gap * 2);
+								ctx.clip();
+								ctx.strokeStyle = hsl(accent + rr(-15, 15), 50, 50, rr(0.15, 0.35));
+								ctx.lineWidth = rr(0.4, 1);
+								const sp = rr(4, 10);
+								for (let d = -Math.max(r.w, r.h); d < Math.max(r.w, r.h) * 2; d += sp) {
+									ctx.beginPath();
+									ctx.moveTo(r.x + d, r.y);
+									ctx.lineTo(r.x + d - r.h, r.y + r.h);
+									ctx.stroke();
+								}
+								ctx.restore();
+							} else {
+								// dot fill
+								const sp = rr(4, 8);
+								const dotH = accent + rr(-30, 30);
+								for (let dx = r.x + gap + sp; dx < r.x + r.w - gap; dx += sp) {
+									for (let dy = r.y + gap + sp; dy < r.y + r.h - gap; dy += sp) {
+										ctx.beginPath();
+										ctx.arc(dx, dy, rr(0.5, 1.5), 0, Math.PI * 2);
+										ctx.fillStyle = hsl(dotH, 55, 55, rr(0.2, 0.5));
+										ctx.fill();
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+
+			// crystalline shards
+			const shards = ri(5, 15);
+			for (let i = 0; i < shards; i++) {
+				elements.push({
+					z: 0, draw: () => {
+						ctx.save();
+						const cx = rr(W * -0.1, W * 1.1), cy = rr(H * -0.1, H * 1.1);
+						const sides = ri(3, 7);
+						const r = dim * rr(0.04, 0.2);
+						const rot = rr(0, Math.PI * 2);
+						const pts = polygon(cx, cy, r, sides, rot);
+						// slightly warp points
+						for (const p of pts) { p.x += rr(-r * 0.2, r * 0.2); p.y += rr(-r * 0.2, r * 0.2); }
+						drawPoly(pts);
+						const style = Math.random();
+						if (style < 0.5) {
+							ctx.fillStyle = hsl(baseHue + rr(-30, 60), ri(30, 70), ri(20, 50), rr(0.08, 0.3));
+							ctx.fill();
+						}
+						ctx.strokeStyle = hsl(mid + rr(-20, 40), ri(40, 65), ri(40, 65), rr(0.15, 0.5));
+						ctx.lineWidth = rr(0.5, 2.5);
+						ctx.stroke();
+						ctx.restore();
+					}
+				});
+			}
+
+			// arc fans
+			const fans = ri(2, 6);
+			for (let i = 0; i < fans; i++) {
+				elements.push({
+					z: 2, draw: () => {
+						ctx.save();
+						const cx = rr(W * 0.05, W * 0.95), cy = rr(H * 0.05, H * 0.95);
+						const r = dim * rr(0.05, 0.18);
+						const startA = rr(0, Math.PI * 2);
+						const sweep = rr(Math.PI * 0.3, Math.PI * 1.5);
+						const n = ri(3, 9);
+						for (let j = 0; j < n; j++) {
+							const jr = r * (1 - j / n * 0.7);
+							ctx.beginPath();
+							ctx.arc(cx, cy, jr, startA, startA + sweep);
+							ctx.strokeStyle = hsl(accent + j * 12, ri(45, 75), ri(40, 65), rr(0.2, 0.6));
+							ctx.lineWidth = rr(0.8, 2.5);
+							ctx.lineCap = 'round';
+							ctx.stroke();
+						}
+						ctx.restore();
+					}
+				});
+			}
+
+			// constellation lines
+			const nodes = [];
+			const nodeCount = ri(15, 40);
+			for (let i = 0; i < nodeCount; i++) {
+				nodes.push({ x: rr(0, W), y: rr(0, H) });
+			}
+			const conThresh = dim * rr(0.1, 0.22);
+			elements.push({
+				z: 2, draw: () => {
+					ctx.save();
+					ctx.strokeStyle = hsl(baseHue + rr(20, 60), 35, 55, rr(0.08, 0.2));
+					ctx.lineWidth = rr(0.3, 1);
+					for (let i = 0; i < nodes.length; i++) {
+						for (let j = i + 1; j < nodes.length; j++) {
+							const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+							const dist = Math.sqrt(dx * dx + dy * dy);
+							if (dist < conThresh) {
+								ctx.beginPath();
+								ctx.moveTo(nodes[i].x, nodes[i].y);
+								ctx.lineTo(nodes[j].x, nodes[j].y);
+								ctx.stroke();
+							}
+						}
+					}
+					// node dots
+					for (const n of nodes) {
+						ctx.beginPath();
+						ctx.arc(n.x, n.y, rr(1.5, 3.5), 0, Math.PI * 2);
+						ctx.fillStyle = hsl(accent + rr(-20, 20), ri(50, 80), ri(50, 70), rr(0.3, 0.7));
+						ctx.fill();
+					}
+					ctx.restore();
+				}
+			});
+
+			// concentric ring clusters
+			const ringClusters = ri(1, 4);
+			for (let i = 0; i < ringClusters; i++) {
+				elements.push({
+					z: 1, draw: () => {
+						const cx = rr(W * 0.1, W * 0.9), cy = rr(H * 0.1, H * 0.9);
+						const maxR = dim * rr(0.06, 0.16);
+						const rings = ri(4, 12);
+						for (let j = 0; j < rings; j++) {
+							ctx.beginPath();
+							ctx.arc(cx, cy, maxR * ((j + 1) / rings), 0, Math.PI * 2);
+							ctx.strokeStyle = hsl(mid + j * 8, ri(35, 60), ri(40, 60), rr(0.1, 0.4));
+							ctx.lineWidth = rr(0.3, 1.5);
+							ctx.stroke();
+						}
+					}
+				});
+			}
+
+			// scattered glyphs (small marks)
+			const glyphs = ri(20, 60);
+			for (let i = 0; i < glyphs; i++) {
+				elements.push({
+					z: ri(1, 4), draw: () => {
+						const x = rr(0, W), y = rr(0, H);
+						const sz = dim * rr(0.003, 0.012);
+						const type = ri(0, 4);
+						ctx.save();
+						ctx.translate(x, y);
+						ctx.rotate(rr(0, Math.PI * 2));
+						ctx.strokeStyle = hsl(pick([baseHue, accent, mid]) + rr(-15, 15), ri(40, 70), ri(45, 65), rr(0.2, 0.6));
+						ctx.fillStyle = ctx.strokeStyle;
+						ctx.lineWidth = rr(0.4, 1.2);
+						if (type === 0) {
+							// cross
+							ctx.beginPath(); ctx.moveTo(-sz, 0); ctx.lineTo(sz, 0); ctx.stroke();
+							ctx.beginPath(); ctx.moveTo(0, -sz); ctx.lineTo(0, sz); ctx.stroke();
+						} else if (type === 1) {
+							// diamond
+							ctx.beginPath(); ctx.moveTo(0, -sz); ctx.lineTo(sz, 0); ctx.lineTo(0, sz); ctx.lineTo(-sz, 0); ctx.closePath(); ctx.stroke();
+						} else if (type === 2) {
+							// dot
+							ctx.beginPath(); ctx.arc(0, 0, sz * 0.5, 0, Math.PI * 2); ctx.fill();
+						} else {
+							// tiny triangle
+							ctx.beginPath(); ctx.moveTo(0, -sz); ctx.lineTo(sz, sz); ctx.lineTo(-sz, sz); ctx.closePath(); ctx.stroke();
+						}
+						ctx.restore();
+					}
+				});
+			}
+
+			// bold diagonal slashes
+			const slashes = ri(1, 4);
+			for (let i = 0; i < slashes; i++) {
+				elements.push({
+					z: 3, draw: () => {
+						ctx.save();
+						const x1 = rr(0, W), y1 = rr(0, H);
+						const angle = rr(-0.8, 0.8);
+						const len = dim * rr(0.3, 0.9);
+						const x2 = x1 + Math.cos(angle) * len;
+						const y2 = y1 + Math.sin(angle) * len;
+						ctx.beginPath();
+						ctx.moveTo(x1, y1);
+						ctx.lineTo(x2, y2);
+						ctx.strokeStyle = hsl(accent + rr(-15, 15), ri(55, 85), ri(45, 60), rr(0.15, 0.45));
+						ctx.lineWidth = dim * rr(0.003, 0.015);
+						ctx.lineCap = 'round';
+						ctx.stroke();
+						ctx.restore();
+					}
+				});
+			}
+
+			// sort and draw
+			elements.sort((a, b) => a.z - b.z);
+			for (const e of elements) e.draw();
+
+			// vignette
+			const v = ctx.createRadialGradient(W / 2, H / 2, dim * 0.15, W / 2, H / 2, dim * 0.85);
+			v.addColorStop(0, 'transparent');
+			v.addColorStop(1, 'rgba(0,0,0,0.45)');
+			ctx.fillStyle = v;
+			ctx.fillRect(0, 0, W, H);
+		}
+
+		function resize() { c.width = window.innerWidth; c.height = window.innerHeight; generate(); }
+		resize();
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #fff;
+			font: 13px monospace;
+			background: rgba(0, 0, 0, 0.5);
+			padding: 6px 10px;
+			border-radius: 6px;
+			pointer-events: none;
+			z-index: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to regenerate</div>
+	<script>
+		// Worker
+		const workerSrc = `
+self.onmessage = function(e) {
+	const p = e.data;
+	const W = p.W, H = p.H;
+	const maxIter = p.maxIter, formula = p.formula, power = p.power;
+	const isJulia = p.isJulia, jcr = p.jcr, jci = p.jci;
+	const logP = p.logP, lutSize = p.lutSize;
+	const useInterior = p.useInterior;
+	const BAND = p.bandSize;
+
+	// rotation + view params
+	const viewCx = p.viewCx, viewCy = p.viewCy;
+	const spanX = p.spanX, spanY = p.spanY;
+	const cosA = p.cosA, sinA = p.sinA;
+
+	const LR = new Uint8Array(p.lutR);
+	const LG = new Uint8Array(p.lutG);
+	const LB = new Uint8Array(p.lutB);
+	const IR = new Uint8Array(p.intR);
+	const IG = new Uint8Array(p.intG);
+	const IB = new Uint8Array(p.intB);
+
+	const mask = lutSize - 1;
+	const invLogP = 1.0 / logP;
+	const invMax = 1.0 / maxIter;
+	const bailout = 256.0;
+
+	for (let bandY = 0; bandY < H; bandY += BAND) {
+		const bandH = Math.min(BAND, H - bandY);
+		const buf = new ArrayBuffer(W * bandH * 4);
+		const px = new Uint32Array(buf);
+		let off = 0;
+
+		for (let py = bandY; py < bandY + bandH; py++) {
+			// normalized coords centered at 0: -0.5 to +0.5
+			const ny = (py / H) - 0.5;
+
+			for (let pxx = 0; pxx < W; pxx++) {
+				const nx = (pxx / W) - 0.5;
+
+				// scale to complex span
+				const dx = nx * spanX;
+				const dy = ny * spanY;
+
+				// rotate around view center
+				const x0 = viewCx + dx * cosA - dy * sinA;
+				const y0 = viewCy + dx * sinA + dy * cosA;
+
+				let zr, zi, cr, ci;
+				if (isJulia) { zr = x0; zi = y0; cr = jcr; ci = jci; }
+				else { zr = 0; zi = 0; cr = x0; ci = y0; }
+
+				let iter = 0, mag2 = 0;
+
+				if (power === 2) {
+					let zr2 = zr * zr, zi2 = zi * zi;
+					switch (formula) {
+						case 0:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = 2 * zr * zi + ci;
+								zr = zr2 - zi2 + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 1:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = 2 * Math.abs(zr) * Math.abs(zi) + ci;
+								zr = zr2 - zi2 + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 2:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = -2 * zr * zi + ci;
+								zr = zr2 - zi2 + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 3:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = 2 * zr * zi + ci;
+								zr = Math.abs(zr2 - zi2) + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 4:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = Math.abs(2 * zr * zi) + ci;
+								zr = Math.abs(zr2 - zi2) + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 5:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = 2 * Math.abs(zr) * zi + ci;
+								zr = zr2 - zi2 + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+						case 6:
+							while (zr2 + zi2 <= bailout && iter < maxIter) {
+								zi = 2 * zr * Math.abs(zi) + ci;
+								zr = zr2 - zi2 + cr;
+								zr2 = zr * zr; zi2 = zi * zi; iter++;
+							} break;
+					}
+					mag2 = zr2 + zi2;
+				} else if (power === 3) {
+					while (mag2 <= bailout && iter < maxIter) {
+						let ar = zr, ai = zi;
+						if (formula===1){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===2){ai=-zi;}
+						else if(formula===3||formula===5){ar=Math.abs(zr);}
+						else if(formula===4){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===6){ai=Math.abs(zi);}
+						const a2=ar*ar, b2=ai*ai;
+						zr=ar*(a2-3*b2)+cr; zi=ai*(3*a2-b2)+ci;
+						mag2=zr*zr+zi*zi; iter++;
+					}
+				} else if (power === 4) {
+					while (mag2 <= bailout && iter < maxIter) {
+						let ar = zr, ai = zi;
+						if (formula===1){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===2){ai=-zi;}
+						else if(formula===3||formula===5){ar=Math.abs(zr);}
+						else if(formula===4){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===6){ai=Math.abs(zi);}
+						const a2=ar*ar, b2=ai*ai;
+						const wr=a2-b2, wi=2*ar*ai;
+						zr=wr*wr-wi*wi+cr; zi=2*wr*wi+ci;
+						mag2=zr*zr+zi*zi; iter++;
+					}
+				} else {
+					while (mag2 <= bailout && iter < maxIter) {
+						let ar = zr, ai = zi;
+						if (formula===1){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===2){ai=-zi;}
+						else if(formula===3||formula===5){ar=Math.abs(zr);}
+						else if(formula===4){ar=Math.abs(zr);ai=Math.abs(zi);}
+						else if(formula===6){ai=Math.abs(zi);}
+						const r=Math.sqrt(ar*ar+ai*ai);
+						const th=Math.atan2(ai,ar);
+						const rn=Math.pow(r,power), an=th*power;
+						zr=rn*Math.cos(an)+cr; zi=rn*Math.sin(an)+ci;
+						mag2=zr*zr+zi*zi; iter++;
+					}
+				}
+
+				if (iter >= maxIter) {
+					if (useInterior) {
+						let angle = Math.atan2(zi, zr);
+						let t = angle / 6.2831853 + 0.5;
+						t = t - (t | 0);
+						if (t < 0) t += 1;
+						const li = (t * lutSize) & mask;
+						const dim = 0.35;
+						const rr = (IR[li] * dim) | 0;
+						const gg = (IG[li] * dim) | 0;
+						const bb = (IB[li] * dim) | 0;
+						px[off++] = (255 << 24) | (bb << 16) | (gg << 8) | rr;
+					} else {
+						px[off++] = (255 << 24) | (p.bgB << 16) | (p.bgG << 8) | p.bgR;
+					}
+				} else {
+					let mu = iter - Math.log(Math.log(mag2) * 0.5) * invLogP;
+					let t = mu * invMax;
+					t = t - (t | 0);
+					if (t < 0) t += 1;
+					const li = (t * lutSize) & mask;
+					px[off++] = (255 << 24) | (LB[li] << 16) | (LG[li] << 8) | LR[li];
+				}
+			}
+		}
+		self.postMessage({ buf, bandY, bandH, done: bandY + bandH >= H }, [buf]);
+	}
+};`;
+
+		const blob = new Blob([workerSrc], { type: 'text/javascript' });
+		const workerUrl = URL.createObjectURL(blob);
+		let worker = null;
+		let genId = 0;
+
+		const cv = document.getElementById('c');
+		const ctx = cv.getContext('2d');
+
+		function rr(a, b) { return a + Math.random() * (b - a); }
+		function ri(a, b) { return (a + Math.random() * (b - a)) | 0; }
+		function pick(a) { return a[Math.random() * a.length | 0]; }
+
+		const palettes = [
+			[[0, 0, 30], [0, 60, 160], [80, 200, 255], [255, 80, 180], [255, 220, 80], [255, 255, 255], [0, 0, 30]],
+			[[0, 8, 20], [0, 80, 120], [0, 200, 180], [255, 180, 40], [255, 80, 20], [255, 240, 200], [0, 8, 20]],
+			[[0, 0, 4], [40, 0, 60], [160, 20, 80], [240, 60, 10], [255, 180, 0], [255, 255, 180], [0, 0, 4]],
+			[[0, 10, 5], [0, 120, 60], [20, 240, 200], [180, 100, 255], [255, 60, 160], [255, 255, 230], [0, 10, 5]],
+			[[5, 0, 25], [40, 10, 100], [120, 40, 200], [255, 180, 40], [255, 255, 140], [200, 220, 255], [5, 0, 25]],
+			[[0, 0, 0], [60, 0, 20], [180, 20, 40], [255, 120, 0], [255, 240, 60], [255, 255, 220], [0, 0, 0]],
+			[[0, 0, 15], [15, 30, 80], [40, 100, 220], [120, 220, 255], [255, 200, 150], [255, 255, 255], [0, 0, 15]],
+			[[0, 5, 0], [0, 80, 20], [60, 255, 60], [200, 80, 255], [255, 160, 200], [255, 255, 240], [0, 5, 0]],
+			[[10, 0, 30], [80, 0, 100], [220, 30, 60], [255, 140, 20], [255, 230, 100], [240, 245, 255], [10, 0, 30]],
+			[[0, 0, 25], [0, 60, 140], [40, 200, 220], [255, 100, 160], [255, 220, 60], [255, 255, 200], [0, 0, 25]],
+		];
+
+		const LUT_SIZE = 1024;
+
+		function buildLut(pal, speed, offset) {
+			const R = new Uint8Array(LUT_SIZE), G = new Uint8Array(LUT_SIZE), B = new Uint8Array(LUT_SIZE);
+			const n = pal.length - 1;
+			for (let i = 0; i < LUT_SIZE; i++) {
+				let t = (i / LUT_SIZE) * speed + offset;
+				t = ((t % 1) + 1) % 1;
+				const fi = t * n, idx = fi | 0, f = fi - idx;
+				const a = pal[Math.min(idx, n)], b = pal[Math.min(idx + 1, n)];
+				R[i] = (a[0] + (b[0] - a[0]) * f) | 0;
+				G[i] = (a[1] + (b[1] - a[1]) * f) | 0;
+				B[i] = (a[2] + (b[2] - a[2]) * f) | 0;
+			}
+			return { R, G, B };
+		}
+
+		function sampleJuliaC() {
+			const strategy = pick([0, 0, 0, 1, 1, 2, 3]);
+			if (strategy === 0) {
+				const t = rr(0, Math.PI * 2);
+				let cr = 0.5 * Math.cos(t) - 0.25 * Math.cos(2 * t);
+				let ci = 0.5 * Math.sin(t) - 0.25 * Math.sin(2 * t);
+				const s = rr(0.93, 1.04);
+				return [cr * s, ci * s];
+			}
+			if (strategy === 1) {
+				const t = rr(0, Math.PI * 2);
+				const s = rr(0.90, 1.05);
+				return [-1 + 0.25 * Math.cos(t) * s, 0.25 * Math.sin(t) * s];
+			}
+			if (strategy === 2) {
+				return pick([
+					[-0.7269, 0.1889], [-0.8, 0.156], [0.285, 0.01],
+					[-0.4, 0.6], [0.285, 0.535], [-0.70176, -0.3842],
+					[-0.835, -0.2321], [-0.1, 0.651], [0.355, 0.355],
+					[-0.54, 0.54], [-0.12, -0.77], [0.37, 0.1],
+					[-0.75, 0.11], [-0.1, 0.8], [-1.25, 0.0],
+					[0.0, 1.0], [-0.52, 0.57], [0.28, 0.008],
+				]);
+			}
+			for (let attempt = 0; attempt < 100; attempt++) {
+				const cr = rr(-2.0, 0.5), ci = rr(-1.3, 1.3);
+				let zr = 0, zi = 0, lastEsc = 0;
+				let escaped = false;
+				for (let i = 0; i < 200; i++) {
+					const t = zr * zr - zi * zi + cr;
+					zi = 2 * zr * zi + ci; zr = t;
+					if (zr * zr + zi * zi > 4) { escaped = true; lastEsc = i; break; }
+				}
+				if (escaped && lastEsc > 40) return [cr, ci];
+				if (!escaped && Math.random() < 0.3) return [cr + rr(-0.02, 0.02), ci + rr(-0.02, 0.02)];
+			}
+			return [-0.7269, 0.1889];
+		}
+
+		function generate() {
+			const W = cv.width, H = cv.height;
+			if (W === 0 || H === 0) return;
+			const aspect = W / H;
+
+			ctx.fillStyle = '#000';
+			ctx.fillRect(0, 0, W, H);
+
+			const pal = pick(palettes);
+			const colorSpeed = rr(1.2, 3.5);
+			const colorOffset = rr(0, 1);
+			const maxIter = ri(150, 400);
+
+			const isJulia = Math.random() < 0.60;
+			const formula = ri(0, 7);
+			const power = pick([2, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6]);
+
+			// Random rotation angle
+			const angle = rr(0, Math.PI * 2);
+			const cosA = Math.cos(angle);
+			const sinA = Math.sin(angle);
+
+			let viewCx, viewCy, scale, jcr = 0, jci = 0;
+
+			if (isJulia) {
+				if (power === 2) {
+					const bc = sampleJuliaC();
+					jcr = bc[0]; jci = bc[1];
+				} else {
+					const a = rr(0, Math.PI * 2);
+					const mag = rr(0.15, 0.85);
+					jcr = Math.cos(a) * mag;
+					jci = Math.sin(a) * mag;
+				}
+				viewCx = 0; viewCy = 0;
+				scale = rr(1.8, 2.3);
+				if (Math.random() < 0.4) {
+					const zf = rr(1.5, 4.0);
+					viewCx = rr(-0.8, 0.8);
+					viewCy = rr(-0.8, 0.8);
+					scale /= zf;
+				}
+			} else {
+				if (formula === 1) {
+					viewCx = rr(-0.6, -0.3);
+					viewCy = rr(-0.6, -0.3);
+					scale = rr(1.5, 2.2);
+				} else if (formula === 0 && power === 2) {
+					viewCx = rr(-0.6, -0.4);
+					viewCy = rr(-0.05, 0.05);
+					scale = rr(1.3, 1.7);
+				} else {
+					viewCx = rr(-0.4, 0.0);
+					viewCy = rr(-0.15, 0.15);
+					scale = rr(1.3, 2.0);
+				}
+				if (Math.random() < 0.35) {
+					const zf = rr(1.5, 5.0);
+					viewCx += rr(-scale * 0.3, scale * 0.3);
+					viewCy += rr(-scale * 0.3, scale * 0.3);
+					scale /= zf;
+				}
+			}
+
+			// Total span of the view in complex-plane units
+			const spanX = scale * aspect * 2;
+			const spanY = scale * 2;
+
+			const extLut = buildLut(pal, colorSpeed, colorOffset);
+			const intLut = buildLut(pal, colorSpeed * 1.5, colorOffset + 0.3);
+			const bg = pal[0];
+
+			const bandSize = Math.max(4, Math.min(32, Math.ceil(H / 60)));
+
+			if (worker) worker.terminate();
+			worker = new Worker(workerUrl);
+
+			const myId = ++genId;
+
+			worker.onmessage = function (e) {
+				if (myId !== genId) return;
+				const { buf, bandY, bandH } = e.data;
+				const pixels = new Uint8ClampedArray(buf);
+				const img = new ImageData(pixels, W, bandH);
+				ctx.putImageData(img, 0, bandY);
+
+				if (e.data.done) {
+					const dim = Math.min(W, H);
+					const v = ctx.createRadialGradient(W / 2, H / 2, dim * 0.25, W / 2, H / 2, dim * 0.85);
+					v.addColorStop(0, 'transparent');
+					v.addColorStop(1, 'rgba(0,0,0,0.45)');
+					ctx.fillStyle = v;
+					ctx.fillRect(0, 0, W, H);
+				}
+			};
+
+			const msg = {
+				W, H,
+				viewCx, viewCy, spanX, spanY,
+				cosA, sinA,
+				maxIter, formula, power, isJulia, jcr, jci,
+				lutR: extLut.R.buffer, lutG: extLut.G.buffer, lutB: extLut.B.buffer,
+				intR: intLut.R.buffer, intG: intLut.G.buffer, intB: intLut.B.buffer,
+				bgR: bg[0], bgG: bg[1], bgB: bg[2],
+				logP: Math.log(power),
+				lutSize: LUT_SIZE,
+				useInterior: isJulia,
+				bandSize,
+			};
+			const transfers = [
+				extLut.R.buffer, extLut.G.buffer, extLut.B.buffer,
+				intLut.R.buffer, intLut.G.buffer, intLut.B.buffer,
+			];
+			worker.postMessage(msg, transfers);
+		}
+
+		function resize() {
+			cv.width = window.innerWidth;
+			cv.height = window.innerHeight;
+			generate();
+		}
+
+		resize();
+		window.addEventListener('resize', resize);
+		cv.addEventListener('click', generate);
+	</script>
+</body>
+
+</html>

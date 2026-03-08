@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Fragments</title>
+	<style>
+		*,
+		*::before,
+		*::after {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background: #1c1917;
+			color-scheme: dark;
+			touch-action: pinch-zoom;
+		}
+
+		.wrapper {
+			position: relative;
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+
+		#bg {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			translate: -50% -50%;
+			z-index: 0;
+			min-width: 110vw;
+			min-height: 110vh;
+			width: auto;
+			height: auto;
+			object-fit: cover;
+			pointer-events: none;
+		}
+
+		canvas {
+			position: relative;
+			z-index: 1;
+			display: block;
+			width: 100vw;
+			height: 100vh;
+			cursor: default;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="wrapper">
+		<img id="bg" src="./empty-sekai.png" alt="" />
+		<canvas id="c"></canvas>
+	</div>
+
+	<script type="importmap">
+{
+  "imports": {
+    "three": "./three.module.js"
+  }
+}
+</script>
+
+	<script type="module">
+		import * as THREE from 'three';
+
+		/* ── helpers ─────────────────────────────────────────────────────── */
+		const unif = (lo, hi) => Math.random() * (hi - lo) + lo;
+		const bernoulli = p => Math.random() < p;
+
+		/* ── simple tween engine (replaces anime.js) ─────────────────────── */
+		const tweens = [];
+		function tween(target, props, duration, easing = 'inOutQuad', onComplete) {
+			const start = performance.now();
+			const from = {};
+			for (const k in props) from[k] = target[k];
+			tweens.push({ target, from, to: props, start, duration, easing, onComplete });
+		}
+		function easeFn(name, t) {
+			switch (name) {
+				case 'inOutQuad': return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+				case 'inQuad': return t * t;
+				case 'outQuad': return 1 - (1 - t) * (1 - t);
+				default: return t;
+			}
+		}
+		function tickTweens() {
+			const now = performance.now();
+			for (let i = tweens.length - 1; i >= 0; i--) {
+				const tw = tweens[i];
+				let t = Math.min((now - tw.start) / tw.duration, 1);
+				t = easeFn(tw.easing, t);
+				for (const k in tw.to) tw.target[k] = tw.from[k] + (tw.to[k] - tw.from[k]) * t;
+				if (t >= 1) {
+					tw.onComplete?.();
+					tweens.splice(i, 1);
+				}
+			}
+		}
+
+		/* ── Fragment class ──────────────────────────────────────────────── */
+		class Fragment {
+			constructor(opts) {
+				this.size = opts.size;
+				this.tip = opts.tip;
+				this.hue = opts.hue;
+				this.orbit = this.initialOrbit = opts.orbit;
+				this.orbitSpeed = opts.orbitSpeed;
+				this.initialSpin = opts.spin;
+				this.spinAxis = opts.spinAxis;
+				this.spinSpeed = this.intrinsicSpinSpeed = opts.spinSpeed;
+				this.offsetH = opts.offset[0];
+				this.offsetV = opts.offset[1];
+				this.hasOutline = opts.hasOutline;
+				this.aspectRatio = opts.aspectRatio;
+				this.lastUpdate = 0;
+
+				// ── mesh ──
+				const shape = new THREE.Shape();
+				const bx = this.size[0], by = this.size[1], tp = this.tip;
+				shape.moveTo(-bx / 2, -by / 2);
+				shape.lineTo(bx / 2, -by / 2);
+				shape.lineTo(-bx / 2 + tp, by / 2);
+				shape.lineTo(-bx / 2, -by / 2);
+
+				const geom = new THREE.ExtrudeGeometry(shape, {
+					depth: 0.03, bevelEnabled: true, bevelSegments: 1,
+					bevelThickness: 0.02, bevelSize: 0.02,
+				});
+
+				this.material = new THREE.MeshPhysicalMaterial({
+					color: new THREE.Color().setHSL(Math.random() * 0.25 + 0.5, 0.5, 0.7),
+					side: THREE.DoubleSide, transparent: true, opacity: 0.5,
+					roughness: 0, metalness: 0,
+					emissive: new THREE.Color(0xffffff), emissiveIntensity: 0,
+				});
+
+				this.mesh = new THREE.Mesh(geom, this.material);
+				this.mesh.castShadow = true;
+				this.mesh.receiveShadow = true;
+
+				this.object = new THREE.Object3D();
+				this.object.add(this.mesh);
+
+				// ── optional outline (simple line loop) ──
+				if (this.hasOutline) {
+					const pts = [
+						new THREE.Vector3(-bx / 2, -by / 2, 0.04),
+						new THREE.Vector3(bx / 2, -by / 2, 0.04),
+						new THREE.Vector3(-bx / 2 + tp, by / 2, 0.04),
+					];
+					const lineGeom = new THREE.BufferGeometry().setFromPoints(pts);
+					const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 });
+					const loop = new THREE.LineLoop(lineGeom, lineMat);
+					loop.rotation.z = 0.1;
+					this.object.add(loop);
+					this._outlineGeom = lineGeom;
+					this._outlineMat = lineMat;
+				}
+
+				this.object.position.copy(this._pos());
+				this.object.rotation.set(this.initialSpin[0], this.initialSpin[1], this.initialSpin[2]);
+			}
+
+			_pos() {
+				const ar = this.aspectRatio.current;
+				const angle = ar >= 0.75 ? 0.3 : Math.atan(1 / ar);
+				const r = 50 + this.offsetH;
+				const ux = r * Math.cos(angle), uy = -r * Math.sin(angle), vz = r;
+				return new THREE.Vector3(
+					ux * Math.cos(this.orbit),
+					this.offsetV + uy * Math.cos(this.orbit),
+					vz * Math.sin(this.orbit),
+				);
+			}
+
+			advance(now) {
+				this.orbit = this.initialOrbit + now * this.orbitSpeed * 2 * Math.PI;
+				this._update(now);
+			}
+
+			_update(now) {
+				this.object.position.copy(this._pos());
+				this.object.rotateOnAxis(this.spinAxis, this.intrinsicSpinSpeed * (now - this.lastUpdate));
+				this.lastUpdate = now;
+			}
+
+			poke() {
+				this.spinSpeed = this.intrinsicSpinSpeed * 10;
+				tween(this, { offsetH: this.offsetH - 5, spinSpeed: this.intrinsicSpinSpeed }, 10000, 'inOutQuad');
+			}
+
+			hover() { tween(this.material, { emissiveIntensity: 1 }, 250, 'inQuad'); }
+			unhover() { tween(this.material, { emissiveIntensity: 0 }, 250, 'outQuad'); }
+
+			dispose() {
+				this.mesh.geometry.dispose();
+				this.material.dispose();
+				this._outlineGeom?.dispose();
+				this._outlineMat?.dispose();
+			}
+
+			static make(aspectRatio) {
+				let base = 0, height = 0;
+				while (base * height < 0.16) { base = unif(0, 3.2); height = unif(0, 3.2); }
+				return new Fragment({
+					size: [base, height],
+					tip: unif(0, base),
+					hue: unif(265, 360),
+					orbit: unif(0, 2 * Math.PI),
+					orbitSpeed: unif(0, 0.000003),
+					spin: [unif(0, 2 * Math.PI), unif(0, 2 * Math.PI), unif(0, 2 * Math.PI)],
+					spinAxis: new THREE.Vector3(unif(-1, 1), unif(-1, 1), unif(-1, 1)).normalize(),
+					spinSpeed: unif(0, 0.0001),
+					offset: [unif(-5, 5), unif(-5, 5)],
+					hasOutline: bernoulli(0.25),
+					aspectRatio,
+				});
+			}
+		}
+
+		/* ── scene setup ─────────────────────────────────────────────────── */
+		const canvas = document.getElementById('c');
+		const bgEl = document.getElementById('bg');
+		const aspectRatio = { current: innerWidth / innerHeight };
+
+		const scene = new THREE.Scene();
+		scene.fog = new THREE.Fog(0xf9f9fb, 1, 100);
+
+		scene.add(new THREE.HemisphereLight(0xf9f9fb, 0x6e7482, 2.0));
+
+		const dirLight = new THREE.DirectionalLight(0xffffff, 4);
+		dirLight.castShadow = true;
+		dirLight.position.set(2, 1, 1);
+		dirLight.target.position.set(0, 0, 0);
+		scene.add(dirLight); scene.add(dirLight.target);
+
+		const CAMERA_X = 0, CAMERA_Y = 1.5, CAMERA_Z = -55;
+		const ptLight = new THREE.PointLight(0xffffff, 50);
+		ptLight.castShadow = true;
+		ptLight.position.set(CAMERA_X, CAMERA_Y, CAMERA_Z);
+		scene.add(ptLight);
+
+		const camera = new THREE.PerspectiveCamera(105, aspectRatio.current, 0.01, 200);
+		camera.position.set(CAMERA_X, CAMERA_Y, CAMERA_Z);
+		camera.lookAt(0, 0, 0);
+
+		const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.VSMShadowMap;
+		renderer.setSize(innerWidth, innerHeight);
+		renderer.setPixelRatio(devicePixelRatio);
+
+		const group = new THREE.Object3D();
+		scene.add(group);
+
+		/* ── fragments ───────────────────────────────────────────────────── */
+		const COUNT = 300;
+		const fragments = [];
+		const meshMap = new Map();
+
+		for (let i = 0; i < COUNT; i++) {
+			const f = Fragment.make(aspectRatio);
+			fragments.push(f);
+			group.add(f.object);
+			meshMap.set(f.mesh, i);
+		}
+
+		/* ── pointer & raycasting ────────────────────────────────────────── */
+		let isTouch = true;
+		const pointer = new THREE.Vector2();
+		let mouseover = null;
+		const raycaster = new THREE.Raycaster();
+
+		function onPointer(e) {
+			isTouch = e.pointerType === 'touch';
+			pointer.x = (e.pageX / innerWidth) * 2 - 1;
+			pointer.y = -(e.pageY / innerHeight) * 2 + 1;
+
+			// parallax background
+			if (bgEl) {
+				if (isTouch) bgEl.style.translate = '-50% -50%';
+				else bgEl.style.translate = `${-50 + pointer.x * 0.1}% ${-50 - pointer.y * 0.1}%`;
+			}
+
+			updateIntersection();
+		}
+		window.addEventListener('pointermove', onPointer);
+		window.addEventListener('pointerdown', onPointer);
+
+		function updateIntersection() {
+			raycaster.setFromCamera(pointer, camera);
+			const hits = raycaster.intersectObjects(group.children, true);
+			const hit = hits.map(h => h.object).find(
+				o => o.isMesh && o.material?.isMeshPhysicalMaterial
+			) || null;
+
+			if (hit !== mouseover) {
+				if (mouseover) {
+					const idx = meshMap.get(mouseover);
+					if (idx != null) fragments[idx].unhover();
+					canvas.style.cursor = 'default';
+					mouseover = null;
+				}
+				if (hit) {
+					canvas.style.cursor = 'pointer';
+					mouseover = hit;
+					const idx = meshMap.get(hit);
+					if (idx != null) fragments[idx].hover();
+				}
+			}
+		}
+
+		canvas.addEventListener('click', () => {
+			if (!mouseover) return;
+			const idx = meshMap.get(mouseover);
+			if (idx != null) fragments[idx].poke();
+		});
+
+		/* ── resize ──────────────────────────────────────────────────────── */
+		window.addEventListener('resize', () => {
+			aspectRatio.current = innerWidth / innerHeight;
+			camera.aspect = aspectRatio.current;
+			camera.updateProjectionMatrix();
+			renderer.setSize(innerWidth, innerHeight);
+			renderer.setPixelRatio(devicePixelRatio);
+		});
+
+		/* ── render loop ─────────────────────────────────────────────────── */
+		renderer.setAnimationLoop(function frame(now) {
+			tickTweens();
+
+			for (const f of fragments) f.advance(now);
+
+			const px = isTouch ? 0 : pointer.x;
+			const py = isTouch ? 0 : pointer.y;
+			camera.position.set(
+				CAMERA_X - px * 0.05 * aspectRatio.current,
+				CAMERA_Y + py * 0.05,
+				CAMERA_Z,
+			);
+			ptLight.position.set(
+				CAMERA_X - px * 2.5 * aspectRatio.current,
+				CAMERA_Y + py * 2.5,
+				CAMERA_Z,
+			);
+
+			updateIntersection();
+			renderer.render(scene, camera);
+		});
+	</script>
+</body>
+
+</html>

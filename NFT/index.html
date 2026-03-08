@@ -592,7 +592,16 @@
 				title: "Fractals",
 				desc: "Layered fractal blobs with screen-blended glow and nebula backdrops across six color palettes.",
 				type: "gen", tag: "GENERATIVE",
-				tech: "Midpoint displacement"
+				tech: "Midpoint fractal",
+				swap: [
+					{
+						file: "realfractal-generator.html",
+						title: "Fractals (Real)",
+						desc: "Mandelbrot, Julia, and variant fractals with randomized rotation, smooth coloring, and interior decomposition.",
+						type: "gen", tag: "GENERATIVE",
+						tech: "Escape-time"
+					}
+				]
 			},
 			{
 				file: "geode-generator.html",
@@ -620,14 +629,32 @@
 				title: "Noise Fields",
 				desc: "Raw RGB white noise. Every pixel is a random color, every click a new static field.",
 				type: "gen", tag: "GENERATIVE",
-				tech: "Random noise"
+				tech: "Random noise",
+				swap: [
+					{
+						file: "sinenoise-generator.html",
+						title: "Sine Noise",
+						desc: "Layered sine-wave plasma fields with randomized frequencies, warp offsets, and HSL color mapping.",
+						type: "gen", tag: "GENERATIVE",
+						tech: "Sine functions"
+					}
+				]
 			},
 			{
 				file: "abstractart-generator.html",
 				title: "Abstract Art",
 				desc: "Generative abstract compositions with geometric forms, color theory, and compositional balance.",
 				type: "gen", tag: "GENERATIVE",
-				tech: "Canvas 2D"
+				tech: "Canvas 2D",
+				swap: [
+					{
+						file: "abstractpolygon-generator.html",
+						title: "Abstract Polygon",
+						desc: "Crystalline shards, recursive subdivisions, arc fans, constellation networks, and scattered glyphs.",
+						type: "gen", tag: "GENERATIVE",
+						tech: "Canvas 2D"
+					}
+				]
 			},
 			{
 				file: "islandmap-generator.html",

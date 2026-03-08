@@ -48,7 +48,6 @@ jobs:
             Archive/www.jakiecola.com/
             Archive/www.toweroffantasy-global.com/
             Archive/webstatic-sea.mihoyo.com/
-            Archive/Surprise!!!/
             Archive/Cloud.png
             Archive/PRINCIPLES OF UNDERWATER SOUND Chapter 8.html
             Archive/Sonar Propagation.html
@@ -56,17 +55,15 @@ jobs:
             Archive/powworker.html
             Archive/FairyDustCursor.js
             Archive/AgentGame.js
-            captcha-test/
             Clouds/
             Idiot!/
             !Idiot!/index_files/fp_32.0.0.371_archive/Source/*
             NFT/
             Space/
             The-Aviary/
-            Zip-Bomb/
             plant-generator/
-            Tools/
-            biochem/
+            random/
+            writeups/
           sparse-checkout-cone-mode: false
           # By setting cone mode to false, I can specify specific files to include during sparse checkout
           # this means I will specify all root dir files (including the Gemfile and yaml file)

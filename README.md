@@ -10,14 +10,14 @@ The projects are folders from the root directory.
 ## Maybe Finished...?
 
 - `/Space/` - Main page finished but generally speaking the specific pages are not done.
-- `/Archive/Surprise!!!/` - Page is done (redirects from `/popups/` if there is nothing else to redirect to). Path however is dubious, maybe I'll figure out a better location for this.
+- `/random/Surprise!!!/` - Page is done (redirects from `/popups/` if there is nothing else to redirect to). Path however is dubious, maybe I'll figure out a better location for this.
 
 ## Unfinished Projects
 
 - `/Idiots!/` - A comprehensive overview and 3 implementations of Trojan.JS.YouAreAnIdiot. polish
-- `/Captcha-test/` - I need to actually properly implement the animation and popups lol.
+- `/random/captcha-test/` - I need to actually properly implement the animation and popups lol.
 - `/Clouds/` - I need to restructure the site and make it more practical. Then, I can do the writeup.
-- `/Zip-Bomb/` - I need to actually relearn everything and finish this. This will take a while.
+- `/writeups/Zip-Bomb/` - I need to actually relearn everything and finish this. This will take a while.
 
 # To-Do & Things to Note
 

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			max-width: 100vw;
+			max-height: 100vh;
+			cursor: pointer;
+		}
+
+		#info {
+			position: fixed;
+			bottom: 12px;
+			right: 12px;
+			color: #fff;
+			font: 12px monospace;
+			pointer-events: none;
+			background: rgba(0, 0, 0, 0.6);
+			padding: 6px 10px;
+			border-radius: 6px;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas>
+	<div id="info">click to regenerate</div>
+	<script>
+		const c = document.getElementById('c');
+		const ctx = c.getContext('2d');
+		let W, H, img, t = 0, seed;
+
+		// random seeded params per generation
+		let params;
+
+		function randomSeed() {
+			seed = Math.random() * 99999;
+			params = {
+				scaleA: 0.005 + Math.random() * 0.015,
+				scaleB: 0.003 + Math.random() * 0.012,
+				scaleC: 0.007 + Math.random() * 0.02,
+				warpX: Math.random() * 6.28,
+				warpY: Math.random() * 6.28,
+				drift: 0.3 + Math.random() * 1.2,
+				hueBase: Math.random() * 360,
+				hueRange: 60 + Math.random() * 200,
+				saturation: 55 + Math.random() * 40,
+				lightMin: 8 + Math.random() * 15,
+				lightMax: 50 + Math.random() * 35,
+			};
+		}
+
+		function resize() {
+			W = window.innerWidth;
+			H = window.innerHeight;
+			c.width = W;
+			c.height = H;
+			img = ctx.createImageData(W, H);
+			draw();
+		}
+
+		// fast sin-based plasma
+		function plasma(x, y, t) {
+			const p = params;
+			const a = Math.sin((x * p.scaleA + t * 0.4 + p.warpX) * 1.0)
+				+ Math.sin((y * p.scaleB + t * 0.3 + p.warpY) * 1.2);
+			const b = Math.sin(((x * p.scaleC + y * p.scaleA) + t * 0.25) * 0.9)
+				+ Math.sin(Math.sqrt((x * p.scaleB) ** 2 + (y * p.scaleC) ** 2 + 1) + t * 0.5);
+			const cx = Math.sin(x * p.scaleA * 0.7 - t * 0.35)
+				* Math.cos(y * p.scaleB * 0.8 + t * 0.45);
+			return (a + b + cx) / 5.0 + 0.5; // normalise ~0..1
+		}
+
+		// HSL to RGB (fast inline)
+		function hsl2rgb(h, s, l) {
+			h = ((h % 360) + 360) % 360;
+			s /= 100; l /= 100;
+			const k = n => (n + h / 30) % 12;
+			const a = s * Math.min(l, 1 - l);
+			const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+			return [(f(0) * 255) | 0, (f(8) * 255) | 0, (f(4) * 255) | 0];
+		}
+
+		function draw() {
+			const d = img.data;
+			const p = params;
+			for (let y = 0; y < H; y++) {
+				for (let x = 0; x < W; x++) {
+					const v = plasma(x, y, t);
+					const hue = p.hueBase + v * p.hueRange;
+					const light = p.lightMin + v * (p.lightMax - p.lightMin);
+					const [r, g, b] = hsl2rgb(hue, p.saturation, light);
+					const i = (y * W + x) * 4;
+					d[i] = r;
+					d[i + 1] = g;
+					d[i + 2] = b;
+					d[i + 3] = 255;
+				}
+			}
+			ctx.putImageData(img, 0, 0);
+		}
+
+		randomSeed();
+		resize();
+
+		window.addEventListener('resize', resize);
+		c.addEventListener('click', () => { randomSeed(); draw(); });
+	</script>
+</body>
+
+</html>
