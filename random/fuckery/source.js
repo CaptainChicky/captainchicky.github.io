@@ -382,7 +382,22 @@ function rickroll() {
 		"color: #888; font-size: 12px; font-style: italic; font-family: 'Courier New';"
 	);
 
-	window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+	setTimeout(function () {
+		var overlay = document.createElement('div');
+		overlay.style.cssText =
+			'position:fixed;inset:0;background:#000;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;';
+
+		overlay.innerHTML =
+			'<div style="font-family:Courier New,monospace;color:#ff0000;font-size:24px;font-weight:bold;margin-bottom:1rem;">💥 CRITICAL CONSOLE ERROR 💥</div>' +
+			'<div style="font-family:Courier New,monospace;color:#888;font-size:14px;margin-bottom:2rem;">click anywhere to restore session</div>';
+
+		overlay.addEventListener('click', function () {
+			window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+			overlay.remove();
+		});
+
+		document.body.appendChild(overlay);
+	}, 15000);
 
 	return "🎤";
 }
@@ -498,9 +513,9 @@ function sussy() {
 (function rightClickSnark() {
 	var messages = [
 		"Inspecting the document? A scholar, I see.",
-		"Looking for the source code? Try source() in the console.",
 		"Right-clicking won't make the copypasta any less pasta.",
 		"You can look, but you can't un-read.",
+		"Looking for the source code? Try source() in the console.",
 	];
 	var count = 0;
 	document.addEventListener("contextmenu", function () {
