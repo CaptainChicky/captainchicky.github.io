@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>console fuckery</title>
+
+	<script src="./source.js"></script>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background: #0a0a0c;
+			color: #ccc;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 2rem;
+			overflow-x: hidden;
+			cursor: default;
+		}
+
+		/* Scanline overlay */
+		body::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background: repeating-linear-gradient(0deg,
+					transparent,
+					transparent 2px,
+					rgba(0, 0, 0, 0.08) 2px,
+					rgba(0, 0, 0, 0.08) 4px);
+			pointer-events: none;
+			z-index: 999;
+		}
+
+		/* Terminal window */
+		.terminal {
+			background: #0c0c0e;
+			border: 1px solid #1a1a1d;
+			border-radius: 10px;
+			width: 100%;
+			max-width: 620px;
+			overflow: hidden;
+			box-shadow: 0 0 60px rgba(246, 128, 0, 0.04), 0 0 2px rgba(255, 255, 255, 0.03);
+		}
+
+		.terminal-bar {
+			background: #141416;
+			padding: 10px 14px;
+			display: flex;
+			align-items: center;
+			gap: 7px;
+			border-bottom: 1px solid #1a1a1d;
+		}
+
+		.terminal-dot {
+			width: 11px;
+			height: 11px;
+			border-radius: 50%;
+		}
+
+		.terminal-dot.red {
+			background: #ff5f57;
+		}
+
+		.terminal-dot.yellow {
+			background: #febc2e;
+		}
+
+		.terminal-dot.green {
+			background: #28c840;
+		}
+
+		.terminal-title {
+			flex: 1;
+			text-align: center;
+			font-size: 0.7rem;
+			color: #555;
+			font-family: 'Courier New', monospace;
+			letter-spacing: 0.05em;
+		}
+
+		.terminal-body {
+			padding: 1.4rem 1.6rem;
+			font-family: 'Courier New', monospace;
+			font-size: 0.8rem;
+			line-height: 1.7;
+			min-height: 200px;
+		}
+
+		.terminal-body .line {
+			opacity: 0;
+			animation: fadeIn 0.3s ease forwards;
+		}
+
+		.terminal-body .prompt {
+			color: #f68000;
+		}
+
+		.terminal-body .output {
+			color: #888;
+		}
+
+		.terminal-body .hint {
+			color: #ff2d55;
+		}
+
+		.terminal-body .muted {
+			color: #444;
+		}
+
+		.terminal-body .accent {
+			color: #af52de;
+		}
+
+		@keyframes fadeIn {
+			to {
+				opacity: 1;
+			}
+		}
+
+		/* Progress tracker */
+		.tracker {
+			margin-top: 2rem;
+			text-align: center;
+			width: 100%;
+			max-width: 620px;
+		}
+
+		.tracker-label {
+			font-family: 'Courier New', monospace;
+			font-size: 0.7rem;
+			color: #444;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			margin-bottom: 0.7rem;
+		}
+
+		.tracker-bar-bg {
+			background: #141416;
+			border: 1px solid #1a1a1d;
+			border-radius: 6px;
+			height: 6px;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.tracker-bar-fill {
+			height: 100%;
+			width: 0%;
+			background: linear-gradient(90deg, #f68000, #ff2d55, #af52de);
+			border-radius: 6px;
+			transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+		}
+
+		.tracker-count {
+			font-family: 'Courier New', monospace;
+			font-size: 1.6rem;
+			font-weight: bold;
+			margin-top: 0.8rem;
+			background: linear-gradient(135deg, #f68000, #ff2d55);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		/* Scattered hints */
+		.hints {
+			margin-top: 2.5rem;
+			width: 100%;
+			max-width: 620px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.6rem;
+		}
+
+		.hint-chip {
+			font-family: 'Courier New', monospace;
+			font-size: 0.62rem;
+			color: #333;
+			border: 1px solid #1a1a1d;
+			border-radius: 4px;
+			padding: 4px 10px;
+			transition: color 0.3s, border-color 0.3s;
+			cursor: default;
+			user-select: none;
+		}
+
+		.hint-chip:hover {
+			color: #666;
+			border-color: #333;
+		}
+
+		.hint-chip abbr {
+			text-decoration: none;
+			border-bottom: 1px dotted #333;
+			cursor: help;
+		}
+
+		.hint-chip abbr:hover {
+			border-bottom-color: #666;
+		}
+
+		/* Snek art container */
+		#SnekArt {
+			display: none;
+			background: #000;
+			color: lime;
+			font-family: 'Courier New', monospace;
+			padding: 0;
+			margin: 0;
+			border-radius: 0;
+			font-size: 0.5rem;
+			line-height: 1.08;
+			white-space: pre;
+			overflow: visible;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			z-index: 998;
+		}
+
+		/* Bottom whisper */
+		.whisper {
+			position: fixed;
+			bottom: 14px;
+			font-family: 'Courier New', monospace;
+			font-size: 0.6rem;
+			color: #222;
+			letter-spacing: 0.15em;
+			transition: color 0.5s;
+		}
+
+		.whisper:hover {
+			color: #444;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="terminal">
+		<div class="terminal-bar">
+			<div class="terminal-dot red"></div>
+			<div class="terminal-dot yellow"></div>
+			<div class="terminal-dot green"></div>
+			<div class="terminal-title">console &mdash; bash</div>
+		</div>
+		<div class="terminal-body" id="termBody"></div>
+	</div>
+
+	<div class="tracker">
+		<div class="tracker-label">functions discovered</div>
+		<div class="tracker-bar-bg">
+			<div class="tracker-bar-fill" id="trackerFill"></div>
+		</div>
+		<div class="tracker-count" id="trackerCount">0 / 15</div>
+	</div>
+
+	<div class="hints">
+		<div class="hint-chip"><abbr title="i wonder what ↑↑↓↓←→←→BA does">konami?</abbr></div>
+		<div class="hint-chip"><abbr title="right clicking????">inspect me</abbr></div>
+		<div class="hint-chip"><abbr title="there are 15 hidden functions">15 secrets</abbr></div>
+		<div class="hint-chip"><abbr title="try the snek function">sssssss</abbr></div>
+		<div class="hint-chip"><abbr title="one function opens a rabbit hole">follow the rabbit</abbr></div>
+		<div class="hint-chip"><abbr title="where are the hints?">they're connected</abbr></div>
+		<div class="hint-chip"><abbr title="what's morbin' time?">🦇</abbr></div>
+		<div class="hint-chip"><abbr title="ඞ amogus">sussy baka</abbr></div>
+	</div>
+
+	<div id="SnekArt">
+		<pre><!-- snek art goes here --></pre>
+	</div>
+
+	<div class="whisper">you should open the console</div>
+
+	<script>
+		// Typewriter terminal lines
+		(function () {
+			var lines = [
+				{ cls: 'prompt', text: '> welcome to console fuckery' },
+				{ cls: 'output', text: '  this page is a shell.' },
+				{ cls: 'output', text: '  or is it?' },
+				{ cls: 'muted', text: '' },
+				{ cls: 'hint', text: '  you should try openning devtools ngl' },
+				{ cls: 'muted', text: '  surely you know the shortcut to browser console right?' },
+				{ cls: 'muted', text: '' },
+				{ cls: 'prompt', text: '> try the explain() function' },
+				{ cls: 'accent', text: '  15 functions are hidden. find them all.' },
+			];
+			var body = document.getElementById('termBody');
+			lines.forEach(function (l, i) {
+				var div = document.createElement('div');
+				div.className = 'line ' + l.cls;
+				div.textContent = l.text || '\u00A0';
+				div.style.animationDelay = (i * 0.25) + 's';
+				body.appendChild(div);
+			});
+		})();
+
+		// Hook into the achievement tracker from source.js
+		// Override _track to also update the on-page progress bar
+		(function () {
+			var origTrack = window._track;
+			if (!origTrack) return; // the source file isnt loaded
+
+			var total = window._allFunctions ? window._allFunctions.length : 15;
+
+			window._track = function (name) {
+				origTrack(name);
+				// Update UI
+				var count = Object.keys(window._found || {}).length;
+				var fill = document.getElementById('trackerFill');
+				var countEl = document.getElementById('trackerCount');
+				if (fill) fill.style.width = ((count / total) * 100) + '%';
+				if (countEl) countEl.textContent = count + ' / ' + total;
+			};
+		})();
+	</script>
+</body>
+
+</html>
