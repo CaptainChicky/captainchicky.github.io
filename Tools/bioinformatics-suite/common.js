@@ -512,7 +512,7 @@ function calcTm(seq, naConc, primerConc) {
 		// Primer range: NN (recommended) + salt-adjusted for comparison
 		var tmNN = calcTmNN(seq, naConc, primerConc);
 		if (tmNN !== null) {
-			methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = \u0394H / (\u0394S + R\u00b7ln(Ct/4)) \u2212 273.15 (SantaLucia 1998)", note: "Most accurate for primers (14\u201360 bp). Uses dinucleotide thermodynamic parameters with salt and primer concentration corrections.", recommended: true });
+			methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = \u0394H / (\u0394S + R\u00b7ln(Ct/4)) \u2212 273.15 (SantaLucia 1998)", note: "Most accurate for primers (14-60 bp). Uses dinucleotide thermodynamic parameters with salt and primer concentration corrections.", recommended: true });
 		}
 		var gcFrac = (s.g + s.c) / len;
 		var tmSalt = 100.5 + (41 * gcFrac) - (820 / len) + 16.6 * Math.log10(naConc);
