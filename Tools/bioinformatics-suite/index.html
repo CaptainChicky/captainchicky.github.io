@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Base ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --sidebar-w: 240px;
@@ -34,34 +33,19 @@
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-sans); }
 body { display: flex; overflow: hidden; }
 
-/* ── Sidebar ───────────────────────────────────────────────────────────────── */
+/* Sidebar */
 #sidebar {
   width: var(--sidebar-w); min-width: var(--sidebar-w);
   height: 100vh; overflow-y: auto;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
-  padding: 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
 }
-.sidebar-header {
-  padding: 20px 16px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-header h1 {
-  font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-dim);
-}
-.sidebar-header .logo {
-  font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.02em;
-  text-transform: none; margin-bottom: 2px;
-}
-.sidebar-cat {
-  padding: 16px 16px 6px;
-  font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-muted);
-}
+.sidebar-header { padding: 20px 16px 12px; border-bottom: 1px solid var(--border); }
+.sidebar-header h1 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); }
+.sidebar-header .logo { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; text-transform: none; margin-bottom: 2px; }
+.sidebar-cat { padding: 16px 16px 6px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
 .sidebar-item {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 16px; margin: 1px 8px; border-radius: var(--radius-sm);
@@ -70,9 +54,7 @@ body { display: flex; overflow: hidden; }
   text-decoration: none; position: relative;
 }
 .sidebar-item:hover { background: rgba(88,166,255,0.08); color: var(--text); }
-.sidebar-item.active {
-  background: rgba(88,166,255,0.12); color: var(--accent);
-}
+.sidebar-item.active { background: rgba(88,166,255,0.12); color: var(--accent); }
 .sidebar-item.active::before {
   content: ""; position: absolute; left: 0; top: 6px; bottom: 6px;
   width: 3px; border-radius: 0 3px 3px 0; background: var(--accent);
@@ -82,47 +64,33 @@ body { display: flex; overflow: hidden; }
 .sidebar-item .badge {
   margin-left: auto; font-size: 9.5px; padding: 1px 6px;
   border-radius: 10px; background: var(--border); color: var(--text-muted);
-  font-weight: 600; letter-spacing: 0.02em;
+  font-weight: 600;
 }
 
-/* ── Main Area ─────────────────────────────────────────────────────────────── */
+/* Main */
 #main {
   flex: 1; height: 100vh; overflow-y: auto;
   padding: 32px 40px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
 }
 .tool-page { display: none; max-width: 960px; }
 .tool-page.active { display: block; }
+.tool-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.tool-desc { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5; }
 
-.tool-title {
-  font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px;
-}
-.tool-desc {
-  font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.5;
-}
-
-/* ── Form Elements ─────────────────────────────────────────────────────────── */
-label.field-label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: var(--text-dim); margin-bottom: 6px;
-  letter-spacing: 0.03em; text-transform: uppercase;
-}
+/* Form */
+label.field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
 textarea, input[type="text"], input[type="number"] {
   width: 100%; padding: 12px 14px;
   background: var(--bg-input); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius);
   font-family: var(--font-mono); font-size: 13px;
-  resize: vertical; transition: border-color 0.15s;
-  line-height: 1.55;
+  resize: vertical; transition: border-color 0.15s; line-height: 1.55;
 }
-textarea:focus, input:focus, select:focus {
-  outline: none; border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
-}
+textarea:focus, input:focus, select:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
 textarea { min-height: 140px; }
 select {
-  padding: 8px 12px; background: var(--bg-input); color: var(--text);
+  padding: 8px 12px; background-color: var(--bg-input); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   font-family: var(--font-sans); font-size: 13px;
   cursor: pointer; appearance: none;
@@ -130,13 +98,14 @@ select {
   background-repeat: no-repeat; background-position: right 10px center;
   padding-right: 30px;
 }
+select option { background-color: var(--bg-card); color: var(--text); }
 
-/* ── Buttons ───────────────────────────────────────────────────────────────── */
+/* Buttons */
 .btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
 .btn {
   padding: 9px 20px; border: none; border-radius: var(--radius-sm);
   font-family: var(--font-sans); font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em;
+  cursor: pointer; transition: all 0.15s;
 }
 .btn-primary { background: var(--accent-dim); color: #fff; }
 .btn-primary:hover { background: var(--accent); }
@@ -144,107 +113,71 @@ select {
 .btn-secondary:hover { color: var(--text); border-color: var(--text-dim); }
 .btn-copy { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
 .btn-copy:hover { color: var(--green); border-color: var(--green); }
-
-.option-row {
-  display: flex; align-items: center; gap: 12px;
-  margin-top: 14px; flex-wrap: wrap;
-}
+.option-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
 .option-row label { font-size: 13px; color: var(--text-dim); text-transform: none; letter-spacing: 0; }
 
-/* ── Results Panel ─────────────────────────────────────────────────────────── */
-.result-panel {
-  margin-top: 28px;
-  border: 1px solid var(--border); border-radius: var(--radius);
-  background: var(--bg-card); overflow: hidden;
-  display: none;
-}
+/* Results */
+.result-panel { margin-top: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); overflow: hidden; display: none; }
 .result-panel.visible { display: block; animation: fadeSlide 0.25s ease; }
 @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-
-.result-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid var(--border);
-}
+.result-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
 .result-header h3 { font-size: 13px; font-weight: 600; color: var(--text-dim); }
 .result-body { padding: 16px; }
-.result-body pre {
-  font-family: var(--font-mono); font-size: 12.5px;
-  line-height: 1.6; white-space: pre-wrap; word-break: break-all;
-  color: var(--text); margin: 0;
-}
-.result-stats {
-  display: flex; gap: 20px; flex-wrap: wrap;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12.5px; font-family: var(--font-mono);
-}
+.result-body pre { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; color: var(--text); margin: 0; }
+.result-stats { display: flex; gap: 20px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12.5px; font-family: var(--font-mono); }
 .stat-item { color: var(--text-dim); }
 .stat-item span { color: var(--text); font-weight: 600; }
 .stat-gc span { color: var(--green); }
 .stat-at span { color: var(--orange); }
 .stat-len span { color: var(--accent); }
 
-/* ── Welcome / Home ────────────────────────────────────────────────────────── */
-.welcome { max-width: 600px; }
-.welcome h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; }
-.welcome p { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
-.tool-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-}
-.tool-card {
-  padding: 16px; border-radius: var(--radius);
-  border: 1px solid var(--border); background: var(--bg-card);
-  cursor: pointer; transition: all 0.15s;
-}
-.tool-card:hover { border-color: var(--accent); background: rgba(88,166,255,0.05); }
-.tool-card.disabled { opacity: 0.35; pointer-events: none; }
-.tool-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.tool-card p { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
-
-/* ── Translation Frames ─────────────────────────────────────────────────────── */
+/* Translation frames */
 .frame-block { border-bottom: 1px solid var(--border); }
 .frame-block:last-child { border-bottom: none; }
-.frame-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; cursor: pointer;
-  background: rgba(255,255,255,0.02);
-  transition: background 0.15s;
-}
+.frame-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; cursor: pointer; background: rgba(255,255,255,0.02); transition: background 0.15s; }
 .frame-header:hover { background: rgba(88,166,255,0.06); }
 .frame-label { font-size: 12.5px; font-weight: 600; color: var(--accent); font-family: var(--font-mono); }
 .frame-meta { font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono); }
-.frame-body {
-  padding: 10px 16px 14px;
-  font-family: var(--font-mono); font-size: 12px;
-  line-height: 1.7; white-space: pre-wrap; word-break: break-all;
-  color: var(--text-dim);
-}
+.frame-body { padding: 10px 16px 14px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-all; color: var(--text-dim); }
 .frame-body .orf { color: #ff6b6b; font-weight: 600; }
 .frame-body .met { color: #3fb950; font-weight: 700; }
 .frame-body .stop { color: #f85149; font-weight: 700; }
-.frame-body .nuc-line {
-  color: var(--text-muted); font-size: 11px; display: block;
-  letter-spacing: 0.02em;
-}
+.frame-body .nuc-line { color: var(--text-muted); font-size: 11px; display: block; letter-spacing: 0.02em; }
 
-/* ── Responsive ────────────────────────────────────────────────────────────── */
+/* Codon freq table */
+.codon-freq { margin-top: 12px; border-top: 1px solid var(--border); padding: 12px 16px; }
+.codon-freq h4 { font-size: 12px; font-weight: 600; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.codon-freq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px 12px; font-family: var(--font-mono); font-size: 11.5px; }
+.codon-freq-grid .cf-item { display: flex; justify-content: space-between; color: var(--text-dim); }
+.codon-freq-grid .cf-item span { color: var(--text); font-weight: 500; }
+
+/* Restriction sites table */
+.re-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--font-mono); }
+.re-table th { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.re-table td { padding: 6px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); color: var(--text); }
+.re-table tr:hover td { background: rgba(88,166,255,0.04); }
+.re-no-cuts { padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* Protein stats grid */
+.prot-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.prot-stat-card { padding: 14px; background: var(--bg-input); border-radius: var(--radius); border: 1px solid var(--border); }
+.prot-stat-card .psc-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-bottom: 4px; }
+.prot-stat-card .psc-value { font-size: 20px; font-weight: 700; font-family: var(--font-mono); }
+
+/* Responsive */
 @media (max-width: 700px) {
   :root { --sidebar-w: 52px; }
   .sidebar-header h1, .sidebar-header .logo, .sidebar-cat, .sidebar-item span:not(.icon), .sidebar-item .badge { display: none; }
   .sidebar-item { justify-content: center; padding: 10px; margin: 1px 4px; }
   .sidebar-item .icon { font-size: 18px; width: auto; }
   #main { padding: 20px; }
-  .tool-grid { grid-template-columns: 1fr; }
+  .prot-stats-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
-<!-- SIDEBAR                                                                    -->
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR -->
 <nav id="sidebar">
   <div class="sidebar-header">
     <div class="logo">SeqToolkit</div>
@@ -253,65 +186,65 @@ select {
 
   <div class="sidebar-cat">Sequence Conversion</div>
   <a class="sidebar-item active" data-tool="reverse-complement">
-    <span class="icon">⇄</span> <span>Reverse Complement</span>
+    <span class="icon">&#8644;</span> <span>Reverse Complement</span>
   </a>
   <a class="sidebar-item" data-tool="translate">
-    <span class="icon">⟶</span> <span>Translate DNA</span>
+    <span class="icon">&#10230;</span> <span>Translate DNA</span>
   </a>
-  <a class="sidebar-item disabled" data-tool="">
-    <span class="icon">↩</span> <span>Back Translate</span>
-    <span class="badge">Soon</span>
+  <a class="sidebar-item" data-tool="back-translate">
+    <span class="icon">&#8617;</span> <span>Back Translate</span>
   </a>
 
   <div class="sidebar-cat">Sequence Analysis</div>
   <a class="sidebar-item" data-tool="gc-content">
-    <span class="icon">◎</span> <span>GC Content</span>
+    <span class="icon">&#9678;</span> <span>GC Content</span>
   </a>
-  <a class="sidebar-item disabled" data-tool="">
-    <span class="icon">🔍</span> <span>ORF Finder</span>
-    <span class="badge">Soon</span>
-  </a>
-  <a class="sidebar-item disabled" data-tool="">
-    <span class="icon">📊</span> <span>Codon Usage</span>
-    <span class="badge">Soon</span>
+  <a class="sidebar-item" data-tool="protein-stats">
+    <span class="icon">&#9879;</span> <span>Protein Stats</span>
   </a>
 
   <div class="sidebar-cat">Pattern Tools</div>
-  <a class="sidebar-item disabled" data-tool="">
-    <span class="icon">✂</span> <span>Restriction Sites</span>
-    <span class="badge">Soon</span>
+  <a class="sidebar-item" data-tool="restriction-sites">
+    <span class="icon">&#9986;</span> <span>Restriction Sites</span>
   </a>
-  <a class="sidebar-item disabled" data-tool="">
-    <span class="icon">⬡</span> <span>Motif Search</span>
-    <span class="badge">Soon</span>
+  <a class="sidebar-item" data-tool="motif-search">
+    <span class="icon">&#11045;</span> <span>Motif Search</span>
   </a>
 
   <div class="sidebar-cat">Utilities</div>
   <a class="sidebar-item" data-tool="random-seq">
-    <span class="icon">🎲</span> <span>Random Sequence</span>
+    <span class="icon">&#127922;</span> <span>Random Sequence</span>
   </a>
   <a class="sidebar-item" data-tool="shuffle-seq">
-    <span class="icon">🔀</span> <span>Shuffle Sequence</span>
+    <span class="icon">&#128256;</span> <span>Shuffle Sequence</span>
+  </a>
+  <a class="sidebar-item" data-tool="tm-calc">
+    <span class="icon">&#127777;</span> <span>Tm Calculator</span>
+  </a>
+  <a class="sidebar-item" data-tool="primer-dimer">
+    <span class="icon">&#128278;</span> <span>Primer Dimer</span>
+  </a>
+  <a class="sidebar-item" data-tool="mass-calc">
+    <span class="icon">&#9878;</span> <span>Mass Calculator</span>
+  </a>
+  <a class="sidebar-item" data-tool="pairwise-align">
+    <span class="icon">&#9776;</span> <span>Pairwise Alignment</span>
+  </a>
+  <a class="sidebar-item" data-tool="format-convert">
+    <span class="icon">&#128196;</span> <span>Format Converter</span>
   </a>
 </nav>
 
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
-<!-- MAIN CONTENT                                                               -->
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT -->
 <main id="main">
 
-  <!-- ── Reverse Complement ─────────────────────────────────────────────── -->
+  <!-- REVERSE COMPLEMENT -->
   <section id="tool-reverse-complement" class="tool-page active">
     <h2 class="tool-title">Reverse Complement</h2>
-    <p class="tool-desc">
-      Convert a DNA sequence into its reverse, complement, or reverse-complement counterpart.
-      Useful for working with ORFs on the reverse strand. Accepts raw or FASTA format.
-    </p>
-
+    <p class="tool-desc">Convert a DNA sequence into its reverse, complement, or reverse-complement counterpart. Accepts raw or FASTA format.</p>
     <label class="field-label" for="rc-input">Input Sequence</label>
-    <textarea id="rc-input" spellcheck="false" placeholder="Paste raw or FASTA sequence…">>Sample sequence
+    <textarea id="rc-input" spellcheck="false" placeholder="Paste raw or FASTA sequence...">>Sample sequence
 GGGGaaaaaaaatttatatat</textarea>
-
     <div class="option-row">
       <label for="rc-mode">Operation:</label>
       <select id="rc-mode">
@@ -320,34 +253,24 @@ GGGGaaaaaaaatttatatat</textarea>
         <option value="c">Complement</option>
       </select>
     </div>
-
     <div class="btn-row">
       <button class="btn btn-primary" id="rc-submit">Run</button>
       <button class="btn btn-secondary" id="rc-clear">Clear</button>
     </div>
-
     <div class="result-panel" id="rc-result">
       <div class="result-stats" id="rc-stats"></div>
-      <div class="result-header">
-        <h3>Output</h3>
-        <button class="btn btn-copy" id="rc-copy" title="Copy to clipboard">Copy</button>
-      </div>
+      <div class="result-header"><h3>Output</h3><button class="btn btn-copy" id="rc-copy">Copy</button></div>
       <div class="result-body"><pre id="rc-output"></pre></div>
     </div>
   </section>
 
-  <!-- ── Translate DNA ────────────────────────────────────────────────── -->
+  <!-- TRANSLATE DNA -->
   <section id="tool-translate" class="tool-page">
     <h2 class="tool-title">Translate DNA</h2>
-    <p class="tool-desc">
-      Translate a DNA sequence in all six reading frames. Open reading frames (Met → Stop) are
-      highlighted. Click any frame header to copy its protein sequence.
-    </p>
-
+    <p class="tool-desc">Translate a DNA sequence in all six reading frames. Open reading frames (Met to Stop) are highlighted in red. Click any frame header to copy its protein sequence.</p>
     <label class="field-label" for="tr-input">Input Sequence</label>
-    <textarea id="tr-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence…">>Example
+    <textarea id="tr-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence...">>Example
 ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
-
     <div class="option-row">
       <label for="tr-table">Genetic code:</label>
       <select id="tr-table"></select>
@@ -360,193 +283,304 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
         <option value="nuc">Compact + nucleotide sequence</option>
         <option value="nuc-verbose">Verbose + nucleotide sequence</option>
       </select>
-      <label for="tr-minorf">Min ORF length (aa):</label>
+      <label for="tr-minorf">Min ORF (aa):</label>
       <input type="number" id="tr-minorf" value="10" min="1" max="9999" style="width:80px">
     </div>
-
     <div class="btn-row">
       <button class="btn btn-primary" id="tr-submit">Translate</button>
       <button class="btn btn-secondary" id="tr-clear">Clear</button>
     </div>
-
     <div class="result-panel" id="tr-result">
       <div class="result-stats" id="tr-stats"></div>
       <div id="tr-frames"></div>
+      <div class="codon-freq" id="tr-codon-freq" style="display:none">
+        <h4>Codon Usage Frequency</h4>
+        <div class="codon-freq-grid" id="tr-freq-grid"></div>
+      </div>
     </div>
   </section>
 
-  <!-- ── GC Content ───────────────────────────────────────────────────── -->
+  <!-- BACK TRANSLATE -->
+  <section id="tool-back-translate" class="tool-page">
+    <h2 class="tool-title">Back Translate</h2>
+    <p class="tool-desc">Convert a protein sequence to a degenerate DNA sequence using IUPAC ambiguity codes. Useful for designing degenerate primers or probes.</p>
+    <label class="field-label" for="bt-input">Protein Sequence</label>
+    <textarea id="bt-input" spellcheck="false" placeholder="Paste protein sequence (one-letter codes)...">MASMTGGQQMGRDLYDDDDKD</textarea>
+    <div class="option-row">
+      <label for="bt-table">Genetic code:</label>
+      <select id="bt-table"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="bt-submit">Back Translate</button>
+      <button class="btn btn-secondary" id="bt-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="bt-result">
+      <div class="result-stats" id="bt-stats"></div>
+      <div class="result-header"><h3>DNA Sequence</h3><button class="btn btn-copy" id="bt-copy">Copy</button></div>
+      <div class="result-body"><pre id="bt-output"></pre></div>
+      <div class="result-header"><h3>Codon Details</h3></div>
+      <div class="result-body"><pre id="bt-details" style="font-size:11.5px;color:var(--text-dim)"></pre></div>
+    </div>
+  </section>
+
+  <!-- GC CONTENT -->
   <section id="tool-gc-content" class="tool-page">
     <h2 class="tool-title">GC Content</h2>
-    <p class="tool-desc">
-      Calculate the nucleotide composition and GC/AT content of a DNA sequence.
-    </p>
-
+    <p class="tool-desc">Calculate the nucleotide composition and GC/AT content of a DNA sequence.</p>
     <label class="field-label" for="gc-input">Input Sequence</label>
-    <textarea id="gc-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence…"></textarea>
-
+    <textarea id="gc-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
     <div class="btn-row">
       <button class="btn btn-primary" id="gc-submit">Analyze</button>
       <button class="btn btn-secondary" id="gc-clear">Clear</button>
     </div>
-
     <div class="result-panel" id="gc-result">
       <div class="result-stats" id="gc-stats"></div>
-      <div class="result-header">
-        <h3>Composition</h3>
-      </div>
+      <div class="result-header"><h3>Composition</h3></div>
       <div class="result-body" id="gc-body"></div>
     </div>
   </section>
 
-  <!-- ── Random Sequence ──────────────────────────────────────────────── -->
+  <!-- PROTEIN STATS -->
+  <section id="tool-protein-stats" class="tool-page">
+    <h2 class="tool-title">Protein Stats</h2>
+    <p class="tool-desc">Calculate molecular weight, isoelectric point (pI), extinction coefficient, and amino acid composition of a protein sequence.</p>
+    <label class="field-label" for="ps-input">Protein Sequence</label>
+    <textarea id="ps-input" spellcheck="false" placeholder="Paste protein sequence (one-letter codes)...">MASMTGGQQMGRDLYDDDDKD</textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="ps-submit">Analyze</button>
+      <button class="btn btn-secondary" id="ps-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="ps-result">
+      <div class="result-stats" id="ps-stats"></div>
+      <div class="result-body" id="ps-body"></div>
+    </div>
+  </section>
+
+  <!-- RESTRICTION SITES -->
+  <section id="tool-restriction-sites" class="tool-page">
+    <h2 class="tool-title">Restriction Sites</h2>
+    <p class="tool-desc">Scan a DNA sequence for restriction enzyme recognition sites. Shows all enzymes that cut and their positions.</p>
+    <label class="field-label" for="re-input">Input Sequence</label>
+    <textarea id="re-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="re-submit">Find Sites</button>
+      <button class="btn btn-secondary" id="re-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="re-result">
+      <div class="result-stats" id="re-stats"></div>
+      <div class="result-body" id="re-body" style="padding:0;overflow-x:auto"></div>
+    </div>
+  </section>
+
+  <!-- RANDOM SEQUENCE -->
   <section id="tool-random-seq" class="tool-page">
     <h2 class="tool-title">Random Sequence</h2>
-    <p class="tool-desc">
-      Generate a random DNA or protein sequence of a given length.
-    </p>
-
+    <p class="tool-desc">Generate a random DNA or protein sequence of a given length.</p>
     <div class="option-row" style="margin-top:0">
       <label for="rs-type">Type:</label>
-      <select id="rs-type">
-        <option value="dna" selected>DNA</option>
-        <option value="protein">Protein</option>
-      </select>
+      <select id="rs-type"><option value="dna" selected>DNA</option><option value="protein">Protein</option></select>
       <label for="rs-length">Length:</label>
       <input type="number" id="rs-length" value="200" min="1" max="100000" style="width:120px">
     </div>
-
     <div class="btn-row">
       <button class="btn btn-primary" id="rs-submit">Generate</button>
     </div>
-
     <div class="result-panel" id="rs-result">
       <div class="result-stats" id="rs-stats"></div>
-      <div class="result-header">
-        <h3>Output</h3>
-        <button class="btn btn-copy" id="rs-copy">Copy</button>
-      </div>
+      <div class="result-header"><h3>Output</h3><button class="btn btn-copy" id="rs-copy">Copy</button></div>
       <div class="result-body"><pre id="rs-output"></pre></div>
     </div>
   </section>
 
-  <!-- ── Shuffle Sequence ─────────────────────────────────────────────── -->
+  <!-- SHUFFLE SEQUENCE -->
   <section id="tool-shuffle-seq" class="tool-page">
     <h2 class="tool-title">Shuffle Sequence</h2>
-    <p class="tool-desc">
-      Randomly shuffle a DNA or protein sequence while preserving its composition.
-      Useful for generating null-model sequences for statistical comparisons.
-    </p>
-
+    <p class="tool-desc">Randomly shuffle a DNA or protein sequence while preserving its composition. Useful for generating null-model sequences.</p>
     <label class="field-label" for="sh-input">Input Sequence</label>
-    <textarea id="sh-input" spellcheck="false" placeholder="Paste raw or FASTA sequence…"></textarea>
-
+    <textarea id="sh-input" spellcheck="false" placeholder="Paste raw or FASTA sequence..."></textarea>
     <div class="btn-row">
       <button class="btn btn-primary" id="sh-submit">Shuffle</button>
       <button class="btn btn-secondary" id="sh-clear">Clear</button>
     </div>
-
     <div class="result-panel" id="sh-result">
       <div class="result-stats" id="sh-stats"></div>
-      <div class="result-header">
-        <h3>Shuffled Sequence</h3>
-        <button class="btn btn-copy" id="sh-copy">Copy</button>
-      </div>
+      <div class="result-header"><h3>Shuffled Sequence</h3><button class="btn btn-copy" id="sh-copy">Copy</button></div>
       <div class="result-body"><pre id="sh-output"></pre></div>
+    </div>
+  </section>
+
+  <!-- TM CALCULATOR -->
+  <section id="tool-tm-calc" class="tool-page">
+    <h2 class="tool-title">Tm Calculator</h2>
+    <p class="tool-desc">Calculate the melting temperature of an oligonucleotide. Uses the Wallace rule for short oligos (13 bp or less) and a salt-adjusted formula for longer sequences (14+ bp).</p>
+    <label class="field-label" for="tm-input">Primer Sequence</label>
+    <textarea id="tm-input" spellcheck="false" placeholder="Paste primer sequence..." style="min-height:80px">ATCGATCGATCGATCG</textarea>
+    <div class="option-row">
+      <label for="tm-na">Na+ conc (M):</label>
+      <input type="number" id="tm-na" value="0.05" min="0.001" max="1" step="0.001" style="width:100px">
+      <label for="tm-primer">Primer conc (nM):</label>
+      <input type="number" id="tm-primer" value="250" min="1" max="100000" step="1" style="width:100px">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="tm-submit">Calculate Tm</button>
+      <button class="btn btn-secondary" id="tm-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="tm-result">
+      <div class="result-stats" id="tm-stats"></div>
+      <div class="result-body" id="tm-body"></div>
+    </div>
+  </section>
+
+  <!-- MOTIF SEARCH -->
+  <section id="tool-motif-search" class="tool-page">
+    <h2 class="tool-title">Motif Search</h2>
+    <p class="tool-desc">Search for a DNA or protein motif/pattern in a sequence. Supports IUPAC ambiguity codes for DNA (R, Y, N, etc.) and allows overlapping matches.</p>
+    <label class="field-label" for="ms-input">Input Sequence</label>
+    <textarea id="ms-input" spellcheck="false" placeholder="Paste raw or FASTA sequence..."></textarea>
+    <div class="option-row">
+      <label for="ms-pattern">Pattern:</label>
+      <input type="text" id="ms-pattern" placeholder="e.g. GAATTC, TATAWN, ATG" style="width:240px">
+      <label for="ms-type">Sequence type:</label>
+      <select id="ms-type">
+        <option value="dna" selected>DNA (IUPAC)</option>
+        <option value="protein">Protein</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="ms-submit">Search</button>
+      <button class="btn btn-secondary" id="ms-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="ms-result">
+      <div class="result-stats" id="ms-stats"></div>
+      <div class="result-body" id="ms-body" style="padding:0;overflow-x:auto"></div>
+    </div>
+  </section>
+
+  <!-- PRIMER DIMER CHECK -->
+  <section id="tool-primer-dimer" class="tool-page">
+    <h2 class="tool-title">Primer Dimer Check</h2>
+    <p class="tool-desc">Check two primers for potential dimer formation. Highlights complementary regions, especially dangerous 3' end binding that can cause extension artifacts in PCR.</p>
+    <label class="field-label" for="pd-input1">Primer 1 (5' to 3')</label>
+    <textarea id="pd-input1" spellcheck="false" style="min-height:60px" placeholder="e.g. ATCGATCGATCGATCG">ATCGATCGATCGATCG</textarea>
+    <label class="field-label" for="pd-input2" style="margin-top:12px">Primer 2 (5' to 3', leave empty for self-dimer check)</label>
+    <textarea id="pd-input2" spellcheck="false" style="min-height:60px" placeholder="e.g. CGATCGATCGATCGAT"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="pd-submit">Check Dimers</button>
+      <button class="btn btn-secondary" id="pd-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="pd-result">
+      <div class="result-stats" id="pd-stats"></div>
+      <div class="result-body" id="pd-body"></div>
+    </div>
+  </section>
+
+  <!-- MASS CALCULATOR -->
+  <section id="tool-mass-calc" class="tool-page">
+    <h2 class="tool-title">DNA/RNA Mass Calculator</h2>
+    <p class="tool-desc">Convert between mass (ug/ng), moles (pmol/fmol), and copy number for DNA or RNA fragments. Paste a sequence or enter a length manually.</p>
+    <label class="field-label" for="mc-seq">Sequence (optional - length will be calculated)</label>
+    <textarea id="mc-seq" spellcheck="false" style="min-height:80px" placeholder="Paste raw or FASTA sequence, or leave empty and enter length below..."></textarea>
+    <div class="option-row" style="margin-top:12px">
+      <label for="mc-type">Type:</label>
+      <select id="mc-type">
+        <option value="dsDNA" selected>dsDNA</option>
+        <option value="ssDNA">ssDNA</option>
+        <option value="ssRNA">ssRNA</option>
+      </select>
+      <label for="mc-length">Length (bp/nt):</label>
+      <input type="number" id="mc-length" value="" min="1" max="99999999" style="width:120px" placeholder="auto">
+    </div>
+    <div class="option-row">
+      <label for="mc-mass">Mass (ug):</label>
+      <input type="number" id="mc-mass" value="1" min="0" step="0.001" style="width:120px">
+      <label for="mc-pmol">OR pmol:</label>
+      <input type="number" id="mc-pmol" value="" min="0" step="0.001" style="width:120px" placeholder="leave empty">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="mc-submit">Calculate</button>
+      <button class="btn btn-secondary" id="mc-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="mc-result">
+      <div class="result-stats" id="mc-stats"></div>
+      <div class="result-body" id="mc-body"></div>
+    </div>
+  </section>
+
+  <!-- PAIRWISE ALIGNMENT -->
+  <section id="tool-pairwise-align" class="tool-page">
+    <h2 class="tool-title">Pairwise Alignment</h2>
+    <p class="tool-desc">Align two DNA or protein sequences using Needleman-Wunsch (global) or Smith-Waterman (local) algorithms. Warning: sequences over ~5000 characters may be slow in the browser.</p>
+    <label class="field-label" for="pa-input1">Sequence 1</label>
+    <textarea id="pa-input1" spellcheck="false" style="min-height:80px" placeholder="Paste raw or FASTA sequence...">ATCGATCGATCGATCG</textarea>
+    <label class="field-label" for="pa-input2" style="margin-top:12px">Sequence 2</label>
+    <textarea id="pa-input2" spellcheck="false" style="min-height:80px" placeholder="Paste raw or FASTA sequence...">ATCGTTCGATGATCG</textarea>
+    <div class="option-row">
+      <label for="pa-mode">Algorithm:</label>
+      <select id="pa-mode">
+        <option value="global" selected>Global (Needleman-Wunsch)</option>
+        <option value="local">Local (Smith-Waterman)</option>
+      </select>
+    </div>
+    <div class="option-row">
+      <label for="pa-match">Match:</label>
+      <input type="number" id="pa-match" value="2" style="width:70px">
+      <label for="pa-mismatch">Mismatch:</label>
+      <input type="number" id="pa-mismatch" value="-1" style="width:70px">
+      <label for="pa-gap">Gap:</label>
+      <input type="number" id="pa-gap" value="-2" style="width:70px">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="pa-submit">Align</button>
+      <button class="btn btn-secondary" id="pa-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="pa-result">
+      <div class="result-stats" id="pa-stats"></div>
+      <div class="result-header"><h3>Alignment</h3><button class="btn btn-copy" id="pa-copy">Copy</button></div>
+      <div class="result-body"><pre id="pa-output"></pre></div>
+    </div>
+  </section>
+
+  <!-- FORMAT CONVERTER -->
+  <section id="tool-format-convert" class="tool-page">
+    <h2 class="tool-title">Format Converter</h2>
+    <p class="tool-desc">Clean up and reformat sequences. Convert between raw, FASTA, numbered formats; change case; remove whitespace or numbers.</p>
+    <label class="field-label" for="fc-input">Input Sequence</label>
+    <textarea id="fc-input" spellcheck="false" placeholder="Paste sequence in any format..."></textarea>
+    <div class="option-row">
+      <label for="fc-mode">Convert to:</label>
+      <select id="fc-mode">
+        <option value="raw">Raw (letters only)</option>
+        <option value="fasta">FASTA format</option>
+        <option value="numbered">Numbered lines</option>
+        <option value="upper">UPPERCASE</option>
+        <option value="lower">lowercase</option>
+        <option value="dna-only">DNA only (strip non-GATCN)</option>
+        <option value="protein-only">Protein only (strip non-AA)</option>
+      </select>
+    </div>
+    <div class="option-row">
+      <label for="fc-title">FASTA title (optional):</label>
+      <input type="text" id="fc-title" value="" placeholder="My sequence" style="width:240px">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="fc-submit">Convert</button>
+      <button class="btn btn-secondary" id="fc-clear">Clear</button>
+    </div>
+    <div class="result-panel" id="fc-result">
+      <div class="result-stats" id="fc-stats"></div>
+      <div class="result-header"><h3>Output</h3><button class="btn btn-copy" id="fc-copy">Copy</button></div>
+      <div class="result-body"><pre id="fc-output"></pre></div>
     </div>
   </section>
 
 </main>
 
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS                                                                    -->
-<!-- ════════════════════════════════════════════════════════════════════════════ -->
 <script src="common.js"></script>
 <script>
 (function() {
   "use strict";
 
-  // ── Sidebar navigation ──────────────────────────────────────────────────
-  const sidebarItems = document.querySelectorAll(".sidebar-item[data-tool]");
-  sidebarItems.forEach(item => {
-    item.addEventListener("click", function(e) {
-      e.preventDefault();
-      const toolId = this.dataset.tool;
-      if (!toolId) return;
-      // toggle sidebar active
-      sidebarItems.forEach(i => i.classList.remove("active"));
-      this.classList.add("active");
-      // toggle tool pages
-      document.querySelectorAll(".tool-page").forEach(p => p.classList.remove("active"));
-      const page = document.getElementById("tool-" + toolId);
-      if (page) page.classList.add("active");
-    });
-  });
-
-  // ── Reverse Complement Tool ─────────────────────────────────────────────
-  const rcInput  = document.getElementById("rc-input");
-  const rcMode   = document.getElementById("rc-mode");
-  const rcResult = document.getElementById("rc-result");
-  const rcStats  = document.getElementById("rc-stats");
-  const rcOutput = document.getElementById("rc-output");
-
-  document.getElementById("rc-submit").addEventListener("click", function() {
-    const raw = rcInput.value.trim();
-    if (!raw) return;
-
-    const parsed = parseFasta(raw);
-    const dna = filterDnaSaveCase(parsed.sequence);
-
-    if (!dna.length) {
-      rcOutput.textContent = "No valid DNA characters found.";
-      rcResult.classList.add("visible");
-      rcStats.innerHTML = "";
-      return;
-    }
-
-    if (!verifyDna(parsed.sequence)) {
-      // still proceed but note it
-    }
-
-    // compute
-    let result;
-    switch (rcMode.value) {
-      case "rc": result = reverseComplement(dna); break;
-      case "r":  result = reverseStr(dna); break;
-      case "c":  result = complement(dna); break;
-    }
-
-    // stats
-    const stats = seqStats(dna);
-    let title = parsed.title ? `"${parsed.title}"` : "";
-    rcStats.innerHTML =
-      `<span class="stat-item stat-len">Length: <span>${stats.len.toLocaleString()} bp</span></span>` +
-      (title ? `<span class="stat-item">Title: <span>${title}</span></span>` : "") +
-      `<span class="stat-item">A: <span>${stats.a}</span></span>` +
-      `<span class="stat-item">T: <span>${stats.t}</span></span>` +
-      `<span class="stat-item">G: <span>${stats.g}</span></span>` +
-      `<span class="stat-item">C: <span>${stats.c}</span></span>` +
-      `<span class="stat-item stat-gc">GC: <span>${stats.gc}%</span></span>`;
-
-    rcOutput.textContent = formatSeq(result, 60);
-    rcResult.classList.add("visible");
-  });
-
-  document.getElementById("rc-clear").addEventListener("click", function() {
-    rcInput.value = "";
-    rcResult.classList.remove("visible");
-    rcInput.focus();
-  });
-
-  document.getElementById("rc-copy").addEventListener("click", function() {
-    const text = rcOutput.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      this.textContent = "Copied!";
-      setTimeout(() => { this.textContent = "Copy"; }, 1500);
-    });
-  });
-
-  // ── Helper: copy button wiring ──────────────────────────────────────────
+  // -- Helpers ---------------------------------------------------------
   function wireCopy(btnId, sourceId) {
     document.getElementById(btnId).addEventListener("click", function() {
       var btn = this;
@@ -558,53 +592,94 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
     });
   }
 
-  // ── Translate DNA Tool ──────────────────────────────────────────────────
-  (function() {
-    var input    = document.getElementById("tr-input");
-    var result   = document.getElementById("tr-result");
-    var stats    = document.getElementById("tr-stats");
-    var framesEl = document.getElementById("tr-frames");
-    var tableSel = document.getElementById("tr-table");
-
-    // Populate genetic code dropdown
-    var tableIds = Object.keys(GENETIC_CODES).sort(function(a,b){ return parseInt(a)-parseInt(b); });
-    for (var t = 0; t < tableIds.length; t++) {
-      var id = tableIds[t];
+  function populateGeneticCodeSelect(selId) {
+    var sel = document.getElementById(selId);
+    var ids = Object.keys(GENETIC_CODES).sort(function(a,b){ return parseInt(a)-parseInt(b); });
+    for (var i = 0; i < ids.length; i++) {
       var opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = id + " — " + GENETIC_CODES[id].name;
-      if (id === "1") opt.selected = true;
-      tableSel.appendChild(opt);
+      opt.value = ids[i];
+      opt.textContent = ids[i] + " - " + GENETIC_CODES[ids[i]].name;
+      if (ids[i] === "1") opt.selected = true;
+      sel.appendChild(opt);
     }
+  }
 
-    // Verbose amino acid names
-    var AA_NAMES = {
-      "A":"Ala","R":"Arg","N":"Asn","D":"Asp","C":"Cys","E":"Glu","Q":"Gln",
-      "G":"Gly","H":"His","I":"Ile","L":"Leu","K":"Lys","M":"Met","F":"Phe",
-      "P":"Pro","S":"Ser","T":"Thr","W":"Trp","Y":"Tyr","V":"Val","*":"Stop","X":"Xaa"
-    };
+  var AA_NAMES = {
+    "A":"Ala","R":"Arg","N":"Asn","D":"Asp","C":"Cys","E":"Glu","Q":"Gln",
+    "G":"Gly","H":"His","I":"Ile","L":"Leu","K":"Lys","M":"Met","F":"Phe",
+    "P":"Pro","S":"Ser","T":"Thr","W":"Trp","Y":"Tyr","V":"Val","*":"Stop","X":"Xaa"
+  };
+
+  // -- Sidebar navigation ---------------------------------------------
+  var sidebarItems = document.querySelectorAll(".sidebar-item[data-tool]");
+  for (var i = 0; i < sidebarItems.length; i++) {
+    sidebarItems[i].addEventListener("click", function(e) {
+      e.preventDefault();
+      var toolId = this.getAttribute("data-tool");
+      if (!toolId) return;
+      for (var j = 0; j < sidebarItems.length; j++) sidebarItems[j].classList.remove("active");
+      this.classList.add("active");
+      var pages = document.querySelectorAll(".tool-page");
+      for (var j = 0; j < pages.length; j++) pages[j].classList.remove("active");
+      var page = document.getElementById("tool-" + toolId);
+      if (page) page.classList.add("active");
+    });
+  }
+
+  // == REVERSE COMPLEMENT =============================================
+  (function() {
+    var input = document.getElementById("rc-input");
+    var result = document.getElementById("rc-result");
+    var statsEl = document.getElementById("rc-stats");
+    var output = document.getElementById("rc-output");
+    document.getElementById("rc-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var dna = filterDnaSaveCase(parsed.sequence);
+      if (!dna.length) { output.textContent = "No valid DNA characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var mode = document.getElementById("rc-mode").value;
+      var res;
+      if (mode === "rc") res = reverseComplement(dna);
+      else if (mode === "r") res = reverseStr(dna);
+      else res = complement(dna);
+      var s = seqStats(dna);
+      var title = parsed.title ? '"' + parsed.title + '"' : "";
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+        (title ? '<span class="stat-item">Title: <span>' + title + '</span></span>' : "") +
+        '<span class="stat-item">A: <span>' + s.a + '</span></span>' +
+        '<span class="stat-item">T: <span>' + s.t + '</span></span>' +
+        '<span class="stat-item">G: <span>' + s.g + '</span></span>' +
+        '<span class="stat-item">C: <span>' + s.c + '</span></span>' +
+        '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
+      output.textContent = formatSeq(res, 60);
+      result.classList.add("visible");
+    });
+    document.getElementById("rc-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+    wireCopy("rc-copy", "rc-output");
+  })();
+
+  // == TRANSLATE DNA ==================================================
+  (function() {
+    var input = document.getElementById("tr-input");
+    var result = document.getElementById("tr-result");
+    var statsEl = document.getElementById("tr-stats");
+    var framesEl = document.getElementById("tr-frames");
+    populateGeneticCodeSelect("tr-table");
 
     function renderFrame(frameData, fmt, minOrf) {
       var cd = frameData.codonData;
       var orfs = findOrfs(cd, minOrf);
       var verbose = (fmt === "verbose" || fmt === "nuc-verbose");
       var showNuc = (fmt === "nuc" || fmt === "nuc-verbose");
-
-      // Build set of indices inside ORFs
       var inOrf = {};
-      for (var o = 0; o < orfs.length; o++) {
+      for (var o = 0; o < orfs.length; o++)
         for (var idx = orfs[o].start; idx <= orfs[o].end; idx++) inOrf[idx] = true;
-      }
-
       var html = '<div class="frame-block">';
-      html += '<div class="frame-header" title="Click to copy protein sequence" data-protein="' +
-        cd.map(function(c){return c.aa;}).join("") + '">';
+      html += '<div class="frame-header" title="Click to copy" data-protein="' + cd.map(function(c){return c.aa;}).join("") + '">';
       html += '<span class="frame-label">' + frameData.label + '</span>';
-      html += '<span class="frame-meta">' + cd.length + ' aa · ' + orfs.length + ' ORF' + (orfs.length !== 1 ? 's' : '') + '</span>';
-      html += '</div>';
+      html += '<span class="frame-meta">' + cd.length + ' aa, ' + orfs.length + ' ORF' + (orfs.length !== 1 ? 's' : '') + '</span></div>';
       html += '<div class="frame-body">';
-
-      // Protein line
       var parts = [];
       for (var i = 0; i < cd.length; i++) {
         var aa = cd[i].aa;
@@ -613,75 +688,47 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
         if (aa === "M" && inOrf[i]) cls = "met";
         else if (aa === "*") cls = "stop";
         else if (inOrf[i]) cls = "orf";
-
-        if (cls) {
-          parts.push('<span class="' + cls + '">' + display + '</span>');
-        } else {
-          parts.push(display);
-        }
+        parts.push(cls ? '<span class="' + cls + '">' + display + '</span>' : display);
       }
       html += parts.join(verbose ? " " : "");
-
-      // Nucleotide line
       if (showNuc) {
         var nucParts = [];
         for (var i = 0; i < cd.length; i++) {
           var codon = cd[i].codon;
-          if (verbose) codon = codon + (codon.length < 3 ? " " : "");
           var cls = "";
           if (cd[i].aa === "M" && inOrf[i]) cls = "met";
           else if (cd[i].aa === "*") cls = "stop";
           else if (inOrf[i]) cls = "orf";
-          if (cls) {
-            nucParts.push('<span class="' + cls + '">' + codon + '</span>');
-          } else {
-            nucParts.push(codon);
-          }
+          nucParts.push(cls ? '<span class="' + cls + '">' + codon + '</span>' : codon);
         }
         html += '<span class="nuc-line">' + nucParts.join(verbose ? " " : "") + '</span>';
       }
-
       html += '</div></div>';
       return html;
     }
 
     document.getElementById("tr-submit").addEventListener("click", function() {
-      var raw = input.value.trim();
-      if (!raw) return;
+      var raw = input.value.trim(); if (!raw) return;
       var parsed = parseFasta(raw);
       var dna = filterDnaSaveCase(parsed.sequence);
-      if (!dna.length) {
-        framesEl.innerHTML = '<div class="result-body"><pre>No valid DNA characters found.</pre></div>';
-        result.classList.add("visible");
-        stats.innerHTML = "";
-        return;
-      }
-
-      var tableId = tableSel.value;
+      if (!dna.length) { framesEl.innerHTML = '<div class="result-body"><pre>No valid DNA characters found.</pre></div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var tableId = document.getElementById("tr-table").value;
       var geneticCode = GENETIC_CODES[tableId].code;
       var fmt = document.getElementById("tr-format").value;
       var minOrf = parseInt(document.getElementById("tr-minorf").value) || 1;
-
       var frames = translateAllFrames(dna, geneticCode);
-
-      // Stats
       var s = seqStats(dna);
       var totalOrfs = 0;
       for (var i = 0; i < frames.length; i++) totalOrfs += frames[i].orfs.length;
-      stats.innerHTML =
+      statsEl.innerHTML =
         '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
         '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
         '<span class="stat-item">Table: <span>' + tableId + '</span></span>' +
-        '<span class="stat-item">ORFs (≥' + minOrf + ' aa): <span>' + totalOrfs + '</span></span>';
-
-      // Render all 6 frames
+        '<span class="stat-item">ORFs (>=' + minOrf + ' aa): <span>' + totalOrfs + '</span></span>';
       var html = "";
-      for (var i = 0; i < frames.length; i++) {
-        html += renderFrame(frames[i], fmt, minOrf);
-      }
+      for (var i = 0; i < frames.length; i++) html += renderFrame(frames[i], fmt, minOrf);
       framesEl.innerHTML = html;
-
-      // Click-to-copy on frame headers
+      // Click to copy on frame headers
       var headers = framesEl.querySelectorAll(".frame-header");
       for (var i = 0; i < headers.length; i++) {
         headers[i].addEventListener("click", function() {
@@ -695,73 +742,181 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
           });
         });
       }
-
+      // Codon frequency table
+      var freq = codonFrequency(dna, geneticCode);
+      var freqEl = document.getElementById("tr-codon-freq");
+      var gridEl = document.getElementById("tr-freq-grid");
+      var allCodons = Object.keys(geneticCode).sort();
+      var freqHtml = "";
+      for (var i = 0; i < allCodons.length; i++) {
+        var c = allCodons[i];
+        var count = freq[c] || 0;
+        var aa = geneticCode[c];
+        freqHtml += '<div class="cf-item"><span>' + c + ' (' + aa + ')</span> ' + count + '</div>';
+      }
+      gridEl.innerHTML = freqHtml;
+      freqEl.style.display = "block";
       result.classList.add("visible");
     });
-
-    document.getElementById("tr-clear").addEventListener("click", function() {
-      input.value = ""; result.classList.remove("visible"); input.focus();
-    });
+    document.getElementById("tr-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
   })();
 
-  // ── GC Content Tool ─────────────────────────────────────────────────────
+  // == BACK TRANSLATE =================================================
   (function() {
-    var input  = document.getElementById("gc-input");
+    var input = document.getElementById("bt-input");
+    var result = document.getElementById("bt-result");
+    var statsEl = document.getElementById("bt-stats");
+    var output = document.getElementById("bt-output");
+    var details = document.getElementById("bt-details");
+    populateGeneticCodeSelect("bt-table");
+
+    document.getElementById("bt-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var prot = filterProtein(parsed.sequence);
+      if (!prot.length) { output.textContent = "No valid protein characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; details.textContent = ""; return; }
+      var tableId = document.getElementById("bt-table").value;
+      var geneticCode = GENETIC_CODES[tableId].code;
+      var bt = backTranslate(prot, geneticCode);
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Protein: <span>' + prot.length + ' aa</span></span>' +
+        '<span class="stat-item">DNA: <span>' + bt.sequence.length + ' bp</span></span>' +
+        '<span class="stat-item">Table: <span>' + tableId + '</span></span>';
+      output.textContent = formatSeq(bt.sequence, 60);
+      // Show codon details
+      var lines = [];
+      for (var i = 0; i < bt.details.length; i++) {
+        var d = bt.details[i];
+        lines.push(d.aa + " -> " + d.degenerate + "  [" + d.codons.join(", ") + "]");
+      }
+      details.textContent = lines.join("\n");
+      result.classList.add("visible");
+    });
+    document.getElementById("bt-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+    wireCopy("bt-copy", "bt-output");
+  })();
+
+  // == GC CONTENT =====================================================
+  (function() {
+    var input = document.getElementById("gc-input");
     var result = document.getElementById("gc-result");
     var statsEl = document.getElementById("gc-stats");
-    var body   = document.getElementById("gc-body");
+    var body = document.getElementById("gc-body");
+
+    function bar(label, count, total, color) {
+      var pct = total > 0 ? (count / total * 100).toFixed(1) : "0.0";
+      var maxW = total > 0 ? (count / total * 100) : 0;
+      return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span style="font-weight:600">' + label + '</span><span style="color:var(--text-dim)">' + count.toLocaleString() + ' (' + pct + '%)</span></div><div style="height:8px;background:var(--bg-input);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + maxW + '%;background:' + color + ';border-radius:4px;transition:width 0.3s"></div></div></div>';
+    }
 
     document.getElementById("gc-submit").addEventListener("click", function() {
-      var raw = input.value.trim();
-      if (!raw) return;
+      var raw = input.value.trim(); if (!raw) return;
       var parsed = parseFasta(raw);
       var dna = filterDnaSaveCase(parsed.sequence);
       if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
-
       var s = seqStats(dna);
       var title = parsed.title ? '"' + parsed.title + '"' : "";
       statsEl.innerHTML =
         '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
         (title ? '<span class="stat-item">Title: <span>' + title + '</span></span>' : "");
-
-      // bar chart style breakdown
-      var maxCount = Math.max(s.a, s.t, s.g, s.c);
-      function bar(label, count, color) {
-        var pct = s.len > 0 ? (count / s.len * 100).toFixed(1) : "0.0";
-        var w = maxCount > 0 ? (count / maxCount * 100) : 0;
-        return '<div style="margin-bottom:10px">' +
-          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">' +
-            '<span style="font-weight:600">' + label + '</span>' +
-            '<span style="color:var(--text-dim)">' + count.toLocaleString() + ' (' + pct + '%)</span>' +
-          '</div>' +
-          '<div style="height:8px;background:var(--bg-input);border-radius:4px;overflow:hidden">' +
-            '<div style="height:100%;width:' + w + '%;background:' + color + ';border-radius:4px;transition:width 0.3s"></div>' +
-          '</div></div>';
-      }
-
       body.innerHTML =
-        bar("Adenine (A)", s.a, "var(--accent)") +
-        bar("Thymine (T)", s.t, "var(--orange)") +
-        bar("Guanine (G)", s.g, "var(--green)") +
-        bar("Cytosine (C)", s.c, "var(--purple)") +
-        (s.n > 0 ? bar("Other (N)", s.n, "var(--text-muted)") : "") +
+        bar("Adenine (A)", s.a, s.len, "var(--accent)") +
+        bar("Thymine (T)", s.t, s.len, "var(--orange)") +
+        bar("Guanine (G)", s.g, s.len, "var(--green)") +
+        bar("Cytosine (C)", s.c, s.len, "var(--purple)") +
+        (s.n > 0 ? bar("Other (N)", s.n, s.len, "var(--text-muted)") : "") +
         '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:28px;font-size:14px">' +
           '<div><span style="color:var(--text-dim)">GC Content:</span> <span style="color:var(--green);font-weight:700;font-size:18px">' + s.gc + '%</span></div>' +
-          '<div><span style="color:var(--text-dim)">AT Content:</span> <span style="color:var(--orange);font-weight:700;font-size:18px">' + s.at + '%</span></div>' +
-        '</div>';
-
+          '<div><span style="color:var(--text-dim)">AT Content:</span> <span style="color:var(--orange);font-weight:700;font-size:18px">' + s.at + '%</span></div></div>';
       result.classList.add("visible");
     });
-
-    document.getElementById("gc-clear").addEventListener("click", function() {
-      input.value = ""; result.classList.remove("visible"); input.focus();
-    });
+    document.getElementById("gc-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
   })();
 
-  // ── Random Sequence Tool ────────────────────────────────────────────────
+  // == PROTEIN STATS ==================================================
+  (function() {
+    var input = document.getElementById("ps-input");
+    var result = document.getElementById("ps-result");
+    var statsEl = document.getElementById("ps-stats");
+    var body = document.getElementById("ps-body");
+
+    document.getElementById("ps-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var prot = filterProtein(parsed.sequence);
+      if (!prot.length) { body.innerHTML = "<p>No valid protein characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var mw = proteinMW(prot);
+      var pi = proteinPI(prot);
+      var ext = extinctionCoeff(prot);
+      var comp = aaComposition(prot);
+      var title = parsed.title ? '"' + parsed.title + '"' : "";
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + prot.length + ' aa</span></span>' +
+        (title ? '<span class="stat-item">Title: <span>' + title + '</span></span>' : "");
+
+      var html = '<div class="prot-stats-grid">';
+      html += '<div class="prot-stat-card"><div class="psc-label">Molecular Weight</div><div class="psc-value">' + mw.toFixed(2) + ' Da</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">' + (mw/1000).toFixed(2) + ' kDa</div></div>';
+      html += '<div class="prot-stat-card"><div class="psc-label">Isoelectric Point (pI)</div><div class="psc-value" style="color:var(--accent)">' + pi.toFixed(2) + '</div></div>';
+      html += '<div class="prot-stat-card"><div class="psc-label">Extinction Coefficient (280nm)</div><div class="psc-value" style="font-size:16px">' + ext.withCystines.toLocaleString() + ' M<sup>-1</sup>cm<sup>-1</sup></div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">Reduced (no cystines): ' + ext.reduced.toLocaleString() + '</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Tyr: ' + ext.nY + ', Trp: ' + ext.nW + ', Cys: ' + ext.nC + '</div></div>';
+
+      // AA Composition
+      html += '<div class="prot-stat-card"><div class="psc-label">Amino Acid Composition</div><div style="font-family:var(--font-mono);font-size:11.5px;margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">';
+      var order = "GAVLIPFWMSCTYHDEQNKR";
+      for (var i = 0; i < order.length; i++) {
+        var aa = order[i];
+        var cnt = comp[aa] || 0;
+        var pct = prot.length > 0 ? (cnt / prot.length * 100).toFixed(1) : "0.0";
+        html += '<div style="display:flex;justify-content:space-between;color:var(--text-dim)"><span>' + aa + ' (' + (AA_NAMES[aa] || aa) + ')</span><span style="color:var(--text)">' + cnt + ' (' + pct + '%)</span></div>';
+      }
+      html += '</div></div>';
+      html += '</div>';
+      body.innerHTML = html;
+      result.classList.add("visible");
+    });
+    document.getElementById("ps-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+  })();
+
+  // == RESTRICTION SITES ==============================================
+  (function() {
+    var input = document.getElementById("re-input");
+    var result = document.getElementById("re-result");
+    var statsEl = document.getElementById("re-stats");
+    var body = document.getElementById("re-body");
+
+    document.getElementById("re-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var dna = filterDnaSaveCase(parsed.sequence);
+      if (!dna.length) { body.innerHTML = '<div class="re-no-cuts">No valid DNA characters found.</div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var results = findRestrictionSites(dna, RESTRICTION_ENZYMES);
+      var totalCuts = 0;
+      for (var i = 0; i < results.length; i++) totalCuts += results[i].cuts;
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + dna.length.toLocaleString() + ' bp</span></span>' +
+        '<span class="stat-item">Enzymes scanned: <span>' + RESTRICTION_ENZYMES.length + '</span></span>' +
+        '<span class="stat-item">Enzymes that cut: <span>' + results.length + '</span></span>' +
+        '<span class="stat-item">Total cut sites: <span>' + totalCuts + '</span></span>';
+      if (results.length === 0) {
+        body.innerHTML = '<div class="re-no-cuts">No restriction sites found in this sequence.</div>';
+      } else {
+        var html = '<table class="re-table"><thead><tr><th>Enzyme</th><th>Site</th><th>Cuts</th><th>Positions</th></tr></thead><tbody>';
+        for (var i = 0; i < results.length; i++) {
+          var r = results[i];
+          var posStr = r.positions.map(function(p){ return p.pos; }).join(", ");
+          html += '<tr><td style="font-weight:600">' + r.name + '</td><td>' + r.site + '</td><td>' + r.cuts + '</td><td style="color:var(--text-dim);font-size:11.5px">' + posStr + '</td></tr>';
+        }
+        html += '</tbody></table>';
+        body.innerHTML = html;
+      }
+      result.classList.add("visible");
+    });
+    document.getElementById("re-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+  })();
+
+  // == RANDOM SEQUENCE ================================================
   (function() {
     var result = document.getElementById("rs-result");
-    var stats  = document.getElementById("rs-stats");
+    var statsEl = document.getElementById("rs-stats");
     var output = document.getElementById("rs-output");
     var DNA_BASES = "GATC".split("");
     var AA_CHARS  = "ACDEFGHIKLMNPQRSTVWY".split("");
@@ -769,70 +924,409 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
     document.getElementById("rs-submit").addEventListener("click", function() {
       var type = document.getElementById("rs-type").value;
       var len  = parseInt(document.getElementById("rs-length").value) || 0;
-      if (len < 1 || len > 100000) { output.textContent = "Length must be 1–100,000."; result.classList.add("visible"); stats.innerHTML = ""; return; }
-
+      if (len < 1 || len > 100000) { output.textContent = "Length must be 1-100,000."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
       var components = type === "dna" ? DNA_BASES : AA_CHARS;
       var seq = randomSeq(components, len);
-
       if (type === "dna") {
         var s = seqStats(seq);
-        stats.innerHTML =
+        statsEl.innerHTML =
           '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
-          '<span class="stat-item">A: <span>' + s.a + '</span></span>' +
-          '<span class="stat-item">T: <span>' + s.t + '</span></span>' +
-          '<span class="stat-item">G: <span>' + s.g + '</span></span>' +
-          '<span class="stat-item">C: <span>' + s.c + '</span></span>' +
+          '<span class="stat-item">A: <span>' + s.a + '</span></span><span class="stat-item">T: <span>' + s.t + '</span></span><span class="stat-item">G: <span>' + s.g + '</span></span><span class="stat-item">C: <span>' + s.c + '</span></span>' +
           '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
       } else {
-        stats.innerHTML =
-          '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' aa</span></span>' +
-          '<span class="stat-item">Type: <span>Protein</span></span>';
+        statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span>';
       }
-
       output.textContent = formatSeq(seq, 60);
       result.classList.add("visible");
     });
     wireCopy("rs-copy", "rs-output");
   })();
 
-  // ── Shuffle Sequence Tool ───────────────────────────────────────────────
+  // == SHUFFLE SEQUENCE ===============================================
   (function() {
-    var input  = document.getElementById("sh-input");
+    var input = document.getElementById("sh-input");
     var result = document.getElementById("sh-result");
-    var stats  = document.getElementById("sh-stats");
+    var statsEl = document.getElementById("sh-stats");
     var output = document.getElementById("sh-output");
 
     document.getElementById("sh-submit").addEventListener("click", function() {
-      var raw = input.value.trim();
-      if (!raw) return;
+      var raw = input.value.trim(); if (!raw) return;
       var parsed = parseFasta(raw);
-      // try DNA first, fall back to protein
       var isDna = verifyDna(parsed.sequence);
       var seq = isDna ? filterDnaSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
-      if (!seq.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); stats.innerHTML = ""; return; }
-
+      if (!seq.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
       var shuffled = shuffleSeq(seq);
-
       if (isDna) {
         var s = seqStats(seq);
-        stats.innerHTML =
-          '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
-          '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
-          '<span class="stat-item">Type: <span>DNA</span></span>';
+        statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span><span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span><span class="stat-item">Type: <span>DNA</span></span>';
       } else {
-        stats.innerHTML =
-          '<span class="stat-item stat-len">Length: <span>' + seq.length.toLocaleString() + ' aa</span></span>' +
-          '<span class="stat-item">Type: <span>Protein</span></span>';
+        statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + seq.length.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span>';
       }
-
       output.textContent = formatSeq(shuffled, 60);
       result.classList.add("visible");
     });
-
-    document.getElementById("sh-clear").addEventListener("click", function() {
-      input.value = ""; result.classList.remove("visible"); input.focus();
-    });
+    document.getElementById("sh-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
     wireCopy("sh-copy", "sh-output");
+  })();
+
+  // == TM CALCULATOR ==================================================
+  (function() {
+    var input = document.getElementById("tm-input");
+    var result = document.getElementById("tm-result");
+    var statsEl = document.getElementById("tm-stats");
+    var body = document.getElementById("tm-body");
+
+    document.getElementById("tm-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var dna = filterDna(parsed.sequence);
+      if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var naConc = parseFloat(document.getElementById("tm-na").value) || 0.05;
+      var primerNM = parseFloat(document.getElementById("tm-primer").value) || 250;
+      var primerConc = primerNM * 1e-9; // convert nM to M
+      var tm = calcTm(dna, naConc, primerConc);
+      var s = tm.stats || seqStats(dna);
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Length: <span>' + s.len + ' bp</span></span>' +
+        '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
+        '<span class="stat-item">Na+: <span>' + naConc + ' M</span></span>' +
+        '<span class="stat-item">Primer: <span>' + primerNM + ' nM</span></span>';
+
+      var html = '<div class="prot-stats-grid" style="grid-template-columns:1fr">';
+      for (var i = 0; i < tm.methods.length; i++) {
+        var m = tm.methods[i];
+        var color = m.recommended ? "var(--green)" : "var(--text-dim)";
+        html += '<div class="prot-stat-card">';
+        html += '<div class="psc-label">' + m.name + (m.recommended ? ' (recommended)' : '') + '</div>';
+        html += '<div class="psc-value" style="color:' + color + '">' + m.tm.toFixed(1) + ' &deg;C</div>';
+        html += '<div style="font-size:12px;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono)">' + m.formula + '</div>';
+        html += '<div style="font-size:11.5px;color:var(--text-muted);margin-top:4px">' + m.note + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+      html += '<div style="margin-top:16px;font-size:13px;color:var(--text-dim)"><strong>Base counts:</strong> A=' + s.a + ', T=' + s.t + ', G=' + s.g + ', C=' + s.c + '</div>';
+      body.innerHTML = html;
+      result.classList.add("visible");
+    });
+    document.getElementById("tm-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+  })();
+
+  // == MOTIF SEARCH ===================================================
+  (function() {
+    var input = document.getElementById("ms-input");
+    var result = document.getElementById("ms-result");
+    var statsEl = document.getElementById("ms-stats");
+    var body = document.getElementById("ms-body");
+
+    document.getElementById("ms-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var pattern = document.getElementById("ms-pattern").value.trim();
+      if (!pattern) { body.innerHTML = '<div class="re-no-cuts">Please enter a search pattern.</div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+      var parsed = parseFasta(raw);
+      var isProtein = document.getElementById("ms-type").value === "protein";
+      var seq = isProtein ? filterProteinSaveCase(parsed.sequence) : filterDnaSaveCase(parsed.sequence);
+      if (!seq.length) { body.innerHTML = '<div class="re-no-cuts">No valid characters found.</div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+      var res = searchMotif(seq, pattern, isProtein);
+      if (res.error) {
+        body.innerHTML = '<div class="re-no-cuts">' + res.error + '</div>';
+        result.classList.add("visible");
+        statsEl.innerHTML = "";
+        return;
+      }
+
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Sequence: <span>' + seq.length + (isProtein ? ' aa' : ' bp') + '</span></span>' +
+        '<span class="stat-item">Pattern: <span>' + res.pattern + '</span></span>' +
+        '<span class="stat-item">Regex: <span>' + res.regex + '</span></span>' +
+        '<span class="stat-item">Matches: <span>' + res.matches.length + '</span></span>';
+
+      if (res.matches.length === 0) {
+        body.innerHTML = '<div class="re-no-cuts">No matches found for "' + res.pattern + '".</div>';
+      } else {
+        var html = '<table class="re-table"><thead><tr><th>#</th><th>Position</th><th>End</th><th>Match</th><th>Context</th></tr></thead><tbody>';
+        for (var i = 0; i < res.matches.length; i++) {
+          var m = res.matches[i];
+          // Show 10 chars of context on each side
+          var ctxStart = Math.max(0, m.pos - 1 - 10);
+          var ctxEnd = Math.min(seq.length, m.end + 10);
+          var before = seq.slice(ctxStart, m.pos - 1);
+          var matched = seq.slice(m.pos - 1, m.end);
+          var after = seq.slice(m.end, ctxEnd);
+          var ctx = '<span style="color:var(--text-muted)">' + before + '</span><span style="color:#ff6b6b;font-weight:600">' + matched + '</span><span style="color:var(--text-muted)">' + after + '</span>';
+          html += '<tr><td>' + (i+1) + '</td><td>' + m.pos + '</td><td>' + m.end + '</td><td style="font-weight:600">' + m.seq + '</td><td style="font-size:11.5px">' + ctx + '</td></tr>';
+        }
+        html += '</tbody></table>';
+        body.innerHTML = html;
+      }
+      result.classList.add("visible");
+    });
+    document.getElementById("ms-clear").addEventListener("click", function() { input.value = ""; document.getElementById("ms-pattern").value = ""; result.classList.remove("visible"); input.focus(); });
+  })();
+
+  // == PRIMER DIMER CHECK =============================================
+  (function() {
+    var input1 = document.getElementById("pd-input1");
+    var input2 = document.getElementById("pd-input2");
+    var result = document.getElementById("pd-result");
+    var statsEl = document.getElementById("pd-stats");
+    var body = document.getElementById("pd-body");
+
+    document.getElementById("pd-submit").addEventListener("click", function() {
+      var p1 = filterDna(input1.value.trim());
+      if (!p1.length) { body.innerHTML = "<p>Please enter primer 1.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+      var p2raw = input2.value.trim();
+      var p2 = p2raw ? filterDna(p2raw) : "";
+      var isSelf = !p2;
+
+      var dimers = checkPrimerDimer(p1, p2 || p1);
+      // Filter to top results
+      var top = dimers.slice(0, 10);
+      var dangerous = dimers.filter(function(d) { return d.end3; });
+
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Primer 1: <span>' + p1.length + ' bp</span></span>' +
+        (isSelf ? '<span class="stat-item">Mode: <span>Self-dimer</span></span>' : '<span class="stat-item">Primer 2: <span>' + (p2 || "").length + ' bp</span></span>') +
+        '<span class="stat-item">Alignments found: <span>' + dimers.length + '</span></span>' +
+        '<span class="stat-item" style="color:' + (dangerous.length > 0 ? 'var(--red)' : 'var(--green)') + '">3\' end dimers: <span>' + dangerous.length + '</span></span>';
+
+      if (top.length === 0) {
+        body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--green);font-weight:600">No significant dimer formation detected.</div>';
+      } else {
+        var html = '';
+        for (var i = 0; i < top.length; i++) {
+          var d = top[i];
+          var borderColor = d.end3 ? 'var(--red)' : 'var(--border)';
+          var tag = d.end3 ? '<span style="color:var(--red);font-weight:600;font-size:11px;margin-left:8px">3\' END RISK</span>' : '';
+          html += '<div style="border:1px solid ' + borderColor + ';border-radius:var(--radius);padding:12px;margin-bottom:8px;background:var(--bg-input)">';
+          html += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Matches: <span style="color:var(--text);font-weight:600">' + d.matches + '</span> / ' + d.overlap + ' overlap, Est. Tm: <span style="font-weight:600">' + d.dimerTm + '&deg;C</span>' + tag + '</div>';
+          html += '<pre style="font-size:11.5px;line-height:1.5;margin:0;color:var(--text)">' + d.line1 + '\n' + d.bondLine + '\n' + d.line2 + '</pre>';
+          html += '</div>';
+        }
+        if (dimers.length > 10) {
+          html += '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:8px">Showing top 10 of ' + dimers.length + ' alignments (sorted by risk score)</div>';
+        }
+        body.innerHTML = html;
+      }
+      result.classList.add("visible");
+    });
+    document.getElementById("pd-clear").addEventListener("click", function() { input1.value = ""; input2.value = ""; result.classList.remove("visible"); input1.focus(); });
+  })();
+
+  // == MASS CALCULATOR ================================================
+  (function() {
+    var seqInput = document.getElementById("mc-seq");
+    var lenInput = document.getElementById("mc-length");
+    var result = document.getElementById("mc-result");
+    var statsEl = document.getElementById("mc-stats");
+    var body = document.getElementById("mc-body");
+
+    // Auto-fill length when sequence changes
+    seqInput.addEventListener("input", function() {
+      var raw = seqInput.value.trim();
+      if (raw) {
+        var parsed = parseFasta(raw);
+        var seq = parsed.sequence.replace(/[^A-Za-z]/g, "");
+        if (seq.length > 0) {
+          lenInput.value = seq.length;
+          lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
+        }
+      } else {
+        lenInput.setAttribute("placeholder", "auto");
+      }
+    });
+
+    document.getElementById("mc-submit").addEventListener("click", function() {
+      var seqType = document.getElementById("mc-type").value;
+      var raw = seqInput.value.trim();
+      var len = parseInt(lenInput.value) || 0;
+      var seqStr = "";
+
+      // If sequence provided, derive length and exact stats
+      if (raw) {
+        var parsed = parseFasta(raw);
+        seqStr = parsed.sequence.replace(/[^A-Za-z]/g, "");
+        if (seqStr.length > 0) len = seqStr.length;
+      }
+
+      if (len <= 0) { body.innerHTML = "<p>Please enter a sequence or a length.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+      var massUg = parseFloat(document.getElementById("mc-mass").value) || 0;
+      var pmol = parseFloat(document.getElementById("mc-pmol").value) || 0;
+
+      // If we have the actual sequence, compute exact MW instead of average
+      var exactMW = null;
+      if (seqStr) {
+        var s = seqStats(filterDnaSaveCase(seqStr));
+        // Per-nucleotide monoisotopic-ish masses (anhydrous, with phosphate)
+        // dAMP=331.2, dTMP=322.2, dGMP=347.2, dCMP=307.2
+        var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 - (len - 1) * 61.96;
+        if (seqType === "dsDNA") {
+          // complement strand: A pairs T, G pairs C
+          var compMW = s.t * 331.2 + s.a * 322.2 + s.c * 347.2 + s.g * 307.2 - (len - 1) * 61.96;
+          exactMW = ssMW + compMW;
+        } else if (seqType === "ssDNA") {
+          exactMW = ssMW;
+        } else {
+          // ssRNA: AMP=347.2, UMP=324.2, GMP=363.2, CMP=323.2
+          exactMW = s.a * 347.2 + s.t * 324.2 + s.g * 363.2 + s.c * 323.2 - (len - 1) * 61.96;
+        }
+      }
+
+      var conv = dnaConversions(len, massUg, pmol, seqType);
+      // Override with exact MW if available
+      if (exactMW) {
+        conv.mwDa = exactMW;
+        conv.mwKDa = exactMW / 1000;
+        // Recalculate conversions with exact MW
+        if (massUg > 0) {
+          var massG = massUg * 1e-6;
+          var moles = massG / exactMW;
+          conv.fromMass = { pmol: moles*1e12, fmol: moles*1e15, nmol: moles*1e9, copies: moles*6.022e23, massUg: massUg };
+        }
+        if (pmol > 0) {
+          var moles = pmol * 1e-12;
+          var massG = moles * exactMW;
+          conv.fromPmol = { ug: massG*1e6, ng: massG*1e9, copies: moles*6.022e23, pmol: pmol };
+        }
+      }
+      var unitLabel = conv.unitLabel;
+      var mwLabel = exactMW ? "MW (exact)" : "MW (avg)";
+
+      var statsHtml =
+        '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' ' + unitLabel + '</span></span>' +
+        '<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
+        '<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
+      if (seqStr) {
+        var s = seqStats(filterDnaSaveCase(seqStr));
+        statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
+      }
+      statsEl.innerHTML = statsHtml;
+
+      var html = '<div class="prot-stats-grid">';
+      if (conv.fromMass) {
+        var fm = conv.fromMass;
+        html += '<div class="prot-stat-card"><div class="psc-label">From ' + fm.massUg + ' ug</div>';
+        html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
+        html += '<div><span style="color:var(--text-dim)">pmol:</span> <span style="color:var(--accent);font-weight:600">' + fm.pmol.toFixed(4) + '</span></div>';
+        html += '<div><span style="color:var(--text-dim)">fmol:</span> <span style="font-weight:600">' + fm.fmol.toFixed(2) + '</span></div>';
+        html += '<div><span style="color:var(--text-dim)">nmol:</span> <span style="font-weight:600">' + fm.nmol.toFixed(6) + '</span></div>';
+        html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fm.copies.toExponential(3) + '</span></div>';
+        html += '</div></div>';
+      }
+      if (conv.fromPmol) {
+        var fp = conv.fromPmol;
+        html += '<div class="prot-stat-card"><div class="psc-label">From ' + fp.pmol + ' pmol</div>';
+        html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
+        html += '<div><span style="color:var(--text-dim)">ug:</span> <span style="color:var(--accent);font-weight:600">' + fp.ug.toFixed(4) + '</span></div>';
+        html += '<div><span style="color:var(--text-dim)">ng:</span> <span style="font-weight:600">' + fp.ng.toFixed(2) + '</span></div>';
+        html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fp.copies.toExponential(3) + '</span></div>';
+        html += '</div></div>';
+      }
+      if (!conv.fromMass && !conv.fromPmol) {
+        html += '<div class="prot-stat-card"><div class="psc-label">Molecular Weight</div>';
+        html += '<div class="psc-value">' + conv.mwDa.toLocaleString() + ' Da</div>';
+        html += '<div style="font-size:12px;color:var(--text-dim);margin-top:4px">Enter a mass (ug) or amount (pmol) to convert.</div></div>';
+      }
+      html += '</div>';
+      body.innerHTML = html;
+      result.classList.add("visible");
+    });
+    document.getElementById("mc-clear").addEventListener("click", function() { seqInput.value = ""; lenInput.value = ""; result.classList.remove("visible"); seqInput.focus(); });
+  })();
+
+  // == PAIRWISE ALIGNMENT =============================================
+  (function() {
+    var input1 = document.getElementById("pa-input1");
+    var input2 = document.getElementById("pa-input2");
+    var result = document.getElementById("pa-result");
+    var statsEl = document.getElementById("pa-stats");
+    var output = document.getElementById("pa-output");
+
+    document.getElementById("pa-submit").addEventListener("click", function() {
+      var raw1 = input1.value.trim(); var raw2 = input2.value.trim();
+      if (!raw1 || !raw2) return;
+      var seq1 = parseFasta(raw1).sequence.replace(/[^A-Za-z]/g, "");
+      var seq2 = parseFasta(raw2).sequence.replace(/[^A-Za-z]/g, "");
+      if (!seq1.length || !seq2.length) { output.textContent = "Please enter two valid sequences."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+      // Warn if large
+      if (seq1.length * seq2.length > 25000000) {
+        if (!confirm("These sequences are very long (" + seq1.length + " x " + seq2.length + "). Alignment may take a while or freeze the browser. Continue?")) return;
+      }
+
+      var mode = document.getElementById("pa-mode").value;
+      var matchScore = parseFloat(document.getElementById("pa-match").value);
+      var mismatchPen = parseFloat(document.getElementById("pa-mismatch").value);
+      var gapPen = parseFloat(document.getElementById("pa-gap").value);
+
+      var aln = pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen);
+
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Seq 1: <span>' + seq1.length + '</span></span>' +
+        '<span class="stat-item">Seq 2: <span>' + seq2.length + '</span></span>' +
+        '<span class="stat-item">Alignment length: <span>' + aln.length + '</span></span>' +
+        '<span class="stat-item stat-gc">Identity: <span>' + aln.identity + '%</span></span>' +
+        '<span class="stat-item">Matches: <span>' + aln.matches + '</span></span>' +
+        '<span class="stat-item">Mismatches: <span>' + aln.mismatches + '</span></span>' +
+        '<span class="stat-item">Gaps: <span>' + aln.gaps + '</span></span>' +
+        '<span class="stat-item">Score: <span>' + aln.score + '</span></span>';
+
+      // Format alignment in blocks of 60
+      var lines = [];
+      var width = 60;
+      for (var i = 0; i < aln.length; i += width) {
+        var a1 = aln.align1.slice(i, i + width);
+        var ml = aln.midline.slice(i, i + width);
+        var a2 = aln.align2.slice(i, i + width);
+        var pos = String(i + 1);
+        while (pos.length < 6) pos = " " + pos;
+        lines.push(pos + "  " + a1);
+        lines.push("        " + ml);
+        lines.push("        " + a2);
+        lines.push("");
+      }
+      output.textContent = lines.join("\n");
+      result.classList.add("visible");
+    });
+    document.getElementById("pa-clear").addEventListener("click", function() { input1.value = ""; input2.value = ""; result.classList.remove("visible"); input1.focus(); });
+    wireCopy("pa-copy", "pa-output");
+  })();
+
+  // == FORMAT CONVERTER ===============================================
+  (function() {
+    var input = document.getElementById("fc-input");
+    var result = document.getElementById("fc-result");
+    var statsEl = document.getElementById("fc-stats");
+    var output = document.getElementById("fc-output");
+
+    document.getElementById("fc-submit").addEventListener("click", function() {
+      var raw = input.value.trim(); if (!raw) return;
+      var parsed = parseFasta(raw);
+      var mode = document.getElementById("fc-mode").value;
+      var seq = parsed.sequence;
+      var cleanSeq = removeNonSeq(seq);
+      var converted = "";
+      switch (mode) {
+        case "raw": converted = cleanSeq; break;
+        case "fasta":
+          var title = document.getElementById("fc-title").value || parsed.title || "Sequence";
+          converted = toFasta(cleanSeq, title, 60); break;
+        case "numbered": converted = formatSeqNumbered(cleanSeq, 60, 10); break;
+        case "upper": converted = cleanSeq.toUpperCase(); break;
+        case "lower": converted = cleanSeq.toLowerCase(); break;
+        case "dna-only": converted = filterDnaSaveCase(seq); break;
+        case "protein-only": converted = filterProtein(seq); break;
+      }
+      statsEl.innerHTML =
+        '<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
+        '<span class="stat-item">Output: <span>' + converted.replace(/[>\n\s]/g, "").length + ' chars</span></span>';
+      output.textContent = converted;
+      result.classList.add("visible");
+    });
+    document.getElementById("fc-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
+    wireCopy("fc-copy", "fc-output");
   })();
 
 })();
