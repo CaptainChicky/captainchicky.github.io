@@ -1240,6 +1240,8 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					<option value="lower">lowercase</option>
 					<option value="dna-only">DNA/RNA only (strip non-GATCNU)</option>
 					<option value="protein-only">Protein only (strip non-AA)</option>
+					<option value="dna-to-rna">DNA → RNA (T → U)</option>
+					<option value="rna-to-dna">RNA → DNA (U → T)</option>
 				</select>
 			</div>
 			<div class="option-row">
@@ -2032,6 +2034,8 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 						case "lower": converted = cleanSeq.toLowerCase(); break;
 						case "dna-only": converted = filterDnaSaveCase(seq); break;
 						case "protein-only": converted = filterProtein(seq); break;
+					  	case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), 60); break;
+						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), 60); break;
 					}
 					statsEl.innerHTML =
 						'<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
