@@ -241,7 +241,7 @@ select option { background-color: var(--bg-card); color: var(--text); }
   <!-- REVERSE COMPLEMENT -->
   <section id="tool-reverse-complement" class="tool-page active">
     <h2 class="tool-title">Reverse Complement</h2>
-    <p class="tool-desc">Convert a DNA sequence into its reverse, complement, or reverse-complement counterpart. Accepts raw or FASTA format.</p>
+    <p class="tool-desc">Convert a DNA sequence into its reverse, complement, or reverse-complement counterpart. Supports IUPAC ambiguity codes (R, Y, S, W, K, M, B, D, H, V, N) and uracil (U). Accepts raw or FASTA format.</p>
     <label class="field-label" for="rc-input">Input Sequence</label>
     <textarea id="rc-input" spellcheck="false" placeholder="Paste raw or FASTA sequence...">>Sample sequence
 GGGGaaaaaaaatttatatat</textarea>
@@ -267,7 +267,7 @@ GGGGaaaaaaaatttatatat</textarea>
   <!-- TRANSLATE DNA -->
   <section id="tool-translate" class="tool-page">
     <h2 class="tool-title">Translate DNA</h2>
-    <p class="tool-desc">Translate a DNA sequence in all six reading frames. Open reading frames (Met to Stop) are highlighted in red. Click any frame header to copy its protein sequence.</p>
+    <p class="tool-desc">Translate a DNA sequence in all six reading frames. Open reading frames (Met to Stop) are highlighted, with Met in green and the ORF body in red. Click any frame header to copy its protein sequence.</p>
     <label class="field-label" for="tr-input">Input Sequence</label>
     <textarea id="tr-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence...">>Example
 ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
@@ -346,6 +346,15 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
     <p class="tool-desc">Calculate molecular weight, isoelectric point (pI), extinction coefficient, and amino acid composition of a protein sequence.</p>
     <label class="field-label" for="ps-input">Protein Sequence</label>
     <textarea id="ps-input" spellcheck="false" placeholder="Paste protein sequence (one-letter codes)...">MASMTGGQQMGRDLYDDDDKD</textarea>
+    <div class="option-row">
+      <label for="ps-pka">pKa dataset:</label>
+      <select id="ps-pka">
+        <option value="bjellqvist" selected>Bjellqvist (ExPASy base values)</option>
+        <option value="lehninger">Lehninger Principles of Biochemistry</option>
+        <option value="emboss">EMBOSS (Epk.dat)</option>
+        <option value="dtamb">DTASelect (Scripps)</option>
+      </select>
+    </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="ps-submit">Analyze</button>
       <button class="btn btn-secondary" id="ps-clear">Clear</button>
@@ -359,7 +368,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   <!-- RESTRICTION SITES -->
   <section id="tool-restriction-sites" class="tool-page">
     <h2 class="tool-title">Restriction Sites</h2>
-    <p class="tool-desc">Scan a DNA sequence for restriction enzyme recognition sites. Shows all enzymes that cut and their positions.</p>
+    <p class="tool-desc">Scan a DNA sequence against 47 common restriction enzymes. Both strands are searched (relevant for enzymes with non-palindromic sites). Shows all enzymes that cut, the number of sites, and their positions.</p>
     <label class="field-label" for="re-input">Input Sequence</label>
     <textarea id="re-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
     <div class="btn-row">
@@ -412,7 +421,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   <!-- TM CALCULATOR -->
   <section id="tool-tm-calc" class="tool-page">
     <h2 class="tool-title">Tm Calculator</h2>
-    <p class="tool-desc">Calculate the melting temperature of an oligonucleotide. Uses the Wallace rule for short oligos (13 bp or less) and a salt-adjusted formula for longer sequences (14+ bp).</p>
+    <p class="tool-desc">Calculate the melting temperature of an oligonucleotide. Uses the Wallace rule for short oligos (&le;13 bp), the nearest-neighbor method for primers (14&ndash;60 bp), and a long-sequence salt-adjusted formula for sequences &gt;60 bp. Supports IUPAC ambiguity codes. Primer concentration is treated as total strand concentration (C<sub>T</sub>).</p>
     <label class="field-label" for="tm-input">Primer Sequence</label>
     <textarea id="tm-input" spellcheck="false" placeholder="Paste primer sequence..." style="min-height:80px">ATCGATCGATCGATCG</textarea>
     <div class="option-row">
@@ -459,7 +468,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   <!-- PRIMER DIMER CHECK -->
   <section id="tool-primer-dimer" class="tool-page">
     <h2 class="tool-title">Primer Dimer Check</h2>
-    <p class="tool-desc">Check two primers for potential dimer formation. Highlights complementary regions, especially dangerous 3' end binding that can cause extension artifacts in PCR.</p>
+    <p class="tool-desc">Check two primers for potential dimer formation. Highlights complementary regions, especially dangerous 3&rsquo; end binding that can cause extension artifacts in PCR. Note: IUPAC ambiguity codes (R, Y, S, W, etc.) are not supported and will be stripped from input.</p>
     <label class="field-label" for="pd-input1">Primer 1 (5' to 3')</label>
     <textarea id="pd-input1" spellcheck="false" style="min-height:60px" placeholder="e.g. ATCGATCGATCGATCG">ATCGATCGATCGATCG</textarea>
     <label class="field-label" for="pd-input2" style="margin-top:12px">Primer 2 (5' to 3', leave empty for self-dimer check)</label>
@@ -477,7 +486,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   <!-- MASS CALCULATOR -->
   <section id="tool-mass-calc" class="tool-page">
     <h2 class="tool-title">DNA/RNA Mass Calculator</h2>
-    <p class="tool-desc">Convert between mass (ug/ng), moles (pmol/fmol), and copy number for DNA or RNA fragments. Paste a sequence or enter a length manually.</p>
+    <p class="tool-desc">Convert between mass (&mu;g/ng), moles (pmol/fmol), and copy number for DNA or RNA fragments. Paste a sequence (DNA or RNA with U) or enter a length manually. Exact MW is computed when a sequence is provided; otherwise an average per-nucleotide mass is used. When ssRNA is selected, any T in the input is treated as U for mass calculation.</p>
     <label class="field-label" for="mc-seq">Sequence (optional - length will be calculated)</label>
     <textarea id="mc-seq" spellcheck="false" style="min-height:80px" placeholder="Paste raw or FASTA sequence, or leave empty and enter length below..."></textarea>
     <div class="option-row" style="margin-top:12px">
@@ -509,7 +518,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   <!-- PAIRWISE ALIGNMENT -->
   <section id="tool-pairwise-align" class="tool-page">
     <h2 class="tool-title">Pairwise Alignment</h2>
-    <p class="tool-desc">Align two DNA or protein sequences using Needleman-Wunsch (global) or Smith-Waterman (local) algorithms. Warning: sequences over ~5000 characters may be slow in the browser.</p>
+    <p class="tool-desc">Align two DNA or protein sequences using Needleman-Wunsch (global) or Smith-Waterman (local) algorithms with linear gap penalties. Sequences over ~5,000 characters may be slow in the browser.</p>
     <label class="field-label" for="pa-input1">Sequence 1</label>
     <textarea id="pa-input1" spellcheck="false" style="min-height:80px" placeholder="Paste raw or FASTA sequence...">ATCGATCGATCGATCG</textarea>
     <label class="field-label" for="pa-input2" style="margin-top:12px">Sequence 2</label>
@@ -554,7 +563,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
         <option value="numbered">Numbered lines</option>
         <option value="upper">UPPERCASE</option>
         <option value="lower">lowercase</option>
-        <option value="dna-only">DNA only (strip non-GATCN)</option>
+        <option value="dna-only">DNA/RNA only (strip non-GATCNU)</option>
         <option value="protein-only">Protein only (strip non-AA)</option>
       </select>
     </div>
@@ -605,9 +614,9 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
   }
 
   var AA_NAMES = {
-    "A":"Ala","R":"Arg","N":"Asn","D":"Asp","C":"Cys","E":"Glu","Q":"Gln",
+    "A":"Ala","R":"Arg","N":"Asn","D":"Asp","B":"Asx","C":"Cys","E":"Glu","Q":"Gln",
     "G":"Gly","H":"His","I":"Ile","L":"Leu","K":"Lys","M":"Met","F":"Phe",
-    "P":"Pro","S":"Ser","T":"Thr","W":"Trp","Y":"Tyr","V":"Val","*":"Stop","X":"Xaa"
+    "P":"Pro","S":"Ser","T":"Thr","W":"Trp","Y":"Tyr","V":"Val","X":"Xaa","*":"Stop"
   };
 
   // -- Sidebar navigation ---------------------------------------------
@@ -635,7 +644,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
     document.getElementById("rc-submit").addEventListener("click", function() {
       var raw = input.value.trim(); if (!raw) return;
       var parsed = parseFasta(raw);
-      var dna = filterDnaSaveCase(parsed.sequence);
+      var dna = filterDnaIupacSaveCase(parsed.sequence);
       if (!dna.length) { output.textContent = "No valid DNA characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
       var mode = document.getElementById("rc-mode").value;
       var res;
@@ -719,7 +728,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
       var frames = translateAllFrames(dna, geneticCode);
       var s = seqStats(dna);
       var totalOrfs = 0;
-      for (var i = 0; i < frames.length; i++) totalOrfs += frames[i].orfs.length;
+      for (var i = 0; i < frames.length; i++) totalOrfs += findOrfs(frames[i].codonData, minOrf).length;
       statsEl.innerHTML =
         '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
         '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
@@ -742,20 +751,40 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
           });
         });
       }
-      // Codon frequency table
-      var freq = codonFrequency(dna, geneticCode);
+      // Codon frequency table — from longest ORF across all frames
       var freqEl = document.getElementById("tr-codon-freq");
       var gridEl = document.getElementById("tr-freq-grid");
-      var allCodons = Object.keys(geneticCode).sort();
-      var freqHtml = "";
-      for (var i = 0; i < allCodons.length; i++) {
-        var c = allCodons[i];
-        var count = freq[c] || 0;
-        var aa = geneticCode[c];
-        freqHtml += '<div class="cf-item"><span>' + c + ' (' + aa + ')</span> ' + count + '</div>';
+      var bestOrf = null, bestOrfFrame = null, bestOrfLen = 0;
+      for (var fi = 0; fi < frames.length; fi++) {
+        var orfs = findOrfs(frames[fi].codonData, minOrf);
+        for (var oi = 0; oi < orfs.length; oi++) {
+          if (orfs[oi].length > bestOrfLen) {
+            bestOrfLen = orfs[oi].length;
+            bestOrf = orfs[oi];
+            bestOrfFrame = frames[fi];
+          }
+        }
       }
-      gridEl.innerHTML = freqHtml;
-      freqEl.style.display = "block";
+      if (bestOrf && bestOrfFrame) {
+        var orfFreq = {};
+        for (var ci = bestOrf.start; ci <= bestOrf.end; ci++) {
+          var codon = bestOrfFrame.codonData[ci].codon.toUpperCase();
+          orfFreq[codon] = (orfFreq[codon] || 0) + 1;
+        }
+        var allCodons = Object.keys(geneticCode).sort();
+        var freqHtml = "";
+        for (var i = 0; i < allCodons.length; i++) {
+          var c = allCodons[i];
+          var count = orfFreq[c] || 0;
+          var aa = geneticCode[c];
+          freqHtml += '<div class="cf-item"><span>' + c + ' (' + aa + ')</span> ' + count + '</div>';
+        }
+        gridEl.innerHTML = freqHtml;
+        document.querySelector("#tr-codon-freq h4").textContent = "Codon Usage \u2014 Longest ORF (" + bestOrfFrame.label + ", " + bestOrfLen + " codons)";
+        freqEl.style.display = "block";
+      } else {
+        freqEl.style.display = "none";
+      }
       result.classList.add("visible");
     });
     document.getElementById("tr-clear").addEventListener("click", function() { input.value = ""; result.classList.remove("visible"); input.focus(); });
@@ -846,7 +875,9 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
       var prot = filterProtein(parsed.sequence);
       if (!prot.length) { body.innerHTML = "<p>No valid protein characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
       var mw = proteinMW(prot);
-      var pi = proteinPI(prot);
+      var pkaSetId = document.getElementById("ps-pka").value;
+      var pkaSet = PKA_SETS[pkaSetId];
+      var pi = proteinPI(prot, pkaSet);
       var ext = extinctionCoeff(prot);
       var comp = aaComposition(prot);
       var title = parsed.title ? '"' + parsed.title + '"' : "";
@@ -856,7 +887,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
 
       var html = '<div class="prot-stats-grid">';
       html += '<div class="prot-stat-card"><div class="psc-label">Molecular Weight</div><div class="psc-value">' + mw.toFixed(2) + ' Da</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">' + (mw/1000).toFixed(2) + ' kDa</div></div>';
-      html += '<div class="prot-stat-card"><div class="psc-label">Isoelectric Point (pI)</div><div class="psc-value" style="color:var(--accent)">' + pi.toFixed(2) + '</div></div>';
+      html += '<div class="prot-stat-card"><div class="psc-label">Isoelectric Point (pI)</div><div class="psc-value" style="color:var(--accent)">' + pi.toFixed(2) + '</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">' + pkaSet.name + '</div></div>';
       html += '<div class="prot-stat-card"><div class="psc-label">Extinction Coefficient (280nm)</div><div class="psc-value" style="font-size:16px">' + ext.withCystines.toLocaleString() + ' M<sup>-1</sup>cm<sup>-1</sup></div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">Reduced (no cystines): ' + ext.reduced.toLocaleString() + '</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Tyr: ' + ext.nY + ', Trp: ' + ext.nW + ', Cys: ' + ext.nC + '</div></div>';
 
       // AA Composition
@@ -979,7 +1010,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
     document.getElementById("tm-submit").addEventListener("click", function() {
       var raw = input.value.trim(); if (!raw) return;
       var parsed = parseFasta(raw);
-      var dna = filterDna(parsed.sequence);
+      var dna = filterDnaIupac(parsed.sequence);
       if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
       var naConc = parseFloat(document.getElementById("tm-na").value) || 0.05;
       var primerNM = parseFloat(document.getElementById("tm-primer").value) || 250;
@@ -1127,7 +1158,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
       var raw = seqInput.value.trim();
       if (raw) {
         var parsed = parseFasta(raw);
-        var seq = parsed.sequence.replace(/[^A-Za-z]/g, "");
+        var seq = filterDnaSaveCase(parsed.sequence);
         if (seq.length > 0) {
           lenInput.value = seq.length;
           lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
@@ -1146,7 +1177,7 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
       // If sequence provided, derive length and exact stats
       if (raw) {
         var parsed = parseFasta(raw);
-        seqStr = parsed.sequence.replace(/[^A-Za-z]/g, "");
+        seqStr = filterDnaSaveCase(parsed.sequence);
         if (seqStr.length > 0) len = seqStr.length;
       }
 
@@ -1159,18 +1190,22 @@ ATGGCTAGCATGACTGGTGGACAGCAAATGGGTCGGGATCTGTACGACGATGACGATAAGGATC</textarea>
       var exactMW = null;
       if (seqStr) {
         var s = seqStats(filterDnaSaveCase(seqStr));
-        // Per-nucleotide monoisotopic-ish masses (anhydrous, with phosphate)
+        // Exact MW from nucleotide 5'-monophosphate masses (Da):
         // dAMP=331.2, dTMP=322.2, dGMP=347.2, dCMP=307.2
-        var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 - (len - 1) * 61.96;
+        // Polymerization loses H2O (18.02) per bond; subtract 79.96
+        // once to convert 5'-phosphate terminus to 5'-OH (standard
+        // for synthetic oligos).
+        var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
+        var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
+        var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
         if (seqType === "dsDNA") {
-          // complement strand: A pairs T, G pairs C
-          var compMW = s.t * 331.2 + s.a * 322.2 + s.c * 347.2 + s.g * 307.2 - (len - 1) * 61.96;
+          var compMW = s.t * 331.2 + s.a * 322.2 + s.c * 347.2 + s.g * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
           exactMW = ssMW + compMW;
         } else if (seqType === "ssDNA") {
           exactMW = ssMW;
         } else {
-          // ssRNA: AMP=347.2, UMP=324.2, GMP=363.2, CMP=323.2
-          exactMW = s.a * 347.2 + s.t * 324.2 + s.g * 363.2 + s.c * 323.2 - (len - 1) * 61.96;
+          // ssRNA: rAMP=347.2, rUMP=324.2, rGMP=363.2, rCMP=323.2
+          exactMW = s.a * 347.2 + s.t * 324.2 + s.g * 363.2 + s.c * 323.2 + s.n * avgRNMP - (len - 1) * 18.02 - 79.96;
         }
       }
 

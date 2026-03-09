@@ -35,10 +35,12 @@ function reverseComplement(seq) {
 
 // -- Filters ----------------------------------------------------------
 
-function filterDna(seq)          { return seq.replace(/[^GATCNgatcn]/g, "").toLowerCase(); }
-function filterDnaSaveCase(seq)  { return seq.replace(/[^GATCNgatcn]/g, ""); }
-function filterProtein(seq)      { return seq.replace(/[^ACDEFGHIKLMNPQRSTVWYZacdefghiklmnpqrstvwyz*]/g, "").toUpperCase(); }
-function filterProteinSaveCase(s){ return s.replace(/[^ACDEFGHIKLMNPQRSTVWYZacdefghiklmnpqrstvwyz*]/g, ""); }
+function filterDna(seq)              { return seq.replace(/[^GATCNUgatcnu]/g, "").toLowerCase(); }
+function filterDnaSaveCase(seq)      { return seq.replace(/[^GATCNUgatcnu]/g, ""); }
+function filterDnaIupac(seq)         { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, "").toLowerCase(); }
+function filterDnaIupacSaveCase(seq) { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, ""); }
+function filterProtein(seq)          { return seq.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz*]/g, "").toUpperCase(); }
+function filterProteinSaveCase(s)    { return s.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz*]/g, ""); }
 
 // -- FASTA parsing ----------------------------------------------------
 
@@ -54,8 +56,8 @@ function parseFasta(raw) {
 
 // -- Validation -------------------------------------------------------
 
-function verifyDna(seq)     { return !/[^gatcn\s]/i.test(seq); }
-function verifyProtein(seq) { return !/[^acdefghiklmnpqrstvwyz*\s]/i.test(seq); }
+function verifyDna(seq)     { return !/[^gatcnu\s]/i.test(seq); }
+function verifyProtein(seq) { return !/[^abcdefghiklmnpqrstvwxyz*\s]/i.test(seq); }
 
 // -- Statistics -------------------------------------------------------
 
@@ -197,8 +199,8 @@ function findOrfs(codonData, minLength) {
     if (codonData[i].aa === "M" && start === -1) {
       start = i;
     } else if (codonData[i].aa === "*" && start !== -1) {
-      if (i - start + 1 >= minLength) {
-        orfs.push({ start: start, end: i, length: i - start + 1 });
+      if (i - start >= minLength) {
+        orfs.push({ start: start, end: i, length: i - start });
       }
       start = -1;
     }
@@ -297,14 +299,35 @@ var AA_MW = {
   G:57.0519, A:71.0788, V:99.1326, L:113.1594, I:113.1594,
   P:97.1167, F:147.1766, W:186.2132, M:131.1926, S:87.0782,
   T:101.1051, C:103.1388, Y:163.1760, H:137.1411, D:115.0886,
-  E:129.1155, N:114.1038, Q:128.1307, K:128.1741, R:156.1875
+  E:129.1155, N:114.1038, Q:128.1307, K:128.1741, R:156.1875,
+  B:114.5962, X:111.0608, Z:128.6231, "*":0
 };
 var WATER_MW = 18.0153;
 
-// pKa values for pI calculation
-var PKA_NTERM = 9.69;
-var PKA_CTERM = 2.34;
-var PKA_SIDE = { D:3.65, E:4.25, C:8.18, Y:10.07, H:6.00, K:10.53, R:12.48 };
+// pKa datasets for pI calculation
+// Values verified against Kozlowski (2016) IPC and primary sources
+var PKA_SETS = {
+  "bjellqvist": {
+    name: "Bjellqvist (ExPASy Compute pI/Mw)",
+    nterm: 7.5, cterm: 3.55,
+    side: { D:4.05, E:4.45, C:9.0, Y:10.0, H:5.98, K:10.0, R:12.0 }
+  },
+  "lehninger": {
+    name: "Lehninger Principles of Biochemistry",
+    nterm: 9.69, cterm: 2.34,
+    side: { D:3.86, E:4.25, C:8.33, Y:10.0, H:6.0, K:10.5, R:12.4 }
+  },
+  "emboss": {
+    name: "EMBOSS (Epk.dat)",
+    nterm: 8.6, cterm: 3.6,
+    side: { D:3.9, E:4.1, C:8.5, Y:10.1, H:6.5, K:10.8, R:12.5 }
+  },
+  "dtamb": {
+    name: "DTASelect (Scripps)",
+    nterm: 8.0, cterm: 3.1,
+    side: { D:4.4, E:4.4, C:8.5, Y:10.0, H:6.5, K:10.0, R:12.0 }
+  }
+}
 
 function proteinMW(seq) {
   var mw = WATER_MW;
@@ -315,15 +338,16 @@ function proteinMW(seq) {
   return mw;
 }
 
-function chargeAtPH(seq, pH) {
+function chargeAtPH(seq, pH, pkaSet) {
+  pkaSet = pkaSet || PKA_SETS["bjellqvist"];
   var charge = 0;
   // N-terminal positive
-  charge += Math.pow(10, PKA_NTERM) / (Math.pow(10, PKA_NTERM) + Math.pow(10, pH));
+  charge += Math.pow(10, pkaSet.nterm) / (Math.pow(10, pkaSet.nterm) + Math.pow(10, pH));
   // C-terminal negative
-  charge -= Math.pow(10, pH) / (Math.pow(10, PKA_CTERM) + Math.pow(10, pH));
+  charge -= Math.pow(10, pH) / (Math.pow(10, pkaSet.cterm) + Math.pow(10, pH));
   for (var i = 0; i < seq.length; i++) {
     var aa = seq[i].toUpperCase();
-    var pka = PKA_SIDE[aa];
+    var pka = pkaSet.side[aa];
     if (pka === undefined) continue;
     if (aa === "K" || aa === "R" || aa === "H") {
       charge += Math.pow(10, pka) / (Math.pow(10, pka) + Math.pow(10, pH));
@@ -334,11 +358,12 @@ function chargeAtPH(seq, pH) {
   return charge;
 }
 
-function proteinPI(seq) {
+function proteinPI(seq, pkaSet) {
+  pkaSet = pkaSet || PKA_SETS["bjellqvist"];
   var lo = 0, hi = 14, mid;
   for (var i = 0; i < 200; i++) {
     mid = (lo + hi) / 2;
-    var ch = chargeAtPH(seq, mid);
+    var ch = chargeAtPH(seq, mid, pkaSet);
     if (ch > 0) lo = mid;
     else hi = mid;
     if (Math.abs(ch) < 0.0001) break;
@@ -364,7 +389,7 @@ function extinctionCoeff(seq) {
 
 function aaComposition(seq) {
   var counts = {};
-  var order = "GAVLIPFWMSCTYHDEQNKR";
+  var order = "GAVLIPFWMSCTYHDEQNKRBXZ";
   for (var i = 0; i < order.length; i++) counts[order[i]] = 0;
   for (var i = 0; i < seq.length; i++) {
     var aa = seq[i].toUpperCase();
@@ -435,48 +460,68 @@ function calcTmNN(seq, naConc, primerConc) {
   // Initiation params based on terminal bases (use first possibility if ambiguous)
   var firstBases = IUPAC_EXPAND[upper[0]] || ["A"];
   var lastBases  = IUPAC_EXPAND[upper[len - 1]] || ["A"];
-  var first = firstBases[0], last = lastBases[0];
-  var initFirst = (first === "G" || first === "C") ? "GC" : "AT";
-  var initLast  = (last === "G" || last === "C") ? "GC" : "AT";
-  dH += NN_INIT_DH[initFirst] + NN_INIT_DH[initLast];
-  dS += NN_INIT_DS[initFirst] + NN_INIT_DS[initLast];
+  function gcFraction(bases) {
+    var gc = 0;
+    for (var i = 0; i < bases.length; i++) if (bases[i]==="G"||bases[i]==="C") gc++;
+    return gc / bases.length;
+  }
+  var fGC = gcFraction(firstBases), lGC = gcFraction(lastBases);
+  dH += fGC*NN_INIT_DH["GC"] + (1-fGC)*NN_INIT_DH["AT"] + lGC*NN_INIT_DH["GC"] + (1-lGC)*NN_INIT_DH["AT"];
+  dS += fGC*NN_INIT_DS["GC"] + (1-fGC)*NN_INIT_DS["AT"] + lGC*NN_INIT_DS["GC"] + (1-lGC)*NN_INIT_DS["AT"];
 
-  // Salt correction (Owczarzy et al. 2004 simplified)
+  // Salt correction (SantaLucia 1998)
   dS += 0.368 * (len - 1) * Math.log(naConc);
 
   // Tm = dH / (dS + R * ln(Ct/4)) - 273.15
   var R = 1.987;
-  var tm = (dH * 1000) / (dS + R * Math.log(primerConc / 4)) - 273.15;
+  var isSelfComp = (seq.toUpperCase() === reverseComplement(seq.toUpperCase()));
+  var ctTerm = isSelfComp ? primerConc : (primerConc / 4);
+  var tm = (dH * 1000) / (dS + R * Math.log(ctTerm)) - 273.15;
   return parseFloat(tm.toFixed(1));
 }
 
 function calcTm(seq, naConc, primerConc) {
   naConc = naConc || 0.05;
   primerConc = primerConc || 0.00000025;
-  var s = seqStats(seq);
-  var len = s.len;
+  // IUPAC-aware base counting: distribute ambiguous bases fractionally
+  var IUPAC_BASES = {
+    A:[1,0,0,0], C:[0,1,0,0], G:[0,0,1,0], T:[0,0,0,1], U:[0,0,0,1],
+    R:[0.5,0,0.5,0], Y:[0,0.5,0,0.5], S:[0,0.5,0.5,0], W:[0.5,0,0,0.5],
+    K:[0,0,0.5,0.5], M:[0.5,0.5,0,0], B:[0,1/3,1/3,1/3], D:[1/3,0,1/3,1/3],
+    H:[1/3,1/3,0,1/3], V:[1/3,1/3,1/3,0], N:[0.25,0.25,0.25,0.25]
+  };
+  var fa=0, fc=0, fg=0, ft=0, len=0;
+  for (var i = 0; i < seq.length; i++) {
+    var b = IUPAC_BASES[seq[i].toUpperCase()];
+    if (b) { fa += b[0]; fc += b[1]; fg += b[2]; ft += b[3]; len++; }
+  }
   if (len === 0) return { methods: [], len: 0 };
+  var s = {
+    len: len, a: Math.round(fa), t: Math.round(ft), g: Math.round(fg), c: Math.round(fc), n: 0,
+    gc: ((fg + fc) / len * 100).toFixed(1),
+    at: ((fa + ft) / len * 100).toFixed(1)
+  };
 
   var methods = [];
 
   if (len <= 13) {
     // Short oligos: Wallace only
     var tmW = 2 * (s.a + s.t) + 4 * (s.g + s.c);
-    methods.push({ name: "Wallace rule", tm: tmW, formula: "Tm = 2(A+T) + 4(G+C)", note: "Standard method for short oligos (13 bp or less)", recommended: true });
+    methods.push({ name: "Wallace rule", tm: tmW, formula: "Tm = 2(A+T) + 4(G+C)", note: "Standard method for short oligos (\u226413 bp). Does not account for salt or primer concentration.", recommended: true });
   } else if (len <= 60) {
     // Primer range: NN (recommended) + salt-adjusted for comparison
     var tmNN = calcTmNN(seq, naConc, primerConc);
     if (tmNN !== null) {
-      methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = dH / (dS + R*ln(Ct/4)) - 273.15 (SantaLucia 1998)", note: "Most accurate for primers. Uses dinucleotide thermodynamic parameters, salt and primer concentration", recommended: true });
+      methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = \u0394H / (\u0394S + R\u00b7ln(Ct/4)) \u2212 273.15 (SantaLucia 1998)", note: "Most accurate for primers (14\u201360 bp). Uses dinucleotide thermodynamic parameters with salt and primer concentration corrections.", recommended: true });
     }
     var gcFrac = (s.g + s.c) / len;
     var tmSalt = 100.5 + (41 * gcFrac) - (820 / len) + 16.6 * Math.log10(naConc);
-    methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 100.5 + 41(GC%) - 820/N + 16.6*log10([Na+])", note: "General-purpose formula, less accurate than nearest-neighbor for primers", recommended: (tmNN === null) });
+    methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 100.5 + 41\u00b7(%GC) \u2212 820/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "General-purpose formula. Less accurate than nearest-neighbor for primers but useful for comparison.", recommended: (tmNN === null) });
   } else {
-    // Long sequences: salt-adjusted only
+    // Long sequences: salt-adjusted (long-sequence variant, Howley et al. 1979)
     var gcFrac = (s.g + s.c) / len;
-    var tmSalt = 100.5 + (41 * gcFrac) - (820 / len) + 16.6 * Math.log10(naConc);
-    methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 100.5 + 41(GC%) - 820/N + 16.6*log10([Na+])", note: "Nearest-neighbor is not applicable for sequences longer than 60 bp. Salt-adjusted formula is the standard method at this length", recommended: true });
+    var tmSalt = 81.5 + (41 * gcFrac) - (500 / len) + 16.6 * Math.log10(naConc);
+    methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 81.5 + 41\u00b7(%GC) \u2212 500/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "Long-sequence salt-adjusted formula (>60 bp). GC and salt terms from Marmur & Doty (1962) and Schildkraut & Lifson (1965).", recommended: true });
   }
 
   return { methods: methods, len: len, gc: s.gc, stats: s };
@@ -485,6 +530,9 @@ function calcTm(seq, naConc, primerConc) {
 // =====================================================================
 // MOTIF SEARCH
 // =====================================================================
+
+// IUPAC_TO_REGEX is defined in the restriction enzyme section below
+// and is also used by searchMotif
 
 function searchMotif(seq, pattern, isProtein) {
   var upper = seq.toUpperCase();
@@ -645,7 +693,7 @@ function toLowerCase(seq) { return seq.toLowerCase(); }
 
 function removeNumbers(seq) { return seq.replace(/[0-9]/g, ""); }
 function removeSpaces(seq) { return seq.replace(/\s/g, ""); }
-function removeNonSeq(seq) { return seq.replace(/[^A-Za-z]/g, ""); }
+function removeNonSeq(seq) { return seq.replace(/[^A-Za-z*]/g, ""); }
 
 // =====================================================================
 // ALIGNMENT
@@ -718,9 +766,9 @@ function parseCodonTable(tableText) {
 // DNA MASS CALCULATOR
 // =====================================================================
 
-// Average MW of a dsDNA base pair = ~660 Da
-// Average MW of a ssDNA nucleotide = ~330 Da
-// Average MW of a ssRNA nucleotide = ~340 Da
+// Average MW of a dsDNA base pair ~ 660 Da
+// Average MW of a ssDNA nucleotide ~ 330 Da
+// Average MW of a ssRNA nucleotide ~ 340 Da
 
 function dnaConversions(lengthBp, massUg, pmol, seqType) {
   // seqType: "dsDNA", "ssDNA", "ssRNA"
@@ -772,7 +820,7 @@ function dnaConversions(lengthBp, massUg, pmol, seqType) {
 function checkPrimerDimer(primer1, primer2) {
   var p1 = primer1.toUpperCase();
   var p2 = primer2 ? primer2.toUpperCase() : p1; // self-dimer if no second primer
-  var p2c = complement(p2).toUpperCase(); // complement of primer2
+  var p2c = reverseComplement(p2).toUpperCase(); // reverse complement of primer2
 
   var results = [];
   var len1 = p1.length, len2 = p2c.length;
@@ -808,7 +856,7 @@ function checkPrimerDimer(primer1, primer2) {
       var idx1 = start1 + overlapLen - 1 - i;
       var idx2 = start2 + overlapLen - 1 - i;
       if (idx1 >= len1 - 5 && p1[idx1] === p2c[idx2]) end3p1 = true;
-      if (idx2 >= len2 - 5 && p1[start1 + i] === p2c[start2 + i]) end3p2 = true;
+      if (start2 + i < 5 && p1[start1 + i] === p2c[start2 + i]) end3p2 = true;
     }
 
     // Build visual alignment
@@ -820,7 +868,7 @@ function checkPrimerDimer(primer1, primer2) {
     var bondLine = "";
     for (var i = 0; i < start1 + 3 + (offset < 0 ? -offset : 0); i++) bondLine += " ";
     bondLine += bondStr;
-    var line2 = pad2 + "3'-" + p2c.split("").reverse().join("") + "-5'";
+    var line2 = pad2 + "3'-" + p2.toUpperCase().split("").reverse().join("") + "-5'";
 
     // Compute score: matches weighted, bonus for 3' involvement
     var score = matches;
