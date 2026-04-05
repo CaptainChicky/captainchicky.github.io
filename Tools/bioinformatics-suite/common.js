@@ -1000,3 +1000,220 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 		identity: identity, length: align1.length
 	};
 }
+
+// =====================================================================
+// SANGER ASSEMBLY (Contig Merge)
+// =====================================================================
+
+var IUPAC_BASES_SET = {
+	A: "A", C: "C", G: "G", T: "T", U: "T",
+	R: "AG", Y: "CT", S: "CG", W: "AT", K: "GT", M: "AC",
+	B: "CGT", D: "AGT", H: "ACT", V: "ACG",
+	N: "ACGT"
+};
+
+var BASES_TO_IUPAC = {
+	"A": "A", "C": "C", "G": "G", "T": "T",
+	"AG": "R", "CT": "Y", "CG": "S", "AT": "W", "GT": "K", "AC": "M",
+	"CGT": "B", "AGT": "D", "ACT": "H", "ACG": "V",
+	"ACGT": "N"
+};
+
+function resolveIUPAC(base1, base2) {
+	var b1 = base1.toUpperCase();
+	var b2 = base2.toUpperCase();
+	if (b1 === b2) return b1;
+	var set1 = IUPAC_BASES_SET[b1];
+	var set2 = IUPAC_BASES_SET[b2];
+	if (!set1 || !set2) return "N";
+	if (b1 === "N") return b2;
+	if (b2 === "N") return b1;
+	var intersection = "";
+	for (var i = 0; i < set1.length; i++) {
+		if (set2.indexOf(set1[i]) !== -1) intersection += set1[i];
+	}
+	if (intersection.length === 0) {
+		var union = "";
+		var seen = {};
+		for (var i = 0; i < set1.length; i++) { if (!seen[set1[i]]) { union += set1[i]; seen[set1[i]] = true; } }
+		for (var i = 0; i < set2.length; i++) { if (!seen[set2[i]]) { union += set2[i]; seen[set2[i]] = true; } }
+		var sorted = union.split("").sort().join("");
+		return BASES_TO_IUPAC[sorted] || "N";
+	}
+	var sorted = intersection.split("").sort().join("");
+	return BASES_TO_IUPAC[sorted] || "N";
+}
+
+function iupacSpecificity(base) {
+	var set = IUPAC_BASES_SET[base.toUpperCase()];
+	return set ? set.length : 4;
+}
+
+function sangerAssemble(fwdSeq, revSeq, opts) {
+	opts = opts || {};
+	var minOverlap = opts.minOverlap || 20;
+	var matchScore = opts.matchScore !== undefined ? opts.matchScore : 2;
+	var mismatchPen = opts.mismatchPen !== undefined ? opts.mismatchPen : -1;
+	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -3;
+
+	var rcRev = reverseComplement(revSeq);
+	var fwd = fwdSeq.toUpperCase();
+	var rev = rcRev.toUpperCase();
+	var fLen = fwd.length;
+	var rLen = rev.length;
+
+	var m = fLen;
+	var n = rLen;
+
+	var score = [];
+	var trace = [];
+	for (var i = 0; i <= m; i++) {
+		score[i] = [];
+		trace[i] = [];
+		for (var j = 0; j <= n; j++) {
+			score[i][j] = 0;
+			trace[i][j] = 0;
+		}
+	}
+
+	// Free end gaps (semi-global alignment)
+	for (var i = 1; i <= m; i++) { score[i][0] = 0; trace[i][0] = 2; }
+	for (var j = 1; j <= n; j++) { score[0][j] = 0; trace[0][j] = 3; }
+
+	function scoreMatchSA(b1, b2) {
+		if (b1 === b2) return matchScore;
+		var s1 = IUPAC_BASES_SET[b1] || "ACGT";
+		var s2 = IUPAC_BASES_SET[b2] || "ACGT";
+		for (var i = 0; i < s1.length; i++) {
+			if (s2.indexOf(s1[i]) !== -1) return matchScore;
+		}
+		return mismatchPen;
+	}
+
+	for (var i = 1; i <= m; i++) {
+		for (var j = 1; j <= n; j++) {
+			var s = scoreMatchSA(fwd[i - 1], rev[j - 1]);
+			var diag = score[i - 1][j - 1] + s;
+			var up = score[i - 1][j] + gapPen;
+			var left = score[i][j - 1] + gapPen;
+			if (diag >= up && diag >= left) { score[i][j] = diag; trace[i][j] = 1; }
+			else if (up >= left) { score[i][j] = up; trace[i][j] = 2; }
+			else { score[i][j] = left; trace[i][j] = 3; }
+		}
+	}
+
+	var bestScore = -Infinity, bestI = m, bestJ = n;
+	for (var j = 0; j <= n; j++) {
+		if (score[m][j] > bestScore) { bestScore = score[m][j]; bestI = m; bestJ = j; }
+	}
+	for (var i = 0; i <= m; i++) {
+		if (score[i][n] > bestScore) { bestScore = score[i][n]; bestI = i; bestJ = n; }
+	}
+
+	var align1 = "", align2 = "";
+	var ti = bestI, tj = bestJ;
+
+	if (bestI < m) {
+		for (var i = m; i > bestI; i--) { align1 = fwd[i - 1] + align1; align2 = "-" + align2; }
+	}
+	if (bestJ < n) {
+		for (var j = n; j > bestJ; j--) { align1 = "-" + align1; align2 = rev[j - 1] + align2; }
+	}
+
+	while (ti > 0 && tj > 0) {
+		if (trace[ti][tj] === 1) {
+			align1 = fwd[ti - 1] + align1;
+			align2 = rev[tj - 1] + align2;
+			ti--; tj--;
+		} else if (trace[ti][tj] === 2) {
+			align1 = fwd[ti - 1] + align1;
+			align2 = "-" + align2;
+			ti--;
+		} else {
+			align1 = "-" + align1;
+			align2 = rev[tj - 1] + align2;
+			tj--;
+		}
+	}
+
+	while (ti > 0) { align1 = fwd[ti - 1] + align1; align2 = "-" + align2; ti--; }
+	while (tj > 0) { align1 = "-" + align1; align2 = rev[tj - 1] + align2; tj--; }
+
+	// Build consensus
+	var consensus = "";
+	var annotation = "";
+	var overlapStart = -1, overlapEnd = -1;
+	var matches = 0, conflicts = 0, resolved = 0;
+
+	for (var i = 0; i < align1.length; i++) {
+		var b1 = align1[i];
+		var b2 = align2[i];
+
+		if (b1 === "-" && b2 === "-") {
+			continue;
+		} else if (b1 === "-") {
+			consensus += b2;
+			annotation += "R";
+		} else if (b2 === "-") {
+			consensus += b1;
+			annotation += "F";
+		} else {
+			if (overlapStart === -1) overlapStart = i;
+			overlapEnd = i;
+
+			var resolved_base = resolveIUPAC(b1, b2);
+			var spec1 = iupacSpecificity(b1);
+			var spec2 = iupacSpecificity(b2);
+			var specR = iupacSpecificity(resolved_base);
+
+			if (b1 === b2) {
+				consensus += resolved_base;
+				annotation += "B";
+				matches++;
+			} else if (specR < Math.max(spec1, spec2)) {
+				consensus += resolved_base;
+				annotation += "X";
+				resolved++;
+			} else if (specR <= Math.min(spec1, spec2)) {
+				consensus += resolved_base;
+				annotation += "X";
+				resolved++;
+			} else {
+				consensus += resolved_base;
+				annotation += "!";
+				conflicts++;
+			}
+		}
+	}
+
+	var overlapLen = 0;
+	for (var i = 0; i < annotation.length; i++) {
+		var c = annotation[i];
+		if (c === "B" || c === "X" || c === "!") overlapLen++;
+	}
+
+	var fwdAmbig = 0, revAmbig = 0, consensusAmbig = 0;
+	for (var i = 0; i < fwdSeq.length; i++) if (iupacSpecificity(fwdSeq[i]) > 1) fwdAmbig++;
+	for (var i = 0; i < revSeq.length; i++) if (iupacSpecificity(revSeq[i]) > 1) revAmbig++;
+	for (var i = 0; i < consensus.length; i++) if (iupacSpecificity(consensus[i]) > 1) consensusAmbig++;
+
+	return {
+		consensus: consensus,
+		annotation: annotation,
+		align1: align1,
+		align2: align2,
+		rcRev: rcRev,
+		score: bestScore,
+		overlapLen: overlapLen,
+		matches: matches,
+		conflicts: conflicts,
+		resolved: resolved,
+		fwdLen: fwdSeq.length,
+		revLen: revSeq.length,
+		consensusLen: consensus.length,
+		fwdAmbig: fwdAmbig,
+		revAmbig: revAmbig,
+		consensusAmbig: consensusAmbig,
+		ambigResolved: (fwdAmbig + revAmbig) - consensusAmbig
+	};
+}
