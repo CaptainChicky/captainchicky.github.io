@@ -1177,14 +1177,12 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 				annotation += "B";
 				matches++;
 			} else if (specR < Math.max(spec1, spec2)) {
-				consensus += resolved_base;
-				annotation += "X";
-				resolved++;
-			} else if (specR <= Math.min(spec1, spec2)) {
+				// Resolved: intersection is more specific than at least one input
 				consensus += resolved_base;
 				annotation += "X";
 				resolved++;
 			} else {
+				// Conflict: resolution is no better (union was used, or sets were disjoint)
 				consensus += resolved_base;
 				annotation += "!";
 				conflicts++;
@@ -1223,6 +1221,8 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 		rcRev: rcRev,
 		score: bestScore,
 		overlapLen: overlapLen,
+		overlapStart: overlapStart,
+		overlapEnd: overlapEnd,
 		matches: matches,
 		conflicts: conflicts,
 		resolved: resolved,

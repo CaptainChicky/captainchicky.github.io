@@ -713,6 +713,13 @@
 			font-family: var(--font-mono);
 		}
 
+		/* Sanger assembly annotation colors */
+		.sa-fwd { color: var(--accent); }
+		.sa-rev { color: var(--purple); }
+		.sa-both { color: var(--green); }
+		.sa-resolved { color: var(--orange); }
+		.sa-conflict { color: var(--red); font-weight: 700; }
+
 		/* Responsive */
 		@media (max-width: 700px) {
 			:root {
@@ -758,7 +765,7 @@
 			<h1>Analysis Suite</h1>
 		</div>
 
-		<div class="sidebar-cat">Sequence Conversion</div>
+		<div class="sidebar-cat">Transform</div>
 		<a class="sidebar-item active" data-tool="reverse-complement">
 			<span class="icon">&#8644;</span> <span>Reverse Complement</span>
 		</a>
@@ -768,16 +775,37 @@
 		<a class="sidebar-item" data-tool="back-translate">
 			<span class="icon">&#8617;</span> <span>Back Translate</span>
 		</a>
+		<a class="sidebar-item" data-tool="format-convert">
+			<span class="icon">&#128196;</span> <span>Format Converter</span>
+		</a>
 
-		<div class="sidebar-cat">Sequence Analysis</div>
+		<div class="sidebar-cat">Analyze</div>
 		<a class="sidebar-item" data-tool="gc-content">
 			<span class="icon">&#9678;</span> <span>GC Content</span>
 		</a>
 		<a class="sidebar-item" data-tool="protein-stats">
 			<span class="icon">&#9879;</span> <span>Protein Stats</span>
 		</a>
+		<a class="sidebar-item" data-tool="mass-calc">
+			<span class="icon">&#9878;</span> <span>Mass Calculator</span>
+		</a>
 
-		<div class="sidebar-cat">Pattern Tools</div>
+		<div class="sidebar-cat">Primers &amp; Oligos</div>
+		<a class="sidebar-item" data-tool="tm-calc">
+			<span class="icon">&#127777;</span> <span>Tm Calculator</span>
+		</a>
+		<a class="sidebar-item" data-tool="primer-dimer">
+			<span class="icon">&#128278;</span> <span>Primer Dimer</span>
+		</a>
+		<a class="sidebar-item" data-tool="sanger-assembly">
+			<span class="icon">&#9654;&#9664;</span> <span>Sanger Assembly</span>
+			<span class="badge">New</span>
+		</a>
+
+		<div class="sidebar-cat">Search &amp; Align</div>
+		<a class="sidebar-item" data-tool="pairwise-align">
+			<span class="icon">&#9776;</span> <span>Pairwise Alignment</span>
+		</a>
 		<a class="sidebar-item" data-tool="restriction-sites">
 			<span class="icon">&#9986;</span> <span>Restriction Sites</span>
 		</a>
@@ -785,27 +813,9 @@
 			<span class="icon">&#11045;</span> <span>Motif Search</span>
 		</a>
 
-		<div class="sidebar-cat">Utilities</div>
-		<a class="sidebar-item" data-tool="random-seq">
-			<span class="icon">&#127922;</span> <span>Random Sequence</span>
-		</a>
-		<a class="sidebar-item" data-tool="shuffle-seq">
-			<span class="icon">&#128256;</span> <span>Shuffle Sequence</span>
-		</a>
-		<a class="sidebar-item" data-tool="tm-calc">
-			<span class="icon">&#127777;</span> <span>Tm Calculator</span>
-		</a>
-		<a class="sidebar-item" data-tool="primer-dimer">
-			<span class="icon">&#128278;</span> <span>Primer Dimer</span>
-		</a>
-		<a class="sidebar-item" data-tool="mass-calc">
-			<span class="icon">&#9878;</span> <span>Mass Calculator</span>
-		</a>
-		<a class="sidebar-item" data-tool="pairwise-align">
-			<span class="icon">&#9776;</span> <span>Pairwise Alignment</span>
-		</a>
-		<a class="sidebar-item" data-tool="format-convert">
-			<span class="icon">&#128196;</span> <span>Format Converter</span>
+		<div class="sidebar-cat">Generate</div>
+		<a class="sidebar-item" data-tool="generate-seq">
+			<span class="icon">&#127922;</span> <span>Random &amp; Shuffle</span>
 		</a>
 	</nav>
 
@@ -955,6 +965,46 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			</div>
 		</section>
 
+		<!-- FORMAT CONVERTER -->
+		<section id="tool-format-convert" class="tool-page">
+			<h2 class="tool-title">Format Converter</h2>
+			<p class="tool-desc">Clean up and reformat sequences. Convert between raw, FASTA, numbered formats; change case;
+				remove whitespace or numbers.</p>
+			<label class="field-label" for="fc-input">Input Sequence</label>
+			<textarea id="fc-input" spellcheck="false" placeholder="Paste sequence in any format..."></textarea>
+			<div class="option-row">
+				<label for="fc-mode">Convert to:</label>
+				<select id="fc-mode">
+					<option value="raw">Raw (letters only)</option>
+					<option value="fasta">FASTA format</option>
+					<option value="numbered">Numbered lines</option>
+					<option value="upper">UPPERCASE</option>
+					<option value="lower">lowercase</option>
+					<option value="dna-only">DNA/RNA only (strip non-GATCNU)</option>
+					<option value="protein-only">Protein only (strip non-AA)</option>
+					<option value="dna-to-rna">DNA &rarr; RNA (T &rarr; U)</option>
+					<option value="rna-to-dna">RNA &rarr; DNA (U &rarr; T)</option>
+				</select>
+			</div>
+			<div class="option-row">
+				<label for="fc-title">FASTA title (optional):</label>
+				<input type="text" id="fc-title" value="" placeholder="My sequence" style="width:240px">
+			</div>
+			<div class="btn-row">
+				<button class="btn btn-primary" id="fc-submit">Convert</button>
+				<button class="btn btn-secondary" id="fc-clear">Clear</button>
+			</div>
+			<div class="result-panel" id="fc-result">
+				<div class="result-stats" id="fc-stats"></div>
+				<div class="result-header">
+					<h3>Output</h3><button class="btn btn-copy" id="fc-copy">Copy</button>
+				</div>
+				<div class="result-body">
+					<pre id="fc-output"></pre>
+				</div>
+			</div>
+		</section>
+
 		<!-- GC CONTENT -->
 		<section id="tool-gc-content" class="tool-page">
 			<h2 class="tool-title">GC Content</h2>
@@ -1000,70 +1050,42 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			</div>
 		</section>
 
-		<!-- RESTRICTION SITES -->
-		<section id="tool-restriction-sites" class="tool-page">
-			<h2 class="tool-title">Restriction Sites</h2>
-			<p class="tool-desc">Scan a DNA sequence against 47 common restriction enzymes. Both strands are searched
-				(relevant for enzymes with non-palindromic sites). Shows all enzymes that cut, the number of sites, and
-				their positions.</p>
-			<label class="field-label" for="re-input">Input Sequence</label>
-			<textarea id="re-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
-			<div class="btn-row">
-				<button class="btn btn-primary" id="re-submit">Find Sites</button>
-				<button class="btn btn-secondary" id="re-clear">Clear</button>
-			</div>
-			<div class="result-panel" id="re-result">
-				<div class="result-stats" id="re-stats"></div>
-				<div class="result-body" id="re-body" style="padding:0;overflow-x:auto"></div>
-			</div>
-		</section>
-
-		<!-- RANDOM SEQUENCE -->
-		<section id="tool-random-seq" class="tool-page">
-			<h2 class="tool-title">Random Sequence</h2>
-			<p class="tool-desc">Generate a random DNA or protein sequence of a given length.</p>
-			<div class="option-row" style="margin-top:0">
-				<label for="rs-type">Type:</label>
-				<select id="rs-type">
-					<option value="dna" selected>DNA</option>
-					<option value="protein">Protein</option>
+		<!-- MASS CALCULATOR -->
+		<section id="tool-mass-calc" class="tool-page">
+			<h2 class="tool-title">DNA/RNA Mass Calculator</h2>
+			<p class="tool-desc">Convert between mass (&mu;g/ng), moles (pmol/fmol), and copy number for DNA or RNA
+				fragments.
+				Paste a sequence (DNA or RNA with U) or enter a length manually. Exact MW is computed when a sequence is
+				provided; otherwise an average per-nucleotide mass is used. When ssRNA is selected, any T in the input
+				is treated as U for mass calculation.</p>
+			<label class="field-label" for="mc-seq">Sequence (optional - length will be calculated)</label>
+			<textarea id="mc-seq" spellcheck="false" style="min-height:80px"
+				placeholder="Paste raw or FASTA sequence, or leave empty and enter length below..."></textarea>
+			<div class="option-row" style="margin-top:12px">
+				<label for="mc-type">Type:</label>
+				<select id="mc-type">
+					<option value="dsDNA" selected>dsDNA</option>
+					<option value="ssDNA">ssDNA</option>
+					<option value="ssRNA">ssRNA</option>
 				</select>
-				<label for="rs-length">Length:</label>
-				<input type="number" id="rs-length" value="200" min="1" max="100000" style="width:120px">
+				<label for="mc-length">Length (bp/nt):</label>
+				<input type="number" id="mc-length" value="" min="1" max="99999999" style="width:120px"
+					placeholder="auto">
+			</div>
+			<div class="option-row">
+				<label for="mc-mass">Mass (ug):</label>
+				<input type="number" id="mc-mass" value="1" min="0" step="0.001" style="width:120px">
+				<label for="mc-pmol">OR pmol:</label>
+				<input type="number" id="mc-pmol" value="" min="0" step="0.001" style="width:120px"
+					placeholder="leave empty">
 			</div>
 			<div class="btn-row">
-				<button class="btn btn-primary" id="rs-submit">Generate</button>
+				<button class="btn btn-primary" id="mc-submit">Calculate</button>
+				<button class="btn btn-secondary" id="mc-clear">Clear</button>
 			</div>
-			<div class="result-panel" id="rs-result">
-				<div class="result-stats" id="rs-stats"></div>
-				<div class="result-header">
-					<h3>Output</h3><button class="btn btn-copy" id="rs-copy">Copy</button>
-				</div>
-				<div class="result-body">
-					<pre id="rs-output"></pre>
-				</div>
-			</div>
-		</section>
-
-		<!-- SHUFFLE SEQUENCE -->
-		<section id="tool-shuffle-seq" class="tool-page">
-			<h2 class="tool-title">Shuffle Sequence</h2>
-			<p class="tool-desc">Randomly shuffle a DNA or protein sequence while preserving its composition. Useful for
-				generating null-model sequences.</p>
-			<label class="field-label" for="sh-input">Input Sequence</label>
-			<textarea id="sh-input" spellcheck="false" placeholder="Paste raw or FASTA sequence..."></textarea>
-			<div class="btn-row">
-				<button class="btn btn-primary" id="sh-submit">Shuffle</button>
-				<button class="btn btn-secondary" id="sh-clear">Clear</button>
-			</div>
-			<div class="result-panel" id="sh-result">
-				<div class="result-stats" id="sh-stats"></div>
-				<div class="result-header">
-					<h3>Shuffled Sequence</h3><button class="btn btn-copy" id="sh-copy">Copy</button>
-				</div>
-				<div class="result-body">
-					<pre id="sh-output"></pre>
-				</div>
+			<div class="result-panel" id="mc-result">
+				<div class="result-stats" id="mc-stats"></div>
+				<div class="result-body" id="mc-body"></div>
 			</div>
 		</section>
 
@@ -1093,32 +1115,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			</div>
 		</section>
 
-		<!-- MOTIF SEARCH -->
-		<section id="tool-motif-search" class="tool-page">
-			<h2 class="tool-title">Motif Search</h2>
-			<p class="tool-desc">Search for a DNA or protein motif/pattern in a sequence. Supports IUPAC ambiguity codes for
-				DNA (R, Y, N, etc.) and allows overlapping matches.</p>
-			<label class="field-label" for="ms-input">Input Sequence</label>
-			<textarea id="ms-input" spellcheck="false" placeholder="Paste raw or FASTA sequence..."></textarea>
-			<div class="option-row">
-				<label for="ms-pattern">Pattern:</label>
-				<input type="text" id="ms-pattern" placeholder="e.g. GAATTC, TATAWN, ATG" style="width:240px">
-				<label for="ms-type">Sequence type:</label>
-				<select id="ms-type">
-					<option value="dna" selected>DNA (IUPAC)</option>
-					<option value="protein">Protein</option>
-				</select>
-			</div>
-			<div class="btn-row">
-				<button class="btn btn-primary" id="ms-submit">Search</button>
-				<button class="btn btn-secondary" id="ms-clear">Clear</button>
-			</div>
-			<div class="result-panel" id="ms-result">
-				<div class="result-stats" id="ms-stats"></div>
-				<div class="result-body" id="ms-body" style="padding:0;overflow-x:auto"></div>
-			</div>
-		</section>
-
 		<!-- PRIMER DIMER CHECK -->
 		<section id="tool-primer-dimer" class="tool-page">
 			<h2 class="tool-title">Primer Dimer Check</h2>
@@ -1141,43 +1137,88 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			</div>
 		</section>
 
-		<!-- MASS CALCULATOR -->
-		<section id="tool-mass-calc" class="tool-page">
-			<h2 class="tool-title">DNA/RNA Mass Calculator</h2>
-			<p class="tool-desc">Convert between mass (&mu;g/ng), moles (pmol/fmol), and copy number for DNA or RNA
-				fragments.
-				Paste a sequence (DNA or RNA with U) or enter a length manually. Exact MW is computed when a sequence is
-				provided; otherwise an average per-nucleotide mass is used. When ssRNA is selected, any T in the input
-				is
-				treated as U for mass calculation.</p>
-			<label class="field-label" for="mc-seq">Sequence (optional - length will be calculated)</label>
-			<textarea id="mc-seq" spellcheck="false" style="min-height:80px"
-				placeholder="Paste raw or FASTA sequence, or leave empty and enter length below..."></textarea>
-			<div class="option-row" style="margin-top:12px">
-				<label for="mc-type">Type:</label>
-				<select id="mc-type">
-					<option value="dsDNA" selected>dsDNA</option>
-					<option value="ssDNA">ssDNA</option>
-					<option value="ssRNA">ssRNA</option>
-				</select>
-				<label for="mc-length">Length (bp/nt):</label>
-				<input type="number" id="mc-length" value="" min="1" max="99999999" style="width:120px"
-					placeholder="auto">
-			</div>
+		<!-- SANGER ASSEMBLY -->
+		<section id="tool-sanger-assembly" class="tool-page">
+			<h2 class="tool-title">Sanger Assembly</h2>
+			<p class="tool-desc">Merge overlapping forward and reverse Sanger reads into a single consensus sequence.
+				The reverse read is automatically reverse-complemented, then aligned to the forward read using semi-global
+				(overlap) alignment with free end gaps. In the overlap region, IUPAC ambiguity codes are resolved by
+				intersection: if one read has N and the other has A, the consensus is A; if one has R (A/G) and the other
+				has A, the consensus is A. Conflicts are flagged.</p>
+			<label class="field-label" for="sa-fwd">Forward Read (5' to 3')</label>
+			<textarea id="sa-fwd" spellcheck="false" placeholder="Paste forward sequencing read (raw or FASTA)...">
+>IDH1 plasmid 6xHis FWD Read
+GNNNNNNNGNNNNNNTNNNNCTAGAATAATTTTGTTTAACTTTAAGAAGGAGATATACATATGGCTAGCATGACTGGTGGA
+CAGCAAATGGGTCGGGATCCGAATTCGATGTCCAAAAAAATCAGTGGCGGTTCTGTGGTAGAGATGCAAGGAGATGAAATG
+ACACGAATCATTTGGGAATTGATTAAAGAGAAACTCATTTTTCCCTACGTGGAATTGGATCTACATAGCTATGATTTAGGC
+ATAGAGAATCGTGATGCCACCAACGACCAAGTCACCAAGGATGCTGCAGAAGCTATAAAGAAGCATAATGTTGGCGTCAAA
+TGTGCCACTATCACTCCTGATGAGAAGAGGGTTGAGGAGTTCAAGTTGAAACAAATGTGGAAATCACCAAATGGCACCATA
+CGAAATATTCTGGGTGGCACGGTCTTCAGAGAAGCCATTATCTGCAAAAATATCCCCCGGCTTGTGAGTGGATGGGTAAAC
+CTATCATCATAGGTCGTCATGCTTATGGGGATCAATACAGAGCAACTGATTTTGTTGTTCCTGGGCCTGGAAAAGTAGAGA
+TAACCTACACACCAAGTGACGGAACCCAAAAGGTGACATACCTGGTACATAACTTTGAAGAAGGTGGTGGTGTTGCCATGG
+GGATGTATAATCAAGATAAGTCAATTGAAGATTTTGCACACAGTTCCTTCCAAATGGCTCTGTCTAAGGGTTGGCCTTTGT
+ATCTGAGCACCAAAAACACTATTCTGAAGAAATATGATGGGCGTTTTAAAGACATCTTTCAGGAGATATATGACAAGCAGT
+ACAAGTCCCAGTTTGAAGCTCAAAAGATCTGGTATGAGCATAGGCTCATCGACGACATGGTGGCCCAAGCTATGAAATCAG
+AGGGAGGCTTCATCTGGGCCTGTAAAAACTATGATGGTGACGTGCAGTCGGACTCTGTGGCCCAAGGGTATGGCTCTCTCG
+GCATGATGACCAGCGTGCTGGTTTGTCCAGATGGCAAGACAGTAGAAGCAGAGGCTGCCCACGGGACTGTAACCCGTCACT
+ACCGCATGTACCAGAAAGGACAGGAGACGTCCACCAATCCCATTGCTTCCATTTTTGCCTGGACCAGAGGGTTAGCCCACA
+GAGCAAAGCTTGATAACAATAAAGAGCTTGCCTTCTTTGCAAATGCTTTGGAAGAAGTCTCTATTGAGACAATTGAGGCTG
+GCTTCATGACCAAGGACTTGGCTGCTTGCATTAAAGGTTTACCCAATGTGCAACGTTCTGACTACTTGAATACATTTGAGT
+TCATGGATAAACTTGGAGAAAACTTGAAGATCAAACTAGCTCAGGCCAAACTTACTCGAGCACCACCACCACCACCACTGA
+GATCCGGCTGCCACCACCACCACCACCACTAACAAAGCNNNNNNNNNNNNNNNNNNNNNN
+			</textarea>
+			<label class="field-label" for="sa-rev" style="margin-top:12px">Reverse Read (5' to 3', will be RC'd automatically)</label>
+			<textarea id="sa-rev" spellcheck="false" placeholder="Paste reverse sequencing read (raw or FASTA)...">
+>IDH1 plasmid 6xHis REV Read
+NNNNNNNNNNNNNNNNNNNNNNGCTTTGTTAGTGGTGGTGGTGGTGGTGGCAGCCGGATCTCAGTGGTGGTGGTGGTGGT
+GCTCGAGTAAGTTTGGCCTGAGCTAGTTTGATCTTCAAGTTTTCTCCAAGTTTATCCATGAACTCAAATGTATTCAAGTA
+GTCAGAACGTTGCACATTGGGTAAACCTTTAATGCAAGCAGCCAAGTCCTTGGTCATGAAGCCAGCCTCAATTGTCTCAA
+TAGAGACTTCTTCCAAAGCATTTGCAAAGAAGGCAAGCTCTTTATTGTTATCAAGCTTTGCTCTGTGGGCTAACCCTCTG
+GTCCAGGCAAAAATGGAAGCAATGGGATTGGTGGACGTCTCCTGTCCTTTCTGGTACATGCGGTAGTGACGGGTTACAGT
+CCCGTGGGCAGCCTCTGCTTCTACTGTCTTGCCATCTGGACAAACCAGCACGCTGGTCATCATGCCGAGAGAGCCATACC
+CTTGGGCCACAGAGTCCGACTGCACGTCACCATCATAGTTTTTACAGGCCCAGATGAAGCCTCCCTCTGATTTCATAGCT
+TGGGCCACCATGTCGTCGATGAGCCTATGCTCATACCAGATCTTTTGAGCTTCAAACTGGGACTTGTACTGCTTGTCATA
+TATCTCCTGAAAGATGTCTTTAAAACGCCCATCATATTTCTTCAGAATAGTGTTTTTGGTGCTCAGATACAAAGGCCAAC
+CCTTAGACAGAGCCATTTGGAAGGAACTGTGTGCAAAATCTTCAATTGACTTATCTTGATTATACATCCCCATGGCAACA
+CCACCACCTTCTTCAAAGTTATGTACCAGGTATGTCACCTTTTGGGTTCCGTCACTTGGTGTGTAGGTTATCTCTACTTT
+TCCAGGCCCAGGAACAACAAAATCAGTTGCTCTGTATTGATCCCCATAAGCATGACGACCTATGATGATAGGTTTACCCA
+TCCACTCACAAGCCGGGGGATATTTTTGCANATNATGGCTTCTCTGANACCGTGCCNCCAGAATATTTCGTATGGNGCCA
+TTTGGTGATTTCCACATTTGTTTCACTGACTCNCAACCTCTTCNCATCANNNNGATAGTGNNCATTTGACGCANNTNANG
+CTTCTTTATNGCTTCTGCAGCANCNTGGNNACTNGNNNTNNNNNGNNNNNNNATTCTCTNNNCNAAANCNNANNNNNNTA
+NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
+			</textarea>
 			<div class="option-row">
-				<label for="mc-mass">Mass (ug):</label>
-				<input type="number" id="mc-mass" value="1" min="0" step="0.001" style="width:120px">
-				<label for="mc-pmol">OR pmol:</label>
-				<input type="number" id="mc-pmol" value="" min="0" step="0.001" style="width:120px"
-					placeholder="leave empty">
+				<label for="sa-match">Match:</label>
+				<input type="number" id="sa-match" value="2" style="width:70px">
+				<label for="sa-mismatch">Mismatch:</label>
+				<input type="number" id="sa-mismatch" value="-1" style="width:70px">
+				<label for="sa-gap">Gap:</label>
+				<input type="number" id="sa-gap" value="-3" style="width:70px">
+				<label for="sa-minoverlap">Min overlap (bp):</label>
+				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
 			<div class="btn-row">
-				<button class="btn btn-primary" id="mc-submit">Calculate</button>
-				<button class="btn btn-secondary" id="mc-clear">Clear</button>
+				<button class="btn btn-primary" id="sa-submit">Assemble</button>
+				<button class="btn btn-secondary" id="sa-clear">Clear</button>
 			</div>
-			<div class="result-panel" id="mc-result">
-				<div class="result-stats" id="mc-stats"></div>
-				<div class="result-body" id="mc-body"></div>
+			<div class="result-panel" id="sa-result">
+				<div class="result-stats" id="sa-stats"></div>
+				<div class="result-header">
+					<h3>Consensus Sequence</h3><button class="btn btn-copy" id="sa-copy-cons">Copy</button>
+				</div>
+				<div class="result-body">
+					<pre id="sa-consensus"></pre>
+				</div>
+				<div class="result-header">
+					<h3>Annotated Alignment</h3><button class="btn btn-copy" id="sa-copy-align">Copy</button>
+				</div>
+				<div class="result-body">
+					<pre id="sa-alignment"></pre>
+				</div>
+				<div class="result-header">
+					<h3>Legend</h3>
+				</div>
+				<div class="result-body" id="sa-legend" style="font-size:12.5px;line-height:1.8"></div>
 			</div>
 		</section>
 
@@ -1223,42 +1264,88 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			</div>
 		</section>
 
-		<!-- FORMAT CONVERTER -->
-		<section id="tool-format-convert" class="tool-page">
-			<h2 class="tool-title">Format Converter</h2>
-			<p class="tool-desc">Clean up and reformat sequences. Convert between raw, FASTA, numbered formats; change case;
-				remove whitespace or numbers.</p>
-			<label class="field-label" for="fc-input">Input Sequence</label>
-			<textarea id="fc-input" spellcheck="false" placeholder="Paste sequence in any format..."></textarea>
+		<!-- RESTRICTION SITES -->
+		<section id="tool-restriction-sites" class="tool-page">
+			<h2 class="tool-title">Restriction Sites</h2>
+			<p class="tool-desc">Scan a DNA sequence against 47 common restriction enzymes. Both strands are searched
+				(relevant for enzymes with non-palindromic sites). Shows all enzymes that cut, the number of sites, and
+				their positions.</p>
+			<label class="field-label" for="re-input">Input Sequence</label>
+			<textarea id="re-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
+			<div class="btn-row">
+				<button class="btn btn-primary" id="re-submit">Find Sites</button>
+				<button class="btn btn-secondary" id="re-clear">Clear</button>
+			</div>
+			<div class="result-panel" id="re-result">
+				<div class="result-stats" id="re-stats"></div>
+				<div class="result-body" id="re-body" style="padding:0;overflow-x:auto"></div>
+			</div>
+		</section>
+
+		<!-- MOTIF SEARCH -->
+		<section id="tool-motif-search" class="tool-page">
+			<h2 class="tool-title">Motif Search</h2>
+			<p class="tool-desc">Search for a DNA or protein motif/pattern in a sequence. Supports IUPAC ambiguity codes for
+				DNA (R, Y, N, etc.) and allows overlapping matches.</p>
+			<label class="field-label" for="ms-input">Input Sequence</label>
+			<textarea id="ms-input" spellcheck="false" placeholder="Paste raw or FASTA sequence..."></textarea>
 			<div class="option-row">
-				<label for="fc-mode">Convert to:</label>
-				<select id="fc-mode">
-					<option value="raw">Raw (letters only)</option>
-					<option value="fasta">FASTA format</option>
-					<option value="numbered">Numbered lines</option>
-					<option value="upper">UPPERCASE</option>
-					<option value="lower">lowercase</option>
-					<option value="dna-only">DNA/RNA only (strip non-GATCNU)</option>
-					<option value="protein-only">Protein only (strip non-AA)</option>
-					<option value="dna-to-rna">DNA → RNA (T → U)</option>
-					<option value="rna-to-dna">RNA → DNA (U → T)</option>
+				<label for="ms-pattern">Pattern:</label>
+				<input type="text" id="ms-pattern" placeholder="e.g. GAATTC, TATAWN, ATG" style="width:240px">
+				<label for="ms-type">Sequence type:</label>
+				<select id="ms-type">
+					<option value="dna" selected>DNA (IUPAC)</option>
+					<option value="protein">Protein</option>
 				</select>
 			</div>
-			<div class="option-row">
-				<label for="fc-title">FASTA title (optional):</label>
-				<input type="text" id="fc-title" value="" placeholder="My sequence" style="width:240px">
+			<div class="btn-row">
+				<button class="btn btn-primary" id="ms-submit">Search</button>
+				<button class="btn btn-secondary" id="ms-clear">Clear</button>
+			</div>
+			<div class="result-panel" id="ms-result">
+				<div class="result-stats" id="ms-stats"></div>
+				<div class="result-body" id="ms-body" style="padding:0;overflow-x:auto"></div>
+			</div>
+		</section>
+
+		<!-- GENERATE (Random + Shuffle combined) -->
+		<section id="tool-generate-seq" class="tool-page">
+			<h2 class="tool-title">Random &amp; Shuffle</h2>
+			<p class="tool-desc">Generate a random DNA or protein sequence, or shuffle an existing sequence to produce a
+				composition-preserving null-model control.</p>
+			<div class="option-row" style="margin-top:0;margin-bottom:14px">
+				<label for="gen-mode">Mode:</label>
+				<select id="gen-mode">
+					<option value="random" selected>Generate random</option>
+					<option value="shuffle">Shuffle existing</option>
+				</select>
+				<label for="gen-type" id="gen-type-label">Type:</label>
+				<select id="gen-type">
+					<option value="dna" selected>DNA</option>
+					<option value="protein">Protein</option>
+				</select>
+			</div>
+			<div id="gen-random-opts">
+				<div class="option-row" style="margin-top:0">
+					<label for="gen-length">Length:</label>
+					<input type="number" id="gen-length" value="200" min="1" max="100000" style="width:120px">
+				</div>
+			</div>
+			<div id="gen-shuffle-opts" style="display:none">
+				<label class="field-label" for="gen-input">Input Sequence</label>
+				<textarea id="gen-input" spellcheck="false" placeholder="Paste raw or FASTA sequence to shuffle..."></textarea>
 			</div>
 			<div class="btn-row">
-				<button class="btn btn-primary" id="fc-submit">Convert</button>
-				<button class="btn btn-secondary" id="fc-clear">Clear</button>
+				<button class="btn btn-primary" id="gen-submit">Run</button>
+				<button class="btn btn-secondary" id="gen-clear">Clear</button>
 			</div>
-			<div class="result-panel" id="fc-result">
-				<div class="result-stats" id="fc-stats"></div>
+			<div class="result-panel" id="gen-result">
+				<div class="result-stats" id="gen-stats"></div>
 				<div class="result-header">
-					<h3>Output</h3><button class="btn btn-copy" id="fc-copy">Copy</button>
+					<h3>Output</h3><button class="btn btn-copy" id="gen-copy">Copy</button>
 				</div>
 				<div class="result-body">
-					<pre id="fc-output"></pre>
+					<pre id="gen-output"></pre>
 				</div>
 			</div>
 		</section>
@@ -1412,12 +1499,11 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					for (var i = 0; i < frames.length; i++) totalOrfs += findOrfs(frames[i].codonData, minOrf).length;
 					statsEl.innerHTML =
 						'<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
-						'<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' + 
+						'<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
 						'<span class="stat-item">ORFs (>=' + minOrf + ' aa): <span>' + totalOrfs + '</span></span>';
 					var html = "";
 					for (var i = 0; i < frames.length; i++) html += renderFrame(frames[i], fmt, minOrf);
 					framesEl.innerHTML = html;
-					// Click to copy on frame headers
 					var headers = framesEl.querySelectorAll(".frame-header");
 					for (var i = 0; i < headers.length; i++) {
 						headers[i].addEventListener("click", function () {
@@ -1431,7 +1517,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 							});
 						});
 					}
-					// Codon frequency table — from longest ORF across all frames
 					var freqEl = document.getElementById("tr-codon-freq");
 					var gridEl = document.getElementById("tr-freq-grid");
 					var bestOrf = null, bestOrfFrame = null, bestOrfLen = 0;
@@ -1491,7 +1576,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 						'<span class="stat-item stat-len">Protein: <span>' + prot.length + ' aa</span></span>' +
 						'<span class="stat-item">DNA: <span>' + bt.sequence.length + ' bp</span></span>';
 					output.textContent = formatSeq(bt.sequence, 60);
-					// Show codon details
 					var lines = [];
 					for (var i = 0; i < bt.details.length; i++) {
 						var d = bt.details[i];
@@ -1502,6 +1586,43 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 				});
 				document.getElementById("bt-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
 				wireCopy("bt-copy", "bt-output");
+			})();
+
+			// == FORMAT CONVERTER ===============================================
+			(function () {
+				var input = document.getElementById("fc-input");
+				var result = document.getElementById("fc-result");
+				var statsEl = document.getElementById("fc-stats");
+				var output = document.getElementById("fc-output");
+
+				document.getElementById("fc-submit").addEventListener("click", function () {
+					var raw = input.value.trim(); if (!raw) return;
+					var parsed = parseFasta(raw);
+					var mode = document.getElementById("fc-mode").value;
+					var seq = parsed.sequence;
+					var cleanSeq = removeNonSeq(seq);
+					var converted = "";
+					switch (mode) {
+						case "raw": converted = cleanSeq; break;
+						case "fasta":
+							var title = document.getElementById("fc-title").value || parsed.title || "Sequence";
+							converted = toFasta(cleanSeq, title, 60); break;
+						case "numbered": converted = formatSeqNumbered(cleanSeq, 60, 10); break;
+						case "upper": converted = cleanSeq.toUpperCase(); break;
+						case "lower": converted = cleanSeq.toLowerCase(); break;
+						case "dna-only": converted = filterDnaSaveCase(seq); break;
+						case "protein-only": converted = filterProtein(seq); break;
+						case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), 60); break;
+						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), 60); break;
+					}
+					statsEl.innerHTML =
+						'<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
+						'<span class="stat-item">Output: <span>' + converted.replace(/[>\n\s]/g, "").length + ' chars</span></span>';
+					output.textContent = converted;
+					result.classList.add("visible");
+				});
+				document.getElementById("fc-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
+				wireCopy("fc-copy", "fc-output");
 			})();
 
 			// == GC CONTENT =====================================================
@@ -1569,7 +1690,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					html += '<div class="prot-stat-card"><div class="psc-label">Isoelectric Point (pI)</div><div class="psc-value" style="color:var(--accent)">' + pi.toFixed(2) + '</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">' + pkaSet.name + '</div></div>';
 					html += '<div class="prot-stat-card"><div class="psc-label">Extinction Coefficient (280nm)</div><div class="psc-value" style="font-size:16px">' + ext.withCystines.toLocaleString() + ' M<sup>-1</sup>cm<sup>-1</sup></div><div style="font-size:12px;color:var(--text-dim);margin-top:4px">Reduced (no cystines): ' + ext.reduced.toLocaleString() + '</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Tyr: ' + ext.nY + ', Trp: ' + ext.nW + ', Cys: ' + ext.nC + '</div></div>';
 
-					// AA Composition
 					html += '<div class="prot-stat-card"><div class="psc-label">Amino Acid Composition</div><div style="font-family:var(--font-mono);font-size:11.5px;margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">';
 					var order = "GAVLIPFWMSCTYHDEQNKR";
 					for (var i = 0; i < order.length; i++) {
@@ -1584,6 +1704,121 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					result.classList.add("visible");
 				});
 				document.getElementById("ps-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
+			})();
+
+			// == MASS CALCULATOR ================================================
+			(function () {
+				var seqInput = document.getElementById("mc-seq");
+				var lenInput = document.getElementById("mc-length");
+				var result = document.getElementById("mc-result");
+				var statsEl = document.getElementById("mc-stats");
+				var body = document.getElementById("mc-body");
+
+				seqInput.addEventListener("input", function () {
+					var raw = seqInput.value.trim();
+					if (raw) {
+						var parsed = parseFasta(raw);
+						var seq = filterDnaSaveCase(parsed.sequence);
+						if (seq.length > 0) {
+							lenInput.value = seq.length;
+							lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
+						}
+					} else {
+						lenInput.setAttribute("placeholder", "auto");
+					}
+				});
+
+				document.getElementById("mc-submit").addEventListener("click", function () {
+					var seqType = document.getElementById("mc-type").value;
+					var raw = seqInput.value.trim();
+					var len = parseInt(lenInput.value) || 0;
+					var seqStr = "";
+
+					if (raw) {
+						var parsed = parseFasta(raw);
+						seqStr = filterDnaSaveCase(parsed.sequence);
+						if (seqStr.length > 0) len = seqStr.length;
+					}
+
+					if (len <= 0) { body.innerHTML = "<p>Please enter a sequence or a length.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+
+					var massUg = parseFloat(document.getElementById("mc-mass").value) || 0;
+					var pmol = parseFloat(document.getElementById("mc-pmol").value) || 0;
+
+					var exactMW = null;
+					if (seqStr) {
+						var s = seqStats(filterDnaSaveCase(seqStr));
+						var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
+						var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
+						var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
+						if (seqType === "dsDNA") {
+							var compMW = s.t * 331.2 + s.a * 322.2 + s.c * 347.2 + s.g * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
+							exactMW = ssMW + compMW;
+						} else if (seqType === "ssDNA") {
+							exactMW = ssMW;
+						} else {
+							exactMW = s.a * 347.2 + s.t * 324.2 + s.g * 363.2 + s.c * 323.2 + s.n * avgRNMP - (len - 1) * 18.02 - 79.96;
+						}
+					}
+
+					var conv = dnaConversions(len, massUg, pmol, seqType);
+					if (exactMW) {
+						conv.mwDa = exactMW;
+						conv.mwKDa = exactMW / 1000;
+						if (massUg > 0) {
+							var massG = massUg * 1e-6;
+							var moles = massG / exactMW;
+							conv.fromMass = { pmol: moles * 1e12, fmol: moles * 1e15, nmol: moles * 1e9, copies: moles * 6.022e23, massUg: massUg };
+						}
+						if (pmol > 0) {
+							var moles = pmol * 1e-12;
+							var massG = moles * exactMW;
+							conv.fromPmol = { ug: massG * 1e6, ng: massG * 1e9, copies: moles * 6.022e23, pmol: pmol };
+						}
+					}
+					var unitLabel = conv.unitLabel;
+					var mwLabel = exactMW ? "MW (exact)" : "MW (avg)";
+
+					var statsHtml =
+						'<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' ' + unitLabel + '</span></span>' +
+						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
+						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
+					if (seqStr) {
+						var s = seqStats(filterDnaSaveCase(seqStr));
+						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
+					}
+					statsEl.innerHTML = statsHtml;
+
+					var html = '<div class="prot-stats-grid">';
+					if (conv.fromMass) {
+						var fm = conv.fromMass;
+						html += '<div class="prot-stat-card"><div class="psc-label">From ' + fm.massUg + ' ug</div>';
+						html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
+						html += '<div><span style="color:var(--text-dim)">pmol:</span> <span style="color:var(--accent);font-weight:600">' + fm.pmol.toFixed(4) + '</span></div>';
+						html += '<div><span style="color:var(--text-dim)">fmol:</span> <span style="font-weight:600">' + fm.fmol.toFixed(2) + '</span></div>';
+						html += '<div><span style="color:var(--text-dim)">nmol:</span> <span style="font-weight:600">' + fm.nmol.toFixed(6) + '</span></div>';
+						html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fm.copies.toExponential(3) + '</span></div>';
+						html += '</div></div>';
+					}
+					if (conv.fromPmol) {
+						var fp = conv.fromPmol;
+						html += '<div class="prot-stat-card"><div class="psc-label">From ' + fp.pmol + ' pmol</div>';
+						html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
+						html += '<div><span style="color:var(--text-dim)">ug:</span> <span style="color:var(--accent);font-weight:600">' + fp.ug.toFixed(4) + '</span></div>';
+						html += '<div><span style="color:var(--text-dim)">ng:</span> <span style="font-weight:600">' + fp.ng.toFixed(2) + '</span></div>';
+						html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fp.copies.toExponential(3) + '</span></div>';
+						html += '</div></div>';
+					}
+					if (!conv.fromMass && !conv.fromPmol) {
+						html += '<div class="prot-stat-card"><div class="psc-label">Molecular Weight</div>';
+						html += '<div class="psc-value">' + conv.mwDa.toLocaleString() + ' Da</div>';
+						html += '<div style="font-size:12px;color:var(--text-dim);margin-top:4px">Enter a mass (ug) or amount (pmol) to convert.</div></div>';
+					}
+					html += '</div>';
+					body.innerHTML = html;
+					result.classList.add("visible");
+				});
+				document.getElementById("mc-clear").addEventListener("click", function () { seqInput.value = ""; lenInput.value = ""; result.classList.remove("visible"); seqInput.focus(); });
 			})();
 
 			// == RESTRICTION SITES ==============================================
@@ -1623,62 +1858,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 				document.getElementById("re-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
 			})();
 
-			// == RANDOM SEQUENCE ================================================
-			(function () {
-				var result = document.getElementById("rs-result");
-				var statsEl = document.getElementById("rs-stats");
-				var output = document.getElementById("rs-output");
-				var DNA_BASES = "GATC".split("");
-				var AA_CHARS = "ACDEFGHIKLMNPQRSTVWY".split("");
-
-				document.getElementById("rs-submit").addEventListener("click", function () {
-					var type = document.getElementById("rs-type").value;
-					var len = parseInt(document.getElementById("rs-length").value) || 0;
-					if (len < 1 || len > 100000) { output.textContent = "Length must be 1-100,000."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
-					var components = type === "dna" ? DNA_BASES : AA_CHARS;
-					var seq = randomSeq(components, len);
-					if (type === "dna") {
-						var s = seqStats(seq);
-						statsEl.innerHTML =
-							'<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
-							'<span class="stat-item">A: <span>' + s.a + '</span></span><span class="stat-item">T: <span>' + s.t + '</span></span><span class="stat-item">G: <span>' + s.g + '</span></span><span class="stat-item">C: <span>' + s.c + '</span></span>' +
-							'<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
-					} else {
-						statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span>';
-					}
-					output.textContent = formatSeq(seq, 60);
-					result.classList.add("visible");
-				});
-				wireCopy("rs-copy", "rs-output");
-			})();
-
-			// == SHUFFLE SEQUENCE ===============================================
-			(function () {
-				var input = document.getElementById("sh-input");
-				var result = document.getElementById("sh-result");
-				var statsEl = document.getElementById("sh-stats");
-				var output = document.getElementById("sh-output");
-
-				document.getElementById("sh-submit").addEventListener("click", function () {
-					var raw = input.value.trim(); if (!raw) return;
-					var parsed = parseFasta(raw);
-					var isDna = verifyDna(parsed.sequence);
-					var seq = isDna ? filterDnaSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
-					if (!seq.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
-					var shuffled = shuffleSeq(seq);
-					if (isDna) {
-						var s = seqStats(seq);
-						statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span><span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span><span class="stat-item">Type: <span>DNA</span></span>';
-					} else {
-						statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + seq.length.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span>';
-					}
-					output.textContent = formatSeq(shuffled, 60);
-					result.classList.add("visible");
-				});
-				document.getElementById("sh-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
-				wireCopy("sh-copy", "sh-output");
-			})();
-
 			// == TM CALCULATOR ==================================================
 			(function () {
 				var input = document.getElementById("tm-input");
@@ -1693,7 +1872,7 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var naConc = parseFloat(document.getElementById("tm-na").value) || 0.05;
 					var primerNM = parseFloat(document.getElementById("tm-primer").value) || 250;
-					var primerConc = primerNM * 1e-9; // convert nM to M
+					var primerConc = primerNM * 1e-9;
 					var tm = calcTm(dna, naConc, primerConc);
 					var s = tm.stats || seqStats(dna);
 					statsEl.innerHTML =
@@ -1758,7 +1937,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 						var html = '<table class="re-table"><thead><tr><th>#</th><th>Position</th><th>End</th><th>Match</th><th>Context</th></tr></thead><tbody>';
 						for (var i = 0; i < res.matches.length; i++) {
 							var m = res.matches[i];
-							// Show 10 chars of context on each side
 							var ctxStart = Math.max(0, m.pos - 1 - 10);
 							var ctxEnd = Math.min(seq.length, m.end + 10);
 							var before = seq.slice(ctxStart, m.pos - 1);
@@ -1791,7 +1969,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					var isSelf = !p2;
 
 					var dimers = checkPrimerDimer(p1, p2 || p1);
-					// Filter to top results
 					var top = dimers.slice(0, 10);
 					var dangerous = dimers.filter(function (d) { return d.end3; });
 
@@ -1824,130 +2001,140 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 				document.getElementById("pd-clear").addEventListener("click", function () { input1.value = ""; input2.value = ""; result.classList.remove("visible"); input1.focus(); });
 			})();
 
-			// == MASS CALCULATOR ================================================
+			// == SANGER ASSEMBLY ================================================
 			(function () {
-				var seqInput = document.getElementById("mc-seq");
-				var lenInput = document.getElementById("mc-length");
-				var result = document.getElementById("mc-result");
-				var statsEl = document.getElementById("mc-stats");
-				var body = document.getElementById("mc-body");
+				var fwdInput = document.getElementById("sa-fwd");
+				var revInput = document.getElementById("sa-rev");
+				var result = document.getElementById("sa-result");
+				var statsEl = document.getElementById("sa-stats");
+				var consEl = document.getElementById("sa-consensus");
+				var alignEl = document.getElementById("sa-alignment");
+				var legendEl = document.getElementById("sa-legend");
 
-				// Auto-fill length when sequence changes
-				seqInput.addEventListener("input", function () {
-					var raw = seqInput.value.trim();
-					if (raw) {
-						var parsed = parseFasta(raw);
-						var seq = filterDnaSaveCase(parsed.sequence);
-						if (seq.length > 0) {
-							lenInput.value = seq.length;
-							lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
+				document.getElementById("sa-submit").addEventListener("click", function () {
+					var rawFwd = fwdInput.value.trim();
+					var rawRev = revInput.value.trim();
+					if (!rawFwd || !rawRev) return;
+
+					var fwd = filterDnaIupacSaveCase(parseFasta(rawFwd).sequence);
+					var rev = filterDnaIupacSaveCase(parseFasta(rawRev).sequence);
+
+					if (!fwd.length || !rev.length) {
+						consEl.textContent = "Please enter valid DNA sequences for both reads.";
+						result.classList.add("visible");
+						statsEl.innerHTML = "";
+						alignEl.textContent = "";
+						legendEl.innerHTML = "";
+						return;
+					}
+
+					if (fwd.length * rev.length > 25000000) {
+						if (!confirm("These reads are very long (" + fwd.length + " x " + rev.length + "). Assembly may take a while. Continue?")) return;
+					}
+
+					var matchScore = parseFloat(document.getElementById("sa-match").value);
+					var mismatchPen = parseFloat(document.getElementById("sa-mismatch").value);
+					var gapPen = parseFloat(document.getElementById("sa-gap").value);
+					var minOverlap = parseInt(document.getElementById("sa-minoverlap").value) || 20;
+
+					var sa = sangerAssemble(fwd, rev, {
+						matchScore: matchScore,
+						mismatchPen: mismatchPen,
+						gapPen: gapPen,
+						minOverlap: minOverlap
+					});
+
+					// Handle insufficient overlap
+					if (sa.error) {
+						statsEl.innerHTML =
+							'<span class="stat-item">Fwd: <span>' + sa.fwdLen + ' bp</span></span>' +
+							'<span class="stat-item">Rev (input): <span>' + sa.revLen + ' bp</span></span>' +
+							'<span class="stat-item" style="color:var(--red)">Overlap: <span>' + sa.overlapLen + ' bp (min: ' + sa.minOverlap + ')</span></span>';
+						consEl.textContent = sa.error;
+						alignEl.textContent = "";
+						legendEl.innerHTML = "";
+						result.classList.add("visible");
+						return;
+					}
+
+					statsEl.innerHTML =
+						'<span class="stat-item stat-len">Consensus: <span>' + sa.consensusLen.toLocaleString() + ' bp</span></span>' +
+						'<span class="stat-item">Fwd: <span>' + sa.fwdLen + ' bp</span></span>' +
+						'<span class="stat-item">Rev (input): <span>' + sa.revLen + ' bp</span></span>' +
+						'<span class="stat-item" style="color:var(--accent)">Overlap: <span>' + sa.overlapLen + ' bp</span></span>' +
+						'<span class="stat-item stat-gc">Matches: <span>' + sa.matches + '</span></span>' +
+						'<span class="stat-item" style="color:var(--orange)">Resolved: <span>' + sa.resolved + '</span></span>' +
+						'<span class="stat-item" style="color:' + (sa.conflicts > 0 ? 'var(--red)' : 'var(--green)') + '">Conflicts: <span>' + sa.conflicts + '</span></span>' +
+						'<span class="stat-item">Ambiguities removed: <span>' + sa.ambigResolved + '</span></span>';
+
+					consEl.textContent = formatSeq(sa.consensus, 60);
+
+					// Build annotated alignment display
+					var width = 60;
+					var lines = [];
+					for (var i = 0; i < sa.align1.length; i += width) {
+						var a1 = sa.align1.slice(i, i + width);
+						var a2 = sa.align2.slice(i, i + width);
+						var ann = sa.annotation;
+						// Build consensus chunk with same offset
+						var consChunk = "";
+						var annChunk = "";
+						var midline = "";
+						var ci = 0;
+						for (var j = i; j < Math.min(i + width, sa.align1.length); j++) {
+							var b1 = sa.align1[j];
+							var b2 = sa.align2[j];
+							if (b1 === "-" && b2 === "-") {
+								midline += " ";
+							} else if (b1 === "-" || b2 === "-") {
+								midline += " ";
+							} else if (b1.toUpperCase() === b2.toUpperCase()) {
+								midline += "|";
+							} else {
+								// Check if IUPAC-compatible
+								var s1 = IUPAC_BASES_SET[b1.toUpperCase()] || "";
+								var s2 = IUPAC_BASES_SET[b2.toUpperCase()] || "";
+								var compat = false;
+								for (var k = 0; k < s1.length; k++) {
+									if (s2.indexOf(s1[k]) !== -1) { compat = true; break; }
+								}
+								midline += compat ? ":" : "X";
+							}
 						}
-					} else {
-						lenInput.setAttribute("placeholder", "auto");
-					}
-				});
 
-				document.getElementById("mc-submit").addEventListener("click", function () {
-					var seqType = document.getElementById("mc-type").value;
-					var raw = seqInput.value.trim();
-					var len = parseInt(lenInput.value) || 0;
-					var seqStr = "";
-
-					// If sequence provided, derive length and exact stats
-					if (raw) {
-						var parsed = parseFasta(raw);
-						seqStr = filterDnaSaveCase(parsed.sequence);
-						if (seqStr.length > 0) len = seqStr.length;
+						var pos = String(i + 1);
+						while (pos.length < 6) pos = " " + pos;
+						lines.push(pos + "  Fwd: " + a1);
+						lines.push("        " + "     " + midline);
+						lines.push("        " + "Rev: " + a2);
+						lines.push("");
 					}
+					alignEl.textContent = lines.join("\n");
 
-					if (len <= 0) { body.innerHTML = "<p>Please enter a sequence or a length.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+					legendEl.innerHTML =
+						'<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:var(--font-mono)">' +
+						'<span style="color:var(--accent);font-weight:600">F</span><span style="color:var(--text-dim)">Forward read only (no reverse coverage)</span>' +
+						'<span style="color:var(--purple);font-weight:600">R</span><span style="color:var(--text-dim)">Reverse read only (no forward coverage)</span>' +
+						'<span style="color:var(--green);font-weight:600">B</span><span style="color:var(--text-dim)">Both reads agree</span>' +
+						'<span style="color:var(--orange);font-weight:600">X</span><span style="color:var(--text-dim)">Ambiguity resolved (e.g. N+A&rarr;A, R+A&rarr;A)</span>' +
+						'<span style="color:var(--red);font-weight:600">!</span><span style="color:var(--text-dim)">True conflict (reads disagree, resolved by IUPAC union)</span>' +
+						'<span style="font-weight:600">|</span><span style="color:var(--text-dim)">Exact match in alignment</span>' +
+						'<span style="font-weight:600">:</span><span style="color:var(--text-dim)">IUPAC-compatible (sets overlap)</span>' +
+						'<span style="font-weight:600">X</span><span style="color:var(--text-dim)">Mismatch in alignment</span>' +
+						'</div>';
 
-					var massUg = parseFloat(document.getElementById("mc-mass").value) || 0;
-					var pmol = parseFloat(document.getElementById("mc-pmol").value) || 0;
-
-					// If we have the actual sequence, compute exact MW instead of average
-					var exactMW = null;
-					if (seqStr) {
-						var s = seqStats(filterDnaSaveCase(seqStr));
-						// Exact MW from nucleotide 5'-monophosphate masses (Da):
-						// dAMP=331.2, dTMP=322.2, dGMP=347.2, dCMP=307.2
-						// Polymerization loses H2O (18.02) per bond; subtract 79.96
-						// once to convert 5'-phosphate terminus to 5'-OH (standard
-						// for synthetic oligos).
-						var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
-						var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
-						var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
-						if (seqType === "dsDNA") {
-							var compMW = s.t * 331.2 + s.a * 322.2 + s.c * 347.2 + s.g * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
-							exactMW = ssMW + compMW;
-						} else if (seqType === "ssDNA") {
-							exactMW = ssMW;
-						} else {
-							// ssRNA: rAMP=347.2, rUMP=324.2, rGMP=363.2, rCMP=323.2
-							exactMW = s.a * 347.2 + s.t * 324.2 + s.g * 363.2 + s.c * 323.2 + s.n * avgRNMP - (len - 1) * 18.02 - 79.96;
-						}
-					}
-
-					var conv = dnaConversions(len, massUg, pmol, seqType);
-					// Override with exact MW if available
-					if (exactMW) {
-						conv.mwDa = exactMW;
-						conv.mwKDa = exactMW / 1000;
-						// Recalculate conversions with exact MW
-						if (massUg > 0) {
-							var massG = massUg * 1e-6;
-							var moles = massG / exactMW;
-							conv.fromMass = { pmol: moles * 1e12, fmol: moles * 1e15, nmol: moles * 1e9, copies: moles * 6.022e23, massUg: massUg };
-						}
-						if (pmol > 0) {
-							var moles = pmol * 1e-12;
-							var massG = moles * exactMW;
-							conv.fromPmol = { ug: massG * 1e6, ng: massG * 1e9, copies: moles * 6.022e23, pmol: pmol };
-						}
-					}
-					var unitLabel = conv.unitLabel;
-					var mwLabel = exactMW ? "MW (exact)" : "MW (avg)";
-
-					var statsHtml =
-						'<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' ' + unitLabel + '</span></span>' +
-						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
-						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
-					if (seqStr) {
-						var s = seqStats(filterDnaSaveCase(seqStr));
-						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
-					}
-					statsEl.innerHTML = statsHtml;
-
-					var html = '<div class="prot-stats-grid">';
-					if (conv.fromMass) {
-						var fm = conv.fromMass;
-						html += '<div class="prot-stat-card"><div class="psc-label">From ' + fm.massUg + ' ug</div>';
-						html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
-						html += '<div><span style="color:var(--text-dim)">pmol:</span> <span style="color:var(--accent);font-weight:600">' + fm.pmol.toFixed(4) + '</span></div>';
-						html += '<div><span style="color:var(--text-dim)">fmol:</span> <span style="font-weight:600">' + fm.fmol.toFixed(2) + '</span></div>';
-						html += '<div><span style="color:var(--text-dim)">nmol:</span> <span style="font-weight:600">' + fm.nmol.toFixed(6) + '</span></div>';
-						html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fm.copies.toExponential(3) + '</span></div>';
-						html += '</div></div>';
-					}
-					if (conv.fromPmol) {
-						var fp = conv.fromPmol;
-						html += '<div class="prot-stat-card"><div class="psc-label">From ' + fp.pmol + ' pmol</div>';
-						html += '<div style="font-family:var(--font-mono);font-size:14px;margin-top:6px;line-height:2">';
-						html += '<div><span style="color:var(--text-dim)">ug:</span> <span style="color:var(--accent);font-weight:600">' + fp.ug.toFixed(4) + '</span></div>';
-						html += '<div><span style="color:var(--text-dim)">ng:</span> <span style="font-weight:600">' + fp.ng.toFixed(2) + '</span></div>';
-						html += '<div><span style="color:var(--text-dim)">copies:</span> <span style="font-weight:600">' + fp.copies.toExponential(3) + '</span></div>';
-						html += '</div></div>';
-					}
-					if (!conv.fromMass && !conv.fromPmol) {
-						html += '<div class="prot-stat-card"><div class="psc-label">Molecular Weight</div>';
-						html += '<div class="psc-value">' + conv.mwDa.toLocaleString() + ' Da</div>';
-						html += '<div style="font-size:12px;color:var(--text-dim);margin-top:4px">Enter a mass (ug) or amount (pmol) to convert.</div></div>';
-					}
-					html += '</div>';
-					body.innerHTML = html;
 					result.classList.add("visible");
 				});
-				document.getElementById("mc-clear").addEventListener("click", function () { seqInput.value = ""; lenInput.value = ""; result.classList.remove("visible"); seqInput.focus(); });
+
+				document.getElementById("sa-clear").addEventListener("click", function () {
+					fwdInput.value = "";
+					revInput.value = "";
+					result.classList.remove("visible");
+					fwdInput.focus();
+				});
+
+				wireCopy("sa-copy-cons", "sa-consensus");
+				wireCopy("sa-copy-align", "sa-alignment");
 			})();
 
 			// == PAIRWISE ALIGNMENT =============================================
@@ -1965,7 +2152,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					var seq2 = parseFasta(raw2).sequence.replace(/[^A-Za-z]/g, "");
 					if (!seq1.length || !seq2.length) { output.textContent = "Please enter two valid sequences."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 
-					// Warn if large
 					if (seq1.length * seq2.length > 25000000) {
 						if (!confirm("These sequences are very long (" + seq1.length + " x " + seq2.length + "). Alignment may take a while or freeze the browser. Continue?")) return;
 					}
@@ -1987,7 +2173,6 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 						'<span class="stat-item">Gaps: <span>' + aln.gaps + '</span></span>' +
 						'<span class="stat-item">Score: <span>' + aln.score + '</span></span>';
 
-					// Format alignment in blocks of 60
 					var lines = [];
 					var width = 60;
 					for (var i = 0; i < aln.length; i += width) {
@@ -2008,41 +2193,78 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 				wireCopy("pa-copy", "pa-output");
 			})();
 
-			// == FORMAT CONVERTER ===============================================
+			// == GENERATE (Random + Shuffle combined) ===========================
 			(function () {
-				var input = document.getElementById("fc-input");
-				var result = document.getElementById("fc-result");
-				var statsEl = document.getElementById("fc-stats");
-				var output = document.getElementById("fc-output");
+				var modeSelect = document.getElementById("gen-mode");
+				var randomOpts = document.getElementById("gen-random-opts");
+				var shuffleOpts = document.getElementById("gen-shuffle-opts");
+				var typeSelect = document.getElementById("gen-type");
+				var typeLabel = document.getElementById("gen-type-label");
+				var result = document.getElementById("gen-result");
+				var statsEl = document.getElementById("gen-stats");
+				var output = document.getElementById("gen-output");
+				var DNA_BASES = "GATC".split("");
+				var AA_CHARS = "ACDEFGHIKLMNPQRSTVWY".split("");
 
-				document.getElementById("fc-submit").addEventListener("click", function () {
-					var raw = input.value.trim(); if (!raw) return;
-					var parsed = parseFasta(raw);
-					var mode = document.getElementById("fc-mode").value;
-					var seq = parsed.sequence;
-					var cleanSeq = removeNonSeq(seq);
-					var converted = "";
-					switch (mode) {
-						case "raw": converted = cleanSeq; break;
-						case "fasta":
-							var title = document.getElementById("fc-title").value || parsed.title || "Sequence";
-							converted = toFasta(cleanSeq, title, 60); break;
-						case "numbered": converted = formatSeqNumbered(cleanSeq, 60, 10); break;
-						case "upper": converted = cleanSeq.toUpperCase(); break;
-						case "lower": converted = cleanSeq.toLowerCase(); break;
-						case "dna-only": converted = filterDnaSaveCase(seq); break;
-						case "protein-only": converted = filterProtein(seq); break;
-					  	case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), 60); break;
-						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), 60); break;
+				modeSelect.addEventListener("change", function () {
+					if (modeSelect.value === "random") {
+						randomOpts.style.display = "";
+						shuffleOpts.style.display = "none";
+						typeLabel.style.display = "";
+						typeSelect.style.display = "";
+					} else {
+						randomOpts.style.display = "none";
+						shuffleOpts.style.display = "";
+						typeLabel.style.display = "none";
+						typeSelect.style.display = "none";
 					}
-					statsEl.innerHTML =
-						'<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
-						'<span class="stat-item">Output: <span>' + converted.replace(/[>\n\s]/g, "").length + ' chars</span></span>';
-					output.textContent = converted;
+				});
+
+				document.getElementById("gen-submit").addEventListener("click", function () {
+					var mode = modeSelect.value;
+					var seq, s;
+
+					if (mode === "random") {
+						var type = typeSelect.value;
+						var len = parseInt(document.getElementById("gen-length").value) || 0;
+						if (len < 1 || len > 100000) { output.textContent = "Length must be 1-100,000."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+						var components = type === "dna" ? DNA_BASES : AA_CHARS;
+						seq = randomSeq(components, len);
+						if (type === "dna") {
+							s = seqStats(seq);
+							statsEl.innerHTML =
+								'<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span>' +
+								'<span class="stat-item">A: <span>' + s.a + '</span></span><span class="stat-item">T: <span>' + s.t + '</span></span><span class="stat-item">G: <span>' + s.g + '</span></span><span class="stat-item">C: <span>' + s.c + '</span></span>' +
+								'<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>' +
+								'<span class="stat-item">Mode: <span>Random</span></span>';
+						} else {
+							statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + len.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span><span class="stat-item">Mode: <span>Random</span></span>';
+						}
+					} else {
+						var raw = document.getElementById("gen-input").value.trim();
+						if (!raw) return;
+						var parsed = parseFasta(raw);
+						var isDna = verifyDna(parsed.sequence);
+						var clean = isDna ? filterDnaSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
+						if (!clean.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
+						seq = shuffleSeq(clean);
+						if (isDna) {
+							s = seqStats(clean);
+							statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span><span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span><span class="stat-item">Type: <span>DNA</span></span><span class="stat-item">Mode: <span>Shuffle</span></span>';
+						} else {
+							statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + clean.length.toLocaleString() + ' aa</span></span><span class="stat-item">Type: <span>Protein</span></span><span class="stat-item">Mode: <span>Shuffle</span></span>';
+						}
+					}
+
+					output.textContent = formatSeq(seq, 60);
 					result.classList.add("visible");
 				});
-				document.getElementById("fc-clear").addEventListener("click", function () { input.value = ""; result.classList.remove("visible"); input.focus(); });
-				wireCopy("fc-copy", "fc-output");
+
+				document.getElementById("gen-clear").addEventListener("click", function () {
+					document.getElementById("gen-input").value = "";
+					result.classList.remove("visible");
+				});
+				wireCopy("gen-copy", "gen-output");
 			})();
 
 		})();
