@@ -567,7 +567,7 @@ function calcTm(seq, naConc, primerConc) {
 // and is also used by searchMotif
 
 function searchMotif(seq, pattern, isProtein) {
-	var upper = seq.toUpperCase();
+	var upper = seq.toUpperCase().replace(/U/g, "T");
 	var patUpper = pattern.toUpperCase().replace(/\s/g, "");
 
 	var regexStr = "";
@@ -575,12 +575,8 @@ function searchMotif(seq, pattern, isProtein) {
 		var ch = patUpper[i];
 		if (!isProtein && IUPAC_TO_REGEX[ch]) {
 			regexStr += IUPAC_TO_REGEX[ch];
-		} else if (ch === ".") {
-			regexStr += ".";
-		} else if (ch === "[" || ch === "]") {
-			regexStr += ch;
 		} else {
-			regexStr += ch.replace(/[*+?^${}()|\\]/g, '\\$&');
+			regexStr += ch.replace(/[.*+?^${}()|\\[\]]/g, '\\$&');
 		}
 	}
 
@@ -674,7 +670,7 @@ function siteToRegex(site) {
 }
 
 function findRestrictionSites(dnaSeq, enzymes) {
-	var upper = dnaSeq.toUpperCase();
+	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
 	var results = [];
 	for (var e = 0; e < enzymes.length; e++) {
 		var enz = enzymes[e];

@@ -1847,7 +1847,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						var html = '<table class="re-table"><thead><tr><th>Enzyme</th><th>Site</th><th>Cuts</th><th>Positions</th></tr></thead><tbody>';
 						for (var i = 0; i < results.length; i++) {
 							var r = results[i];
-							var posStr = r.positions.map(function (p) { return p.pos; }).join(", ");
+							var posStr = r.positions.map(function (p) { return p.pos + " (cuts after " + p.cutPos + ")"; }).join(", ");
 							html += '<tr><td style="font-weight:600">' + r.name + '</td><td>' + r.site + '</td><td>' + r.cuts + '</td><td style="color:var(--text-dim);font-size:11.5px">' + posStr + '</td></tr>';
 						}
 						html += '</tbody></table>';
