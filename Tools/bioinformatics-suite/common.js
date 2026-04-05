@@ -308,6 +308,8 @@ var AA_MW = {
 };
 var WATER_MW = 18.0153;
 
+// pKa datasets for pI calculation
+// Values verified against Kozlowski (2016) IPC and primary sources
 var PKA_SETS = {
 	"bjellqvist": {
 		name: "Bjellqvist (ExPASy Compute pI/Mw)",
@@ -343,7 +345,9 @@ function proteinMW(seq) {
 function chargeAtPH(seq, pH, pkaSet) {
 	pkaSet = pkaSet || PKA_SETS["bjellqvist"];
 	var charge = 0;
+	// N-terminal positive
 	charge += Math.pow(10, pkaSet.nterm) / (Math.pow(10, pkaSet.nterm) + Math.pow(10, pH));
+	// C-terminal negative
 	charge -= Math.pow(10, pH) / (Math.pow(10, pkaSet.cterm) + Math.pow(10, pH));
 	for (var i = 0; i < seq.length; i++) {
 		var aa = seq[i].toUpperCase();
@@ -402,6 +406,8 @@ function aaComposition(seq) {
 // TM CALCULATOR
 // =====================================================================
 
+// Nearest-neighbor parameters (SantaLucia 1998, unified)
+// delta-H in kcal/mol, delta-S in cal/(mol*K)
 var NN_DH = {
 	"AA": -7.9, "TT": -7.9, "AT": -7.2, "TA": -7.2,
 	"CA": -8.5, "TG": -8.5, "GT": -8.4, "AC": -8.4,
@@ -414,6 +420,7 @@ var NN_DS = {
 	"CT": -21.0, "AG": -21.0, "GA": -22.2, "TC": -22.2,
 	"CG": -27.2, "GC": -24.4, "GG": -19.9, "CC": -19.9
 };
+// Initiation parameters
 var NN_INIT_DH = { "GC": 0.1, "AT": 2.3 };
 var NN_INIT_DS = { "GC": -2.8, "AT": 4.1 };
 
@@ -424,6 +431,7 @@ function calcTmNN(seq, naConc, primerConc) {
 	var len = upper.length;
 	if (len < 2) return null;
 
+	// Expand IUPAC to possible bases
 	var IUPAC_EXPAND = {
 		A: ["A"], C: ["C"], G: ["G"], T: ["T"], U: ["T"],
 		R: ["A", "G"], Y: ["C", "T"], S: ["G", "C"], W: ["A", "T"], K: ["G", "T"], M: ["A", "C"],
@@ -431,6 +439,7 @@ function calcTmNN(seq, naConc, primerConc) {
 		N: ["A", "C", "G", "T"]
 	};
 
+	// Sum nearest-neighbor params, averaging over ambiguous positions
 	var dH = 0, dS = 0;
 	for (var i = 0; i < len - 1; i++) {
 		var bases1 = IUPAC_EXPAND[upper[i]];
@@ -452,6 +461,7 @@ function calcTmNN(seq, naConc, primerConc) {
 		dS += sumS / count;
 	}
 
+	// Initiation params based on terminal bases (use first possibility if ambiguous)
 	var firstBases = IUPAC_EXPAND[upper[0]] || ["A"];
 	var lastBases = IUPAC_EXPAND[upper[len - 1]] || ["A"];
 	function gcFraction(bases) {
@@ -463,8 +473,10 @@ function calcTmNN(seq, naConc, primerConc) {
 	dH += fGC * NN_INIT_DH["GC"] + (1 - fGC) * NN_INIT_DH["AT"] + lGC * NN_INIT_DH["GC"] + (1 - lGC) * NN_INIT_DH["AT"];
 	dS += fGC * NN_INIT_DS["GC"] + (1 - fGC) * NN_INIT_DS["AT"] + lGC * NN_INIT_DS["GC"] + (1 - lGC) * NN_INIT_DS["AT"];
 
+	// Salt correction (SantaLucia 1998)
 	dS += 0.368 * (len - 1) * Math.log(naConc);
 
+	// Tm = dH / (dS + R * ln(Ct/4)) - 273.15
 	var R = 1.987;
 	var isSelfComp = (seq.toUpperCase() === reverseComplement(seq.toUpperCase()));
 	var ctTerm = isSelfComp ? primerConc : (primerConc / 4);
@@ -475,6 +487,7 @@ function calcTmNN(seq, naConc, primerConc) {
 function calcTm(seq, naConc, primerConc) {
 	naConc = naConc || 0.05;
 	primerConc = primerConc || 0.00000025;
+	// IUPAC-aware base counting: distribute ambiguous bases fractionally
 	var IUPAC_BASES = {
 		A: [1, 0, 0, 0], C: [0, 1, 0, 0], G: [0, 0, 1, 0], T: [0, 0, 0, 1], U: [0, 0, 0, 1],
 		R: [0.5, 0, 0.5, 0], Y: [0, 0.5, 0, 0.5], S: [0, 0.5, 0.5, 0], W: [0.5, 0, 0, 0.5],
@@ -519,6 +532,9 @@ function calcTm(seq, naConc, primerConc) {
 // MOTIF SEARCH
 // =====================================================================
 
+// IUPAC_TO_REGEX is defined in the restriction enzyme section below
+// and is also used by searchMotif
+
 function searchMotif(seq, pattern, isProtein) {
 	var upper = seq.toUpperCase();
 	var patUpper = pattern.toUpperCase().replace(/\s/g, "");
@@ -552,7 +568,7 @@ function searchMotif(seq, pattern, isProtein) {
 			end: match.index + match[0].length,
 			seq: seq.slice(match.index, match.index + match[0].length)
 		});
-		re.lastIndex = match.index + 1;
+		re.lastIndex = match.index + 1; // allow overlapping matches
 	}
 
 	return { matches: matches, pattern: patUpper, regex: regexStr, error: null };
@@ -637,8 +653,9 @@ function findRestrictionSites(dnaSeq, enzymes) {
 		var match;
 		while ((match = re.exec(upper)) !== null) {
 			positions.push({ pos: match.index + 1, strand: "+", cutPos: match.index + enz.cut });
-			re.lastIndex = match.index + 1;
+			re.lastIndex = match.index + 1; // allow overlapping
 		}
+		// Also search reverse complement
 		var rcSite = reverseComplement(enz.site.toUpperCase());
 		if (rcSite !== enz.site.toUpperCase()) {
 			var rcPattern = siteToRegex(rcSite);
@@ -698,7 +715,12 @@ function randomSeq(components, length) {
 // DNA MASS CALCULATOR
 // =====================================================================
 
+// Average MW of a dsDNA base pair ~ 660 Da
+// Average MW of a ssDNA nucleotide ~ 330 Da
+// Average MW of a ssRNA nucleotide ~ 340 Da
+
 function dnaConversions(lengthBp, massUg, pmol, seqType) {
+	// seqType: "dsDNA", "ssDNA", "ssRNA"
 	var mwPerUnit;
 	var unitLabel;
 	if (seqType === "ssDNA") { mwPerUnit = 330; unitLabel = "nt"; }
@@ -744,12 +766,13 @@ function dnaConversions(lengthBp, massUg, pmol, seqType) {
 
 function checkPrimerDimer(primer1, primer2) {
 	var p1 = primer1.toUpperCase();
-	var p2 = primer2 ? primer2.toUpperCase() : p1;
-	var p2c = reverseComplement(p2).toUpperCase();
+	var p2 = primer2 ? primer2.toUpperCase() : p1; // self-dimer if no second primer
+	var p2c = reverseComplement(p2).toUpperCase(); // reverse complement of primer2
 
 	var results = [];
 	var len1 = p1.length, len2 = p2c.length;
 
+	// Slide p2c across p1 in all offsets
 	for (var offset = -(len2 - 1); offset < len1; offset++) {
 		var matches = 0;
 		var matchStr1 = "";
@@ -826,7 +849,7 @@ function checkPrimerDimer(primer1, primer2) {
 // =====================================================================
 
 function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
-	mode = mode || "global";
+	mode = mode || "global"; // "global" (NW) or "local" (SW)
 	matchScore = matchScore !== undefined ? matchScore : 2;
 	mismatchPen = mismatchPen !== undefined ? mismatchPen : -1;
 	gapPen = gapPen !== undefined ? gapPen : -2;
@@ -834,8 +857,9 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 	var m = seq1.length;
 	var n = seq2.length;
 
+	// Init score matrix
 	var score = [];
-	var trace = [];
+	var trace = []; // 0=done, 1=diag, 2=up, 3=left
 	for (var i = 0; i <= m; i++) {
 		score[i] = [];
 		trace[i] = [];
@@ -875,6 +899,7 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 		}
 	}
 
+	// Traceback
 	var align1 = "", align2 = "", midline = "";
 	var ti, tj;
 	if (mode === "local") { ti = maxI; tj = maxJ; }
@@ -901,6 +926,7 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 		}
 	}
 
+	// Calc stats
 	var matches = 0, mismatches = 0, gaps = 0;
 	for (var i = 0; i < midline.length; i++) {
 		if (midline[i] === "|") matches++;
