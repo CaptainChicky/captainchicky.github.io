@@ -1962,11 +1962,11 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				var body = document.getElementById("pd-body");
 
 				document.getElementById("pd-submit").addEventListener("click", function () {
-					var p1 = filterDna(input1.value.trim());
+					var p1 = filterDna(parseFasta(input1.value.trim()).sequence).replace(/u/g, "t");
 					if (!p1.length) { body.innerHTML = "<p>Please enter primer 1.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var p2raw = input2.value.trim();
-					var p2 = p2raw ? filterDna(p2raw) : "";
-					var isSelf = !p2;
+					var p2 = filterDna(parseFasta(p2raw).sequence).replace(/u/g, "t");
+					var isSelf = !p2raw;
 
 					var dimers = checkPrimerDimer(p1, p2 || p1);
 					var top = dimers.slice(0, 10);

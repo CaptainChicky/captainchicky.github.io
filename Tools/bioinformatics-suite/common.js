@@ -567,7 +567,7 @@ function calcTm(seq, naConc, primerConc) {
 // and is also used by searchMotif
 
 function searchMotif(seq, pattern, isProtein) {
-	var upper = seq.toUpperCase().replace(/U/g, "T");
+	var upper = isProtein ? seq.toUpperCase() : seq.toUpperCase().replace(/U/g, "T");
 	var patUpper = pattern.toUpperCase().replace(/\s/g, "");
 
 	var regexStr = "";
