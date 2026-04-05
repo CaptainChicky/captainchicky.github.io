@@ -1487,7 +1487,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 				document.getElementById("tr-submit").addEventListener("click", function () {
 					var raw = input.value.trim(); if (!raw) return;
 					var parsed = parseFasta(raw);
-					var dna = filterDnaSaveCase(parsed.sequence);
+					var dna = filterDnaIupacSaveCase(parsed.sequence);
 					if (!dna.length) { framesEl.innerHTML = '<div class="result-body"><pre>No valid DNA characters found.</pre></div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var tableId = document.getElementById("tr-table").value;
 					var geneticCode = GENETIC_CODES[tableId].code;
@@ -1641,7 +1641,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 				document.getElementById("gc-submit").addEventListener("click", function () {
 					var raw = input.value.trim(); if (!raw) return;
 					var parsed = parseFasta(raw);
-					var dna = filterDnaSaveCase(parsed.sequence);
+					var dna = filterDnaIupacSaveCase(parsed.sequence);
 					if (!dna.length) { body.innerHTML = "<p>No valid DNA characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var s = seqStats(dna);
 					var title = parsed.title ? '"' + parsed.title + '"' : "";
@@ -1831,7 +1831,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 				document.getElementById("re-submit").addEventListener("click", function () {
 					var raw = input.value.trim(); if (!raw) return;
 					var parsed = parseFasta(raw);
-					var dna = filterDnaSaveCase(parsed.sequence);
+					var dna = filterDnaIupacSaveCase(parsed.sequence);
 					if (!dna.length) { body.innerHTML = '<div class="re-no-cuts">No valid DNA characters found.</div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var results = findRestrictionSites(dna, RESTRICTION_ENZYMES);
 					var totalCuts = 0;
@@ -1914,7 +1914,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 
 					var parsed = parseFasta(raw);
 					var isProtein = document.getElementById("ms-type").value === "protein";
-					var seq = isProtein ? filterProteinSaveCase(parsed.sequence) : filterDnaSaveCase(parsed.sequence);
+					var seq = isProtein ? filterProteinSaveCase(parsed.sequence) : filterDnaIupacSaveCase(parsed.sequence);
 					if (!seq.length) { body.innerHTML = '<div class="re-no-cuts">No valid characters found.</div>'; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 
 					var res = searchMotif(seq, pattern, isProtein);

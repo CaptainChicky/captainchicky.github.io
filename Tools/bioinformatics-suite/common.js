@@ -169,13 +169,45 @@ var GENETIC_CODES = {
 	"33": { name: "Cephalodiscidae Mitochondrial", code: _makeCode({ "TAA": "Y", "TGA": "W", "AGA": "S", "AGG": "K" }) }
 };
 
+function translateCodon(codon, geneticCode) {
+	// Fast path: direct lookup for unambiguous codons
+	var aa = geneticCode[codon];
+	if (aa) return aa;
+
+	// Expand IUPAC ambiguity codes at each position
+	var EXPAND = {
+		A: "A", C: "C", G: "G", T: "T",
+		R: "AG", Y: "CT", S: "CG", W: "AT", K: "GT", M: "AC",
+		B: "CGT", D: "AGT", H: "ACT", V: "ACG", N: "ACGT"
+	};
+
+	var b1 = EXPAND[codon[0]];
+	var b2 = EXPAND[codon[1]];
+	var b3 = EXPAND[codon[2]];
+	if (!b1 || !b2 || !b3) return "X";
+
+	// Try all possible concrete codons; if all agree, use that AA
+	var result = null;
+	for (var i = 0; i < b1.length; i++) {
+		for (var j = 0; j < b2.length; j++) {
+			for (var k = 0; k < b3.length; k++) {
+				var thisAA = geneticCode[b1[i] + b2[j] + b3[k]];
+				if (!thisAA) return "X";
+				if (result === null) result = thisAA;
+				else if (thisAA !== result) return "X";
+			}
+		}
+	}
+	return result || "X";
+}
+
 function translate(dnaSeq, frame, geneticCode) {
 	frame = frame || 0;
 	geneticCode = geneticCode || STANDARD_CODE;
 	var protein = "";
 	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
 	for (var i = frame; i <= upper.length - 3; i += 3) {
-		protein += geneticCode[upper.slice(i, i + 3)] || "X";
+		protein += translateCodon(upper.slice(i, i + 3), geneticCode);
 	}
 	return protein;
 }
@@ -186,7 +218,7 @@ function translateDetailed(dnaSeq, frame, geneticCode) {
 	var codons = [];
 	for (var i = frame; i <= upper.length - 3; i += 3) {
 		var codon = upper.slice(i, i + 3);
-		codons.push({ codon: dnaSeq.slice(i, i + 3), aa: geneticCode[codon] || "X", pos: i });
+		codons.push({ codon: dnaSeq.slice(i, i + 3), aa: translateCodon(codon, geneticCode), pos: i });
 	}
 	return codons;
 }
