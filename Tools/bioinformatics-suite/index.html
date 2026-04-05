@@ -970,6 +970,7 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 					<option value="upper">UPPERCASE</option>
 					<option value="lower">lowercase</option>
 					<option value="dna-only">DNA/RNA only (strip non-GATCNU)</option>
+					<option value="dna-iupac-only">DNA/RNA + IUPAC (strip non-sequence)</option>
 					<option value="protein-only">Protein only (strip non-AA)</option>
 					<option value="dna-to-rna">DNA &rarr; RNA (T &rarr; U)</option>
 					<option value="rna-to-dna">RNA &rarr; DNA (U &rarr; T)</option>
@@ -1024,13 +1025,14 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 		<section id="tool-protein-stats" class="tool-page">
 			<h2 class="tool-title">Protein Stats</h2>
 			<p class="tool-desc">Calculate molecular weight, isoelectric point (pI), extinction coefficient, and amino
-				acid composition of a protein sequence.</p>
+				acid composition of a protein sequence. pI values are approximate as terminal pKa values are simplified and predictions 
+				may diverge from ExPASy for very short peptides. See Kozlowski's IPC benchmarking paper (2016) for more info.</p>
 			<label class="field-label" for="ps-input">Protein Sequence</label>
 			<textarea id="ps-input" spellcheck="false" placeholder="Paste protein sequence (one-letter codes)..."></textarea>
 			<div class="option-row">
 				<label for="ps-pka">pKa dataset:</label>
 				<select id="ps-pka">
-					<option value="bjellqvist" selected>Bjellqvist (ExPASy base values)</option>
+					<option value="bjellqvist" selected>Bjellqvist (simplified ExPASy model)</option>
 					<option value="lehninger">Lehninger Principles of Biochemistry</option>
 					<option value="emboss">EMBOSS (Epk.dat)</option>
 					<option value="dtamb">DTASelect (Scripps)</option>
@@ -1374,9 +1376,9 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 			}
 
 			var AA_NAMES = {
-				"A": "Ala", "R": "Arg", "N": "Asn", "D": "Asp", "B": "Asx", "C": "Cys", "E": "Glu", "Q": "Gln",
-				"G": "Gly", "H": "His", "I": "Ile", "L": "Leu", "K": "Lys", "M": "Met", "F": "Phe",
-				"P": "Pro", "S": "Ser", "T": "Thr", "W": "Trp", "Y": "Tyr", "V": "Val", "X": "Xaa", "*": "Stop"
+				"A": "Ala", "R": "Arg", "N": "Asn", "D": "Asp", "B": "Asx", "C": "Cys", "E": "Glu", "Q": "Gln", "J": "Xle",
+				"G": "Gly", "H": "His", "I": "Ile", "L": "Leu", "K": "Lys", "M": "Met", "F": "Phe", "Z": "Glx", "O": "Pyl",
+				"P": "Pro", "S": "Ser", "T": "Thr", "W": "Trp", "Y": "Tyr", "V": "Val", "X": "Xaa", "U": "Sec", "*": "Stop"
 			};
 
 			// -- Sidebar navigation ---------------------------------------------
@@ -1537,7 +1539,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 							freqHtml += '<div class="cf-item"><span>' + c + ' (' + aa + ')</span> ' + count + '</div>';
 						}
 						gridEl.innerHTML = freqHtml;
-						document.querySelector("#tr-codon-freq h4").textContent = "Codon Usage - Longest ORF (" + bestOrfFrame.label + ", " + bestOrfLen + " codons)";
+						document.querySelector("#tr-codon-freq h4").textContent = "Codon Usage - Longest ORF (" + bestOrfFrame.label + ", " + (bestOrfLen + 1) + " codons incl. stop)";
 						freqEl.style.display = "block";
 					} else {
 						freqEl.style.display = "none";
@@ -1604,13 +1606,14 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						case "upper": converted = cleanSeq.toUpperCase(); break;
 						case "lower": converted = cleanSeq.toLowerCase(); break;
 						case "dna-only": converted = filterDnaSaveCase(seq); break;
+						case "dna-iupac-only": converted = filterDnaIupacSaveCase(seq); break;
 						case "protein-only": converted = filterProtein(seq); break;
-						case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), lineWidth); break;
-						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), lineWidth); break;
+						case "dna-to-rna": converted = cleanSeq.replace(/T/g,"U").replace(/t/g,"u"); break;
+						case "rna-to-dna": converted = cleanSeq.replace(/U/g,"T").replace(/u/g,"t"); break;
 					}
 					statsEl.innerHTML =
 						'<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
-						'<span class="stat-item">Output: <span>' + converted.replace(/[>\n\s]/g, "").length + ' chars</span></span>';
+						'<span class="stat-item">Output: <span>' + converted.replace(/\n/g, "").length + ' chars</span></span>';
 					output.textContent = converted;
 					result.classList.add("visible");
 				});
@@ -1665,7 +1668,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				document.getElementById("ps-submit").addEventListener("click", function () {
 					var raw = input.value.trim(); if (!raw) return;
 					var parsed = parseFasta(raw);
-					var prot = filterProtein(parsed.sequence);
+					var prot = filterProtein(parsed.sequence).replace(/\*/g, "");
 					if (!prot.length) { body.innerHTML = "<p>No valid protein characters found.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var mw = proteinMW(prot);
 					var pkaSetId = document.getElementById("ps-pka").value;
@@ -1685,6 +1688,10 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 
 					html += '<div class="prot-stat-card"><div class="psc-label">Amino Acid Composition</div><div style="font-family:var(--font-mono);font-size:11.5px;margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">';
 					var order = "GAVLIPFWMSCTYHDEQNKR";
+					var extra = "BXZJOU";
+					for (var e = 0; e < extra.length; e++) {
+						if ((comp[extra[e]] || 0) > 0) order += extra[e];
+					}
 					for (var i = 0; i < order.length; i++) {
 						var aa = order[i];
 						var cnt = comp[aa] || 0;

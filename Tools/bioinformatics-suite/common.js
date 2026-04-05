@@ -39,19 +39,34 @@ function filterDna(seq) { return seq.replace(/[^GATCNUgatcnu]/g, "").toLowerCase
 function filterDnaSaveCase(seq) { return seq.replace(/[^GATCNUgatcnu]/g, ""); }
 function filterDnaIupac(seq) { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, "").toLowerCase(); }
 function filterDnaIupacSaveCase(seq) { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, ""); }
-function filterProtein(seq) { return seq.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz*]/g, "").toUpperCase(); }
-function filterProteinSaveCase(s) { return s.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZabcdefghiklmnpqrstvwxyz*]/g, ""); }
+function filterProtein(seq) { return seq.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, "").toUpperCase(); }
+function filterProteinSaveCase(s) { return s.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, ""); }
 
 // -- FASTA parsing ----------------------------------------------------
 
 function parseFasta(raw) {
 	var title = "";
-	var headerMatch = raw.match(/^>([^\r\n]+)/m);
-	if (headerMatch) {
-		title = headerMatch[1].trim().replace(/[<>]/g, "").replace(/\s{2,}/g, " ");
+	var lines = raw.split(/\r?\n/);
+	var seqLines = [];
+	var headerCount = 0;
+
+	for (var i = 0; i < lines.length; i++) {
+		var line = lines[i];
+		if (line.charAt(0) === '>') {
+			headerCount++;
+			if (headerCount === 1) {
+				title = line.substring(1).trim().replace(/[<>]/g, "").replace(/\s{2,}/g, " ");
+			} else {
+				break;
+			}
+		} else if (headerCount <= 1) {
+			seqLines.push(line);
+		}
 	}
-	var sequence = raw.replace(/^>.*$/gm, "").trim();
-	return { title: title, sequence: sequence };
+
+	if (headerCount > 1) alert("Invalid configuration (Multi-FASTA) detected: only the first record was used.");
+
+	return { title: title, sequence: seqLines.join("").trim() };
 }
 
 // -- Statistics -------------------------------------------------------
@@ -272,6 +287,22 @@ function buildReverseTable(geneticCode) {
 
 function backTranslate(proteinSeq, geneticCode) {
 	var revTable = buildReverseTable(geneticCode || STANDARD_CODE);
+	// Add non-standard amino acids
+	if (!revTable["J"]) {
+		var jCodons = (revTable["L"] || []).concat(revTable["I"] || []);
+		if (jCodons.length > 0) revTable["J"] = jCodons;
+	}
+	if (!revTable["B"]) {
+		var bCodons = (revTable["D"] || []).concat(revTable["N"] || []);
+		if (bCodons.length > 0) revTable["B"] = bCodons;
+	}
+	if (!revTable["Z"]) {
+		var zCodons = (revTable["E"] || []).concat(revTable["Q"] || []);
+		if (zCodons.length > 0) revTable["Z"] = zCodons;
+	}
+	if (!revTable["O"]) revTable["O"] = ["TAG"];
+	if (!revTable["U"]) revTable["U"] = ["TGA"];
+
 	var result = "";
 	var details = [];
 	for (var i = 0; i < proteinSeq.length; i++) {
@@ -300,11 +331,11 @@ function backTranslate(proteinSeq, geneticCode) {
 // =====================================================================
 
 var AA_MW = {
-	G: 57.0519, A: 71.0788, V: 99.1326, L: 113.1594, I: 113.1594,
-	P: 97.1167, F: 147.1766, W: 186.2132, M: 131.1926, S: 87.0782,
+	G: 57.0519, A: 71.0788, V: 99.1326, L: 113.1594, I: 113.1594, O: 237.2982, 
+	P: 97.1167, F: 147.1766, W: 186.2132, M: 131.1926, S: 87.0782, U: 150.0489, 
 	T: 101.1051, C: 103.1388, Y: 163.1760, H: 137.1411, D: 115.0886,
 	E: 129.1155, N: 114.1038, Q: 128.1307, K: 128.1741, R: 156.1875,
-	B: 114.5962, X: 111.0608, Z: 128.6231, "*": 0
+	B: 114.5962, X: 111.0608, Z: 128.6231, J: 113.1594, "*": 0
 };
 var WATER_MW = 18.0153;
 
@@ -312,24 +343,24 @@ var WATER_MW = 18.0153;
 // Values verified against Kozlowski (2016) IPC and primary sources
 var PKA_SETS = {
 	"bjellqvist": {
-		name: "Bjellqvist (ExPASy Compute pI/Mw)",
+		name: "Bjellqvist (simplified ExPASy compute pI/Mw)",
 		nterm: 7.5, cterm: 3.55,
-		side: { D: 4.05, E: 4.45, C: 9.0, Y: 10.0, H: 5.98, K: 10.0, R: 12.0 }
+		side: { D: 4.05, E: 4.45, C: 9.0, Y: 10.0, H: 5.98, K: 10.0, R: 12.0, U: 5.43 }
 	},
 	"lehninger": {
 		name: "Lehninger Principles of Biochemistry",
 		nterm: 9.69, cterm: 2.34,
-		side: { D: 3.86, E: 4.25, C: 8.33, Y: 10.0, H: 6.0, K: 10.5, R: 12.4 }
+		side: { D: 3.86, E: 4.25, C: 8.33, Y: 10.0, H: 6.0, K: 10.5, R: 12.4, U: 5.43 }
 	},
 	"emboss": {
 		name: "EMBOSS (Epk.dat)",
 		nterm: 8.6, cterm: 3.6,
-		side: { D: 3.9, E: 4.1, C: 8.5, Y: 10.1, H: 6.5, K: 10.8, R: 12.5 }
+		side: { D: 3.9, E: 4.1, C: 8.5, Y: 10.1, H: 6.5, K: 10.8, R: 12.5, U: 5.43 }
 	},
 	"dtamb": {
 		name: "DTASelect (Scripps)",
 		nterm: 8.0, cterm: 3.1,
-		side: { D: 4.4, E: 4.4, C: 8.5, Y: 10.0, H: 6.5, K: 10.0, R: 12.0 }
+		side: { D: 4.4, E: 4.4, C: 8.5, Y: 10.0, H: 6.5, K: 10.0, R: 12.0, U: 5.43 }
 	}
 }
 
@@ -393,7 +424,7 @@ function extinctionCoeff(seq) {
 
 function aaComposition(seq) {
 	var counts = {};
-	var order = "GAVLIPFWMSCTYHDEQNKRBXZ";
+	var order = "GAVLIPFWMSCTYHDEQNKRBXZJOU";
 	for (var i = 0; i < order.length; i++) counts[order[i]] = 0;
 	for (var i = 0; i < seq.length; i++) {
 		var aa = seq[i].toUpperCase();
@@ -549,7 +580,7 @@ function searchMotif(seq, pattern, isProtein) {
 		} else if (ch === "[" || ch === "]") {
 			regexStr += ch;
 		} else {
-			regexStr += ch;
+			regexStr += ch.replace(/[*+?^${}()|\\]/g, '\\$&');
 		}
 	}
 
