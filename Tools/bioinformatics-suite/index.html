@@ -1736,7 +1736,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 
 					if (raw) {
 						var parsed = parseFasta(raw);
-						seqStr = filterDnaIupacSaveCase(parsed.sequence);
+						seqStr = (seqType === "ssRNA") ? filterRnaIupacSaveCase(parsed.sequence) : filterDnaIupacSaveCase(parsed.sequence);
 						if (seqStr.length > 0) len = seqStr.length;
 					}
 
@@ -1747,7 +1747,22 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 
 					var exactMW = null;
 					if (seqStr) {
-						var s = seqStats(seqStr);
+						var s;
+						if (seqType === "ssRNA") {
+							var _a=0,_u=0,_g=0,_c=0,_n=0;
+							for (var _i=0;_i<seqStr.length;_i++) {
+								switch(seqStr[_i].toUpperCase()){
+									case "A":_a++;break;case "U":_u++;break;
+									case "G":_g++;break;case "C":_c++;break;
+									default:_n++;break;
+								}
+							}
+							s = {len:seqStr.length,a:_a,t:_u,g:_g,c:_c,n:_n,
+								gc:((_g+_c)/seqStr.length*100).toFixed(1),
+								at:((_a+_u)/seqStr.length*100).toFixed(1)};
+						} else {
+							s = seqStats(seqStr);
+						}
 						var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
 						var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
 						var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
@@ -1784,7 +1799,22 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
 						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
 					if (seqStr) {
-						var s = seqStats(seqStr);
+						var s;
+						if (seqType === "ssRNA") {
+							var _a=0,_u=0,_g=0,_c=0,_n=0;
+							for (var _i=0;_i<seqStr.length;_i++) {
+								switch(seqStr[_i].toUpperCase()){
+									case "A":_a++;break;case "U":_u++;break;
+									case "G":_g++;break;case "C":_c++;break;
+									default:_n++;break;
+								}
+							}
+							s = {len:seqStr.length,a:_a,t:_u,g:_g,c:_c,n:_n,
+								gc:((_g+_c)/seqStr.length*100).toFixed(1),
+								at:((_a+_u)/seqStr.length*100).toFixed(1)};
+						} else {
+							s = seqStats(seqStr);
+						}
 						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
 					}
 					statsEl.innerHTML = statsHtml;
@@ -1962,10 +1992,10 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				var body = document.getElementById("pd-body");
 
 				document.getElementById("pd-submit").addEventListener("click", function () {
-					var p1 = filterDna(parseFasta(input1.value.trim()).sequence).replace(/u/g, "t");
+					var p1 = filterDna(parseFasta(input1.value.trim()).sequence);
 					if (!p1.length) { body.innerHTML = "<p>Please enter primer 1.</p>"; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 					var p2raw = input2.value.trim();
-					var p2 = filterDna(parseFasta(p2raw).sequence).replace(/u/g, "t");
+					var p2 = filterDna(parseFasta(p2raw).sequence);
 					var isSelf = !p2raw;
 
 					var dimers = checkPrimerDimer(p1, p2 || p1);

@@ -11,8 +11,7 @@ var COMP_MAP = {
 	R: "Y", Y: "R", K: "M", M: "K", S: "S", W: "W",
 	B: "V", V: "B", D: "H", H: "D",
 	r: "y", y: "r", k: "m", m: "k", s: "s", w: "w",
-	b: "v", v: "b", d: "h", h: "d",
-	U: "A", u: "a"
+	b: "v", v: "b", d: "h", h: "d"
 };
 
 // -- Core sequence ops ------------------------------------------------
@@ -35,10 +34,12 @@ function reverseComplement(seq) {
 
 // -- Filters ----------------------------------------------------------
 
-function filterDna(seq) { return seq.replace(/[^GATCNUgatcnu]/g, "").toLowerCase(); }
-function filterDnaSaveCase(seq) { return seq.replace(/[^GATCNUgatcnu]/g, ""); }
-function filterDnaIupac(seq) { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, "").toLowerCase(); }
-function filterDnaIupacSaveCase(seq) { return seq.replace(/[^GATCNRYSWKMBDHVUgatcnryswkmbdhvu]/g, ""); }
+function filterDna(seq) { return seq.replace(/[^GATCNgatcn]/g, "").toLowerCase(); }
+function filterDnaSaveCase(seq) { return seq.replace(/[^GATCNgatcn]/g, ""); }
+function filterDnaIupac(seq) { return seq.replace(/[^GATCNRYSWKMBDHVgatcnryswkmbdhv]/g, "").toLowerCase(); }
+function filterDnaIupacSaveCase(seq) { return seq.replace(/[^GATCNRYSWKMBDHVgatcnryswkmbdhv]/g, ""); }
+function filterRna(seq) { return seq.replace(/[^GAUCNgaucn]/g, "").toLowerCase(); }
+function filterRnaIupacSaveCase(seq) { return seq.replace(/[^GAUCNRYSWKMBDHVgaucnryswkmbdhv]/g, ""); }
 function filterProtein(seq) { return seq.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, "").toUpperCase(); }
 function filterProteinSaveCase(s) { return s.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, ""); }
 
@@ -78,7 +79,7 @@ function seqStats(seq) {
 	for (var i = 0; i < len; i++) {
 		switch (seq[i].toUpperCase()) {
 			case "A": a++; break;
-			case "T": case "U": t++; break;
+			case "T": t++; break;
 			case "G": g++; break;
 			case "C": c++; break;
 			default: n++; break;
@@ -213,7 +214,7 @@ function translateCodon(codon, geneticCode) {
 
 function translateDetailed(dnaSeq, frame, geneticCode) {
 	geneticCode = geneticCode || STANDARD_CODE;
-	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
+	var upper = dnaSeq.toUpperCase();
 	var codons = [];
 	for (var i = frame; i <= upper.length - 3; i += 3) {
 		var codon = upper.slice(i, i + 3);
@@ -464,7 +465,7 @@ function calcTmNN(seq, naConc, primerConc) {
 
 	// Expand IUPAC to possible bases
 	var IUPAC_EXPAND = {
-		A: ["A"], C: ["C"], G: ["G"], T: ["T"], U: ["T"],
+		A: ["A"], C: ["C"], G: ["G"], T: ["T"],
 		R: ["A", "G"], Y: ["C", "T"], S: ["G", "C"], W: ["A", "T"], K: ["G", "T"], M: ["A", "C"],
 		B: ["C", "G", "T"], D: ["A", "G", "T"], H: ["A", "C", "T"], V: ["A", "C", "G"],
 		N: ["A", "C", "G", "T"]
@@ -520,7 +521,7 @@ function calcTm(seq, naConc, primerConc) {
 	primerConc = primerConc || 0.00000025;
 	// IUPAC-aware base counting: distribute ambiguous bases fractionally
 	var IUPAC_BASES = {
-		A: [1, 0, 0, 0], C: [0, 1, 0, 0], G: [0, 0, 1, 0], T: [0, 0, 0, 1], U: [0, 0, 0, 1],
+		A: [1, 0, 0, 0], C: [0, 1, 0, 0], G: [0, 0, 1, 0], T: [0, 0, 0, 1],
 		R: [0.5, 0, 0.5, 0], Y: [0, 0.5, 0, 0.5], S: [0, 0.5, 0.5, 0], W: [0.5, 0, 0, 0.5],
 		K: [0, 0, 0.5, 0.5], M: [0.5, 0.5, 0, 0], B: [0, 1 / 3, 1 / 3, 1 / 3], D: [1 / 3, 0, 1 / 3, 1 / 3],
 		H: [1 / 3, 1 / 3, 0, 1 / 3], V: [1 / 3, 1 / 3, 1 / 3, 0], N: [0.25, 0.25, 0.25, 0.25]
@@ -567,7 +568,7 @@ function calcTm(seq, naConc, primerConc) {
 // and is also used by searchMotif
 
 function searchMotif(seq, pattern, isProtein) {
-	var upper = isProtein ? seq.toUpperCase() : seq.toUpperCase().replace(/U/g, "T");
+	var upper = seq.toUpperCase();
 	var patUpper = pattern.toUpperCase().replace(/\s/g, "");
 
 	var regexStr = "";
@@ -656,7 +657,7 @@ var RESTRICTION_ENZYMES = [
 ];
 
 var IUPAC_TO_REGEX = {
-	A: "A", C: "C", G: "G", T: "T", U: "T",
+	A: "A", C: "C", G: "G", T: "T",
 	R: "[AG]", Y: "[CT]", S: "[GC]", W: "[AT]", K: "[GT]", M: "[AC]",
 	B: "[CGT]", D: "[AGT]", H: "[ACT]", V: "[ACG]", N: "[ACGT]"
 };
@@ -670,7 +671,7 @@ function siteToRegex(site) {
 }
 
 function findRestrictionSites(dnaSeq, enzymes) {
-	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
+	var upper = dnaSeq.toUpperCase()
 	var results = [];
 	for (var e = 0; e < enzymes.length; e++) {
 		var enz = enzymes[e];
@@ -974,7 +975,7 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 // =====================================================================
 
 var IUPAC_BASES_SET = {
-	A: "A", C: "C", G: "G", T: "T", U: "T",
+	A: "A", C: "C", G: "G", T: "T",
 	R: "AG", Y: "CT", S: "CG", W: "AT", K: "GT", M: "AC",
 	B: "CGT", D: "AGT", H: "ACT", V: "ACG",
 	N: "ACGT"
