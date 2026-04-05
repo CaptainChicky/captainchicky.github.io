@@ -54,11 +54,6 @@ function parseFasta(raw) {
 	return { title: title, sequence: sequence };
 }
 
-// -- Validation -------------------------------------------------------
-
-function verifyDna(seq) { return !/[^gatcnu\s]/i.test(seq); }
-function verifyProtein(seq) { return !/[^abcdefghiklmnpqrstvwxyz*\s]/i.test(seq); }
-
 // -- Statistics -------------------------------------------------------
 
 function seqStats(seq) {
@@ -201,17 +196,6 @@ function translateCodon(codon, geneticCode) {
 	return result || "X";
 }
 
-function translate(dnaSeq, frame, geneticCode) {
-	frame = frame || 0;
-	geneticCode = geneticCode || STANDARD_CODE;
-	var protein = "";
-	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
-	for (var i = frame; i <= upper.length - 3; i += 3) {
-		protein += translateCodon(upper.slice(i, i + 3), geneticCode);
-	}
-	return protein;
-}
-
 function translateDetailed(dnaSeq, frame, geneticCode) {
 	geneticCode = geneticCode || STANDARD_CODE;
 	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
@@ -245,25 +229,13 @@ function translateAllFrames(dnaSeq, geneticCode) {
 	var rc = reverseComplement(dnaSeq);
 	for (var f = 0; f < 3; f++) {
 		var cd = translateDetailed(dnaSeq, f, geneticCode);
-		results.push({ label: "5'>3' Frame " + (f + 1), codonData: cd, orfs: findOrfs(cd) });
+		results.push({ label: "5'>3' Frame " + (f + 1), codonData: cd });
 	}
 	for (var f = 0; f < 3; f++) {
 		var cd = translateDetailed(rc, f, geneticCode);
-		results.push({ label: "3'>5' Frame " + (f + 1), codonData: cd, orfs: findOrfs(cd) });
+		results.push({ label: "3'>5' Frame " + (f + 1), codonData: cd });
 	}
 	return results;
-}
-
-// Codon frequency from a DNA sequence
-function codonFrequency(dnaSeq, geneticCode) {
-	geneticCode = geneticCode || STANDARD_CODE;
-	var upper = dnaSeq.toUpperCase().replace(/U/g, "T");
-	var freq = {};
-	for (var i = 0; i <= upper.length - 3; i += 3) {
-		var c = upper.slice(i, i + 3);
-		freq[c] = (freq[c] || 0) + 1;
-	}
-	return freq;
 }
 
 // =====================================================================
@@ -336,8 +308,6 @@ var AA_MW = {
 };
 var WATER_MW = 18.0153;
 
-// pKa datasets for pI calculation
-// Values verified against Kozlowski (2016) IPC and primary sources
 var PKA_SETS = {
 	"bjellqvist": {
 		name: "Bjellqvist (ExPASy Compute pI/Mw)",
@@ -373,9 +343,7 @@ function proteinMW(seq) {
 function chargeAtPH(seq, pH, pkaSet) {
 	pkaSet = pkaSet || PKA_SETS["bjellqvist"];
 	var charge = 0;
-	// N-terminal positive
 	charge += Math.pow(10, pkaSet.nterm) / (Math.pow(10, pkaSet.nterm) + Math.pow(10, pH));
-	// C-terminal negative
 	charge -= Math.pow(10, pH) / (Math.pow(10, pkaSet.cterm) + Math.pow(10, pH));
 	for (var i = 0; i < seq.length; i++) {
 		var aa = seq[i].toUpperCase();
@@ -434,8 +402,6 @@ function aaComposition(seq) {
 // TM CALCULATOR
 // =====================================================================
 
-// Nearest-neighbor parameters (SantaLucia 1998, unified)
-// delta-H in kcal/mol, delta-S in cal/(mol*K)
 var NN_DH = {
 	"AA": -7.9, "TT": -7.9, "AT": -7.2, "TA": -7.2,
 	"CA": -8.5, "TG": -8.5, "GT": -8.4, "AC": -8.4,
@@ -448,18 +414,16 @@ var NN_DS = {
 	"CT": -21.0, "AG": -21.0, "GA": -22.2, "TC": -22.2,
 	"CG": -27.2, "GC": -24.4, "GG": -19.9, "CC": -19.9
 };
-// Initiation parameters
 var NN_INIT_DH = { "GC": 0.1, "AT": 2.3 };
 var NN_INIT_DS = { "GC": -2.8, "AT": 4.1 };
 
 function calcTmNN(seq, naConc, primerConc) {
 	naConc = naConc || 0.05;
-	primerConc = primerConc || 0.00000025; // 250 nM default
+	primerConc = primerConc || 0.00000025;
 	var upper = seq.toUpperCase();
 	var len = upper.length;
 	if (len < 2) return null;
 
-	// Expand IUPAC to possible bases
 	var IUPAC_EXPAND = {
 		A: ["A"], C: ["C"], G: ["G"], T: ["T"], U: ["T"],
 		R: ["A", "G"], Y: ["C", "T"], S: ["G", "C"], W: ["A", "T"], K: ["G", "T"], M: ["A", "C"],
@@ -467,7 +431,6 @@ function calcTmNN(seq, naConc, primerConc) {
 		N: ["A", "C", "G", "T"]
 	};
 
-	// Sum nearest-neighbor params, averaging over ambiguous positions
 	var dH = 0, dS = 0;
 	for (var i = 0; i < len - 1; i++) {
 		var bases1 = IUPAC_EXPAND[upper[i]];
@@ -489,7 +452,6 @@ function calcTmNN(seq, naConc, primerConc) {
 		dS += sumS / count;
 	}
 
-	// Initiation params based on terminal bases (use first possibility if ambiguous)
 	var firstBases = IUPAC_EXPAND[upper[0]] || ["A"];
 	var lastBases = IUPAC_EXPAND[upper[len - 1]] || ["A"];
 	function gcFraction(bases) {
@@ -501,10 +463,8 @@ function calcTmNN(seq, naConc, primerConc) {
 	dH += fGC * NN_INIT_DH["GC"] + (1 - fGC) * NN_INIT_DH["AT"] + lGC * NN_INIT_DH["GC"] + (1 - lGC) * NN_INIT_DH["AT"];
 	dS += fGC * NN_INIT_DS["GC"] + (1 - fGC) * NN_INIT_DS["AT"] + lGC * NN_INIT_DS["GC"] + (1 - lGC) * NN_INIT_DS["AT"];
 
-	// Salt correction (SantaLucia 1998)
 	dS += 0.368 * (len - 1) * Math.log(naConc);
 
-	// Tm = dH / (dS + R * ln(Ct/4)) - 273.15
 	var R = 1.987;
 	var isSelfComp = (seq.toUpperCase() === reverseComplement(seq.toUpperCase()));
 	var ctTerm = isSelfComp ? primerConc : (primerConc / 4);
@@ -515,7 +475,6 @@ function calcTmNN(seq, naConc, primerConc) {
 function calcTm(seq, naConc, primerConc) {
 	naConc = naConc || 0.05;
 	primerConc = primerConc || 0.00000025;
-	// IUPAC-aware base counting: distribute ambiguous bases fractionally
 	var IUPAC_BASES = {
 		A: [1, 0, 0, 0], C: [0, 1, 0, 0], G: [0, 0, 1, 0], T: [0, 0, 0, 1], U: [0, 0, 0, 1],
 		R: [0.5, 0, 0.5, 0], Y: [0, 0.5, 0, 0.5], S: [0, 0.5, 0.5, 0], W: [0.5, 0, 0, 0.5],
@@ -537,11 +496,9 @@ function calcTm(seq, naConc, primerConc) {
 	var methods = [];
 
 	if (len <= 13) {
-		// Short oligos: Wallace only
 		var tmW = 2 * (s.a + s.t) + 4 * (s.g + s.c);
 		methods.push({ name: "Wallace rule", tm: tmW, formula: "Tm = 2(A+T) + 4(G+C)", note: "Standard method for short oligos (\u226413 bp). Does not account for salt or primer concentration.", recommended: true });
 	} else if (len <= 60) {
-		// Primer range: NN (recommended) + salt-adjusted for comparison
 		var tmNN = calcTmNN(seq, naConc, primerConc);
 		if (tmNN !== null) {
 			methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = \u0394H / (\u0394S + R\u00b7ln(Ct/4)) \u2212 273.15 (SantaLucia 1998)", note: "Most accurate for primers (14-60 bp). Uses dinucleotide thermodynamic parameters with salt and primer concentration corrections.", recommended: true });
@@ -550,7 +507,6 @@ function calcTm(seq, naConc, primerConc) {
 		var tmSalt = 100.5 + (41 * gcFrac) - (820 / len) + 16.6 * Math.log10(naConc);
 		methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 100.5 + 41\u00b7(%GC) \u2212 820/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "General-purpose formula. Less accurate than nearest-neighbor for primers but useful for comparison.", recommended: (tmNN === null) });
 	} else {
-		// Long sequences: salt-adjusted (long-sequence variant, Howley et al. 1979)
 		var gcFrac = (s.g + s.c) / len;
 		var tmSalt = 81.5 + (41 * gcFrac) - (500 / len) + 16.6 * Math.log10(naConc);
 		methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 81.5 + 41\u00b7(%GC) \u2212 500/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "Long-sequence salt-adjusted formula (>60 bp). GC and salt terms from Marmur & Doty (1962) and Schildkraut & Lifson (1965).", recommended: true });
@@ -563,14 +519,10 @@ function calcTm(seq, naConc, primerConc) {
 // MOTIF SEARCH
 // =====================================================================
 
-// IUPAC_TO_REGEX is defined in the restriction enzyme section below
-// and is also used by searchMotif
-
 function searchMotif(seq, pattern, isProtein) {
 	var upper = seq.toUpperCase();
 	var patUpper = pattern.toUpperCase().replace(/\s/g, "");
 
-	// Build regex from pattern (supports IUPAC for DNA, or literal for protein)
 	var regexStr = "";
 	for (var i = 0; i < patUpper.length; i++) {
 		var ch = patUpper[i];
@@ -600,7 +552,7 @@ function searchMotif(seq, pattern, isProtein) {
 			end: match.index + match[0].length,
 			seq: seq.slice(match.index, match.index + match[0].length)
 		});
-		re.lastIndex = match.index + 1; // allow overlapping matches
+		re.lastIndex = match.index + 1;
 	}
 
 	return { matches: matches, pattern: patUpper, regex: regexStr, error: null };
@@ -685,9 +637,8 @@ function findRestrictionSites(dnaSeq, enzymes) {
 		var match;
 		while ((match = re.exec(upper)) !== null) {
 			positions.push({ pos: match.index + 1, strand: "+", cutPos: match.index + enz.cut });
-			re.lastIndex = match.index + 1; // allow overlapping
+			re.lastIndex = match.index + 1;
 		}
-		// Also search reverse complement
 		var rcSite = reverseComplement(enz.site.toUpperCase());
 		if (rcSite !== enz.site.toUpperCase()) {
 			var rcPattern = siteToRegex(rcSite);
@@ -720,35 +671,7 @@ function toFasta(seq, title, lineWidth) {
 	return lines.join("\n");
 }
 
-function toUpperCase(seq) { return seq.toUpperCase(); }
-function toLowerCase(seq) { return seq.toLowerCase(); }
-
-function removeNumbers(seq) { return seq.replace(/[0-9]/g, ""); }
-function removeSpaces(seq) { return seq.replace(/\s/g, ""); }
 function removeNonSeq(seq) { return seq.replace(/[^A-Za-z*]/g, ""); }
-
-// =====================================================================
-// ALIGNMENT
-// =====================================================================
-
-function parseAlignment(text) {
-	var blocks = text.split(/^>/gm).filter(Boolean);
-	return blocks.map(function (block) {
-		var nl = block.indexOf("\n");
-		var title = block.slice(0, nl).trim().replace(/[<>]/g, "");
-		var seq = block.slice(nl).replace(/[^A-Za-z.\-]/g, "");
-		return { title: title, seq: seq };
-	});
-}
-
-function checkAlign(titles, sequences) {
-	if (sequences.length < 2) return false;
-	var len = sequences[0].length;
-	for (var i = 0; i < sequences.length; i++) {
-		if (!titles[i].trim() || !sequences[i].trim() || sequences[i].length !== len) return false;
-	}
-	return true;
-}
 
 // =====================================================================
 // SHUFFLE & RANDOM
@@ -772,52 +695,23 @@ function randomSeq(components, length) {
 }
 
 // =====================================================================
-// CODON TABLE PARSING
-// =====================================================================
-
-function parseCodonTable(tableText) {
-	var entries = [];
-	var lines = tableText.replace(/[^.]*\.\./, "").split(/[\r\n]+/);
-	for (var i = 0; i < lines.length; i++) {
-		var fields = lines[i].trim().split(/\s+/);
-		if (fields.length >= 5) {
-			var aa = fields[0].charAt(0).toUpperCase() + fields[0].slice(1, 3).toLowerCase();
-			var cdn = fields[1].toLowerCase();
-			var num = parseFloat(fields[2]);
-			var pt = parseFloat(fields[3]);
-			var frac = parseFloat(fields[4]);
-			if (/^[A-Z][a-z]{2}$/.test(aa) && /^[a-z]{3}$/.test(cdn)) {
-				entries.push({ aa: aa, codon: cdn, number: num, perThou: pt, fraction: frac });
-			}
-		}
-	}
-	return entries;
-}
-
-// =====================================================================
 // DNA MASS CALCULATOR
 // =====================================================================
 
-// Average MW of a dsDNA base pair ~ 660 Da
-// Average MW of a ssDNA nucleotide ~ 330 Da
-// Average MW of a ssRNA nucleotide ~ 340 Da
-
 function dnaConversions(lengthBp, massUg, pmol, seqType) {
-	// seqType: "dsDNA", "ssDNA", "ssRNA"
 	var mwPerUnit;
 	var unitLabel;
 	if (seqType === "ssDNA") { mwPerUnit = 330; unitLabel = "nt"; }
 	else if (seqType === "ssRNA") { mwPerUnit = 340; unitLabel = "nt"; }
-	else { mwPerUnit = 660; unitLabel = "bp"; } // dsDNA default
+	else { mwPerUnit = 660; unitLabel = "bp"; }
 
-	var mwTotal = lengthBp * mwPerUnit; // Da (g/mol)
+	var mwTotal = lengthBp * mwPerUnit;
 
 	var results = {};
 	results.mwDa = mwTotal;
 	results.mwKDa = mwTotal / 1000;
 	results.unitLabel = unitLabel;
 
-	// If mass given, calculate pmol and copies
 	if (massUg > 0) {
 		var massG = massUg * 1e-6;
 		var moles = massG / mwTotal;
@@ -830,7 +724,6 @@ function dnaConversions(lengthBp, massUg, pmol, seqType) {
 		};
 	}
 
-	// If pmol given, calculate mass and copies
 	if (pmol > 0) {
 		var moles = pmol * 1e-12;
 		var massG = moles * mwTotal;
@@ -851,13 +744,12 @@ function dnaConversions(lengthBp, massUg, pmol, seqType) {
 
 function checkPrimerDimer(primer1, primer2) {
 	var p1 = primer1.toUpperCase();
-	var p2 = primer2 ? primer2.toUpperCase() : p1; // self-dimer if no second primer
-	var p2c = reverseComplement(p2).toUpperCase(); // reverse complement of primer2
+	var p2 = primer2 ? primer2.toUpperCase() : p1;
+	var p2c = reverseComplement(p2).toUpperCase();
 
 	var results = [];
 	var len1 = p1.length, len2 = p2c.length;
 
-	// Slide p2c across p1 in all offsets
 	for (var offset = -(len2 - 1); offset < len1; offset++) {
 		var matches = 0;
 		var matchStr1 = "";
@@ -882,7 +774,6 @@ function checkPrimerDimer(primer1, primer2) {
 
 		if (matches < 3) continue;
 
-		// Check if 3' end is involved (last 5 bases)
 		var end3p1 = false, end3p2 = false;
 		for (var i = 0; i < Math.min(5, overlapLen); i++) {
 			var idx1 = start1 + overlapLen - 1 - i;
@@ -891,7 +782,6 @@ function checkPrimerDimer(primer1, primer2) {
 			if (start2 + i < 5 && p1[start1 + i] === p2c[start2 + i]) end3p2 = true;
 		}
 
-		// Build visual alignment
 		var pad1 = "", pad2 = "";
 		if (offset > 0) { pad2 = ""; for (var i = 0; i < offset; i++) pad2 += " "; }
 		else { pad1 = ""; for (var i = 0; i < -offset; i++) pad1 += " "; }
@@ -902,11 +792,9 @@ function checkPrimerDimer(primer1, primer2) {
 		bondLine += bondStr;
 		var line2 = pad2 + "3'-" + p2.toUpperCase().split("").reverse().join("") + "-5'";
 
-		// Compute score: matches weighted, bonus for 3' involvement
 		var score = matches;
 		if (end3p1 || end3p2) score += 5;
 
-		// Calculate estimated Tm of the dimer (rough: 2*AT + 4*GC for matched region)
 		var dimerAt = 0, dimerGc = 0;
 		for (var i = 0; i < overlapLen; i++) {
 			if (p1[start1 + i] === p2c[start2 + i]) {
@@ -929,9 +817,7 @@ function checkPrimerDimer(primer1, primer2) {
 		});
 	}
 
-	// Sort by score descending
 	results.sort(function (a, b) { return b.score - a.score; });
-
 	return results;
 }
 
@@ -940,7 +826,7 @@ function checkPrimerDimer(primer1, primer2) {
 // =====================================================================
 
 function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
-	mode = mode || "global"; // "global" (NW) or "local" (SW)
+	mode = mode || "global";
 	matchScore = matchScore !== undefined ? matchScore : 2;
 	mismatchPen = mismatchPen !== undefined ? mismatchPen : -1;
 	gapPen = gapPen !== undefined ? gapPen : -2;
@@ -948,9 +834,8 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 	var m = seq1.length;
 	var n = seq2.length;
 
-	// Init score matrix
 	var score = [];
-	var trace = []; // 0=done, 1=diag, 2=up, 3=left
+	var trace = [];
 	for (var i = 0; i <= m; i++) {
 		score[i] = [];
 		trace[i] = [];
@@ -990,7 +875,6 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 		}
 	}
 
-	// Traceback
 	var align1 = "", align2 = "", midline = "";
 	var ti, tj;
 	if (mode === "local") { ti = maxI; tj = maxJ; }
@@ -1017,7 +901,6 @@ function pairwiseAlign(seq1, seq2, mode, matchScore, mismatchPen, gapPen) {
 		}
 	}
 
-	// Calc stats
 	var matches = 0, mismatches = 0, gaps = 0;
 	for (var i = 0; i < midline.length; i++) {
 		if (midline[i] === "|") matches++;

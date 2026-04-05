@@ -289,15 +289,6 @@
 			pointer-events: none;
 		}
 
-		.sidebar-item .badge {
-			margin-left: auto;
-			font-size: 9.5px;
-			padding: 1px 6px;
-			border-radius: 10px;
-			background: var(--border);
-			color: var(--text-muted);
-			font-weight: 600;
-		}
 
 		/* Main */
 		#main {
@@ -729,8 +720,7 @@
 			.sidebar-header h1,
 			.sidebar-header .logo,
 			.sidebar-cat,
-			.sidebar-item span:not(.icon),
-			.sidebar-item .badge {
+			.sidebar-item span:not(.icon) {
 				display: none;
 			}
 
@@ -799,7 +789,6 @@
 		</a>
 		<a class="sidebar-item" data-tool="sanger-assembly">
 			<span class="icon">&#9654;&#9664;</span> <span>Sanger Assembly</span>
-			<span class="badge">New</span>
 		</a>
 
 		<div class="sidebar-cat">Search &amp; Align</div>
@@ -1008,7 +997,8 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 		<!-- GC CONTENT -->
 		<section id="tool-gc-content" class="tool-page">
 			<h2 class="tool-title">GC Content</h2>
-			<p class="tool-desc">Calculate the nucleotide composition and GC/AT content of a DNA sequence.</p>
+			<p class="tool-desc">Calculate the nucleotide composition and GC/AT content of a DNA sequence.
+				IUPAC ambiguity codes are accepted but counted as &ldquo;Other&rdquo;&mdash;GC% reflects only definitive G and C bases.</p>
 			<label class="field-label" for="gc-input">Input Sequence</label>
 			<textarea id="gc-input" spellcheck="false" placeholder="Paste raw or FASTA DNA sequence..."></textarea>
 			<div class="btn-row">
@@ -1718,7 +1708,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					var raw = seqInput.value.trim();
 					if (raw) {
 						var parsed = parseFasta(raw);
-						var seq = filterDnaSaveCase(parsed.sequence);
+						var seq = filterDnaIupacSaveCase(parsed.sequence);
 						if (seq.length > 0) {
 							lenInput.value = seq.length;
 							lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
@@ -1736,7 +1726,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 
 					if (raw) {
 						var parsed = parseFasta(raw);
-						seqStr = filterDnaSaveCase(parsed.sequence);
+						seqStr = filterDnaIupacSaveCase(parsed.sequence);
 						if (seqStr.length > 0) len = seqStr.length;
 					}
 
@@ -1747,7 +1737,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 
 					var exactMW = null;
 					if (seqStr) {
-						var s = seqStats(filterDnaSaveCase(seqStr));
+						var s = seqStats(filterDnaIupacSaveCase(seqStr));
 						var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
 						var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
 						var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
@@ -1784,7 +1774,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
 						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
 					if (seqStr) {
-						var s = seqStats(filterDnaSaveCase(seqStr));
+						var s = seqStats(filterDnaIupacSaveCase(seqStr));
 						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
 					}
 					statsEl.innerHTML = statsHtml;
@@ -2210,13 +2200,9 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					if (modeSelect.value === "random") {
 						randomOpts.style.display = "";
 						shuffleOpts.style.display = "none";
-						typeLabel.style.display = "";
-						typeSelect.style.display = "";
 					} else {
 						randomOpts.style.display = "none";
 						shuffleOpts.style.display = "";
-						typeLabel.style.display = "none";
-						typeSelect.style.display = "none";
 					}
 				});
 
@@ -2244,11 +2230,11 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 						var raw = document.getElementById("gen-input").value.trim();
 						if (!raw) return;
 						var parsed = parseFasta(raw);
-						var isDna = verifyDna(parsed.sequence);
-						var clean = isDna ? filterDnaSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
+						var type = typeSelect.value;
+						var clean = type === "dna" ? filterDnaIupacSaveCase(parsed.sequence) : filterProteinSaveCase(parsed.sequence);
 						if (!clean.length) { output.textContent = "No valid characters found."; result.classList.add("visible"); statsEl.innerHTML = ""; return; }
 						seq = shuffleSeq(clean);
-						if (isDna) {
+						if (type === "dna") {
 							s = seqStats(clean);
 							statsEl.innerHTML = '<span class="stat-item stat-len">Length: <span>' + s.len.toLocaleString() + ' bp</span></span><span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span><span class="stat-item">Type: <span>DNA</span></span><span class="stat-item">Mode: <span>Shuffle</span></span>';
 						} else {
