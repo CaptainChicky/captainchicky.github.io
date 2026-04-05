@@ -1980,7 +1980,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 							var borderColor = d.end3 ? 'var(--red)' : 'var(--border)';
 							var tag = d.end3 ? '<span style="color:var(--red);font-weight:600;font-size:11px;margin-left:8px">3\' END RISK</span>' : '';
 							html += '<div style="border:1px solid ' + borderColor + ';border-radius:var(--radius);padding:12px;margin-bottom:8px;background:var(--bg-input)">';
-							html += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Matches: <span style="color:var(--text);font-weight:600">' + d.matches + '</span> / ' + d.overlap + ' overlap, Est. Tm: <span style="font-weight:600">' + d.dimerTm + '&deg;C</span>' + tag + '</div>';
+							html += '<div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Matches: <span style="color:var(--text);font-weight:600">' + d.matches + '</span> / ' + d.overlap + ' overlap, Stability score: <span style="font-weight:600;color:' + (d.end3 ? 'var(--red)' : 'var(--text)') + '">' + d.dimerScore + '</span>' + tag + '</div>';
 							html += '<pre style="font-size:11.5px;line-height:1.5;margin:0;color:var(--text)">' + d.line1 + '\n' + d.bondLine + '\n' + d.line2 + '</pre>';
 							html += '</div>';
 						}

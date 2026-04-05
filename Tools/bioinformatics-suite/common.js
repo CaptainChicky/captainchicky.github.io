@@ -509,18 +509,18 @@ function calcTm(seq, naConc, primerConc) {
 	var methods = [];
 
 	if (len <= 13) {
-		var tmW = 2 * (s.a + s.t) + 4 * (s.g + s.c);
+		var tmW = 2 * (fa + ft) + 4 * (fg + fc);
 		methods.push({ name: "Wallace rule", tm: tmW, formula: "Tm = 2(A+T) + 4(G+C)", note: "Standard method for short oligos (\u226413 bp). Does not account for salt or primer concentration.", recommended: true });
 	} else if (len <= 60) {
 		var tmNN = calcTmNN(seq, naConc, primerConc);
 		if (tmNN !== null) {
 			methods.push({ name: "Nearest-neighbor", tm: tmNN, formula: "Tm = \u0394H / (\u0394S + R\u00b7ln(Ct/4)) \u2212 273.15 (SantaLucia 1998)", note: "Most accurate for primers (14-60 bp). Uses dinucleotide thermodynamic parameters with salt and primer concentration corrections.", recommended: true });
 		}
-		var gcFrac = (s.g + s.c) / len;
+		var gcFrac = (fg + fc) / len;
 		var tmSalt = 100.5 + (41 * gcFrac) - (820 / len) + 16.6 * Math.log10(naConc);
 		methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 100.5 + 41\u00b7(%GC) \u2212 820/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "General-purpose formula. Less accurate than nearest-neighbor for primers but useful for comparison.", recommended: (tmNN === null) });
 	} else {
-		var gcFrac = (s.g + s.c) / len;
+		var gcFrac = (fg + fc) / len;
 		var tmSalt = 81.5 + (41 * gcFrac) - (500 / len) + 16.6 * Math.log10(naConc);
 		methods.push({ name: "Salt-adjusted", tm: parseFloat(tmSalt.toFixed(1)), formula: "Tm = 81.5 + 41\u00b7(%GC) \u2212 500/N + 16.6\u00b7log\u2081\u2080([Na\u207a])", note: "Long-sequence salt-adjusted formula (>60 bp). GC and salt terms from Marmur & Doty (1962) and Schildkraut & Lifson (1965).", recommended: true });
 	}
@@ -832,7 +832,7 @@ function checkPrimerDimer(primer1, primer2) {
 			overlap: overlapLen,
 			end3: end3p1 || end3p2,
 			score: score,
-			dimerTm: dimerTm,
+			dimerScore: dimerTm,
 			line1: line1,
 			bondLine: bondLine,
 			line2: line2,
