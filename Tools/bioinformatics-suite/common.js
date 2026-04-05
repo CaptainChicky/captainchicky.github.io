@@ -1084,10 +1084,16 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 		if (b1 === b2) return matchScore;
 		var s1 = IUPAC_BASES_SET[b1] || "ACGT";
 		var s2 = IUPAC_BASES_SET[b2] || "ACGT";
+		// Count intersection size
+		var intersection = 0;
 		for (var i = 0; i < s1.length; i++) {
-			if (s2.indexOf(s1[i]) !== -1) return matchScore;
+			if (s2.indexOf(s1[i]) !== -1) intersection++;
 		}
-		return mismatchPen;
+		if (intersection === 0) return mismatchPen;
+		// Fractional score: scale by intersection / max set size
+		// A vs A = 2, A vs R = 1, A vs N = 0.5, N vs N = 0.5, R vs R = 1
+		var maxSet = Math.max(s1.length, s2.length);
+		return matchScore * (intersection / maxSet);
 	}
 
 	for (var i = 1; i <= m; i++) {
@@ -1190,6 +1196,18 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 	for (var i = 0; i < annotation.length; i++) {
 		var c = annotation[i];
 		if (c === "B" || c === "X" || c === "!") overlapLen++;
+	}
+
+	// Enforce minimum overlap
+	if (overlapLen < minOverlap) {
+		return {
+			error: "Insufficient overlap: found " + overlapLen + " bp but minimum is " + minOverlap +
+				" bp. The reads may not overlap, or try lowering the minimum overlap threshold.",
+			overlapLen: overlapLen,
+			minOverlap: minOverlap,
+			fwdLen: fwdSeq.length,
+			revLen: revSeq.length
+		};
 	}
 
 	var fwdAmbig = 0, revAmbig = 0, consensusAmbig = 0;
