@@ -978,6 +978,12 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			<div class="option-row">
 				<label for="fc-title">FASTA title (optional):</label>
 				<input type="text" id="fc-title" value="" placeholder="My sequence" style="width:240px">
+				<label for="fc-width">Line width:</label>
+				<select id="fc-width">
+					<option value="60" selected>60</option>
+					<option value="70">70</option>
+					<option value="80">80</option>
+				</select>
 			</div>
 			<div class="btn-row">
 				<button class="btn btn-primary" id="fc-submit">Convert</button>
@@ -1589,6 +1595,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					var raw = input.value.trim(); if (!raw) return;
 					var parsed = parseFasta(raw);
 					var mode = document.getElementById("fc-mode").value;
+					var lineWidth = parseInt(document.getElementById("fc-width").value) || 60;
 					var seq = parsed.sequence;
 					var cleanSeq = removeNonSeq(seq);
 					var converted = "";
@@ -1596,14 +1603,14 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 						case "raw": converted = cleanSeq; break;
 						case "fasta":
 							var title = document.getElementById("fc-title").value || parsed.title || "Sequence";
-							converted = toFasta(cleanSeq, title, 60); break;
-						case "numbered": converted = formatSeqNumbered(cleanSeq, 60, 10); break;
+							converted = toFasta(cleanSeq, title, lineWidth); break;
+						case "numbered": converted = formatSeqNumbered(cleanSeq, lineWidth, 10); break;
 						case "upper": converted = cleanSeq.toUpperCase(); break;
 						case "lower": converted = cleanSeq.toLowerCase(); break;
 						case "dna-only": converted = filterDnaSaveCase(seq); break;
 						case "protein-only": converted = filterProtein(seq); break;
-						case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), 60); break;
-						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), 60); break;
+						case "dna-to-rna": converted = formatSeq(cleanSeq.replace(/T/g,"U").replace(/t/g,"u"), lineWidth); break;
+						case "rna-to-dna": converted = formatSeq(cleanSeq.replace(/U/g,"T").replace(/u/g,"t"), lineWidth); break;
 					}
 					statsEl.innerHTML =
 						'<span class="stat-item stat-len">Input: <span>' + cleanSeq.length + ' chars</span></span>' +
@@ -2038,7 +2045,7 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					if (sa.error) {
 						statsEl.innerHTML =
 							'<span class="stat-item">Fwd: <span>' + sa.fwdLen + ' bp</span></span>' +
-							'<span class="stat-item">Rev (input): <span>' + sa.revLen + ' bp</span></span>' +
+							'<span class="stat-item">Rev: <span>' + sa.revLen + ' bp</span></span>' +
 							'<span class="stat-item" style="color:var(--red)">Overlap: <span>' + sa.overlapLen + ' bp (min: ' + sa.minOverlap + ')</span></span>';
 						consEl.textContent = sa.error;
 						alignEl.textContent = "";
@@ -2050,14 +2057,26 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					statsEl.innerHTML =
 						'<span class="stat-item stat-len">Consensus: <span>' + sa.consensusLen.toLocaleString() + ' bp</span></span>' +
 						'<span class="stat-item">Fwd: <span>' + sa.fwdLen + ' bp</span></span>' +
-						'<span class="stat-item">Rev (input): <span>' + sa.revLen + ' bp</span></span>' +
+						'<span class="stat-item">Rev: <span>' + sa.revLen + ' bp</span></span>' +
 						'<span class="stat-item" style="color:var(--accent)">Overlap: <span>' + sa.overlapLen + ' bp</span></span>' +
 						'<span class="stat-item stat-gc">Matches: <span>' + sa.matches + '</span></span>' +
 						'<span class="stat-item" style="color:var(--orange)">Resolved: <span>' + sa.resolved + '</span></span>' +
 						'<span class="stat-item" style="color:' + (sa.conflicts > 0 ? 'var(--red)' : 'var(--green)') + '">Conflicts: <span>' + sa.conflicts + '</span></span>' +
 						'<span class="stat-item">Ambiguities removed: <span>' + sa.ambigResolved + '</span></span>';
 
-					consEl.textContent = formatSeq(sa.consensus, 60);
+					// Build color-coded consensus
+					var annMap = { "F": "sa-fwd", "R": "sa-rev", "B": "sa-both", "X": "sa-resolved", "!": "sa-conflict" };
+					var consHtml = "";
+					var lineWidth = 60;
+					for (var i = 0; i < sa.consensus.length; i += lineWidth) {
+						for (var j = i; j < Math.min(i + lineWidth, sa.consensus.length); j++) {
+							var cls = annMap[sa.annotation[j]] || "";
+							if (cls) consHtml += '<span class="' + cls + '">' + sa.consensus[j] + '</span>';
+							else consHtml += sa.consensus[j];
+						}
+						consHtml += "\n";
+					}
+					consEl.innerHTML = consHtml;
 
 					// Build annotated alignment display
 					var width = 60;
@@ -2102,16 +2121,22 @@ NNNNCNNNCCNCNNAGGNAAAANNNNNNNNNTNNNNCAATNCNNNNNN
 					alignEl.textContent = lines.join("\n");
 
 					legendEl.innerHTML =
+						'<div style="margin-bottom:16px">' +
+						'<div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Consensus colors</div>' +
 						'<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:var(--font-mono)">' +
-						'<span style="color:var(--accent);font-weight:600">F</span><span style="color:var(--text-dim)">Forward read only (no reverse coverage)</span>' +
-						'<span style="color:var(--purple);font-weight:600">R</span><span style="color:var(--text-dim)">Reverse read only (no forward coverage)</span>' +
-						'<span style="color:var(--green);font-weight:600">B</span><span style="color:var(--text-dim)">Both reads agree</span>' +
-						'<span style="color:var(--orange);font-weight:600">X</span><span style="color:var(--text-dim)">Ambiguity resolved (e.g. N+A&rarr;A, R+A&rarr;A)</span>' +
-						'<span style="color:var(--red);font-weight:600">!</span><span style="color:var(--text-dim)">True conflict (reads disagree, resolved by IUPAC union)</span>' +
-						'<span style="font-weight:600">|</span><span style="color:var(--text-dim)">Exact match in alignment</span>' +
-						'<span style="font-weight:600">:</span><span style="color:var(--text-dim)">IUPAC-compatible (sets overlap)</span>' +
-						'<span style="font-weight:600">X</span><span style="color:var(--text-dim)">Mismatch in alignment</span>' +
-						'</div>';
+						'<span class="sa-fwd">&#9646;&#9646;&#9646;</span><span style="color:var(--text-dim)">Forward read only (no reverse coverage)</span>' +
+						'<span class="sa-rev">&#9646;&#9646;&#9646;</span><span style="color:var(--text-dim)">Reverse read only (no forward coverage)</span>' +
+						'<span class="sa-both">&#9646;&#9646;&#9646;</span><span style="color:var(--text-dim)">Both reads agree</span>' +
+						'<span class="sa-resolved">&#9646;&#9646;&#9646;</span><span style="color:var(--text-dim)">Ambiguity resolved (e.g. N+A&#8594;A, R+A&#8594;A)</span>' +
+						'<span class="sa-conflict">&#9646;&#9646;&#9646;</span><span style="color:var(--text-dim)">True conflict (reads disagree, resolved by IUPAC union)</span>' +
+						'</div></div>' +
+						'<div>' +
+						'<div style="font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Alignment symbols</div>' +
+						'<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-family:var(--font-mono)">' +
+						'<span style="font-weight:600">&nbsp;|&nbsp;</span><span style="color:var(--text-dim)">Exact match</span>' +
+						'<span style="font-weight:600">&nbsp;:&nbsp;</span><span style="color:var(--text-dim)">IUPAC-compatible (base sets overlap)</span>' +
+						'<span style="font-weight:600">&nbsp;X&nbsp;</span><span style="color:var(--text-dim)">Mismatch</span>' +
+						'</div></div>';
 
 					result.classList.add("visible");
 				});
