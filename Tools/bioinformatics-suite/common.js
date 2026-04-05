@@ -242,7 +242,7 @@ function translateAllFrames(dnaSeq, geneticCode) {
 // BACK TRANSLATE
 // =====================================================================
 
-var IUPAC_MAP = {
+var BASES_TO_IUPAC = {
 	"A": "A", "C": "C", "G": "G", "T": "T",
 	"AG": "R", "CT": "Y", "CG": "S", "AT": "W", "GT": "K", "AC": "M",
 	"CGT": "B", "AGT": "D", "ACT": "H", "ACG": "V",
@@ -257,7 +257,7 @@ function getIUPAC(basesArr) {
 		if (!seen[b]) { seen[b] = true; unique.push(b); }
 	}
 	unique.sort();
-	return IUPAC_MAP[unique.join("")] || "N";
+	return BASES_TO_IUPAC[unique.join("")] || "N";
 }
 
 function buildReverseTable(geneticCode) {
@@ -951,13 +951,6 @@ var IUPAC_BASES_SET = {
 	R: "AG", Y: "CT", S: "CG", W: "AT", K: "GT", M: "AC",
 	B: "CGT", D: "AGT", H: "ACT", V: "ACG",
 	N: "ACGT"
-};
-
-var BASES_TO_IUPAC = {
-	"A": "A", "C": "C", "G": "G", "T": "T",
-	"AG": "R", "CT": "Y", "CG": "S", "AT": "W", "GT": "K", "AC": "M",
-	"CGT": "B", "AGT": "D", "ACT": "H", "ACG": "V",
-	"ACGT": "N"
 };
 
 function resolveIUPAC(base1, base2) {
