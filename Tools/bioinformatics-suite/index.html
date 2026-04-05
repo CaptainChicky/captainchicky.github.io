@@ -1740,7 +1740,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 
 					var exactMW = null;
 					if (seqStr) {
-						var s = seqStats(filterDnaIupacSaveCase(seqStr));
+						var s = seqStats(seqStr);
 						var avgDNMP = (331.2 + 322.2 + 347.2 + 307.2) / 4;
 						var avgRNMP = (347.2 + 324.2 + 363.2 + 323.2) / 4;
 						var ssMW = s.a * 331.2 + s.t * 322.2 + s.g * 347.2 + s.c * 307.2 + s.n * avgDNMP - (len - 1) * 18.02 - 79.96;
@@ -1777,7 +1777,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
 						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
 					if (seqStr) {
-						var s = seqStats(filterDnaIupacSaveCase(seqStr));
+						var s = seqStats(seqStr);
 						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
 					}
 					statsEl.innerHTML = statsHtml;
@@ -2080,12 +2080,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					for (var i = 0; i < sa.align1.length; i += width) {
 						var a1 = sa.align1.slice(i, i + width);
 						var a2 = sa.align2.slice(i, i + width);
-						var ann = sa.annotation;
-						// Build consensus chunk with same offset
-						var consChunk = "";
-						var annChunk = "";
 						var midline = "";
-						var ci = 0;
 						for (var j = i; j < Math.min(i + width, sa.align1.length); j++) {
 							var b1 = sa.align1[j];
 							var b2 = sa.align2[j];
