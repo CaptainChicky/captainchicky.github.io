@@ -1718,7 +1718,8 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					var raw = seqInput.value.trim();
 					if (raw) {
 						var parsed = parseFasta(raw);
-						var seq = filterDnaIupacSaveCase(parsed.sequence);
+						var seqType = document.getElementById("mc-type").value;
+						var seq = (seqType === "ssRNA") ? filterRnaIupacSaveCase(parsed.sequence) : filterDnaIupacSaveCase(parsed.sequence);
 						if (seq.length > 0) {
 							lenInput.value = seq.length;
 							lenInput.setAttribute("placeholder", seq.length + " (from sequence)");
@@ -1726,6 +1727,9 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					} else {
 						lenInput.setAttribute("placeholder", "auto");
 					}
+				});
+				document.getElementById("mc-type").addEventListener("change", function () {
+					seqInput.dispatchEvent(new Event("input"));
 				});
 
 				document.getElementById("mc-submit").addEventListener("click", function () {
@@ -1799,22 +1803,6 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						'<span class="stat-item">Type: <span>' + seqType + '</span></span>' +
 						'<span class="stat-item">' + mwLabel + ': <span>' + Math.round(conv.mwDa).toLocaleString() + ' Da (' + conv.mwKDa.toFixed(1) + ' kDa)</span></span>';
 					if (seqStr) {
-						var s;
-						if (seqType === "ssRNA") {
-							var _a=0,_u=0,_g=0,_c=0,_n=0;
-							for (var _i=0;_i<seqStr.length;_i++) {
-								switch(seqStr[_i].toUpperCase()){
-									case "A":_a++;break;case "U":_u++;break;
-									case "G":_g++;break;case "C":_c++;break;
-									default:_n++;break;
-								}
-							}
-							s = {len:seqStr.length,a:_a,t:_u,g:_g,c:_c,n:_n,
-								gc:((_g+_c)/seqStr.length*100).toFixed(1),
-								at:((_a+_u)/seqStr.length*100).toFixed(1)};
-						} else {
-							s = seqStats(seqStr);
-						}
 						statsHtml += '<span class="stat-item stat-gc">GC: <span>' + s.gc + '%</span></span>';
 					}
 					statsEl.innerHTML = statsHtml;
