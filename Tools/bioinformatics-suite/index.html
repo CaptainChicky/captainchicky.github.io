@@ -711,6 +711,13 @@
 		.sa-resolved { color: var(--orange); }
 		.sa-conflict { color: var(--red); font-weight: 700; }
 
+		.sidebar-subtitle {
+			font-size: 11px;
+			color: var(--accent);
+			letter-spacing: 0.05em;
+			text-transform: lowercase;
+		}
+
 		/* Responsive */
 		@media (max-width: 700px) {
 			:root {
@@ -753,6 +760,7 @@
 		<div class="sidebar-header">
 			<div class="logo">SeqToolkit</div>
 			<h1>Analysis Suite</h1>
+			<p class="sidebar-subtitle">made by cc :3</p>
 		</div>
 
 		<div class="sidebar-cat">Transform</div>
@@ -1387,6 +1395,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					e.preventDefault();
 					var toolId = this.getAttribute("data-tool");
 					if (!toolId) return;
+					window.location.hash = toolId;
 					for (var j = 0; j < sidebarItems.length; j++) sidebarItems[j].classList.remove("active");
 					this.classList.add("active");
 					var pages = document.querySelectorAll(".tool-page");
@@ -1395,6 +1404,15 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					if (page) page.classList.add("active");
 				});
 			}
+			// Hash routing to load tool from URL hash
+			function navigateToHash() {
+				var hash = window.location.hash.slice(1);
+				if (!hash) return;
+				var target = document.querySelector('.sidebar-item[data-tool="' + hash + '"]');
+				if (target) target.click();
+			}
+			navigateToHash();
+			window.addEventListener("hashchange", navigateToHash);
 
 			// == REVERSE COMPLEMENT =============================================
 			(function () {
