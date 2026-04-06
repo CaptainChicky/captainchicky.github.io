@@ -1039,9 +1039,9 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 	var minOverlap = opts.minOverlap || 20;
 	var matchScore = opts.matchScore !== undefined ? opts.matchScore : 2;
 	var mismatchPen = opts.mismatchPen !== undefined ? opts.mismatchPen : -1;
-	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -10;
+	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -30;
 	var qualityThreshold = opts.qualityThreshold !== undefined ? opts.qualityThreshold : 0.1;
-	var qualityWindow = opts.qualityWindow !== undefined ? opts.qualityWindow : 15;
+	var qualityWindow = opts.qualityWindow !== undefined ? opts.qualityWindow : 20;
 
 	var rcRev = reverseComplement(revSeq);
 	var fwd = fwdSeq.toUpperCase();
