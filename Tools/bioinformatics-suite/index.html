@@ -1295,7 +1295,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					<label for="sa-qualthresh">Quality threshold:
 						<span class="info-tip">?<span class="info-text">Controls how consensus bases are chosen when the forward and reverse reads disagree. Each read's local quality is scored from 0.0 (all ambiguous N/R/Y...) to 1.0 (all clean A/T/G/C) using a sliding window. If the difference between the two scores exceeds the threshold, the higher-quality base is used directly. If the difference is below this threshold, both reads are considered equally trustworthy and IUPAC ambiguity resolution is used instead. <b>Lower values (e.g. 0.05) produce <u>fewer</u> ambiguity codes. Vice versa.</b></span></span>
 					</label>
-					<input type="number" id="sa-qualthresh" value="0.1" min="0" max="1" step="0.05" style="width:80px">
+					<input type="number" id="sa-qualthresh" value="0.1" min="0" max="1" step="0.01" style="width:80px">
 					<label for="sa-qualwindow">Quality window (bp):
 						<span class="info-tip">?<span class="info-text">Number of bases (bp) in the sliding window used to estimate local read quality at each position. Quality is calculated as the fraction of unambiguous bases (A/T/G/C) within this window. A window with 15 clean bases out of 15 scores 1.0, while a window with 10 N's out of 15 scores 0.33. <b>Smaller windows (e.g. 5) produce <u>more</u> ambiguity codes. Vice versa.</b> The window is centered on each position.</span></span>
 					</label>
