@@ -670,7 +670,7 @@ function siteToRegex(site) {
 }
 
 function findRestrictionSites(dnaSeq, enzymes) {
-	var upper = dnaSeq.toUpperCase()
+	var upper = dnaSeq.toUpperCase();
 	var results = [];
 	for (var e = 0; e < enzymes.length; e++) {
 		var enz = enzymes[e];
