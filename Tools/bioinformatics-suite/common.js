@@ -38,7 +38,6 @@ function filterDna(seq) { return seq.replace(/[^GATCNgatcn]/g, "").toLowerCase()
 function filterDnaSaveCase(seq) { return seq.replace(/[^GATCNgatcn]/g, ""); }
 function filterDnaIupac(seq) { return seq.replace(/[^GATCNRYSWKMBDHVgatcnryswkmbdhv]/g, "").toLowerCase(); }
 function filterDnaIupacSaveCase(seq) { return seq.replace(/[^GATCNRYSWKMBDHVgatcnryswkmbdhv]/g, ""); }
-function filterRna(seq) { return seq.replace(/[^GAUCNgaucn]/g, "").toLowerCase(); }
 function filterRnaIupacSaveCase(seq) { return seq.replace(/[^GAUCNRYSWKMBDHVgaucnryswkmbdhv]/g, ""); }
 function filterProtein(seq) { return seq.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, "").toUpperCase(); }
 function filterProteinSaveCase(s) { return s.replace(/[^ABCDEFGHIKLMNPQRSTVWXYZJOUabcdefghiklmnpqrstvwxyzjou*]/g, ""); }
