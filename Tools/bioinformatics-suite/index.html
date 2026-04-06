@@ -1283,8 +1283,14 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				<label for="sa-minoverlap">Min overlap (bp):</label>
 				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
-			<div style="margin-top:12px;padding:10px 14px;background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);border-radius:var(--radius-sm);font-size:12.5px;color:var(--text-dim);line-height:1.5">
-				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty (e.g. &minus;35, &minus;45, &minus;60...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. <u>Conflicts can be reduced</u> by <u>increasing the quality window</u> (try first; 40, 50, 70...) or <u>decreasing the quality threshold</u> (try second; 0.08, 0.05...) in the advanced options below.
+			<div style="margin-top:12px;padding:14px 16px;background:rgba(88,166,255,0.06);border:1px solid rgba(88,166,255,0.2);border-radius:var(--radius);font-size:12.5px;color:var(--text-dim);line-height:1.7">
+				<div style="color:var(--accent);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px">Fine-Tuning Workflow</div>
+				<div style="display:flex;flex-direction:column;gap:6px">
+					<div><span style="color:var(--text);font-weight:600">1.</span> Run with defaults first.</div>
+					<div><span style="color:var(--text);font-weight:600">2.</span> <span style="color:var(--orange)">Frameshifts?</span> (consensus won't translate to your expected protein) &rarr; Increase gap penalty: -35, -40, -50&hellip; until the frameshift resolves.</div>
+					<div><span style="color:var(--text);font-weight:600">3.</span> <span style="color:var(--red)">Too many conflicts?</span> &rarr; Try decreasing gap penalty (-25, -20). Going too low can reintroduce frameshifts.</div>
+					<div><span style="color:var(--text);font-weight:600">4.</span> <span style="color:var(--purple)">Conflicts still won't resolve?</span> &rarr; Open Advanced Options. Increase the quality window (60, 70, 80&hellip;) first, then decrease the quality threshold (0.08, 0.05, 0.03&hellip;) to let the higher-quality read win more decisively.</div>
+				</div>
 			</div>
 			<details class="advanced-section" style="margin-top:14px">
 				<summary>Advanced Consensus Options</summary>
@@ -1299,7 +1305,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					<label for="sa-qualwindow">Quality window (bp):
 						<span class="info-tip">?<span class="info-text">Number of bases (bp) in the sliding window used to estimate local read quality at each position. Quality is calculated as the fraction of unambiguous bases (A/T/G/C) within this window. A window with 15 clean bases out of 15 scores 1.0, while a window with 10 N's out of 15 scores 0.33. <b>Smaller windows (e.g. 5) produce <u>more</u> ambiguity codes. Vice versa.</b> The window is centered on each position.</span></span>
 					</label>
-					<input type="number" id="sa-qualwindow" value="30" min="3" max="999" step="1" style="width:80px">
+					<input type="number" id="sa-qualwindow" value="50" min="3" max="999" step="1" style="width:80px">
 				</div>
 			</details>
 			<div class="btn-row">
@@ -2171,14 +2177,15 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 						if (!confirm("These reads are very long (" + fwd.length + " x " + rev.length + "). Assembly may take a while. Continue?")) return;
 					}
 
-					var matchScore = parseFloat(document.getElementById("sa-match").value);
+					var matchScore = parseFloat(document.getElementById("sa-match").value) || 2;
 					var mismatchPen = parseFloat(document.getElementById("sa-mismatch").value);
-					var gapPen = parseFloat(document.getElementById("sa-gap").value);
+					if (isNaN(mismatchPen)) mismatchPen = -1;
+					var gapPen = parseFloat(document.getElementById("sa-gap").value) || -30;
 					var minOverlap = parseInt(document.getElementById("sa-minoverlap").value) || 20;
 
 					var qualityThreshold = parseFloat(document.getElementById("sa-qualthresh").value);
 					if (isNaN(qualityThreshold)) qualityThreshold = 0.1;
-					var qualityWindow = parseInt(document.getElementById("sa-qualwindow").value) || 30;
+					var qualityWindow = parseInt(document.getElementById("sa-qualwindow").value) || 50;
 
 					var sa = sangerAssemble(fwd, rev, {
 						matchScore: matchScore,

@@ -1041,7 +1041,7 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 	var mismatchPen = opts.mismatchPen !== undefined ? opts.mismatchPen : -1;
 	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -30;
 	var qualityThreshold = opts.qualityThreshold !== undefined ? opts.qualityThreshold : 0.1;
-	var qualityWindow = opts.qualityWindow !== undefined ? opts.qualityWindow : 30;
+	var qualityWindow = opts.qualityWindow !== undefined ? opts.qualityWindow : 50;
 
 	var rcRev = reverseComplement(revSeq);
 	var fwd = fwdSeq.toUpperCase();
