@@ -1231,9 +1231,10 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 			<h2 class="tool-title">Sanger Assembly</h2>
 			<p class="tool-desc">Merge overlapping forward and reverse Sanger reads into a single consensus sequence.
 				The reverse read is automatically reverse-complemented, then aligned to the forward read using semi-global
-				(overlap) alignment with free end gaps. In the overlap region, IUPAC ambiguity codes are resolved by
-				intersection: if one read has N and the other has A, the consensus is A; if one has R (A/G) and the other
-				has A, the consensus is A. Conflicts are flagged.</p>
+				(overlap) alignment with free end gaps. In the overlap region, local read quality is estimated from
+				ambiguity density and used to resolve disagreements: the higher-quality base wins when the quality
+				difference exceeds the threshold, otherwise IUPAC resolution is used. Conflicts are flagged when
+				both reads have similar quality but disagree.</p>
 			<label class="field-label" for="sa-fwd">Forward Read (5' to 3')</label>
 			<textarea id="sa-fwd" spellcheck="false" placeholder="Paste forward sequencing read (raw or FASTA)...">
 >IDH1 plasmid 6xHis FWD Read
@@ -1283,7 +1284,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
 			<div style="margin-top:12px;padding:10px 14px;background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);border-radius:var(--radius-sm);font-size:12.5px;color:var(--text-dim);line-height:1.5">
-				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty by growing increments (e.g. &minus;32, &minus;38, &minus;50...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. You can resolve conflicts resulting from high gap penalties by increasing the quality window (recommended; 30, 40, 50...) or decreasing the quality threshold (not recommended; 0.05, 0.03, 0.01) in the advanced options below.
+				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty by growing increments (e.g. &minus;35, &minus;45, &minus;60...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. You can resolve conflicts resulting from high gap penalties by increasing the quality window (recommended; 30, 40, 50...) or decreasing the quality threshold (not recommended; 0.05, 0.04, 0.03...) in the advanced options below.
 			</div>
 			<details class="advanced-section" style="margin-top:14px">
 				<summary>Advanced Consensus Options</summary>
