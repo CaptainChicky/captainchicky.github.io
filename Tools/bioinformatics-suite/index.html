@@ -718,6 +718,91 @@
 			text-transform: lowercase;
 		}
 
+		.advanced-section summary {
+			font-size: 12px;
+			font-weight: 600;
+			color: var(--text-dim);
+			cursor: pointer;
+			letter-spacing: 0.03em;
+			text-transform: uppercase;
+			user-select: none;
+			padding: 8px 0;
+		}
+
+		.advanced-section summary:hover {
+			color: var(--accent);
+		}
+
+		.advanced-section[open] summary {
+			color: var(--accent);
+			margin-bottom: 4px;
+		}
+
+		.advanced-section summary::marker {
+			color: var(--text-muted);
+		}
+
+		.info-tip {
+			position: relative;
+			display: inline-block;
+			width: 15px;
+			height: 15px;
+			line-height: 15px;
+			text-align: center;
+			font-size: 10px;
+			font-weight: 700;
+			font-style: normal;
+			color: var(--text-muted);
+			border: 1px solid var(--border);
+			border-radius: 50%;
+			cursor: help;
+			vertical-align: middle;
+			margin-left: 3px;
+			letter-spacing: 0;
+			text-transform: none;
+		}
+
+		.info-tip:hover {
+			color: var(--accent);
+			border-color: var(--accent);
+		}
+
+		.info-tip .info-text {
+			display: none;
+			position: absolute;
+			bottom: calc(100% + 8px);
+			left: 50%;
+			transform: translateX(-50%);
+			width: 260px;
+			padding: 10px 12px;
+			background: var(--bg-sidebar);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 1.5;
+			color: var(--text-dim);
+			text-transform: none;
+			letter-spacing: 0;
+			white-space: normal;
+			z-index: 100;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+		}
+
+		.info-tip .info-text::after {
+			content: "";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			border: 6px solid transparent;
+			border-top-color: var(--border);
+		}
+
+		.info-tip:hover .info-text {
+			display: block;
+		}
+
 		/* Responsive */
 		@media (max-width: 700px) {
 			:root {
@@ -1081,8 +1166,7 @@ MGKPIIIGRHAYGDQYRATDFVVPGPGKVEITYTPSDGTQKVTYLVHNFEEGGGVAMGMYNQDKSIEDFAHSSFQMALSK
 				<label for="mc-mass">Mass (ug):</label>
 				<input type="number" id="mc-mass" value="1" min="0" step="0.001" style="width:120px">
 				<label for="mc-pmol">OR pmol:</label>
-				<input type="number" id="mc-pmol" value="" min="0" step="0.001" style="width:120px"
-					placeholder="leave empty">
+				<input type="number" id="mc-pmol" value="" min="0" step="0.001" style="width:140px" placeholder="leave empty">
 			</div>
 			<div class="btn-row">
 				<button class="btn btn-primary" id="mc-submit">Calculate</button>
@@ -1190,14 +1274,30 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 			</textarea>
 			<div class="option-row">
 				<label for="sa-match">Match:</label>
-				<input type="number" id="sa-match" value="2" style="width:70px">
+				<input type="number" id="sa-match" value="2" style="width:80px">
 				<label for="sa-mismatch">Mismatch:</label>
-				<input type="number" id="sa-mismatch" value="-1" style="width:70px">
+				<input type="number" id="sa-mismatch" value="-1" style="width:80px">
 				<label for="sa-gap">Gap:</label>
-				<input type="number" id="sa-gap" value="-3" style="width:70px">
+				<input type="number" id="sa-gap" value="-10" style="width:80px">
 				<label for="sa-minoverlap">Min overlap (bp):</label>
 				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
+			<details class="advanced-section" style="margin-top:14px">
+				<summary>Advanced Consensus Options</summary>
+				<p style="font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.5">
+					Quality is estimated from local ambiguity density (N, R, Y, etc.) since raw quality scores are not available from plain text sequences. When reads disagree, the higher-quality base wins if the difference exceeds the threshold; otherwise IUPAC resolution is used. Default values are empirical estimates derived from typical Sanger capillary sequencing reads. Inspired by <a href="https://en.wikipedia.org/wiki/Phrap" style="color:var(--accent);text-decoration:none" target="_blank">Phrap's</a> quality-weighted consensus approach.
+				</p>
+				<div class="option-row" style="margin-top:10px">
+					<label for="sa-qualthresh">Quality threshold:
+						<span class="info-tip">?<span class="info-text">Controls how consensus bases are chosen when the forward and reverse reads disagree. Each read's local quality is scored from 0.0 (all ambiguous bases like N) to 1.0 (all clean A/T/G/C) using a sliding window. If the difference between the two quality scores exceeds this threshold, the higher-quality base is used directly. If the difference is below this threshold, both reads are considered equally trustworthy and IUPAC ambiguity resolution is used instead. Lower values (e.g. 0.05) make quality-based selection more aggressive, producing fewer ambiguity codes. Higher values (e.g. 0.5) require a larger quality gap before one read can override the other, producing more conservative IUPAC consensus.</span></span>
+					</label>
+					<input type="number" id="sa-qualthresh" value="0.1" min="0" max="1" step="0.05" style="width:80px">
+					<label for="sa-qualwindow">Quality window (bp):
+						<span class="info-tip">?<span class="info-text">Number of bases (bp) in the sliding window used to estimate local read quality at each position. Quality is calculated as the fraction of unambiguous bases (A, T, G, C) within this window. A window with 15 clean bases out of 15 scores 1.0, while a window with 10 N's out of 15 scores 0.33. Smaller windows (e.g. 5) react quickly to individual N's but can be noisy. Larger windows (e.g. 25) give smoother quality estimates but may blur the boundary between clean and degraded regions. The window is centered on each position.</span></span>
+					</label>
+					<input type="number" id="sa-qualwindow" value="15" min="3" max="99" step="2" style="width:80px">
+				</div>
+			</details>
 			<div class="btn-row">
 				<button class="btn btn-primary" id="sa-submit">Assemble</button>
 				<button class="btn btn-secondary" id="sa-clear">Clear</button>
@@ -1244,11 +1344,11 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 			</div>
 			<div class="option-row">
 				<label for="pa-match">Match:</label>
-				<input type="number" id="pa-match" value="2" style="width:70px">
+				<input type="number" id="pa-match" value="2" style="width:80px">
 				<label for="pa-mismatch">Mismatch:</label>
-				<input type="number" id="pa-mismatch" value="-1" style="width:70px">
+				<input type="number" id="pa-mismatch" value="-1" style="width:80px">
 				<label for="pa-gap">Gap:</label>
-				<input type="number" id="pa-gap" value="-2" style="width:70px">
+				<input type="number" id="pa-gap" value="-2" style="width:80px">
 			</div>
 			<div class="btn-row">
 				<button class="btn btn-primary" id="pa-submit">Align</button>
@@ -2072,11 +2172,17 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 					var gapPen = parseFloat(document.getElementById("sa-gap").value);
 					var minOverlap = parseInt(document.getElementById("sa-minoverlap").value) || 20;
 
+					var qualityThreshold = parseFloat(document.getElementById("sa-qualthresh").value);
+					if (isNaN(qualityThreshold)) qualityThreshold = 0.1;
+					var qualityWindow = parseInt(document.getElementById("sa-qualwindow").value) || 15;
+
 					var sa = sangerAssemble(fwd, rev, {
 						matchScore: matchScore,
 						mismatchPen: mismatchPen,
 						gapPen: gapPen,
-						minOverlap: minOverlap
+						minOverlap: minOverlap,
+						qualityThreshold: qualityThreshold,
+						qualityWindow: qualityWindow
 					});
 
 					// Handle insufficient overlap

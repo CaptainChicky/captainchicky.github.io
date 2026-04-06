@@ -1018,12 +1018,30 @@ function iupacSpecificity(base) {
 	return set ? set.length : 4;
 }
 
+function readQuality(seq, windowSize) {
+	windowSize = windowSize || 15;
+	var half = Math.floor(windowSize / 2);
+	var qualities = [];
+	for (var i = 0; i < seq.length; i++) {
+		var start = Math.max(0, i - half);
+		var end = Math.min(seq.length, i + half + 1);
+		var ambig = 0;
+		for (var j = start; j < end; j++) {
+			if (iupacSpecificity(seq[j]) > 1) ambig++;
+		}
+		qualities.push(1 - (ambig / (end - start)));
+	}
+	return qualities;
+}
+
 function sangerAssemble(fwdSeq, revSeq, opts) {
 	opts = opts || {};
 	var minOverlap = opts.minOverlap || 20;
 	var matchScore = opts.matchScore !== undefined ? opts.matchScore : 2;
 	var mismatchPen = opts.mismatchPen !== undefined ? opts.mismatchPen : -1;
-	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -3;
+	var gapPen = opts.gapPen !== undefined ? opts.gapPen : -10;
+	var qualityThreshold = opts.qualityThreshold !== undefined ? opts.qualityThreshold : 0.1;
+	var qualityWindow = opts.qualityWindow !== undefined ? opts.qualityWindow : 15;
 
 	var rcRev = reverseComplement(revSeq);
 	var fwd = fwdSeq.toUpperCase();
@@ -1114,15 +1132,23 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 	while (ti > 0) { align1 = fwd[ti - 1] + align1; align2 = "-" + align2; ti--; }
 	while (tj > 0) { align1 = "-" + align1; align2 = rev[tj - 1] + align2; tj--; }
 
+	// Precompute quality for each read based on local ambiguity density
+	var fwdQual = readQuality(fwd, qualityWindow);
+	var revQual = readQuality(rev, qualityWindow);
+
 	// Build consensus
 	var consensus = "";
 	var annotation = "";
 	var overlapStart = -1, overlapEnd = -1;
 	var matches = 0, conflicts = 0, resolved = 0;
+	var fwdPos = -1, revPos = -1;
 
 	for (var i = 0; i < align1.length; i++) {
 		var b1 = align1[i];
 		var b2 = align2[i];
+
+		if (b1 !== "-") fwdPos++;
+		if (b2 !== "-") revPos++;
 
 		if (b1 === "-" && b2 === "-") {
 			continue;
@@ -1136,25 +1162,39 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 			if (overlapStart === -1) overlapStart = i;
 			overlapEnd = i;
 
-			var resolved_base = resolveIUPAC(b1, b2);
-			var spec1 = iupacSpecificity(b1);
-			var spec2 = iupacSpecificity(b2);
-			var specR = iupacSpecificity(resolved_base);
-
-			if (b1 === b2) {
-				consensus += resolved_base;
+			if (b1.toUpperCase() === b2.toUpperCase()) {
+				consensus += b1;
 				annotation += "B";
 				matches++;
-			} else if (specR < Math.max(spec1, spec2)) {
-				// Resolved: intersection is more specific than at least one input
-				consensus += resolved_base;
-				annotation += "X";
-				resolved++;
 			} else {
-				// Conflict: resolution is no better (union was used, or sets were disjoint)
-				consensus += resolved_base;
-				annotation += "!";
-				conflicts++;
+				var q1 = fwdQual[fwdPos] || 0;
+				var q2 = revQual[revPos] || 0;
+				var qDiff = q1 - q2;
+
+				if (qDiff > qualityThreshold) {
+					// Forward read clearly better quality
+					consensus += b1;
+					annotation += "X";
+					resolved++;
+				} else if (qDiff < -qualityThreshold) {
+					// Reverse read clearly better quality
+					consensus += b2;
+					annotation += "X";
+					resolved++;
+				} else {
+					// Similar quality — fall back to IUPAC resolution
+					var resolved_base = resolveIUPAC(b1, b2);
+					var specR = iupacSpecificity(resolved_base);
+					if (specR < Math.max(iupacSpecificity(b1), iupacSpecificity(b2))) {
+						consensus += resolved_base;
+						annotation += "X";
+						resolved++;
+					} else {
+						consensus += resolved_base;
+						annotation += "!";
+						conflicts++;
+					}
+				}
 			}
 		}
 	}
