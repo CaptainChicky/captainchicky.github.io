@@ -1167,29 +1167,33 @@ function sangerAssemble(fwdSeq, revSeq, opts) {
 				annotation += "B";
 				matches++;
 			} else {
-				var q1 = fwdQual[fwdPos] || 0;
-				var q2 = revQual[revPos] || 0;
-				var qDiff = q1 - q2;
+				// Try IUPAC resolution first
+				var resolved_base = resolveIUPAC(b1, b2);
+				var spec1 = iupacSpecificity(b1);
+				var spec2 = iupacSpecificity(b2);
+				var specR = iupacSpecificity(resolved_base);
 
-				if (qDiff > qualityThreshold) {
-					// Forward read clearly better quality
-					consensus += b1;
-					annotation += "X";
-					resolved++;
-				} else if (qDiff < -qualityThreshold) {
-					// Reverse read clearly better quality
-					consensus += b2;
+				if (specR < Math.max(spec1, spec2)) {
+					// IUPAC intersection narrowed it (e.g. N+A→A, R+A→A)
+					consensus += resolved_base;
 					annotation += "X";
 					resolved++;
 				} else {
-					// Similar quality — fall back to IUPAC resolution
-					var resolved_base = resolveIUPAC(b1, b2);
-					var specR = iupacSpecificity(resolved_base);
-					if (specR < Math.max(iupacSpecificity(b1), iupacSpecificity(b2))) {
-						consensus += resolved_base;
+					// True conflict - use quality to pick winner
+					var q1 = fwdQual[fwdPos] || 0;
+					var q2 = revQual[revPos] || 0;
+					var qDiff = q1 - q2;
+
+					if (qDiff > qualityThreshold) {
+						consensus += b1;
+						annotation += "X";
+						resolved++;
+					} else if (qDiff < -qualityThreshold) {
+						consensus += b2;
 						annotation += "X";
 						resolved++;
 					} else {
+						// Similar quality - keep IUPAC union
 						consensus += resolved_base;
 						annotation += "!";
 						conflicts++;
