@@ -1282,6 +1282,9 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				<label for="sa-minoverlap">Min overlap (bp):</label>
 				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
+			<div style="margin-top:12px;padding:10px 14px;background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);border-radius:var(--radius-sm);font-size:12.5px;color:var(--text-dim);line-height:1.5">
+				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty by growing increments (e.g. &minus;12, &minus;18, &minus;30...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. You can resolve conflicts resulting from high gap penalties by increasing the quality window (recommended) or decreasing the quality threshold (not recommended) in the advanced options below.
+			</div>
 			<details class="advanced-section" style="margin-top:14px">
 				<summary>Advanced Consensus Options</summary>
 				<p style="font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.5">
@@ -1289,11 +1292,11 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				</p>
 				<div class="option-row" style="margin-top:10px">
 					<label for="sa-qualthresh">Quality threshold:
-						<span class="info-tip">?<span class="info-text">Controls how consensus bases are chosen when the forward and reverse reads disagree. Each read's local quality is scored from 0.0 (all ambiguous bases like N) to 1.0 (all clean A/T/G/C) using a sliding window. If the difference between the two quality scores exceeds this threshold, the higher-quality base is used directly. If the difference is below this threshold, both reads are considered equally trustworthy and IUPAC ambiguity resolution is used instead. Lower values (e.g. 0.05) make quality-based selection more aggressive, producing fewer ambiguity codes. Higher values (e.g. 0.5) require a larger quality gap before one read can override the other, producing more conservative IUPAC consensus.</span></span>
+						<span class="info-tip">?<span class="info-text">Controls how consensus bases are chosen when the forward and reverse reads disagree. Each read's local quality is scored from 0.0 (all ambiguous N/R/Y...) to 1.0 (all clean A/T/G/C) using a sliding window. If the difference between the two scores exceeds the threshold, the higher-quality base is used directly. If the difference is below this threshold, both reads are considered equally trustworthy and IUPAC ambiguity resolution is used instead. <b>Lower values (e.g. 0.05) produce <u>fewer</u> ambiguity codes. Vice versa.</b></span></span>
 					</label>
 					<input type="number" id="sa-qualthresh" value="0.1" min="0" max="1" step="0.05" style="width:80px">
 					<label for="sa-qualwindow">Quality window (bp):
-						<span class="info-tip">?<span class="info-text">Number of bases (bp) in the sliding window used to estimate local read quality at each position. Quality is calculated as the fraction of unambiguous bases (A, T, G, C) within this window. A window with 15 clean bases out of 15 scores 1.0, while a window with 10 N's out of 15 scores 0.33. Smaller windows (e.g. 5) react quickly to individual N's but can be noisy. Larger windows (e.g. 25) give smoother quality estimates but may blur the boundary between clean and degraded regions. The window is centered on each position.</span></span>
+						<span class="info-tip">?<span class="info-text">Number of bases (bp) in the sliding window used to estimate local read quality at each position. Quality is calculated as the fraction of unambiguous bases (A/T/G/C) within this window. A window with 15 clean bases out of 15 scores 1.0, while a window with 10 N's out of 15 scores 0.33. <b>Smaller windows (e.g. 5) produce <u>more</u> ambiguity codes. Vice versa.</b> The window is centered on each position.</span></span>
 					</label>
 					<input type="number" id="sa-qualwindow" value="15" min="3" max="99" step="2" style="width:80px">
 				</div>
