@@ -1284,7 +1284,7 @@ CTTTNNAGCTNNNNNNNNNTCCNTGNNNNNTTGGTNNNNNNNNNNNNNNNNN
 				<input type="number" id="sa-minoverlap" value="20" min="1" max="9999" style="width:80px">
 			</div>
 			<div style="margin-top:12px;padding:10px 14px;background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);border-radius:var(--radius-sm);font-size:12.5px;color:var(--text-dim);line-height:1.5">
-				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty (e.g. &minus;35, &minus;45, &minus;60...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. Conflicts due to high gap penalties can be reduced by increasing the quality window (try first; 40, 50, 70...) or decreasing the quality threshold (try second; 0.08, 0.05...) in the advanced options below.
+				<span style="color:var(--orange);font-weight:600">Tip:</span> If the consensus produces unexpected frameshifts when translated, increase the gap penalty (e.g. &minus;35, &minus;45, &minus;60...) until the frameshift resolves. Sanger reads from the same template have no real indels, so high gap penalties are appropriate. <u>Conflicts can be reduced</u> by <u>increasing the quality window</u> (try first; 40, 50, 70...) or <u>decreasing the quality threshold</u> (try second; 0.08, 0.05...) in the advanced options below.
 			</div>
 			<details class="advanced-section" style="margin-top:14px">
 				<summary>Advanced Consensus Options</summary>
