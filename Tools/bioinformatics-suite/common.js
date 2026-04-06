@@ -197,18 +197,26 @@ function translateCodon(codon, geneticCode) {
 	if (!b1 || !b2 || !b3) return "X";
 
 	// Try all possible concrete codons; if all agree, use that AA
-	var result = null;
+	var seen = {};
 	for (var i = 0; i < b1.length; i++) {
 		for (var j = 0; j < b2.length; j++) {
 			for (var k = 0; k < b3.length; k++) {
 				var thisAA = geneticCode[b1[i] + b2[j] + b3[k]];
 				if (!thisAA) return "X";
-				if (result === null) result = thisAA;
-				else if (thisAA !== result) return "X";
+				seen[thisAA] = true;
 			}
 		}
 	}
-	return result || "X";
+	var aas = Object.keys(seen);
+	if (aas.length === 1) return aas[0];
+
+	// Check for ambiguous amino acid codes
+	aas.sort();
+	var key = aas.join("");
+	var AMBIG_AA = { "IL": "J", "DN": "B", "EQ": "Z" };
+	if (AMBIG_AA[key]) return AMBIG_AA[key];
+
+	return "X";
 }
 
 function translateDetailed(dnaSeq, frame, geneticCode) {
