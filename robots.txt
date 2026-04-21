@@ -9,7 +9,6 @@ User-agent: YandexBot
 User-agent: DuckDuckBot
 User-agent: Slurp
 User-agent: Baiduspider
-User-agent: ClaudeBot
 Disallow: /Archive/
 Disallow: /NFT/
 Allow: /
