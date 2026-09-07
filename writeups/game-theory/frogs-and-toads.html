@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frogs & Toads</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Menlo', 'SF Mono', 'Consolas', monospace;
+    background: #0c0c14; color: #ededf5;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px; min-height: 100vh;
+  }
+  h1 {
+    font-size: 26px; font-weight: 800;
+    background: linear-gradient(135deg, #f97316, #06b6d4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .sub { color: #9999b0; font-size: 13px; margin-bottom: 20px; }
+  .row {
+    display: flex; gap: 12px; align-items: center;
+    flex-wrap: wrap; justify-content: center; margin-bottom: 16px;
+  }
+  .row label { font-size: 13px; color: #c0c0d0; }
+  .row select {
+    background: #1a1a28; color: #ededf5; border: 1px solid #3e3e58;
+    border-radius: 6px; padding: 3px 6px; font-size: 14px; font-family: inherit;
+  }
+  .stats {
+    display: flex; gap: 18px; font-size: 13px; color: #9999b0;
+    margin-bottom: 16px; flex-wrap: wrap; justify-content: center;
+  }
+  .stats b { color: #ededf5; }
+
+  .board-wrap {
+    background: #161622; border-radius: 14px; padding: 18px;
+    border: 1px solid #3e3e58; margin-bottom: 16px;
+    transition: box-shadow 0.4s;
+    max-width: 95vw; overflow-x: auto;
+  }
+  .board-wrap.won { box-shadow: 0 0 35px rgba(34,197,94,0.3); }
+  .board-wrap.dead { box-shadow: 0 0 35px rgba(239,68,68,0.3); }
+
+  .board { position: relative; margin: 0 auto; }
+
+  .piece {
+    position: absolute; top: 0;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; user-select: none;
+    /* Pieces slide smoothly */
+    transition: left 0.32s cubic-bezier(0.4, 0, 0.15, 1),
+                transform 0.15s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                background 0.25s ease;
+  }
+
+  .piece.empty {
+    background: transparent; border: 2px solid transparent;
+    z-index: 0;
+    transition: none;
+  }
+
+  .piece.R {
+    background: rgba(249,115,22,0.15);
+    border: 2px solid rgba(249,115,22,0.45);
+    color: rgba(249,115,22,0.65);
+    transform: scale(0.95);
+    z-index: 1;
+  }
+  .piece.L {
+    background: rgba(6,182,212,0.15);
+    border: 2px solid rgba(6,182,212,0.45);
+    color: rgba(6,182,212,0.65);
+    transform: scale(0.95);
+    z-index: 1;
+  }
+  .piece.mv { cursor: pointer; transform: scale(1); z-index: 2; }
+  .piece.mv.R {
+    border-color: #f97316; color: #f97316;
+    background: rgba(249,115,22,0.2);
+    box-shadow: 0 0 22px rgba(249,115,22,0.35), inset 0 0 22px rgba(249,115,22,0.2);
+  }
+  .piece.mv.L {
+    border-color: #06b6d4; color: #06b6d4;
+    background: rgba(6,182,212,0.2);
+    box-shadow: 0 0 22px rgba(6,182,212,0.35), inset 0 0 22px rgba(6,182,212,0.2);
+  }
+  .piece.mv:hover { transform: scale(1.08); }
+
+  .goal-row {
+    display: flex; gap: 4px; justify-content: center;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid #3e3e58; opacity: 0.85;
+  }
+  .gc {
+    border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-weight: 700;
+  }
+  .gc.empty { background: #1e1e30; border: 2px dashed #4a4a65; }
+  .gc.R {
+    background: rgba(249,115,22,0.15);
+    border: 2px solid rgba(249,115,22,0.5);
+    color: rgba(249,115,22,0.75);
+  }
+  .gc.L {
+    background: rgba(6,182,212,0.15);
+    border: 2px solid rgba(6,182,212,0.5);
+    color: rgba(6,182,212,0.75);
+  }
+  .gl { text-align: center; font-size: 10px; color: #8888a0; margin-top: 3px; opacity: 0.85; }
+
+  .status {
+    font-size: 15px; font-weight: 700; margin-bottom: 14px;
+    min-height: 22px; text-align: center;
+  }
+  .status.win { color: #34d472; }
+  .status.fail { color: #f06060; }
+
+  .btns {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center; margin-bottom: 20px;
+  }
+  .btn {
+    background: #1a1a28; color: #ededf5; border: 1px solid #3e3e58;
+    border-radius: 8px; padding: 7px 16px; font-size: 13px;
+    font-family: inherit; cursor: pointer; transition: background 0.2s;
+  }
+  .btn:hover { background: #24243a; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn.ac {
+    background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(6,182,212,0.15));
+  }
+
+  .panel {
+    background: #161622; border-radius: 10px; border: 1px solid #3e3e58;
+    padding: 14px; max-width: 460px; width: 100%; margin-bottom: 14px;
+  }
+  .ptitle {
+    font-size: 11px; color: #9999b0; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+  .log {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    max-height: 140px; overflow-y: auto;
+  }
+  .log span {
+    font-size: 11px; padding: 2px 6px; border-radius: 4px;
+  }
+  .log span.R {
+    background: rgba(249,115,22,0.18); color: #fb9a54;
+    border: 1px solid rgba(249,115,22,0.35);
+  }
+  .log span.L {
+    background: rgba(6,182,212,0.18); color: #3dd4ec;
+    border: 1px solid rgba(6,182,212,0.35);
+  }
+
+  .prow { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .pat {
+    font-size: 12px; padding: 3px 8px; border-radius: 5px;
+    border: 1px solid #3e3e58; color: #8888a0; background: transparent;
+    transition: all 0.3s;
+  }
+  .pat.aR {
+    color: #fb9a54; background: rgba(249,115,22,0.15);
+    border-color: rgba(249,115,22,0.45);
+  }
+  .pat.aL {
+    color: #3dd4ec; background: rgba(6,182,212,0.15);
+    border-color: rgba(6,182,212,0.45);
+  }
+  .pat.done { opacity: 0.35; }
+  .parr { color: #555570; font-size: 10px; }
+
+  .info {
+    background: #161622; border-radius: 10px; border: 1px solid #3e3e58;
+    padding: 16px; max-width: 460px; width: 100%;
+    font-size: 13px; line-height: 1.7; color: #9999b0;
+  }
+  .info b { color: #ededf5; }
+  .info p { margin-bottom: 6px; }
+  .info p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<h1>Frogs &amp; Toads</h1>
+<p class="sub">Swap all pieces. Click a highlighted piece to move it.</p>
+
+<div class="row">
+  <label><span style="color:#f97316">→</span> n: <select id="nSel"></select></label>
+  <label><span style="color:#06b6d4">←</span> m: <select id="mSel"></select></label>
+</div>
+<div class="stats">
+  <span>Moves: <b id="mc">0</b></span>
+  <span>Optimal: <b id="oc">0</b></span>
+  <span>Formula: <b id="fm"></b></span>
+</div>
+
+<div class="board-wrap" id="bw">
+  <div class="board" id="bd"></div>
+  <div class="goal-row" id="gr"></div>
+  <div class="gl">goal</div>
+</div>
+
+<div class="status" id="st"></div>
+
+<div class="btns">
+  <button class="btn" onclick="reset()">Reset</button>
+  <button class="btn" id="ubtn" onclick="doUndo()" disabled>Undo</button>
+  <button class="btn ac" id="sbtn" onclick="startSolve()">Show Optimal</button>
+  <button class="btn" id="tbtn" onclick="stepSolve()" style="display:none">Step</button>
+  <button class="btn" id="abtn" onclick="toggleAuto()" style="display:none">Auto Play</button>
+</div>
+
+<div class="panel" id="pp" style="display:none">
+  <div class="ptitle">Group Pattern</div>
+  <div class="prow" id="pr"></div>
+</div>
+
+<div class="panel" id="lp" style="display:none">
+  <div class="ptitle">Move Log</div>
+  <div class="log" id="lg"></div>
+</div>
+
+<div class="info">
+  <b>Strategy</b>
+  <p><span style="color:#f97316">●</span> If you can <b>jump</b>, always jump. Never slide when a jump is open.</p>
+  <p><span style="color:#06b6d4">●</span> Never let two pieces going the same direction sit next to each other in the middle. That's a deadlock.</p>
+  <p><span style="color:#34d472">●</span> When only slides are available, pick the one that sets up a jump on the next turn. Peeking <b>2 moves ahead</b> always resolves it.</p>
+</div>
+
+<script>
+let n = 3, m = 3, board, goal, moves, hist, logE;
+let solMode, solMvs, solStep, autoId;
+let gPat, gCum, pid, pidN;
+const GAP = 5;
+const $ = id => document.getElementById(id);
+
+[0,1,2,3,4,5,6,7,8].forEach(v => {
+  $('nSel').innerHTML += `<option value="${v}"${v===3?' selected':''}>${v}</option>`;
+  $('mSel').innerHTML += `<option value="${v}"${v===3?' selected':''}>${v}</option>`;
+});
+$('nSel').onchange = e => { n = +e.target.value; reset(); };
+$('mSel').onchange = e => { m = +e.target.value; reset(); };
+
+function mkB(a, b) {
+  const r = [];
+  for (let i = 0; i < a; i++) r.push('R');
+  r.push('_');
+  for (let i = 0; i < b; i++) r.push('L');
+  return r;
+}
+function mkG(a, b) {
+  const r = [];
+  for (let i = 0; i < b; i++) r.push('L');
+  r.push('_');
+  for (let i = 0; i < a; i++) r.push('R');
+  return r;
+}
+function vm(b) {
+  const e = b.indexOf('_'), mv = [];
+  if (e-1 >= 0 && b[e-1] === 'R') mv.push({f: e-1, t: 'slide'});
+  if (e-2 >= 0 && b[e-2] === 'R' && b[e-1] === 'L') mv.push({f: e-2, t: 'jump'});
+  if (e+1 < b.length && b[e+1] === 'L') mv.push({f: e+1, t: 'slide'});
+  if (e+2 < b.length && b[e+2] === 'L' && b[e+1] === 'R') mv.push({f: e+2, t: 'jump'});
+  return mv;
+}
+function ap(b, mv) {
+  const nb = [...b], e = nb.indexOf('_');
+  nb[e] = nb[mv.f]; nb[mv.f] = '_';
+  return nb;
+}
+function ok(b) { return b.every((v, i) => v === goal[i]); }
+
+function bfs() {
+  const init = mkB(n, m), g = mkG(n, m);
+  if (init.every((v, i) => v === g[i])) return [];
+  const q = [{b: init, mv: []}], seen = new Set([init.join(',')]);
+  while (q.length) {
+    const {b, mv} = q.shift();
+    for (const move of vm(b)) {
+      const nb = ap(b, move), k = nb.join(','), who = b[move.f];
+      if (nb.every((v, i) => v === g[i])) return [...mv, {move, who, board: nb}];
+      if (!seen.has(k)) { seen.add(k); q.push({b: nb, mv: [...mv, {move, who, board: nb}]}); }
+    }
+  }
+  return null;
+}
+
+function compPat() {
+  const sol = bfs();
+  if (!sol || !sol.length) { gPat = []; gCum = []; return; }
+  const groups = [];
+  let cur = sol[0].who, cnt = 1;
+  for (let i = 1; i < sol.length; i++) {
+    if (sol[i].who === cur) cnt++;
+    else { groups.push({s: cur, n: cnt}); cur = sol[i].who; cnt = 1; }
+  }
+  groups.push({s: cur, n: cnt});
+  gPat = groups;
+  gCum = [];
+  let sum = 0;
+  for (const g of groups) { sum += g.n; gCum.push(sum); }
+}
+
+function renderPat() {
+  const r = $('pr');
+  if (!gPat || !gPat.length) { r.innerHTML = ''; return; }
+  let ai = -1;
+  if (moves > 0) {
+    for (let i = 0; i < gCum.length; i++) {
+      const start = i === 0 ? 0 : gCum[i - 1];
+      if (moves > start && moves <= gCum[i]) { ai = i; break; }
+    }
+  }
+  const done = ok(board);
+  r.innerHTML = gPat.map((g, i) => {
+    let cls = 'pat';
+    if (i === ai) cls += ' a' + g.s;
+    else if (i < ai || done) cls += ' done';
+    const arr = i < gPat.length - 1 ? '<span class="parr"> › </span>' : '';
+    const arrow = g.s === 'R' ? '→' : '←';
+    return `<span class="${cls}">${g.n}${arrow}</span>${arr}`;
+  }).join('');
+}
+
+function getSz() { return Math.min(52, Math.max(28, Math.floor(420 / (n + m + 1)))); }
+function initPid() { pidN = 0; pid = []; for (let i = 0; i < board.length; i++) pid.push(pidN++); }
+
+function createPieces() {
+  const bd = $('bd'), len = board.length, sz = getSz();
+  bd.style.width = (len * sz + (len - 1) * GAP) + 'px';
+  bd.style.height = sz + 'px';
+  bd.innerHTML = '';
+  for (let i = 0; i < len; i++) {
+    const el = document.createElement('div');
+    el.className = 'piece';
+    el.id = 'p' + pid[i];
+    el.style.width = sz + 'px';
+    el.style.height = sz + 'px';
+    el.style.fontSize = (sz * 0.45) + 'px';
+    el.style.left = (i * (sz + GAP)) + 'px';
+    bd.appendChild(el);
+  }
+  syncPieces();
+}
+
+function syncPieces() {
+  const sz = getSz();
+  const valids = solMode ? [] : vm(board);
+  const movSet = new Set(valids.map(m => m.f));
+  for (let i = 0; i < board.length; i++) {
+    const el = document.getElementById('p' + pid[i]);
+    if (!el) continue;
+    const c = board[i], isMv = movSet.has(i);
+    el.className = 'piece' + (c === '_' ? ' empty' : ' ' + c) + (isMv ? ' mv' : '');
+    el.textContent = c === 'R' ? '→' : c === 'L' ? '←' : '';
+    el.style.left = (i * (sz + GAP)) + 'px';
+    if (isMv) {
+      const idx = i;
+      el.onclick = () => doMove(idx);
+      el.onmouseenter = function() { this.style.transform = 'scale(1.08)'; };
+      el.onmouseleave = function() { this.style.transform = ''; };
+    } else {
+      el.onclick = null;
+      el.onmouseenter = null;
+      el.onmouseleave = null;
+    }
+  }
+}
+
+function animateSwap(fromIdx, toIdx) {
+  const tmp = pid[fromIdx];
+  pid[fromIdx] = pid[toIdx];
+  pid[toIdx] = tmp;
+  syncPieces();
+}
+
+function renderGoal() {
+  const len = goal.length, sz = Math.min(34, Math.max(18, Math.floor(300 / len)));
+  $('gr').innerHTML = goal.map(c => {
+    const cls = c === '_' ? 'gc empty' : 'gc ' + c;
+    const t = c === 'R' ? '→' : c === 'L' ? '←' : '';
+    return `<div class="${cls}" style="width:${sz}px;height:${sz}px;font-size:${sz * 0.4}px">${t}</div>`;
+  }).join('');
+}
+
+function renderStats() {
+  const opt = n * m + n + m;
+  $('mc').textContent = moves;
+  $('oc').textContent = opt;
+  $('fm').textContent = n === m
+    ? `${n}\u00B2+2\u00B7${n}=${opt}`
+    : `${n}\u00B7${m}+${n}+${m}=${opt}`;
+}
+
+function renderStatus() {
+  const w = $('bw'), st = $('st');
+  w.classList.remove('won', 'dead');
+  if (ok(board)) {
+    w.classList.add('won');
+    st.className = 'status win';
+    st.textContent = 'Solved in ' + moves + ' moves!';
+  } else if (!solMode && vm(board).length === 0) {
+    w.classList.add('dead');
+    st.className = 'status fail';
+    st.textContent = 'Deadlocked! Two same direction pieces are blocking each other.';
+  } else {
+    st.className = 'status';
+    st.textContent = '';
+  }
+}
+
+function renderLog() {
+  if (!logE.length) { $('lp').style.display = 'none'; return; }
+  $('lp').style.display = '';
+  $('lg').innerHTML = logE.map(e => {
+    const arrow = e.w === 'R' ? '→' : '←';
+    return `<span class="${e.w}">${e.num}. ${arrow} ${e.t}</span>`;
+  }).join('');
+  $('lg').scrollTop = $('lg').scrollHeight;
+}
+
+function doMove(from) {
+  if (solMode) return;
+  const valids = vm(board);
+  const mv = valids.find(m => m.f === from);
+  if (!mv) return;
+  const who = board[from], toIdx = board.indexOf('_');
+  hist.push({board: [...board], pid: [...pid]});
+  board = ap(board, mv);
+  moves++;
+  logE.push({w: who, t: mv.t, num: moves});
+  animateSwap(from, toIdx);
+  renderStats();
+  renderStatus();
+  renderLog();
+  $('ubtn').disabled = false;
+}
+
+function doUndo() {
+  if (!hist.length || solMode) return;
+  const prev = hist.pop();
+  board = prev.board;
+  pid = prev.pid;
+  moves--;
+  logE.pop();
+  syncPieces();
+  renderStats();
+  renderStatus();
+  renderLog();
+  $('ubtn').disabled = !hist.length;
+}
+
+function startSolve() {
+  solMvs = bfs();
+  if (!solMvs) return;
+  solMode = true;
+  solStep = 0;
+  board = mkB(n, m);
+  moves = 0;
+  hist = [];
+  logE = [];
+  compPat();
+  initPid();
+  createPieces();
+  renderStats();
+  renderStatus();
+  renderLog();
+  $('pp').style.display = '';
+  renderPat();
+  $('sbtn').style.display = 'none';
+  $('tbtn').style.display = '';
+  $('tbtn').textContent = 'Step (0/' + solMvs.length + ')';
+  $('tbtn').disabled = false;
+  $('abtn').style.display = '';
+  $('ubtn').disabled = true;
+}
+
+function stepSolve() {
+  if (!solMvs || solStep >= solMvs.length) return;
+  const s = solMvs[solStep];
+  const fromIdx = s.move.f;
+  const toIdx = board.indexOf('_');
+  board = s.board;
+  moves = solStep + 1;
+  logE.push({w: s.who, t: s.move.t, num: moves});
+  animateSwap(fromIdx, toIdx);
+  solStep++;
+  $('tbtn').textContent = 'Step (' + solStep + '/' + solMvs.length + ')';
+  if (solStep >= solMvs.length) { $('tbtn').disabled = true; stopA(); }
+  renderStats();
+  renderStatus();
+  renderLog();
+  renderPat();
+}
+
+function toggleAuto() {
+  if (autoId) stopA();
+  else {
+    autoId = setInterval(() => {
+      if (solStep >= solMvs.length) { stopA(); return; }
+      stepSolve();
+    }, 450);
+    $('abtn').textContent = 'Pause';
+    $('abtn').style.borderColor = '#f97316';
+  }
+}
+function stopA() {
+  if (autoId) clearInterval(autoId);
+  autoId = null;
+  $('abtn').textContent = 'Auto Play';
+  $('abtn').style.borderColor = '';
+}
+
+function reset() {
+  stopA();
+  solMode = false;
+  solMvs = null;
+  solStep = 0;
+  autoId = null;
+  board = mkB(n, m);
+  goal = mkG(n, m);
+  moves = 0;
+  hist = [];
+  logE = [];
+  initPid();
+  createPieces();
+  renderGoal();
+  renderStats();
+  renderStatus();
+  renderLog();
+  $('pp').style.display = 'none';
+  $('sbtn').style.display = '';
+  $('tbtn').style.display = 'none';
+  $('abtn').style.display = 'none';
+  $('ubtn').disabled = true;
+}
+
+reset();
+</script>
+</body>
+</html>
