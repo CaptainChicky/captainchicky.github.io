@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Spinning to Delay the Dawn - xkcd #162</title>
+	<script>
+		window.MathJax = {
+			tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+			startup: { pageReady: () => MathJax.startup.defaultPageReady().then(() => window.__mathjaxReady = true) }
+		};
+	</script>
+	<script src="./tex-mml-svg.js" crossorigin="anonymous"></script>
+	<style>
+		:root {
+			--bg: #fafaf8;
+			--fg: #1a1a1a;
+			--heading: #222;
+			--muted: #666;
+			--border: #d8d4cc;
+			--eq-bg: #f3f1ed;
+			--accent: #7a5230;
+			--result-bg: #f0ede6;
+			--result-border: #c8bfab;
+			--input-bg: #fff;
+			--dia-earth: #d4e2ee;
+			--dia-earth-stroke: #8fa9bd;
+			--dia-axis: #5a5a5a;
+			--dia-guide: #bcb5a6;
+			--dia-vec: #7a5230;
+			--dia-eff: #127a6b;
+			--dia-eff-label: #0e6a5c;
+			--dia-waste: #9a9a9a;
+			--dia-person: #333;
+			--dia-label: #444;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--bg: #1a1a1a;
+				--fg: #ddd;
+				--heading: #eee;
+				--muted: #999;
+				--border: #444;
+				--eq-bg: #242420;
+				--accent: #c4956a;
+				--result-bg: #222;
+				--result-border: #555;
+				--input-bg: #2a2a2a;
+				--dia-earth: #25333d;
+				--dia-earth-stroke: #46606f;
+				--dia-axis: #b0b0b0;
+				--dia-guide: #5c574c;
+				--dia-vec: #c4956a;
+				--dia-eff: #4fc4b4;
+				--dia-eff-label: #5fd0c0;
+				--dia-waste: #888;
+				--dia-person: #ddd;
+				--dia-label: #bbb;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+			background: var(--bg);
+			color: var(--fg);
+			max-width: 780px;
+			margin: 0 auto;
+			padding: 36px 28px 60px;
+			line-height: 1.75;
+			font-size: 17px;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 44px;
+		}
+
+		header h1 {
+			font-size: 1.7em;
+			font-weight: 700;
+			color: var(--heading);
+			margin-bottom: 4px;
+		}
+
+		header .subtitle {
+			color: var(--muted);
+			font-size: 0.92em;
+			font-style: italic;
+		}
+
+		h2 {
+			font-size: 1.2em;
+			font-weight: 700;
+			color: var(--heading);
+			border-bottom: 1px solid var(--border);
+			padding-bottom: 6px;
+			margin: 40px 0 16px;
+		}
+
+		p {
+			margin: 12px 0;
+		}
+
+		.eq-block {
+			background: var(--eq-bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 16px 20px;
+			margin: 16px 0;
+			overflow-x: auto;
+		}
+
+		.note {
+			color: var(--muted);
+			font-size: 0.92em;
+			font-style: italic;
+			margin: 10px 0;
+		}
+
+		/* Interactive diagram */
+		.dia-figure {
+			margin: 22px 0 8px;
+			padding: 18px 18px 14px;
+			background: var(--eq-bg);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+		}
+
+		.dia-figure svg {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
+
+		.dia-controls {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			flex-wrap: wrap;
+			margin-top: 6px;
+			font-family: system-ui, sans-serif;
+			font-size: 0.85em;
+		}
+
+		.dia-controls label {
+			color: var(--muted);
+			white-space: nowrap;
+		}
+
+		.dia-controls input[type="range"] {
+			accent-color: var(--accent);
+			flex: 1;
+			min-width: 160px;
+		}
+
+		.dia-controls .lat-val {
+			font-weight: 700;
+			color: var(--fg);
+			min-width: 34px;
+		}
+
+		.dia-preset {
+			display: flex;
+			gap: 6px;
+		}
+
+		.dia-preset button {
+			padding: 3px 10px;
+			border-radius: 4px;
+			border: 1px solid var(--border);
+			background: var(--input-bg);
+			color: var(--fg);
+			cursor: pointer;
+			font-size: 0.85em;
+			font-family: system-ui, sans-serif;
+		}
+
+		.dia-readout {
+			margin-top: 12px;
+			font-size: 0.9em;
+			line-height: 1.6;
+			padding: 10px 14px;
+			background: var(--input-bg);
+			border-radius: 6px;
+			border: 1px solid var(--border);
+		}
+
+		.dia-readout .eff {
+			color: var(--dia-eff-label);
+			font-weight: 700;
+		}
+
+		.dia-readout .waste {
+			color: var(--dia-waste);
+			font-weight: 700;
+		}
+
+		figcaption {
+			font-size: 0.85em;
+			color: var(--muted);
+			font-style: italic;
+			margin-top: 4px;
+			text-align: center;
+			font-family: system-ui, sans-serif;
+		}
+
+		/* Calculator */
+		#calculator-box {
+			background: var(--result-bg);
+			border: 1px solid var(--result-border);
+			border-radius: 8px;
+			padding: 22px 26px;
+			margin-top: 20px;
+		}
+
+		.param-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 16px 28px;
+			margin-bottom: 22px;
+		}
+
+		@media (max-width: 560px) {
+			.param-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.param-grid label {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.param-grid .label-text {
+			font-size: 0.82em;
+			color: var(--muted);
+			font-family: system-ui, sans-serif;
+		}
+
+		.param-grid input[type="range"] {
+			accent-color: var(--accent);
+			width: 100%;
+		}
+
+		.param-grid .val {
+			font-size: 0.9em;
+			font-weight: 600;
+			font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+		}
+
+		.param-grid .val .sub {
+			font-weight: 400;
+			color: var(--muted);
+			font-size: 0.92em;
+		}
+
+		.btn-group {
+			display: flex;
+			gap: 8px;
+			margin-top: 4px;
+		}
+
+		.btn-group button {
+			padding: 4px 14px;
+			border-radius: 4px;
+			border: 1px solid var(--border);
+			background: var(--input-bg);
+			color: var(--fg);
+			cursor: pointer;
+			font-size: 0.82em;
+			font-family: system-ui, sans-serif;
+		}
+
+		.btn-group button.active {
+			background: var(--accent);
+			color: #fff;
+			border-color: var(--accent);
+		}
+
+		#results-box {
+			background: var(--input-bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 16px 20px;
+		}
+
+		#results-box h3 {
+			font-size: 1.05em;
+			margin-bottom: 12px;
+			color: var(--heading);
+		}
+
+		#results-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.88em;
+		}
+
+		#results-table td {
+			padding: 8px 4px;
+		}
+
+		#results-table td:first-child {
+			color: var(--muted);
+			font-family: system-ui, sans-serif;
+		}
+
+		#results-table td:last-child {
+			font-weight: 600;
+			text-align: right;
+			font-family: 'SF Mono', Consolas, Menlo, monospace;
+			font-size: 0.95em;
+		}
+
+		#results-table tr {
+			border-bottom: 1px solid var(--border);
+		}
+
+		#results-table tr:last-child {
+			border-bottom: none;
+		}
+
+		.comparison-box {
+			background: var(--eq-bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 14px 20px;
+			margin: 16px 0;
+			font-size: 0.92em;
+			line-height: 2.1;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Spinning to Delay the Dawn</h1>
+		<p class="subtitle">A rigorous derivation of xkcd #162: Angular Momentum</p>
+	</header>
+
+	<!-- image needs to be centered -->
+	<img src="./162.jpg"
+		alt="With reasonable assumptions about latitude and body shape, how much time might she gain them? Note: whatever the answer, sunrise always comes too soon. (Also, is it worth it if she throws up?)"
+		style="max-width:100%;height:auto;margin-bottom:20px;display:block;margin-left:auto;margin-right:auto;">
+
+	<!-- ========== Section 1 ========== -->
+	<h2>1. Problem Statement &amp; Coordinate System</h2>
+
+	<p>
+		A person stands on Earth's surface at geodetic latitude $\lambda$ and spins counterclockwise
+		(viewed from above) at angular frequency $f$ turns per second about their local vertical axis.
+		By conservation of angular momentum in the Earth–person system, this must alter Earth's spin rate.
+		We want to derive, as a function of $\lambda$, $f$, and spinning duration $\tau$, how much later dawn arrives.
+	</p>
+
+	<p>
+		Let $\hat{z}$ be the unit vector along Earth's rotation axis (pointing toward the north celestial pole).
+		A person at latitude $\lambda$ has a local vertical $\hat{n}$ that makes an angle
+		$\theta = 90° - \lambda$ (the colatitude) with $\hat{z}$. Therefore:
+	</p>
+
+	<div class="eq-block">
+		$$\hat{n} \cdot \hat{z} = \cos(90° - \lambda) = \sin\lambda$$
+	</div>
+
+	<p>
+		This projection factor $\sin\lambda$ is the heart of the latitude dependence. At the equator
+		($\lambda = 0°$), spinning about your vertical axis produces angular momentum entirely perpendicular
+		to Earth's axis&mdash;zero effect on Earth's spin rate. At the pole ($\lambda = 90°$), your spin axis
+		is perfectly aligned with Earth's&mdash;maximum effect.
+	</p>
+
+	<figure class="dia-figure">
+		<svg viewBox="0 0 500 470" xmlns="http://www.w3.org/2000/svg" role="img"
+			aria-label="Cross-section of Earth showing a spinning person at an adjustable latitude and the projection of their spin angular momentum onto Earth's rotation axis.">
+			<defs>
+				<marker id="ah-vec" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto">
+					<path d="M0,0 L7,3 L0,6 Z" style="fill:var(--dia-vec)" />
+				</marker>
+				<marker id="ah-eff" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto">
+					<path d="M0,0 L7,3 L0,6 Z" style="fill:var(--dia-eff)" />
+				</marker>
+				<marker id="ah-waste" markerWidth="8" markerHeight="8" refX="6" refY="2.6" orient="auto">
+					<path d="M0,0 L6,2.6 L0,5.2 Z" style="fill:var(--dia-waste)" />
+				</marker>
+				<marker id="ah-spin" markerWidth="8" markerHeight="8" refX="5.5" refY="2.6" orient="auto">
+					<path d="M0,0 L6,2.6 L0,5.2 Z" style="fill:var(--dia-person)" />
+				</marker>
+				<marker id="ah-earth" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+					<path d="M0,0 L7,3 L0,6 Z" style="fill:var(--dia-axis)" />
+				</marker>
+			</defs>
+
+			<!-- static frame -->
+			<line x1="210" y1="107" x2="210" y2="405" style="stroke:var(--dia-axis)" stroke-width="1.5"
+				stroke-dasharray="2 3" />
+			<circle cx="210" cy="256" r="116" style="fill:var(--dia-earth);stroke:var(--dia-earth-stroke)"
+				stroke-width="1.5" />
+			<line x1="94" y1="256" x2="326" y2="256" style="stroke:var(--dia-earth-stroke)" stroke-width="1"
+				stroke-dasharray="3 3" opacity="0.7" />
+			<text x="210" y="100" text-anchor="middle" style="fill:var(--dia-axis)" font-size="13"
+				font-family="system-ui,sans-serif">N</text>
+			<text x="210" y="424" text-anchor="middle" style="fill:var(--dia-axis)" font-size="13"
+				font-family="system-ui,sans-serif">S</text>
+			<text x="224" y="118" style="fill:var(--dia-axis)" font-size="13" font-style="italic"
+				font-family="Georgia,serif">ẑ</text>
+			<text x="330" y="252" style="fill:var(--dia-earth-stroke)" font-size="11"
+				font-family="system-ui,sans-serif">equator</text>
+			<!-- Earth spin hint near pole -->
+			<path d="M 196 150 A 15 15 0 1 1 210 165" style="fill:none;stroke:var(--dia-axis)" stroke-width="1.3"
+				marker-end="url(#ah-earth)" />
+			<text x="150" y="150" style="fill:var(--dia-axis)" font-size="12" font-style="italic"
+				font-family="Georgia,serif">Ω₀</text>
+
+			<g id="dia-dynamic"></g>
+		</svg>
+
+		<div class="dia-controls">
+			<label for="sl-lat-dia">latitude λ</label>
+			<input type="range" id="sl-lat-dia" min="0" max="90" step="0.5" value="42">
+			<span class="lat-val" id="dia-lat-val">42°</span>
+			<span class="dia-preset">
+				<button type="button" onclick="setLatitude(0)">Equator</button>
+				<button type="button" onclick="setLatitude(42)">Boston</button>
+				<button type="button" onclick="setLatitude(90)">Pole</button>
+			</span>
+		</div>
+
+		<div class="dia-readout" id="dia-readout"></div>
+
+		<figcaption>
+			Cross-section through Earth's rotation axis. Drag latitude to see the spin
+			angular-momentum vector <span style="color:var(--dia-vec);font-weight:700">Lₚ</span> split into the
+			<span class="eff" style="color:var(--dia-eff-label)">component along the axis</span> (which slows Earth)
+			and the <span style="color:var(--dia-waste)">sideways component</span> (which does not).
+		</figcaption>
+	</figure>
+
+	<!-- ========== Section 2 ========== -->
+	<h2>2. Conservation of Angular Momentum</h2>
+
+	<p>
+		Treat the Earth + person as an isolated system (neglecting lunar and solar tidal torques, which act
+		on much longer timescales). The $z$-component of total angular momentum $L_z^{\text{tot}}$ is conserved.
+	</p>
+
+	<p><strong>Initial state</strong> (person stationary, co-rotating with Earth):</p>
+
+	<div class="eq-block">
+		$$L_z^{(\text{initial})} = I_E\,\Omega_0 + I_{p \to E}\,\Omega_0$$
+	</div>
+
+	<p>
+		where $I_E \approx 8.04 \times 10^{37}\;\text{kg·m}^2$ is Earth's axial moment of inertia,
+		$\Omega_0$ is Earth's angular velocity, and $I_{p \to E} = m R_E^2 \cos^2\!\lambda$ is the person's
+		moment of inertia about Earth's axis. Since $I_{p \to E} / I_E \sim 10^{-23}$, we drop this term.
+	</p>
+
+	<p class="note">
+		<em>Which $\Omega_0$?</em> The rate that carries Earth's rotational angular momentum is the
+		<em>sidereal</em> rate, $\Omega_0 = 2\pi / (86{,}164\;\text{s}) \approx 7.292 \times 10^{-5}\;\text{rad/s}$
+		(one rotation relative to the fixed stars). The familiar 86,400 s "day" is the <em>solar</em> day, which
+		is $\approx 0.27\%$ longer because Earth also advances along its orbit. The distinction is genuinely
+		negligible at our level of precision, but since dawn is set by the Sun and rotation is set by the stars,
+		the honest choice for the angular-momentum bookkeeping is the sidereal value. The calculator below uses
+		$\Omega_0 = 7.292 \times 10^{-5}\;\text{rad/s}$.
+	</p>
+
+	<p><strong>Final state</strong> (person spinning at angular velocity $\omega = 2\pi f$ about $\hat{n}$):</p>
+
+	<p>
+		The person's spin angular momentum is $\vec{L}_p = I_p\,\omega\,\hat{n}$, where $I_p$ is their
+		moment of inertia about the local vertical. Its component along $\hat{z}$:
+	</p>
+
+	<div class="eq-block">
+		$$L_{p,z} = I_p\,\omega\,\sin\lambda$$
+	</div>
+
+	<p>Conservation of $L_z$:</p>
+
+	<div class="eq-block">
+		$$\boxed{I_E\,\Omega_0 \;=\; I_E\,\Omega' \;+\; I_p\,\omega\,\sin\lambda}$$
+	</div>
+
+	<p class="note">
+		<em>Note on the perpendicular component:</em> There is also
+		$L_{p,\perp} = I_p\,\omega\cos\lambda$ perpendicular to Earth's axis. Because the person's spin axis
+		$\hat{n}$ is fixed to the ground, it is carried around Earth's axis once per day, so this component
+		does not accumulate&mdash;it drives a minuscule <em>daily wobble</em> of the instantaneous rotation
+		axis rather than any secular precession. Since $I_p / I_E \sim 10^{-38}$, we ignore it entirely.
+	</p>
+
+	<!-- ========== Section 3 ========== -->
+	<h2>3. Change in Earth's Angular Velocity</h2>
+
+	<p>Solving for Earth's new angular velocity:</p>
+
+	<div class="eq-block">
+		$$\Omega' = \Omega_0 - \frac{I_p\,\omega\,\sin\lambda}{I_E}$$
+	</div>
+
+	<p>The change:</p>
+
+	<div class="eq-block">
+		$$\Delta\Omega \;\equiv\; \Omega' - \Omega_0 \;=\; -\frac{I_p\,\omega\,\sin\lambda}{I_E}$$
+	</div>
+
+	<p>
+		The negative sign confirms Earth slows down when the person spins in the same sense as Earth's
+		rotation (counterclockwise viewed from above the North Pole). The fractional change:
+	</p>
+
+	<div class="eq-block">
+		$$\frac{|\Delta\Omega|}{\Omega_0} = \frac{I_p\,\omega\,\sin\lambda}{I_E\,\Omega_0}$$
+	</div>
+
+	<!-- ========== Section 4 ========== -->
+	<h2>4. Human Moment of Inertia Model</h2>
+
+	<p>
+		We model the person as a solid cylinder (the torso, mass $m_{\text{torso}} = m - m_{\text{arms}}$,
+		radius $R$) plus two arms (combined mass $m_{\text{arms}}$, each modeled as a thin rod of length $\ell$).
+		The shoulders are not on the spin axis&mdash;they sit at roughly the torso radius $R$&mdash;so an extended
+		arm is a rod of length $\ell$ whose near end is at radius $R$. Using the rod's own center-of-mass moment
+		$\tfrac{1}{12}m\ell^2$ and the parallel-axis theorem to shift its center (at radius $R + \ell/2$) onto the
+		spin axis:
+	</p>
+
+	<div class="eq-block">
+		$$I_{\text{torso}} = \tfrac{1}{2}\,m_{\text{torso}}\,R^2$$
+	</div>
+	<div class="eq-block">
+		$$I_{\text{arms}}^{(\text{extended})} = m_{\text{arms}}\!\left[\tfrac{1}{12}\ell^2 + \left(R +
+		\tfrac{\ell}{2}\right)^{2}\right]
+		\qquad I_{\text{arms}}^{(\text{tucked})} = \tfrac{1}{2}\,m_{\text{arms}}\,R^2$$
+	</div>
+	<div class="eq-block">
+		$$I_p = I_{\text{torso}} + I_{\text{arms}}$$
+	</div>
+
+	<p>
+		(If the shoulder offset is dropped, $R \to 0$, the extended term collapses to the textbook
+		$\tfrac{1}{3}m_{\text{arms}}\ell^2$ for a rod pivoting about its end. Keeping the offset makes
+		arms-out noticeably larger&mdash;more faithful to a real spinning body.) With arms extended, $I_p$ is
+		several times the arms-tucked value&mdash;the same physics behind a figure skater controlling spin speed.
+	</p>
+
+	<p class="note">
+		<em>A note on the Wolfram|Alpha value:</em> The often-cited $I_p \approx 62\;\text{kg·m}^2$ from the
+		explainxkcd discussion is <em>not</em> a vertical-spin quantity at all. It is suspiciously close to the
+		person's mass in kg, which is the fingerprint of a radius of gyration $\approx 1\;\text{m}$&mdash;i.e. a
+		human treated as a uniform rod tipping end-over-end about an axis near the feet, $\tfrac{1}{3}m\ell^2
+		\approx \tfrac{1}{3}(62)(1.7)^2 \approx 60\;\text{kg·m}^2$. Even a genuine horizontal tumbling axis
+		through the center of mass gives only $\sim 10$–$15\;\text{kg·m}^2$. For spinning about the <em>vertical</em>
+		axis&mdash;the relevant one here&mdash;realistic values are $\sim 1$–$3\;\text{kg·m}^2$, roughly $30$ times
+		smaller than the quoted 62, making the effect smaller still.
+	</p>
+
+	<!-- ========== Section 5 ========== -->
+	<h2>5. Two Natural Questions</h2>
+
+	<p><strong>(a) How much is each day lengthened while you spin continuously?</strong></p>
+
+	<p>
+		The period of rotation is $T = 2\pi/\Omega$. For a small perturbation
+		$\Delta\Omega \ll \Omega_0$:
+	</p>
+
+	<div class="eq-block">
+		$$\frac{\Delta T}{T_0} = -\frac{\Delta\Omega}{\Omega_0} = \frac{I_p\,\omega\,\sin\lambda}{I_E\,\Omega_0}$$
+	</div>
+
+	<div class="eq-block">
+		$$\Delta T = \frac{I_p\,\omega\,\sin\lambda\;\cdot\;T_0^2}{2\pi\,I_E}$$
+	</div>
+
+	<p>
+		This is the change in the length of one full rotation, valid only as long as you keep spinning.
+		The moment you stop, Earth returns to $\Omega_0$.
+	</p>
+
+	<p><strong>(b) If you spin for a finite duration $\tau$, by how much is dawn delayed?</strong></p>
+
+	<p>
+		This is the more physically meaningful question for the comic. During the interval $[0,\,\tau]$,
+		Earth rotates at $\Omega'$ instead of $\Omega_0$. The angular deficit accumulated:
+	</p>
+
+	<div class="eq-block">
+		$$\Delta\varphi = (\Omega_0 - \Omega')\,\tau = \frac{I_p\,\omega\,\sin\lambda}{I_E}\;\tau$$
+	</div>
+
+	<p>
+		When the person stops, Earth resumes speed $\Omega_0$, but it is now behind by $\Delta\varphi$ radians.
+		The extra time before the surface reaches the orientation it would have reached at the original rate:
+	</p>
+
+	<div class="eq-block" style="border: 2px solid var(--accent);">
+		$$\boxed{\delta t \;=\; \frac{\Delta\varphi}{\Omega_0} \;=\; \frac{I_p \;\cdot\; \omega \;\cdot\; \sin\lambda
+		\;\cdot\; \tau}{I_E \;\cdot\; \Omega_0}}$$
+	</div>
+
+	<p>
+		This is the <strong>master formula</strong>. Every parameter enters linearly: doubling your spin rate,
+		doubling your spinning time, or moving to a higher latitude all double the effect proportionally.
+	</p>
+
+	<p>The delay per individual revolution of the person (independent of spin speed):</p>
+
+	<div class="eq-block">
+		$$\delta t_{\text{per turn}} = \frac{2\pi\,I_p\,\sin\lambda}{I_E\,\Omega_0}$$
+	</div>
+
+	<p class="note">
+		Each revolution contributes the same delay regardless of how fast you turn. Faster spinning just
+		means more turns packed into a given time.
+	</p>
+
+	<!-- ========== Section 6: Push off ground ========== -->
+	<h2>6. Does It Matter That You Spin By Pushing Off the Ground?</h2>
+
+	<p>
+		A real person can't spontaneously start spinning&mdash;there's no internal way to change your own
+		angular momentum from zero. You spin up by planting a foot and <em>pushing against the ground</em>, i.e.
+		by exerting a torque on the Earth. It's worth checking that the derivation survives this, because it
+		might seem like pushing off the ground is a different situation from the idealized "person acquires
+		spin $\omega$" picture.
+	</p>
+
+	<p>
+		It survives&mdash;in fact this is the mechanism that makes the whole thing work. Your foot exerts a
+		frictional torque $\vec{\Gamma}$ on the ground about the vertical axis; by Newton's third law the ground
+		exerts $-\vec{\Gamma}$ back on you. Over the spin-up interval, the ground's reaction delivers angular
+		momentum to the Earth:
+	</p>
+
+	<div class="eq-block">
+		$$\Delta \vec{L}_{\text{Earth}} = -\!\int \vec{\Gamma}\,dt = -\,\Delta\vec{L}_{\text{you}}$$
+	</div>
+
+	<p>
+		The forces between you and the Earth are an <em>internal</em> action–reaction pair of the Earth+person
+		system, so they cannot change the system's total angular momentum&mdash;they only shuttle it between the
+		two bodies. Whatever spin angular momentum $+I_p\,\omega\,\hat{n}$ you end up with, the Earth picks up
+		exactly $-I_p\,\omega\,\hat{n}$. Projected onto Earth's axis, that is the $-I_p\,\omega\sin\lambda$ term
+		that already appears in the boxed conservation equation of Section 2. So "pushing off the ground" is not
+		an alternative to the derivation&mdash;it is the physical realization of it.
+	</p>
+
+	<p class="note">
+		<em>What about the energy?</em> Spinning up costs real metabolic work, and you might worry that energy
+		input changes the accounting. It doesn't: the kinetic energy of your spin comes from chemistry in your
+		muscles, and angular momentum, not energy, is the conserved quantity that fixes Earth's response. You can
+		pour in as much effort as you like&mdash;pant, sweat, throw up&mdash;and the Earth still only responds to
+		the angular momentum you actually transfer through your feet. (Equally, friction quietly dissipates most
+		of that energy as heat; none of that dissipation affects the angular-momentum bookkeeping.)
+	</p>
+
+	<p class="note">
+		<em>And when you stop?</em> You halt by pushing on the ground again, handing your $+I_p\,\omega\,\hat{n}$
+		back to the Earth. Earth's rotation rate returns to $\Omega_0$&mdash;but, as the next section shows, not
+		to the same orientation. The round trip of angular momentum out and back is exactly what leaves the
+		permanent offset.
+	</p>
+
+	<!-- ========== Section 7: Why returns ========== -->
+	<h2>7. Why Earth's Spin Returns (And Why You Still Gain Time)</h2>
+
+	<p>
+		A natural objection: if Earth returns to $\Omega_0$ when you stop, did you accomplish nothing?
+		No&mdash;and the analogy is a person walking on a boat. While you walk forward, the boat drifts
+		backward; when you stop, the boat stops. But the boat is now <em>displaced</em> from where it started.
+	</p>
+
+	<p>
+		Similarly, while you spin, Earth rotates slower. When you stop, Earth resumes its normal rate&mdash;but
+		it is now <em>behind</em> in its rotation by the angular deficit $\Delta\varphi$. The Sun hasn't moved (on
+		this timescale), so your location reaches the sunrise orientation later by exactly
+		$\delta t = \Delta\varphi / \Omega_0$. The effect is real and permanent (until some other torque acts on the
+		system).
+	</p>
+
+	<!-- ========== Section 8: Calculator ========== -->
+	<h2>8. Interactive Calculator</h2>
+
+	<p>Plug in your own parameters below.</p>
+
+	<div id="calculator-box">
+		<div class="param-grid">
+			<label>
+				<span class="label-text">Latitude $\lambda$ (°)</span>
+				<input type="range" id="sl-lat" min="0" max="90" step="0.5" value="42">
+				<span class="val"><span id="v-lat">42</span>° <span class="sub">(sin λ = <span
+							id="v-sinlat">0.6691</span>)</span></span>
+			</label>
+			<label>
+				<span class="label-text">Spin frequency $f$ (turns/s)</span>
+				<input type="range" id="sl-freq" min="0.1" max="10" step="0.1" value="1.0">
+				<span class="val"><span id="v-freq">1.0</span> Hz <span class="sub">(ω = <span id="v-omega">6.28</span>
+						rad/s)</span></span>
+			</label>
+			<label>
+				<span class="label-text">Duration $\tau$ (s)</span>
+				<input type="range" id="sl-tau" min="1" max="600" step="1" value="60">
+				<span class="val"><span id="v-tau">60</span> s <span class="sub">(<span id="v-taumin">1.0</span>
+						min)</span></span>
+			</label>
+			<label>
+				<span class="label-text">Body mass $m$ (kg)</span>
+				<input type="range" id="sl-mass" min="30" max="150" step="1" value="62">
+				<span class="val"><span id="v-mass">62</span> kg</span>
+			</label>
+			<label>
+				<span class="label-text">Torso radius $R$ (m)</span>
+				<input type="range" id="sl-radius" min="0.10" max="0.35" step="0.01" value="0.20">
+				<span class="val"><span id="v-radius">0.20</span> m</span>
+			</label>
+			<label>
+				<span class="label-text">Arm mass (both) $m_{\text{arms}}$ (kg)</span>
+				<input type="range" id="sl-armmass" min="2" max="16" step="0.5" value="7.0">
+				<span class="val"><span id="v-armmass">7.0</span> kg</span>
+			</label>
+			<label>
+				<span class="label-text">Arm length $\ell$ (m)</span>
+				<input type="range" id="sl-armlen" min="0.30" max="0.85" step="0.01" value="0.60">
+				<span class="val"><span id="v-armlen">0.60</span> m</span>
+			</label>
+			<label>
+				<span class="label-text">Arms position</span>
+				<div class="btn-group">
+					<button id="btn-ext" class="active" onclick="setArms(true)">Extended</button>
+					<button id="btn-tuck" onclick="setArms(false)">Tucked in</button>
+				</div>
+			</label>
+		</div>
+
+		<div id="results-box">
+			<h3>Results</h3>
+			<table id="results-table">
+				<tbody id="results-tbody"></tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- ========== Section 8 ========== -->
+	<h2>9. Putting the Numbers in Perspective</h2>
+
+	<p>
+		At the default parameters (62 kg person, latitude 42°, spinning at 1 turn/s for 60 seconds),
+		the dawn delay is of order $10^{-31}$ seconds. Some comparisons:
+	</p>
+
+	<div class="comparison-box">
+		Planck time: $\approx 5.4 \times 10^{-44}$ s<br>
+		Light crossing a proton: $\approx 10^{-24}$ s<br>
+		Light crossing 5% of an atom: $\approx 10^{-20}$ s<br>
+		Shortest measured time interval: $\approx 10^{-21}$ s (zeptosecond regime)<br>
+		<strong>Dawn delay (1 min spin): $\approx 10^{-31}$ s</strong>
+	</div>
+
+	<p>
+		The dawn delay is about ten billion times shorter than the shortest interval humans have ever
+		measured. Meanwhile, the 60 seconds spent spinning is 60 seconds not spent with your companion&mdash;a
+		net loss of approximately $59.999\!\ldots\!9$ seconds. As the title text notes: whatever the answer,
+		sunrise always comes too soon.
+	</p>
+
+	<!-- ========== Section 9 ========== -->
+	<h2>10. Assumptions &amp; Limitations</h2>
+
+	<p>
+		The derivation assumes Earth is a rigid body (no elastic deformation from redistributed angular
+		momentum), ignores external torques (Moon, Sun), treats the atmosphere as rigidly co-rotating, and
+		uses the parallel-axis theorem only to confirm the person's orbital contribution is negligible.
+		All of these are excellent approximations given that the person's angular momentum is a factor
+		$\sim\!10^{-38}$ of Earth's. The dominant uncertainty is the human moment of inertia model&mdash;real
+		bodies aren't solid cylinders&mdash;but even generous choices only move $I_p$ by a factor of a few,
+		which is utterly irrelevant when your effect is $10^{-31}$ seconds.
+	</p>
+
+	<img src="./sunset.png" style="max-width:100%;height:auto;margin-bottom:20px;display:block;margin-left:auto;margin-right:auto;">
+
+	<script>
+		const I_EARTH = 8.04e37;
+		const T_DAY = 86164;              // sidereal day (s)
+		const OMEGA_0 = 2 * Math.PI / T_DAY;  // 7.292e-5 rad/s
+		const R_EARTH = 6.371e6;
+		let armsOut = true;
+
+		function setArms(ext) {
+			armsOut = ext;
+			document.getElementById('btn-ext').classList.toggle('active', ext);
+			document.getElementById('btn-tuck').classList.toggle('active', !ext);
+			recalc();
+		}
+
+		function toSci(v, d) {
+			if (v === 0) return '0';
+			d = d || 3;
+			const e = Math.floor(Math.log10(Math.abs(v)));
+			const m = v / Math.pow(10, e);
+			return m.toFixed(d - 1) + ' × 10<sup>' + e + '</sup>';
+		}
+
+		function fmtTime(s) {
+			const a = Math.abs(s);
+			const units = [
+				['quectoseconds', 'qs', 1e30], ['rontoseconds', 'rs', 1e27], ['yoctoseconds', 'ys', 1e24],
+				['zeptoseconds', 'zs', 1e21], ['attoseconds', 'as', 1e18], ['femtoseconds', 'fs', 1e15],
+				['picoseconds', 'ps', 1e12], ['nanoseconds', 'ns', 1e9], ['microseconds', 'µs', 1e6],
+				['milliseconds', 'ms', 1e3],
+			];
+			for (const [name, abbr, fac] of units) {
+				const sc = a * fac;
+				if (sc >= 0.1 && sc < 1e6) return sc.toFixed(3) + ' ' + name + ' (' + sc.toFixed(3) + ' ' + abbr + ')';
+			}
+			return toSci(s) + ' s';
+		}
+
+		// ---- Interactive latitude / projection diagram ----
+		const DIA = { cx: 210, cy: 256, Re: 116, Lmag: 74, qOff: 28 };
+
+		function arcPolyline(cx, cy, r, a0deg, a1deg, n) {
+			// screen coords, angle measured from +x axis, positive toward -y (north)
+			let pts = [];
+			for (let i = 0; i <= n; i++) {
+				const a = (a0deg + (a1deg - a0deg) * i / n) * Math.PI / 180;
+				pts.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy - r * Math.sin(a)).toFixed(1));
+			}
+			return pts.join(' ');
+		}
+
+		function drawDiagram(lat) {
+			const { cx, cy, Re, Lmag, qOff } = DIA;
+			const rad = lat * Math.PI / 180;
+			const sinL = Math.sin(rad), cosL = Math.cos(rad);
+
+			// surface point P (SVG coords, -y = north)
+			const Px = cx + Re * cosL, Py = cy - Re * sinL;
+			const nx = cosL, ny = -sinL;                 // outward local vertical
+			const px = -ny, py = nx;                      // perpendicular (arms)
+
+			// origin of the L vector, just beyond the head
+			const Qx = Px + qOff * nx, Qy = Py + qOff * ny;
+			const Ltx = Qx + Lmag * nx, Lty = Qy + Lmag * ny;   // vector tip
+			const Vx = Qx, Vy = Qy - Lmag * sinL;               // decomposition corner (up from Q)
+
+			const g = document.getElementById('dia-dynamic');
+			const S = [];
+
+			// radius line centre -> surface (faint)
+			S.push(`<line x1="${cx}" y1="${cy}" x2="${Px.toFixed(1)}" y2="${Py.toFixed(1)}" style="stroke:var(--dia-guide)" stroke-width="1" stroke-dasharray="2 3"/>`);
+
+			// latitude arc at centre (equator -> P)
+			const r0 = 34;
+			S.push(`<polyline points="${arcPolyline(cx, cy, r0, 0, lat, 16)}" fill="none" style="stroke:var(--dia-label)" stroke-width="1.2"/>`);
+			if (lat > 4) {
+				const mid = (lat / 2) * Math.PI / 180;
+				S.push(`<text x="${(cx + (r0 + 12) * Math.cos(mid)).toFixed(1)}" y="${(cy - (r0 + 12) * Math.sin(mid) + 4).toFixed(1)}" style="fill:var(--dia-label)" font-size="13" font-style="italic" font-family="Georgia,serif">λ</text>`);
+			}
+
+			// person: feet at P, standing outward
+			const hip = [Px + 8 * nx, Py + 8 * ny];
+			const sho = [Px + 18 * nx, Py + 18 * ny];
+			const hd = [Px + 24 * nx, Py + 24 * ny];
+			S.push(`<line x1="${Px.toFixed(1)}" y1="${Py.toFixed(1)}" x2="${sho[0].toFixed(1)}" y2="${sho[1].toFixed(1)}" style="stroke:var(--dia-person)" stroke-width="1.8"/>`);
+			S.push(`<line x1="${(sho[0] - 6 * px).toFixed(1)}" y1="${(sho[1] - 6 * py).toFixed(1)}" x2="${(sho[0] + 6 * px).toFixed(1)}" y2="${(sho[1] + 6 * py).toFixed(1)}" style="stroke:var(--dia-person)" stroke-width="1.6"/>`);
+			S.push(`<line x1="${hip[0].toFixed(1)}" y1="${hip[1].toFixed(1)}" x2="${(Px - 3.5 * px).toFixed(1)}" y2="${(Py - 3.5 * py).toFixed(1)}" style="stroke:var(--dia-person)" stroke-width="1.6"/>`);
+			S.push(`<line x1="${hip[0].toFixed(1)}" y1="${hip[1].toFixed(1)}" x2="${(Px + 3.5 * px).toFixed(1)}" y2="${(Py + 3.5 * py).toFixed(1)}" style="stroke:var(--dia-person)" stroke-width="1.6"/>`);
+			S.push(`<circle cx="${hd[0].toFixed(1)}" cy="${hd[1].toFixed(1)}" r="3.4" style="fill:var(--dia-person)"/>`);
+
+			// spin sense omega near shoulders
+			S.push(`<path d="M ${(sho[0] - 9 * px).toFixed(1)} ${(sho[1] - 9 * py).toFixed(1)} A 9 4 ${(Math.atan2(ny, nx) * 180 / Math.PI).toFixed(1)} 1 1 ${(sho[0] + 9 * px).toFixed(1)} ${(sho[1] + 9 * py).toFixed(1)}" fill="none" style="stroke:var(--dia-person)" stroke-width="1.1" marker-end="url(#ah-spin)" opacity="0.85"/>`);
+
+			// decomposition: wasted (sideways) leg
+			if (lat < 89.5) {
+				S.push(`<line x1="${Vx.toFixed(1)}" y1="${Vy.toFixed(1)}" x2="${Ltx.toFixed(1)}" y2="${Lty.toFixed(1)}" style="stroke:var(--dia-waste)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ah-waste)"/>`);
+			}
+			// effective (along-axis) leg
+			if (lat > 0.5) {
+				S.push(`<line x1="${Qx.toFixed(1)}" y1="${Qy.toFixed(1)}" x2="${Vx.toFixed(1)}" y2="${Vy.toFixed(1)}" style="stroke:var(--dia-eff)" stroke-width="2.6" marker-end="url(#ah-eff)"/>`);
+			}
+			// full L vector (hypotenuse)
+			S.push(`<line x1="${Qx.toFixed(1)}" y1="${Qy.toFixed(1)}" x2="${Ltx.toFixed(1)}" y2="${Lty.toFixed(1)}" style="stroke:var(--dia-vec)" stroke-width="2.2" marker-end="url(#ah-vec)"/>`);
+
+			// right-angle marker at V
+			if (lat > 3 && lat < 88) {
+				const s = 7;
+				S.push(`<path d="M ${Vx.toFixed(1)} ${(Vy + s).toFixed(1)} L ${(Vx + s).toFixed(1)} ${(Vy + s).toFixed(1)} L ${(Vx + s).toFixed(1)} ${Vy.toFixed(1)}" fill="none" style="stroke:var(--dia-waste)" stroke-width="1"/>`);
+			}
+
+			// labels
+			S.push(`<text x="${(Ltx + 8 * nx + 4).toFixed(1)}" y="${(Lty + 8 * ny).toFixed(1)}" style="fill:var(--dia-vec)" font-size="14" font-style="italic" font-family="Georgia,serif">Lₚ</text>`);
+			if (lat > 12) {
+				S.push(`<text x="${(Vx - 42).toFixed(1)}" y="${((Qy + Vy) / 2 + 4).toFixed(1)}" style="fill:var(--dia-eff-label)" font-size="12" font-family="system-ui,sans-serif">L·sinλ</text>`);
+			}
+			if (lat < 78) {
+				S.push(`<text x="${((Vx + Ltx) / 2 - 16).toFixed(1)}" y="${(Vy - 6).toFixed(1)}" style="fill:var(--dia-waste)" font-size="12" font-family="system-ui,sans-serif">L·cosλ</text>`);
+			}
+
+			g.innerHTML = S.join('');
+
+			// readout
+			const pct = (sinL * 100).toFixed(0), cpct = (cosL * 100).toFixed(0);
+			let msg;
+			if (lat < 1) {
+				msg = `At the <strong>equator</strong>, your spin axis lies in Earth's equatorial plane. sin λ = 0, so <span class="eff">0%</span> of Lₚ points along Earth's axis - spinning does <strong>nothing</strong> to the day. The entire vector (<span class="waste">${cpct}%</span>) pushes sideways.`;
+			} else if (lat > 89) {
+				msg = `At the <strong>pole</strong>, your spin axis is parallel to Earth's. sin λ = 1, so <span class="eff">100%</span> of Lₚ opposes Earth's rotation - the <strong>maximum</strong> effect. Nothing is wasted sideways.`;
+			} else {
+				msg = `At <strong>λ = ${lat}°</strong>: sin λ = ${sinL.toFixed(3)}, so the <span class="eff">along-axis component</span> is ${pct}% of the vector's length (this is the part that slows Earth). The <span class="waste">sideways component</span> is cos λ = ${cosL.toFixed(3)} of the length and only nudges the axis.`;
+			}
+			document.getElementById('dia-readout').innerHTML = msg;
+			document.getElementById('dia-lat-val').textContent = lat + '°';
+		}
+
+		// Shared latitude setter - keeps diagram slider and calculator slider in sync
+		function setLatitude(val) {
+			document.getElementById('sl-lat').value = val;
+			document.getElementById('sl-lat-dia').value = val;
+			recalc();
+		}
+
+		function recalc() {
+			const lat = +document.getElementById('sl-lat').value;
+			const freq = +document.getElementById('sl-freq').value;
+			const tau = +document.getElementById('sl-tau').value;
+			const mass = +document.getElementById('sl-mass').value;
+			const R = +document.getElementById('sl-radius').value;
+			const ma = +document.getElementById('sl-armmass').value;
+			const al = +document.getElementById('sl-armlen').value;
+
+			const lam = lat * Math.PI / 180;
+			const sinL = Math.sin(lam);
+			const omega = 2 * Math.PI * freq;
+
+			const It = 0.5 * (mass - ma) * R * R;
+			const Ia = armsOut
+				? ma * ((1 / 12) * al * al + Math.pow(R + al / 2, 2))  // rod + parallel-axis (shoulder offset)
+				: 0.5 * ma * R * R;
+			const Ip = It + Ia;
+
+			const dOmega = Ip * omega * sinL / I_EARTH;
+			const frac = dOmega / OMEGA_0;
+			const dT = frac * T_DAY;
+			const dawn = Ip * omega * sinL * tau / (I_EARTH * OMEGA_0);
+			const perTurn = 2 * Math.PI * Ip * sinL / (I_EARTH * OMEGA_0);
+			const dphi = dOmega * tau;
+			const arc = dphi * R_EARTH * Math.cos(lam);
+
+			// Update display values
+			document.getElementById('v-lat').textContent = lat;
+			document.getElementById('v-sinlat').textContent = sinL.toFixed(4);
+			document.getElementById('v-freq').textContent = freq.toFixed(1);
+			document.getElementById('v-omega').textContent = omega.toFixed(2);
+			document.getElementById('v-tau').textContent = tau;
+			document.getElementById('v-taumin').textContent = (tau / 60).toFixed(1);
+			document.getElementById('v-mass').textContent = mass;
+			document.getElementById('v-radius').textContent = R.toFixed(2);
+			document.getElementById('v-armmass').textContent = ma.toFixed(1);
+			document.getElementById('v-armlen').textContent = al.toFixed(2);
+
+			const rows = [
+				["Person's MoI &nbsp; $I_p$", Ip.toFixed(4) + ' kg·m²'],
+				["$\\Delta\\Omega$", toSci(-dOmega) + ' rad/s'],
+				["Fractional change &nbsp; $|\\Delta\\Omega|/\\Omega_0$", toSci(frac)],
+				["Day lengthening $\\Delta T$ (continuous spin)", fmtTime(dT)],
+				["Delay per single turn", fmtTime(perTurn)],
+				["Dawn delay from " + tau + " s at " + freq.toFixed(1) + " Hz", fmtTime(dawn)],
+				["Total turns", (freq * tau).toFixed(0)],
+				["Angular deficit $\\Delta\\varphi$", toSci(dphi) + ' rad'],
+				["Surface displacement at your latitude", toSci(arc) + ' m'],
+			];
+
+			const tbody = document.getElementById('results-tbody');
+			tbody.innerHTML = rows.map(([l, v]) =>
+				'<tr><td>' + l + '</td><td>' + v + '</td></tr>'
+			).join('');
+
+			// Re-typeset MathJax in the results table
+			if (window.__mathjaxReady && MathJax.typesetPromise) {
+				MathJax.typesetPromise([tbody]).catch(() => { });
+			}
+
+			// keep the diagram's own slider in sync and redraw
+			document.getElementById('sl-lat-dia').value = lat;
+			drawDiagram(lat);
+		}
+
+		// Attach listeners
+		['sl-lat', 'sl-freq', 'sl-tau', 'sl-mass', 'sl-radius', 'sl-armmass', 'sl-armlen'].forEach(id => {
+			document.getElementById(id).addEventListener('input', recalc);
+		});
+		// diagram slider drives the shared latitude
+		document.getElementById('sl-lat-dia').addEventListener('input', function () {
+			document.getElementById('sl-lat').value = this.value;
+			recalc();
+		});
+
+		recalc();
+	</script>
+
+</body>
+
+</html>
