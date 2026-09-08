@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursor — minimal drop-in</title>
+<style>
+  /* ---- your page's own styles would go here ---- */
+  * { margin: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #04060a;
+    color: #97a5b4;
+    font: 400 1.05rem/1.6 system-ui, sans-serif;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    overflow: hidden;
+    cursor: crosshair;      /* swap to `none` to hide the arrow entirely */
+  }
+
+  /* ================= CURSOR: CSS ================= */
+  .cursor-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+  }
+
+  .cursor-glow, .cursor-ring, .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity .15s ease;
+    will-change: transform;
+  }
+
+  .cursor-glow {
+    width: 260px;
+    height: 260px;
+    margin: -130px 0 0 -130px;
+    background: radial-gradient(circle,
+      rgba(0, 220, 255, .16) 0%,
+      rgba(0, 220, 255, .05) 40%,
+      transparent 70%);
+  }
+
+  .cursor-ring {
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 1px solid rgba(0, 220, 255, .5);
+    box-shadow: 0 0 14px rgba(0, 220, 255, .35);
+  }
+
+  .cursor-dot {
+    width: 5px;
+    height: 5px;
+    margin: -2.5px 0 0 -2.5px;
+    background: #00dcff;
+    box-shadow: 0 0 10px #00dcff, 0 0 18px rgba(0, 220, 255, .5);
+  }
+
+  .cursor-active .cursor-glow,
+  .cursor-active .cursor-ring,
+  .cursor-active .cursor-dot { opacity: 1; }
+
+  /* optional: light that tracks the pointer, behind all content */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(circle 240px at var(--mx, 50%) var(--my, 50%),
+        rgba(0, 220, 255, .09), transparent 70%),
+      linear-gradient(180deg, #030508, #060a12 50%, #04060a);
+  }
+
+  @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor-layer { display: none; }
+  }
+  /* =============== END CURSOR: CSS =============== */
+</style>
+</head>
+<body>
+
+<div class="backdrop" aria-hidden="true"></div>
+
+<!-- ================= CURSOR: MARKUP ================= -->
+<div class="cursor-layer" aria-hidden="true">
+  <div class="cursor-glow"></div>
+  <div class="cursor-ring"></div>
+  <div class="cursor-dot"></div>
+</div>
+<!-- =============== END CURSOR: MARKUP =============== -->
+
+<p style="position:relative;z-index:1">Move the pointer.</p>
+
+<!-- ================= CURSOR: JS ================= -->
+<script>
+(function () {
+  if (matchMedia("(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
+
+  var glow = document.querySelector(".cursor-glow");
+  var ring = document.querySelector(".cursor-ring");
+  var dot  = document.querySelector(".cursor-dot");
+  var back = document.querySelector(".backdrop");
+
+  var tx = innerWidth / 2, ty = innerHeight / 2;   // true pointer position
+  var gx = tx, gy = ty, rx = tx, ry = ty;          // lagging layer positions
+  var active = false;
+
+  addEventListener("mousemove", function (e) {
+    tx = e.clientX;
+    ty = e.clientY;
+    if (back) {
+      back.style.setProperty("--mx", tx + "px");
+      back.style.setProperty("--my", ty + "px");
+    }
+    if (!active) {
+      active = true;
+      document.body.classList.add("cursor-active");
+    }
+  });
+
+  addEventListener("mouseleave", function () {
+    active = false;
+    document.body.classList.remove("cursor-active");
+  });
+
+  (function tick() {
+    // lower factor = more lag. glow trails most, ring less, dot not at all.
+    gx += (tx - gx) * 0.55;
+    gy += (ty - gy) * 0.55;
+    rx += (tx - rx) * 0.78;
+    ry += (ty - ry) * 0.78;
+
+    glow.style.transform = "translate(" + gx + "px," + gy + "px)";
+    ring.style.transform = "translate(" + rx + "px," + ry + "px)";
+    dot.style.transform  = "translate(" + tx + "px," + ty + "px)";
+
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+<!-- =============== END CURSOR: JS =============== -->
+
+</body>
+</html>
